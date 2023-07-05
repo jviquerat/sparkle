@@ -12,22 +12,21 @@ from sparkle.src.utils.prints    import *
 # Average training over multiple runs
 def train(json_file):
 
-    pass
+    # Initialize json parser and read parameters
+    parser = json_parser()
+    pms    = parser.read(json_file)
 
-    # # Initialize json parser and read parameters
-    # parser = json_parser()
-    # pms    = parser.read(json_file)
+    # Create paths for results and open repositories
+    base_path     = os.path.abspath(os.getcwd())
+    results_path  = 'results'
+    os.makedirs(results_path, exist_ok=True)
+    path          = folder_name(pms)
+    results_path += '/'+path
+    os.makedirs(results_path, exist_ok=True)
+    print(results_path)
 
-    # # Create paths for results and open repositories
-    # base_path     = os.path.abspath(os.getcwd())
-    # results_path  = 'results'
-    # os.makedirs(results_path, exist_ok=True)
-    # path          = folder_name(pms)
-    # results_path += '/'+path
-    # os.makedirs(results_path, exist_ok=True)
-
-    # # Copy json file to results folder
-    # shutil.copyfile(json_file, results_path+'/params.json')
+    # Copy json file to results folder
+    shutil.copyfile(json_file, results_path+'/params.json')
 
     # # Intialize averager
     # averager = data_avg(2, int(pms.n_stp_max/step_report), pms.n_avg)
@@ -64,35 +63,40 @@ def train(json_file):
     # # Finalize main process
     # mpi.finalize()
 
-# # Generate results folder name
-# def folder_name(pms):
+# Generate results folder name
+def folder_name(pms):
 
-#     name_env = True
-#     if hasattr(pms, "name_env"): name_env = pms.name_env
+    name_env = ""
+    if hasattr(pms.naming, "env"):
+        if (pms.naming.env is True):
+            name_env = pms.environment.name
 
-#     name_agent = True
-#     if hasattr(pms, "name_agent"): name_agent = pms.name_agent
+    name_agent = ""
+    if hasattr(pms.naming, "agent"):
+        if (pms.naming.agent is True):
+            name_agent = pms.agent.name
 
-#     name_tag = ""
-#     if hasattr(pms, "name_tag"): name_tag = pms.name_tag
+    name_tag = ""
+    if hasattr(pms.naming, "tag"):
+        if (pms.naming.tag is not False):
+            name_tag = pms.naming.tag
 
-#     name_time = False
-#     if hasattr(pms, "name_time"): name_time = pms.name_time
+    name_time = ""
+    if hasattr(pms.naming, "time"):
+        if (pms.naming.time is True):
+            name_time = str(time.strftime("%H-%M-%S", time.localtime()))
 
-#     path_time = ""
-#     if (name_time):
-#         path_time = str(time.strftime("%H-%M-%S", time.localtime()))
+    path = ""
+    if (name_env != ""):
+        path += name_env
+    if (name_agent != ""):
+        if (path != ""): path += "_"
+        path += name_agent
+    if (name_tag != ""):
+        if (path != ""): path += "_"
+        path += name_tag
+    if (name_time):
+        if (path != ""): path += "_"
+        path += name_time
 
-#     path = ""
-#     if (name_env): path += pms.env.name
-#     if (name_agent != ""):
-#         if (path != ""): path += "_"
-#         path += pms.agent.type
-#     if (name_tag != ""):
-#         if (path != ""): path += "_"
-#         path += name_tag
-#     if (name_time):
-#         if (path != ""): path += "_"
-#         path += path_time
-
-#     return path
+    return path

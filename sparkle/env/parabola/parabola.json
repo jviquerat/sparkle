@@ -1,0 +1,14 @@
+{
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "parabola"
+    },
+    "agent": {
+        "name": "pso"
+    }
+}

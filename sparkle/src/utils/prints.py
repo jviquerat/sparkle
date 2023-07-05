@@ -3,7 +3,7 @@ import os
 import subprocess
 
 # Custom improts
-from sparkle.src.envs.mpi import *
+from sparkle.src.env.mpi import *
 
 ###############################################
 ### A set of functions to format printings

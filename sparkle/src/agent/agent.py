@@ -1,5 +1,5 @@
 # Custom imports
-from dragonfly.src.core.factory import *
+from sparkle.src.core.factory import *
 
 # Declare factory
 agent_factory = factory()
