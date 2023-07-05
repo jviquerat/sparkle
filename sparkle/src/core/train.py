@@ -23,7 +23,6 @@ def train(json_file):
     path          = folder_name(pms)
     results_path += '/'+path
     os.makedirs(results_path, exist_ok=True)
-    print(results_path)
 
     # Copy json file to results folder
     shutil.copyfile(json_file, results_path+'/params.json')
@@ -31,13 +30,12 @@ def train(json_file):
     # # Intialize averager
     # averager = data_avg(2, int(pms.n_stp_max/step_report), pms.n_avg)
 
-    # # Initialize trainer
-    # trainer = trainer_factory.create(pms.trainer.style,
-    #                                  env_pms   = pms.env,
-    #                                  agent_pms = pms.agent,
-    #                                  path      = base_path,
-    #                                  n_stp_max = pms.n_stp_max,
-    #                                  pms       = pms.trainer)
+    # Initialize trainer
+    trainer = trainer_factory.create(pms.trainer.name,
+                                     env_pms   = pms.environment,
+                                     agent_pms = pms.agent,
+                                     path      = base_path,
+                                     pms       = pms.trainer)
 
     # # Run
     # for run in range(pms.n_avg):

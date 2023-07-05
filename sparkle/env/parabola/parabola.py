@@ -13,28 +13,47 @@ class parabola(base_env):
     def __init__(self, path, pms):
 
         # Fill structure
-        self.name     = 'parabola'
-        self.path     = path
-        self.dim      = 2
-        self.x_min    = np.array([-5.0,-5.0])
-        self.x_max    = np.array([ 5.0, 5.0])
-        self.x_0      = np.array([ 2.5, 2.5])
+        self.name  = 'parabola'
+        self.path  = path
+        self.dim   = 2
+        self.xmin  = np.array([-5.0,-5.0])
+        self.xmax  = np.array([ 5.0, 5.0])
+        self.x0    = np.array([ 2.5, 2.5])
 
         # Check inputs
-        if hasattr(pms, "x_min"): self.x_min = pms.x_min
-        if hasattr(pms, "x_max"): self.x_max = pms.x_max
-        if hasattr(pms, "x_0"):   self.x_min = pms.x_0
+        if hasattr(pms, "xmin"): self.xmin = pms.xmin
+        if hasattr(pms, "xmax"): self.xmax = pms.xmax
+        if hasattr(pms, "x0"):   self.xmin = pms.x0
 
     ### Cost function
     def cost(self, x):
 
+        # Scale inputs
+        sx = self.scale(x)
+
         # Compute function value in x
         v = 0.0
         for i in range(len(x)):
-            v += (x[i])**2
+            v += (sx[i])**2
 
         return v
-    
+
+    ### Scale parameters
+    def scale(self, x):
+
+        # Scale
+        sx = self.dim*[None]
+        xp = self.x_max - self.x_0
+        xm = self.x_0   - self.x_min
+
+        for i in range(self.dim):
+            if (x[i] >= 0.0):
+                sx[i] = self.x0[i] + xp[i]*x[i]
+            if (x[i] <  0.0):
+                sx[i] = self.x0[i] + xm[i]*x[i]
+
+        return sx
+
     ### Rendering
     def render(self):
         pass

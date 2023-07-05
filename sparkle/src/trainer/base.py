@@ -1,23 +1,25 @@
 # Generic imports
-import random
+import os
+import math
+import shutil
 import numpy as np
 
 # Custom imports
 
 ###############################################
-### Base agent
-class base_agent():
+### Base trainer
+class base_trainer():
     def __init__(self):
         pass
 
-    # Perform one optimization step
-    def step(self):
-        raise NotImplementedError
-
-    # Return degrees of freedom
-    def dof(self):
+    # Optimize
+    def optimize(self):
         raise NotImplementedError
 
     # Reset
     def reset(self):
+        raise NotImplementedError
+
+    # Printings
+    def print(self):
         raise NotImplementedError

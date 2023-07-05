@@ -9,6 +9,12 @@
         "name": "parabola"
     },
     "agent": {
-        "name": "pso"
+        "name": "pso",
+        "n_steps_max": 20,
+        "n_particles": 20,
+        "v0": 0.1
+    },
+    "trainer": {
+        "name": "regular"
     }
 }
