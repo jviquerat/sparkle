@@ -81,6 +81,11 @@ class pso():
 
         return self.x
 
+    # Return number of degress of freedom
+    def ndof(self):
+
+        return self.n_particles
+
     # Check if done
     def done(self):
 

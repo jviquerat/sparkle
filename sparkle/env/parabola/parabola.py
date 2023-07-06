@@ -9,7 +9,7 @@ from sparkle.env.base_env import base_env
 ### Environment for parabola
 class parabola(base_env):
 
-    ### Create object
+    # Create object
     def __init__(self, cpu, path, pms=None):
 
         # Fill structure
@@ -26,12 +26,12 @@ class parabola(base_env):
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
         if hasattr(pms, "x0"):   self.xmin = pms.x0
 
-    ### Reset environment
+    # Reset environment
     def reset(self):
 
         return True
 
-    ### Cost function
+    # Cost function
     def cost(self, x):
 
         # Scale inputs
@@ -44,7 +44,7 @@ class parabola(base_env):
 
         return v
 
-    ### Scale parameters
+    # Scale parameters
     def scale(self, x):
 
         # Scale
@@ -60,11 +60,11 @@ class parabola(base_env):
 
         return sx
 
-    ### Rendering
+    # Rendering
     def render(self):
 
         return True
 
-    ### Close environment
+    # Close environment
     def close(self):
         pass

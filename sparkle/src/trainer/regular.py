@@ -18,6 +18,12 @@ class regular(base_trainer):
         self.agent = agent_factory.create(agent_pms.name,
                                           dim = self.dim,
                                           pms = agent_pms)
+
+        # Check compatibility between the number of parallel workers
+        # and the number of degrees of freedom required by the agent
+        if (self.agent.ndof()%mpi.size !=0):
+            error("trainer::regaular", "init", "Number of degress of freedom of the agent must be a multiple of the number of parallel workers")
+
         # Initialize timer
         self.timer_global = timer("global   ")
 

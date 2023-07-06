@@ -36,7 +36,15 @@ class environments:
             return self.worker.env.dim
 
     # Compute cost in all environments
+    # The distribution of computations is made on the fly
+    # based on the dimension of input x:
+    # - If n_env > dim(x), this is not authorized
+    # - If n_env < dim(x), several passes are made until the costs of
+    #                      all elements of x have been computed
     def cost(self, x):
+
+        # Array to store costs
+        costs = np.empty((x.shape(0)))
 
         self.timer_env.tic()
 
@@ -51,7 +59,7 @@ class environments:
         c = self.worker.cost(data[0][1])
 
         # Receive
-        costs = np.empty((mpi.size))
+
 
         data = mpi.comm.gather((c), root=0)
 
