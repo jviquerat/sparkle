@@ -44,6 +44,8 @@ def train(json_file):
                                      path      = results_path,
                                      pms       = pms.trainer)
 
+    trainer.optimize(0)
+
     # # Run
     # for run in range(pms.n_avg):
     #     liner()

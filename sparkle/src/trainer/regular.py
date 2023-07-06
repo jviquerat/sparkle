@@ -28,20 +28,20 @@ class regular(base_trainer):
         self.timer_global = timer("global   ")
 
     # Optimize
-    def optimize(self, path, run):
+    def optimize(self, run):
 
         # Start global timer
         self.timer_global.tic()
 
         # Reset agent
-        agent.reset()
+        self.agent.reset()
 
         # Loop until done
         while (not self.agent.done()):
 
-            x = agent.dof()
-            c = env.cost(x)
-            agent.step(c)
+            x = self.agent.dof()
+            c = self.env.cost(x)
+            self.agent.step(c)
 
         # Close timer and show
         self.timer_global.toc()

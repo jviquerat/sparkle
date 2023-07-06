@@ -43,29 +43,32 @@ class environments:
     #                      all elements of x have been computed
     def cost(self, x):
 
-        # Array to store costs
-        costs = np.empty((x.shape(0)))
+        # Initialize stuff
+        n_dof   = x.shape[0]
+        costs   = np.empty((n_dof))
+        n_loops = n_dof//mpi.size
+        k       = 0
 
         self.timer_env.tic()
 
-        # Send
-        data = [('step', None)]*mpi.size
-        for p in range(mpi.size):
-            xp = x[p]
-            data[p] = ('cost', p)
-        mpi.comm.scatter(data, root=0)
+        for i in range(n_loops):
 
-        # Main process executing
-        c = self.worker.cost(data[0][1])
+            # Send
+            data = [('step', None)]*mpi.size
+            for p in range(mpi.size):
+                data[p] = ('cost', x[p])
+            mpi.comm.scatter(data, root=0)
 
-        # Receive
+            # Main process executing
+            c = self.worker.cost(data[0][1])
 
+            # Receive
+            data = mpi.comm.gather((c), root=0)
 
-        data = mpi.comm.gather((c), root=0)
-
-        for p in range(mpi.size):
-            c        = data[p]
-            costs[p] = c
+            for p in range(mpi.size):
+                c        = data[p]
+                costs[k] = c
+                k       += 1
 
         self.timer_env.toc()
 

@@ -49,8 +49,8 @@ class parabola(base_env):
 
         # Scale
         sx = self.dim*[None]
-        xp = self.x_max - self.x_0
-        xm = self.x_0   - self.x_min
+        xp = self.xmax - self.x0
+        xm = self.x0   - self.xmin
 
         for i in range(self.dim):
             if (x[i] >= 0.0):

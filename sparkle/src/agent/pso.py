@@ -28,7 +28,7 @@ class pso():
     def reset(self):
 
         # Iteration counter
-        self.step = 0
+        self.stp = 0
 
         # Positions and velocities
         self.x = np.random.rand(self.n_particles, self.dim)
@@ -36,7 +36,7 @@ class pso():
         self.v = np.random.randn(self.n_particles, self.dim)*self.v0
 
         # Local best and global best
-        self.p_best  = np.copy(self.x.copy)
+        self.p_best  = np.copy(self.x)
         self.p_score = np.ones(self.n_particles)*1.0e8
         self.g_best  = np.zeros((2))
         self.g_score = 1.0e8
@@ -49,7 +49,7 @@ class pso():
         self.update_best(c)
         self.update_xv()
 
-        self.step += 1
+        self.stp += 1
 
     # Update local and global best
     def update_best(self, c):
@@ -58,8 +58,8 @@ class pso():
 
             # Update best local score
             if (c[i] >= self.p_score[i]):
-                self.p_score[i] = c[i]
-                self.p_best[i,:]  = self.x[i,:]
+                self.p_score[i]  = c[i]
+                self.p_best[i,:] = self.x[i,:]
 
             # Update best global score
             if (c[i] >= self.g_score):
@@ -89,7 +89,7 @@ class pso():
     # Check if done
     def done(self):
 
-        if (self.step == self.step_max):
+        if (self.stp == self.n_steps_max):
             return True
 
         return False
