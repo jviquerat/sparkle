@@ -36,11 +36,6 @@ class environments:
             return self.worker.env.dim
 
     # Compute cost in all environments
-    # The distribution of computations is made on the fly
-    # based on the dimension of input x:
-    # - If n_env > dim(x), this is not authorized
-    # - If n_env < dim(x), several passes are made until the costs of
-    #                      all elements of x have been computed
     def cost(self, x):
 
         # Initialize stuff
@@ -93,9 +88,11 @@ class environments:
         return results
 
     # Render environment
-    def render(self, render):
+    def render(self, x):
 
-        pass
+        if (mpi.rank == 0):
+            return self.worker.env.render(x)
+
 
     #     # Not all environments will render simultaneously
     #     # We use a list to store those that render and those that don't

@@ -54,9 +54,9 @@ class worker():
         return None
 
     # Rendering
-    def render(self):
+    def render(self, x):
 
-        return self.env.render()
+        return self.env.render(x)
 
     # Closing
     def close(self):

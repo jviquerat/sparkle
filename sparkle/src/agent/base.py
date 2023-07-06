@@ -21,3 +21,7 @@ class base_agent():
     # Reset
     def reset(self):
         raise NotImplementedError
+
+    # Render
+    def render(self):
+        raise NotImplementedError

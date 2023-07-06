@@ -8,6 +8,10 @@ from sparkle.src.agent.agent      import *
 class regular(base_trainer):
     def __init__(self, env_pms, agent_pms, path, pms):
 
+        # Set parameters
+        self.render_every = 100000
+        if hasattr(pms, "render_every"): self.render_every = pms.render_every
+
         # Initialize environment
         self.env = environments(path, env_pms)
 
@@ -36,6 +40,9 @@ class regular(base_trainer):
         # Reset agent
         self.agent.reset()
 
+        # Set counter
+        self.it = 0
+
         # Loop until done
         while (not self.agent.done()):
 
@@ -43,6 +50,13 @@ class regular(base_trainer):
             c = self.env.cost(x)
             self.agent.step(c)
 
+            if (self.it%self.render_every == 0):
+                self.env.render(self.agent.dof())
+
+            self.it += 1
+
         # Close timer and show
         self.timer_global.toc()
         self.timer_global.show()
+
+
