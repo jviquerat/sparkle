@@ -10,10 +10,18 @@ class base_env():
     def __init__(self):
         pass
 
+    ### Reset environment
+    def reset(self):
+        raise NotImplementedError
+
     ### Cost function
     def cost(self, x):
         raise NotImplementedError
 
     ### Rendering
     def render(self):
-        pass
+        raise NotImplementedError
+
+    ### Close environment
+    def close(self):
+        raise NotImplementedError

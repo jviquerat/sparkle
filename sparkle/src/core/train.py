@@ -6,6 +6,7 @@ import shutil
 import numpy as np
 
 # Custom imports
+from sparkle.src.trainer.trainer import *
 from sparkle.src.utils.json      import *
 from sparkle.src.utils.prints    import *
 
@@ -15,6 +16,12 @@ def train(json_file):
     # Initialize json parser and read parameters
     parser = json_parser()
     pms    = parser.read(json_file)
+
+    # Add paths to PATH
+    base_path = os.path.abspath(os.getcwd())
+    json_path = os.path.dirname(json_file)
+    sys.path.append(base_path)
+    sys.path.append(json_path)
 
     # Create paths for results and open repositories
     base_path     = os.path.abspath(os.getcwd())
@@ -34,7 +41,7 @@ def train(json_file):
     trainer = trainer_factory.create(pms.trainer.name,
                                      env_pms   = pms.environment,
                                      agent_pms = pms.agent,
-                                     path      = base_path,
+                                     path      = results_path,
                                      pms       = pms.trainer)
 
     # # Run

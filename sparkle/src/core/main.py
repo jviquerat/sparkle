@@ -2,8 +2,8 @@
 import sys
 
 # Custom imports
-from sparkle.src.core.train    import *
-from sparkle.src.utils.prints  import *
+from sparkle.src.core.train   import *
+from sparkle.src.utils.prints import *
 
 def error():
     new_line()

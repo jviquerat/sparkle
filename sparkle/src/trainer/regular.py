@@ -1,5 +1,7 @@
 # Custom imports
-from sparkle.src.trainer.base import *
+from sparkle.src.trainer.base     import *
+from sparkle.src.env.environments import *
+from sparkle.src.agent.agent      import *
 
 ###############################################
 ### Class for regular trainer
@@ -10,7 +12,7 @@ class regular(base_trainer):
         self.env = environments(path, env_pms)
 
         # Initialize from input
-        self.dim = self.env.dim
+        self.dim = self.env.dim()
 
         # Initialize agent
         self.agent = agent_factory.create(agent_pms.name,
@@ -25,17 +27,15 @@ class regular(base_trainer):
         # Start global timer
         self.timer_global.tic()
 
-        # Reset agent and compute initial cost
-        x = agent.reset()
-        c = env.cost(x)
-        agent.pre_loop(c)
+        # Reset agent
+        agent.reset()
 
         # Loop until done
         while (not self.agent.done()):
 
-            x = agent.step()
+            x = agent.dof()
             c = env.cost(x)
-            agent
+            agent.step(c)
 
         # Close timer and show
         self.timer_global.toc()

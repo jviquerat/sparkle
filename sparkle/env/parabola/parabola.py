@@ -10,11 +10,12 @@ from sparkle.env.base_env import base_env
 class parabola(base_env):
 
     ### Create object
-    def __init__(self, path, pms):
+    def __init__(self, cpu, path, pms=None):
 
         # Fill structure
         self.name  = 'parabola'
         self.path  = path
+        self.cpu   = cpu
         self.dim   = 2
         self.xmin  = np.array([-5.0,-5.0])
         self.xmax  = np.array([ 5.0, 5.0])
@@ -24,6 +25,11 @@ class parabola(base_env):
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
         if hasattr(pms, "x0"):   self.xmin = pms.x0
+
+    ### Reset environment
+    def reset(self):
+
+        return True
 
     ### Cost function
     def cost(self, x):
@@ -56,4 +62,9 @@ class parabola(base_env):
 
     ### Rendering
     def render(self):
+
+        return True
+
+    ### Close environment
+    def close(self):
         pass

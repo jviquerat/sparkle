@@ -31,9 +31,9 @@ class pso():
         self.step = 0
 
         # Positions and velocities
-        self.x = np.random.rand(self.dim, self.n_particles)
+        self.x = np.random.rand(self.n_particles, self.dim)
         self.x = 2.0*self.x - 1.0 # Scale to [-1,1]
-        self.v = np.random.randn(self.dim, self.n_particles)*self.v0
+        self.v = np.random.randn(self.n_particles, self.dim)*self.v0
 
         # Local best and global best
         self.p_best  = np.copy(self.x.copy)
@@ -43,10 +43,13 @@ class pso():
 
         return self.x
 
-    # Pre-loop computations
-    def pre_loop(self, c):
+    # Step
+    def step(self, c):
 
         self.update_best(c)
+        self.update_xv()
+
+        self.step += 1
 
     # Update local and global best
     def update_best(self, c):
@@ -56,12 +59,22 @@ class pso():
             # Update best local score
             if (c[i] >= self.p_score[i]):
                 self.p_score[i] = c[i]
-                self.p_best[:,i]  = self.x[:,i]
+                self.p_best[i,:]  = self.x[i,:]
 
             # Update best global score
             if (c[i] >= self.g_score):
                 self.g_score   = c[i]
-                self.g_best[:] = self.x[:,i]
+                self.g_best[:] = self.x[i,:]
+
+    # Update positions and velocities
+    def update_xv(self):
+
+        r1, r2 = np.random.rand(2)
+        for i in range(self.n_particles):
+            self.v[i,:]  = (self.w*self.v[i,:] +
+                            self.c1*r1*(self.p_best[i,:] - self.x[i,:]) +
+                            self.c2*r2*(self.g_best[:] - self.x[i,:]))
+            self.x[i,:] += self.v[i,:]
 
     # Return degrees of freedom
     def dof(self):
@@ -75,9 +88,3 @@ class pso():
             return True
 
         return False
-
-    # Perform one optimization step
-    def step(self, cost):
-
-
-        self.step += 1
