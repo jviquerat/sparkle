@@ -64,7 +64,8 @@ class parabola(base_env):
                    extent=[self.xmin[0], self.xmax[0],
                            self.xmin[1], self.xmax[1]],
                    alpha=0.8, cmap='RdBu_r')
-        cnt = plt.contour(self.x, self.y, self.z, 10,
+        cnt = plt.contour(self.x, self.y, self.z,
+                          levels=[0.1, 1.0, 5.0, 10.0, 20.0],
                           colors='black', alpha=0.5)
         plt.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
         plt.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.8)

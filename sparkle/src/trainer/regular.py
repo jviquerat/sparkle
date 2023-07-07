@@ -39,8 +39,9 @@ class regular(base_trainer):
         # Reset agent
         self.agent.reset()
 
-        # Set counter
+        # Set counter and make initial rendering
         self.it = 0
+        self.env.render(self.agent.dof())
 
         # Loop until done
         while (not self.agent.done()):
@@ -50,10 +51,10 @@ class regular(base_trainer):
             self.agent.step(c)
             self.agent.print()
 
+            self.it += 1
+
             if (self.it%self.render_every == 0):
                 self.env.render(self.agent.dof())
-
-            self.it += 1
 
         # Close timer and show
         self.timer_global.toc()

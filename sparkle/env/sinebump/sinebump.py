@@ -1,24 +1,24 @@
 # Generic imports
-import math
-import numpy as np
+from   math  import cos, sqrt
+import numpy as     np
 
 # Custom imports
 from sparkle.env.base_env import *
 
 ###############################################
-### Environment for 2D rosenbrock
-class rosenbrock(base_env):
+### Environment for 2D sinebump
+class sinebump(base_env):
 
     # Create object
     def __init__(self, cpu, path, pms=None):
 
         # Fill structure
-        self.name   = 'rosenbrock'
+        self.name   = 'sinebump'
         self.path   = path
         self.cpu    = cpu
         self.dim    = 2
-        self.xmin   = np.array([-2.0,-2.0])
-        self.xmax   = np.array([ 2.0, 2.0])
+        self.xmin   = np.array([0.0, 0.0])
+        self.xmax   = np.array([5.0, 5.0])
         self.it_plt = 0
 
         # Check inputs
@@ -45,9 +45,7 @@ class rosenbrock(base_env):
     # Cost function
     def cost(self, x):
 
-        v = 0.0
-        for i in range(len(x)-1):
-            v += 100.0*(x[i+1]-x[i]**2)**2 + (1.0-x[i])**2
+        v = (x[0]-3.14)**2 + (x[1]-2.72)**2 + np.sin(3*x[0]+1.41) + np.sin(4*x[1]-1.73)
 
         return v
 
@@ -63,12 +61,12 @@ class rosenbrock(base_env):
         plt.imshow(self.z,
                    extent=[self.xmin[0], self.xmax[0],
                            self.xmin[1], self.xmax[1]],
-                   vmin=0.0, vmax=200.0,
+                   vmin=0.0, vmax=16.0,
                    alpha=0.8, cmap='RdBu_r')
         cnt = plt.contour(self.x, self.y, self.z,
-                          levels=[1.0, 10.0, 50.0, 200.0, 500.0],
+                          levels=[0, 2, 4, 6, 8],
                           colors='black', alpha=0.5)
-        plt.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
+        plt.clabel(cnt, inline=True, fontsize=8, fmt="%.1f")
         plt.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.8)
 
         filename = self.path+"/"+str(self.it_plt)+".png"

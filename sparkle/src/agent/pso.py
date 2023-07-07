@@ -78,7 +78,7 @@ class pso():
             r1, r2 = np.random.rand(2)
             self.v[i,:]  = (self.w*self.v[i,:] +
                             self.c1*r1*(self.p_best[i,:] - self.x[i,:]) +
-                            self.c2*r2*(self.g_best[:] - self.x[i,:]))
+                            self.c2*r2*(self.g_best[:]   - self.x[i,:]))
             self.x[i,:] += self.v[i,:]
 
     # Return degrees of freedom
