@@ -8,6 +8,13 @@
 
 `sparkle` is a parametric optimization library. It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy.
 
+Implementation of the following algorithms is planned:
+
+- Particle swarm optimization (PSO)
+- Covariance matrix adaptation evolution strategy (CMAES)
+- Efficient global optimization (EGO)
+- Policy based optimization (PBO)
+
 ## Particle swarm
 
 | **`parabola`**                                                   | **`rosenbrock`**                                                   | **`sinebump`**                                                   |
