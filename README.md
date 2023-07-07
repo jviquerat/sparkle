@@ -6,4 +6,19 @@
 
 ![master badge](https://github.com/jviquerat/sparkle/workflows/sparkle/badge.svg?branch=master)
 
-`sparkle` is a parametric optimization library. It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy.
+`sparkle` is a parametric, gradient-free optimization library. It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy.
+
+Implementation of the following algorithms is planned:
+
+- Particle swarm optimization (PSO)
+- Covariance matrix adaptation evolution strategy (CMAES)
+- Efficient global optimization (EGO)
+- Policy based optimization (PBO)
+
+More informations about each method can be obtained from the documentation. Below are several optimization examples performed with each method.
+
+## Particle swarm
+
+| **`parabola`**                                                   | **`rosenbrock`**                                                   | **`sinebump`**                                                   |
+| :--------------------------------------------------------------: | :----------------------------------------------------------------: | :--------------------------------------------------------------: |
+| <img height="250" alt="gif" src="sparkle/save/parabola_pso.gif"> | <img height="250" alt="gif" src="sparkle/save/rosenbrock_pso.gif"> | <img height="250" alt="gif" src="sparkle/save/sinebump_pso.gif"> |
