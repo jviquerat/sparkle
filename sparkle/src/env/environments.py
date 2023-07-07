@@ -40,9 +40,8 @@ class environments:
 
         # Initialize stuff
         n_dof   = x.shape[0]
-        costs   = np.empty((n_dof))
+        costs   = np.zeros((n_dof))
         n_loops = n_dof//mpi.size
-        k       = 0
 
         self.timer_env.tic()
 
@@ -51,7 +50,7 @@ class environments:
             # Send
             data = [('step', None)]*mpi.size
             for p in range(mpi.size):
-                data[p] = ('cost', x[p])
+                data[p] = ('cost', x[i*mpi.size+p])
             mpi.comm.scatter(data, root=0)
 
             # Main process executing
@@ -62,8 +61,7 @@ class environments:
 
             for p in range(mpi.size):
                 c        = data[p]
-                costs[k] = c
-                k       += 1
+                costs[i*mpi.size+p] = c
 
         self.timer_env.toc()
 
@@ -92,29 +90,6 @@ class environments:
 
         if (mpi.rank == 0):
             return self.worker.env.render(x)
-
-
-    #     # Not all environments will render simultaneously
-    #     # We use a list to store those that render and those that don't
-    #     rnd = [[] for _ in range(mpi.size)]
-
-    #     # Send
-    #     data = [('render',False) for i in range(mpi.size)]
-    #     for cpu in range(mpi.size):
-    #         if (render[cpu]):
-    #             data[cpu] = ('render',True)
-    #     mpi.comm.scatter(data, root=0)
-
-    #     # Main process executing
-    #     r = self.worker.render(data[0][1])
-
-    #     # Receive
-    #     data = mpi.comm.gather(r, root=0)
-    #     for cpu in range(mpi.size):
-    #         if (render[cpu]):
-    #             rnd[cpu] = data[cpu]
-
-    #     return rnd
 
     # Close
     def close(self):

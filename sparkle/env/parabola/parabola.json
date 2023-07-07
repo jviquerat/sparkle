@@ -10,12 +10,15 @@
     },
     "agent": {
         "name": "pso",
-        "n_steps_max": 20,
-        "n_particles": 20,
-        "v0": 0.1
+        "n_steps_max": 50,
+        "n_particles": 10,
+        "v0": 0.1,
+        "c1": 0.1,
+        "c2": 0.1,
+        "w": 0.8
     },
     "trainer": {
         "name": "regular",
-        "render_every": 5
+        "render_every": 1
     }
 }

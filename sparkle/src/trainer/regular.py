@@ -49,6 +49,7 @@ class regular(base_trainer):
             x = self.agent.dof()
             c = self.env.cost(x)
             self.agent.step(c)
+            self.agent.print()
 
             if (self.it%self.render_every == 0):
                 self.env.render(self.agent.dof())
