@@ -6,19 +6,19 @@ import numpy as np
 from sparkle.env.base_env import *
 
 ###############################################
-### Environment for parabola
-class parabola(base_env):
+### Environment for 2D rosenbrock
+class rosenbrock(base_env):
 
     # Create object
     def __init__(self, cpu, path, pms=None):
 
         # Fill structure
-        self.name   = 'parabola'
+        self.name   = 'rosenbrock'
         self.path   = path
         self.cpu    = cpu
         self.dim    = 2
-        self.xmin   = np.array([-5.0,-5.0])
-        self.xmax   = np.array([ 5.0, 5.0])
+        self.xmin   = np.array([-2.0,-2.0])
+        self.xmax   = np.array([ 2.0, 2.0])
         self.xm     = 0.5*(self.xmin + self.xmax)
         self.it_plt = 0
 
@@ -57,8 +57,8 @@ class parabola(base_env):
     def f(self, x):
 
         v = 0.0
-        for i in range(len(x)):
-            v += (x[i])**2
+        for i in range(len(x)-1):
+            v += 100.0*(x[i+1]-x[i]**2)**2 + (1.0-x[i])**2
 
         return v
 
@@ -94,8 +94,10 @@ class parabola(base_env):
         plt.imshow(self.z,
                    extent=[self.xmin[0], self.xmax[0],
                            self.xmin[1], self.xmax[1]],
+                   vmin=0.0, vmax=50.0,
                    alpha=0.8, cmap='RdBu_r')
         cnt = plt.contour(self.x, self.y, self.z, 10,
+                          vmin=0.0, vmax=50.0,
                           colors='black', alpha=0.5)
         plt.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
         plt.scatter(sx[:,0], sx[:,1], c="black", marker='o', alpha=0.8)
