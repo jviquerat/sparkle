@@ -7,14 +7,17 @@ import numpy as np
 ###############################################
 ### Particle swarm optimization
 class pso():
-    def __init__(self, dim, pms):
+    def __init__(self, dim, xmin, xmax, pms):
 
         self.dim         = dim
+        self.xmin        = xmin
+        self.xmax        = xmax
+
         self.n_steps_max = 20
         self.n_particles = 20
         self.v0          = 0.1
-        self.c1          = 0.1
-        self.c2          = 0.1
+        self.c1          = 0.5
+        self.c2          = 0.5
         self.w           = 0.8
 
         if hasattr(pms, "n_steps_max"): self.n_steps_max = pms.n_steps_max
@@ -34,7 +37,7 @@ class pso():
 
         # Positions and velocities
         self.x = np.random.rand(self.n_particles, self.dim)
-        self.x = 2.0*self.x - 1.0 # Scale to [-1,1]
+        self.x = self.xmin + self.x*(self.xmax-self.xmin)
         self.v = np.random.randn(self.n_particles, self.dim)*self.v0
 
         # Local best and global best
@@ -48,7 +51,6 @@ class pso():
     # Step
     def step(self, c):
 
-        #print(c)
         self.update_best(c)
         self.update_xv()
 

@@ -19,13 +19,11 @@ class parabola(base_env):
         self.dim    = 2
         self.xmin   = np.array([-5.0,-5.0])
         self.xmax   = np.array([ 5.0, 5.0])
-        self.xm     = 0.5*(self.xmin + self.xmax)
         self.it_plt = 0
 
         # Check inputs
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
-        if hasattr(pms, "x0"):   self.xmin = pms.x0
 
         # Generate map of cost values for rendering
         nx = 100
@@ -37,7 +35,7 @@ class parabola(base_env):
         self.z         = np.zeros((nx,ny))
         for i in range(nx):
             for j in range(ny):
-                self.z[i,j] = self.f([self.x[i,j], self.y[i,j]])
+                self.z[i,j] = self.cost([self.x[i,j], self.y[i,j]])
 
     # Reset environment
     def reset(self):
@@ -47,43 +45,14 @@ class parabola(base_env):
     # Cost function
     def cost(self, x):
 
-        # Scale inputs
-        sx = self.scale(x)
-
-        # Compute value for input x
-        return self.f(sx)
-
-    # Function
-    def f(self, x):
-
         v = 0.0
         for i in range(len(x)):
             v += (x[i])**2
 
         return v
 
-    # Scale parameters
-    def scale(self, x):
-
-        # Scale
-        sx = self.dim*[None]
-        xp = self.xmax - self.xm
-        xm = self.xm   - self.xmin
-
-        for i in range(self.dim):
-            if (x[i] >= 0.0):
-                sx[i] = self.xm[i] + xp[i]*x[i]
-            if (x[i] <  0.0):
-                sx[i] = self.xm[i] + xm[i]*x[i]
-
-        return sx
-
     # Rendering
     def render(self, x):
-
-        sx = np.zeros_like(x)
-        for i in range(x.shape[0]):
-            sx[i,:] = self.scale(x[i,:])
 
         # Set up base figure: The contour map
         plt.clf()
@@ -98,7 +67,7 @@ class parabola(base_env):
         cnt = plt.contour(self.x, self.y, self.z, 10,
                           colors='black', alpha=0.5)
         plt.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
-        plt.scatter(sx[:,0], sx[:,1], c="black", marker='o', alpha=0.8)
+        plt.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.8)
 
         filename = self.path+"/"+str(self.it_plt)+".png"
         plt.axis('off')

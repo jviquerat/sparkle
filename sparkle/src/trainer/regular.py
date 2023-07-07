@@ -15,13 +15,12 @@ class regular(base_trainer):
         # Initialize environment
         self.env = environments(path, env_pms)
 
-        # Initialize from input
-        self.dim = self.env.dim()
-
         # Initialize agent
         self.agent = agent_factory.create(agent_pms.name,
-                                          dim = self.dim,
-                                          pms = agent_pms)
+                                          dim  = self.env.dim(),
+                                          xmin = self.env.xmin(),
+                                          xmax = self.env.xmax(),
+                                          pms  = agent_pms)
 
         # Check compatibility between the number of parallel workers
         # and the number of degrees of freedom required by the agent

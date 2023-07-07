@@ -35,6 +35,18 @@ class environments:
         if (mpi.rank == 0):
             return self.worker.env.dim
 
+    # Return xmin value
+    def xmin(self):
+
+        if (mpi.rank == 0):
+            return self.worker.env.xmin
+
+    # Return xmax value
+    def xmax(self):
+
+        if (mpi.rank == 0):
+            return self.worker.env.xmax
+
     # Compute cost in all environments
     def cost(self, x):
 
