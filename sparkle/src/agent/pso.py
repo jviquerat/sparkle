@@ -62,13 +62,13 @@ class pso():
         return self.x
 
     # Step
-    # The provided cost corresponds to the current
-    # degrees of freedom (self.x), so data storage
-    # is performed first
+    # Data storage is performed between update of best points
+    # and update of positions and velocities so the recorded (x,v)
+    # matches with the correct cost
     def step(self, c):
 
-        self.store(c)
         self.update_best(c)
+        self.store(c)
         self.update_xv()
 
         self.stp += 1
@@ -96,7 +96,8 @@ class pso():
             self.v[i,:]  = (self.w*self.v[i,:] +
                             self.c1*r1*(self.p_best[i,:] - self.x[i,:]) +
                             self.c2*r2*(self.g_best[:]   - self.x[i,:]))
-            self.x[i,:] += self.v[i,:]
+            v = np.random.randn(self.n_particles, self.dim)*self.v0
+            self.x[i,:] += self.v[i,:] + v[i,:]*0.1*self.v[i,:]/np.linalg.norm(self.v[i,:])
 
     # Return degrees of freedom
     def dof(self):

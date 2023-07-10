@@ -13,16 +13,14 @@ class packing(base_env):
     def __init__(self, cpu, path, pms):
 
         # Fill structure
-        self.name   = 'packing'
-        self.path   = path
-        self.cpu    = cpu
+        self.name      = 'packing'
+        self.base_path = path
+        self.cpu       = cpu
 
         self.obj_type = "sphere"
         self.n_objs   = 6
         self.max_side = 7.0
         self.obj_size = 1.0
-
-        print(pms.obj_type)
 
         if hasattr(pms, "obj_type"): self.obj_type = pms.obj_type
         if hasattr(pms, "obj_size"): self.obj_size = pms.obj_size
@@ -43,7 +41,10 @@ class packing(base_env):
         self.it_plt = 0
 
     # Reset environment
-    def reset(self):
+    def reset(self, run):
+
+        self.path   = self.base_path+"/"+str(run)
+        self.it_plt = 0
 
         return True
 
@@ -110,6 +111,9 @@ class packing(base_env):
     # Rendering
     def render(self, x):
 
+        if (self.it_plt == 0):
+            os.makedirs(self.path+'/png', exist_ok=True)
+
         # Axis
         lx      = np.reshape(x, (-1,2))
         s       = self.cost_min_side(lx)
@@ -136,32 +140,10 @@ class packing(base_env):
         ax.set_xticklabels([])
 
         # Save figure and close
-        filename = self.path+"/"+str(self.it_plt)+".png"
+        filename = self.path+"/png/"+str(self.it_plt)+".png"
         plt.axis('off')
         plt.savefig(filename, dpi=100)
         plt.close()
-        #plt.cla()
-
-        # Set up base figure: The contour map
-        # plt.clf()
-        # fig, ax = plt.subplots(figsize=plt.figaspect(self.z))
-        # ax.set_xlim([self.xmin[0], self.xmax[0]])
-        # ax.set_ylim([self.xmin[1], self.xmax[1]])
-        # fig.subplots_adjust(0,0,1,1)
-        # plt.imshow(self.z,
-        #            extent=[self.xmin[0], self.xmax[0],
-        #                    self.xmin[1], self.xmax[1]],
-        #            alpha=0.8, cmap='RdBu_r')
-        # cnt = plt.contour(self.x, self.y, self.z,
-        #                   levels=[0.1, 1.0, 5.0, 10.0, 20.0],
-        #                   colors='black', alpha=0.5)
-        # plt.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
-        # plt.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.8)
-
-        # filename = self.path+"/"+str(self.it_plt)+".png"
-        # plt.axis('off')
-        # plt.savefig(filename, dpi=100)
-        # plt.close()
 
         self.it_plt += 1
 

@@ -1,4 +1,6 @@
 {
+    "n_avg": 3,
+    "avg_type": "linear",
     "naming": {
         "env": true,
         "agent": true,

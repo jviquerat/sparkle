@@ -1,6 +1,5 @@
 # Generic imports
-from   math  import cos, sqrt
-import numpy as     np
+from  math import cos, sqrt
 
 # Custom imports
 from sparkle.env.base_env import *
@@ -13,13 +12,13 @@ class sinebump(base_env):
     def __init__(self, cpu, path, pms=None):
 
         # Fill structure
-        self.name   = 'sinebump'
-        self.path   = path
-        self.cpu    = cpu
-        self.dim    = 2
-        self.xmin   = np.array([0.0, 0.0])
-        self.xmax   = np.array([5.0, 5.0])
-        self.it_plt = 0
+        self.name      = 'sinebump'
+        self.base_path = path
+        self.cpu       = cpu
+        self.dim       = 2
+        self.xmin      = np.array([0.0, 0.0])
+        self.xmax      = np.array([5.0, 5.0])
+        self.it_plt    = 0
 
         # Check inputs
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
@@ -38,7 +37,10 @@ class sinebump(base_env):
                 self.z[i,j] = self.cost([self.x[i,j], self.y[i,j]])
 
     # Reset environment
-    def reset(self):
+    def reset(self, run):
+
+        self.path   = self.base_path+"/"+str(run)
+        self.it_plt = 0
 
         return True
 
@@ -51,6 +53,9 @@ class sinebump(base_env):
 
     # Rendering
     def render(self, x):
+
+        if (self.it_plt == 0):
+            os.makedirs(self.path+'/png', exist_ok=True)
 
         plt.clf()
         fig, ax = plt.subplots(figsize=plt.figaspect(self.z))
@@ -68,7 +73,7 @@ class sinebump(base_env):
         plt.clabel(cnt, inline=True, fontsize=8, fmt="%.1f")
         plt.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.8)
 
-        filename = self.path+"/"+str(self.it_plt)+".png"
+        filename = self.path+"/png/"+str(self.it_plt)+".png"
         plt.axis('off')
         plt.savefig(filename, dpi=100)
         plt.close()

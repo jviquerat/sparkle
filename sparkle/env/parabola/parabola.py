@@ -1,7 +1,3 @@
-# Generic imports
-import math
-import numpy as np
-
 # Custom imports
 from sparkle.env.base_env import *
 
@@ -40,7 +36,8 @@ class parabola(base_env):
     # Reset environment
     def reset(self, run):
 
-        self.path = self.base_path+"/"+str(run)
+        self.path   = self.base_path+"/"+str(run)
+        self.it_plt = 0
 
         return True
 
@@ -55,6 +52,9 @@ class parabola(base_env):
 
     # Rendering
     def render(self, x):
+
+        if (self.it_plt == 0):
+            os.makedirs(self.path+'/png', exist_ok=True)
 
         plt.clf()
         fig, ax = plt.subplots(figsize=plt.figaspect(self.z))
@@ -71,7 +71,7 @@ class parabola(base_env):
         plt.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
         plt.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.8)
 
-        filename = self.path+"/"+str(self.it_plt)+".png"
+        filename = self.path+"/png/"+str(self.it_plt)+".png"
         plt.axis('off')
         plt.savefig(filename, dpi=100)
         plt.close()

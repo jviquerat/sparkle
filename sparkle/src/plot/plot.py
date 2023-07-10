@@ -51,7 +51,7 @@ def plot(data, filename, avg_type):
     fig.savefig(filename+'.png')
 
 # Return avg, p and m fields depending on avg type
-def return_plottable(avg, p, m, avg_type):
+def return_plottables(avg, p, m, avg_type):
 
     if (avg_type == "linear"):
         ylabel = "cost"
@@ -65,4 +65,4 @@ def return_plottable(avg, p, m, avg_type):
         m       = np.exp(log_m)
         ylabel  = "log(cost)"
 
-    return avg, p, m, label
+    return avg, p, m, ylabel
