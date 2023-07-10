@@ -1,6 +1,9 @@
 # Generic imports
 import numpy as np
 
+# Custom imports
+from sparkle.src.utils.ema import *
+
 ###############################################
 ### Data averager class
 ### Used to compute avg+/-std of drl-related fields
@@ -25,6 +28,7 @@ class data_avg():
     def average(self, filename):
 
         array = np.vstack(self.stp)
+        smoother = ema(0.5, 5)
 
         for field in range(self.n_fields):
             avg   = np.mean(self.data[:,:,field], axis=0)
@@ -32,9 +36,13 @@ class data_avg():
             p     = avg + std
             m     = avg - std
 
-            array = np.hstack((array,np.vstack(avg)))
-            array = np.hstack((array,np.vstack(p)))
-            array = np.hstack((array,np.vstack(m)))
+            smooth_avg = smoother.smooth(avg)
+            smooth_p   = smoother.smooth(p)
+            smooth_m   = smoother.smooth(m)
+
+            array = np.hstack((array,np.vstack(smooth_avg)))
+            array = np.hstack((array,np.vstack(smooth_p)))
+            array = np.hstack((array,np.vstack(smooth_m)))
 
         np.savetxt(filename, array, fmt='%.5e')
         return array

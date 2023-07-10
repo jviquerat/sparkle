@@ -151,7 +151,7 @@ class pso():
 
         # Actual print
         if (self.cnt <= 1):
-            gs = f"{self.g_score:.3f}"
+            gs = f"{self.g_score:.5e}"
             gb = np.array2string(self.g_best, precision=5,
                                  threshold=5, separator=',')
             print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                 ", end=end)
