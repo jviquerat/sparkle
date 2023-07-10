@@ -80,22 +80,19 @@ class environments:
         return costs
 
     # Reset environments
-    def reset(self):
+    def reset(self, run):
 
         # Send
-        data = [('reset', True) for i in range(mpi.size)]
+        data = [('reset', run) for i in range(mpi.size)]
         mpi.comm.scatter(data, root=0)
 
         # Main process executing
         r = self.worker.reset(data[0][1])
 
         # Receive and normalize
-        results = np.empty((mpi.size))
-        data    = mpi.comm.gather((r), root=0)
-        for p in range(mpi.size):
-            results[p] = self.process_obs(data[p])
+        data = mpi.comm.gather((r), root=0)
 
-        return results
+        return data
 
     # Render environment
     def render(self, x):

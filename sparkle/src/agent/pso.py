@@ -7,8 +7,9 @@ import numpy as np
 ###############################################
 ### Particle swarm optimization
 class pso():
-    def __init__(self, dim, xmin, xmax, pms):
+    def __init__(self, path, dim, xmin, xmax, pms):
 
+        self.base_path   = path
         self.dim         = dim
         self.xmin        = xmin
         self.xmax        = xmax
@@ -29,13 +30,22 @@ class pso():
         if hasattr(pms, "w"):           self.w           = pms.w
         if hasattr(pms, "print_x"):     self.print_x     = pms.print_x
 
-        self.reset()
+        # Data storage
+        self.n_steps_total = self.n_steps_max*self.n_particles
+        self.hist_t        = np.zeros((self.n_steps_total))
+        self.hist_c        = np.zeros((self.n_steps_total))
+        self.hist_x        = np.zeros((self.n_steps_total, self.dim))
 
     # Reset
-    def reset(self):
+    def reset(self, run):
 
-        # Iteration counter
+        # Step counter       (one step = n_particles cost evaluations)
+        # Total step counter (one total step = 1 particle cost evaluation)
         self.stp = 0
+        self.total_stp = 0
+
+        # Path
+        self.path = self.base_path+"/"+str(run)
 
         # Positions and velocities
         self.x = np.random.rand(self.n_particles, self.dim)
@@ -51,8 +61,12 @@ class pso():
         return self.x
 
     # Step
+    # The provided cost corresponds to the current
+    # degrees of freedom (self.x), so data storage
+    # is performed first
     def step(self, c):
 
+        self.store(c)
         self.update_best(c)
         self.update_xv()
 
@@ -100,6 +114,26 @@ class pso():
             return True
 
         return False
+
+    # Store data
+    def store(self, c):
+
+        for i in range(self.n_particles):
+            self.hist_t[self.total_stp]   = self.total_stp
+            self.hist_x[self.total_stp,:] = self.x[i,:]
+            self.hist_c[self.total_stp]   = c[i]
+
+            self.total_stp += 1
+
+    # Dump data
+    def dump(self):
+
+        filename = self.path+'/raw.dat'
+        np.savetxt(filename,
+                   np.hstack([np.reshape(self.hist_t, (-1,1)),
+                              np.reshape(self.hist_c, (-1,1)),
+                              np.reshape(self.hist_x, (-1,self.dim))]),
+                   fmt='%.5e')
 
     # Print
     def print(self):

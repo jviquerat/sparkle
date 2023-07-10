@@ -13,13 +13,13 @@ class parabola(base_env):
     def __init__(self, cpu, path, pms=None):
 
         # Fill structure
-        self.name   = 'parabola'
-        self.path   = path
-        self.cpu    = cpu
-        self.dim    = 2
-        self.xmin   = np.array([-5.0,-5.0])
-        self.xmax   = np.array([ 5.0, 5.0])
-        self.it_plt = 0
+        self.name      = 'parabola'
+        self.base_path = path
+        self.cpu       = cpu
+        self.dim       = 2
+        self.xmin      = np.array([-5.0,-5.0])
+        self.xmax      = np.array([ 5.0, 5.0])
+        self.it_plt    = 0
 
         # Check inputs
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
@@ -38,7 +38,9 @@ class parabola(base_env):
                 self.z[i,j] = self.cost([self.x[i,j], self.y[i,j]])
 
     # Reset environment
-    def reset(self):
+    def reset(self, run):
+
+        self.path = self.base_path+"/"+str(run)
 
         return True
 
