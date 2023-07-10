@@ -13,7 +13,8 @@ class worker():
         module    = __import__(env_name)
         env_build = getattr(module, env_name)
         if args is not None:
-            self.env = env_build(cpu, path, **args.__dict__)
+            #self.env = env_build(cpu, path, **args.__dict__)
+            self.env = env_build(cpu, path, args)
         else:
             self.env = env_build(cpu, path)
 
