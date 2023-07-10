@@ -19,6 +19,7 @@ class pso():
         self.c1          = 0.5
         self.c2          = 0.5
         self.w           = 0.8
+        self.print_x     = True
 
         if hasattr(pms, "n_steps_max"): self.n_steps_max = pms.n_steps_max
         if hasattr(pms, "n_particles"): self.n_particles = pms.n_particles
@@ -26,6 +27,7 @@ class pso():
         if hasattr(pms, "c1"):          self.c1          = pms.c1
         if hasattr(pms, "c2"):          self.c2          = pms.c2
         if hasattr(pms, "w"):           self.w           = pms.w
+        if hasattr(pms, "print_x"):     self.print_x     = pms.print_x
 
         self.reset()
 
@@ -43,7 +45,7 @@ class pso():
         # Local best and global best
         self.p_best  = np.copy(self.x)
         self.p_score = np.ones(self.n_particles)*1.0e8
-        self.g_best  = np.zeros((2))
+        self.g_best  = np.zeros(self.dim)
         self.g_score = 1.0e8
 
         return self.x
@@ -115,7 +117,8 @@ class pso():
 
         # Actual print
         if (self.cnt <= 1):
-            gs = f"{self.g_score:.3e}"
-            gb = np.array2string(self.g_best, precision=5, separator=',')
+            gs = f"{self.g_score:.3f}"
+            gb = np.array2string(self.g_best, precision=5,
+                                 threshold=5, separator=',')
             print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                 ", end=end)
 

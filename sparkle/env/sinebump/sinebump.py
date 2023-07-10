@@ -52,7 +52,6 @@ class sinebump(base_env):
     # Rendering
     def render(self, x):
 
-        # Set up base figure: The contour map
         plt.clf()
         fig, ax = plt.subplots(figsize=plt.figaspect(self.z))
         ax.set_xlim([self.xmin[0], self.xmax[0]])
