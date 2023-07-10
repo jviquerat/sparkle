@@ -11,7 +11,7 @@ class base_agent():
         pass
 
     # Perform one optimization step
-    def step(self):
+    def step(self, c):
         raise NotImplementedError
 
     # Return degrees of freedom
@@ -19,7 +19,7 @@ class base_agent():
         raise NotImplementedError
 
     # Reset
-    def reset(self):
+    def reset(self, run):
         raise NotImplementedError
 
     # Render

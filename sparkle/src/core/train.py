@@ -9,6 +9,8 @@ import numpy as np
 from sparkle.src.trainer.trainer import *
 from sparkle.src.utils.json      import *
 from sparkle.src.utils.prints    import *
+from sparkle.src.utils.data      import *
+from sparkle.src.plot.plot       import *
 
 # Average training over multiple runs
 def train(json_file):
@@ -34,9 +36,6 @@ def train(json_file):
     # Copy json file to results folder
     shutil.copyfile(json_file, results_path+'/params.json')
 
-    # # Intialize averager
-    # averager = data_avg(2, int(pms.n_stp_max/step_report), pms.n_avg)
-
     # Initialize trainer
     trainer = trainer_factory.create(pms.trainer.name,
                                      env_pms   = pms.environment,
@@ -44,31 +43,32 @@ def train(json_file):
                                      path      = results_path,
                                      pms       = pms.trainer)
 
-    trainer.optimize(0)
+    # Intialize averager
+    averager = data_avg(2, trainer.agent.n_steps_total, pms.n_avg)
 
-    # # Run
-    # for run in range(pms.n_avg):
-    #     liner()
-    #     print('Avg run #'+str(run))
-    #     os.makedirs(results_path+'/'+str(run), exist_ok=True)
-    #     trainer.reset()
-    #     trainer.loop(results_path, run)
-    #     filename = results_path+'/'+str(run)+'/'+str(run)+'.dat'
-    #     averager.store(filename, run)
+    # Run
+    for run in range(pms.n_avg):
+        liner()
+        print('Avg run #'+str(run))
+        os.makedirs(results_path+'/'+str(run), exist_ok=True)
+        trainer.reset(run)
+        trainer.optimize()
+        filename = results_path+'/'+str(run)+'/raw.dat'
+        averager.store(filename, run)
 
-    # # Close environments
-    # trainer.env.close()
+    # Close environments
+    trainer.env.close()
 
-    # # Write to file
-    # filename = results_path+'/avg.dat'
-    # data = averager.average(filename)
+    # Write to file
+    filename = results_path+'/avg.dat'
+    data = averager.average(filename)
 
-    # # Plot
-    # filename = results_path+'/'+path
-    # plot_avg(data, filename)
+    # Plot
+    filename = results_path+'/'+path
+    plot(data, filename, pms.avg_type)
 
-    # # Finalize main process
-    # mpi.finalize()
+    # Finalize main process
+    mpi.finalize()
 
 # Generate results folder name
 def folder_name(pms):

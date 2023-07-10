@@ -1,4 +1,6 @@
 {
+    "n_avg": 3,
+    "avg_type": "linear",
     "naming": {
         "env": true,
         "agent": true,
@@ -10,16 +12,16 @@
         "args":{
             "obj_type": "sphere",
             "obj_size": 1.0,
-            "n_objs": 3,
-            "max_side": 5.0
+            "n_objs": 6,
+            "max_side": 7.0
         }
     },
     "agent": {
         "name": "pso",
-        "n_steps_max": 200,
-        "n_particles": 40,
+        "n_steps_max": 500,
+        "n_particles": 50,
         "v0": 0.1,
-        "c1": 0.1,
+        "c1": 0.5,
         "c2": 0.5,
         "w": 0.8
     },

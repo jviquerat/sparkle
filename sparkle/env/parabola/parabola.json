@@ -1,4 +1,6 @@
 {
+    "n_avg": 3,
+    "avg_type": "log",
     "naming": {
         "env": true,
         "agent": true,

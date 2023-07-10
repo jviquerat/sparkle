@@ -17,6 +17,7 @@ class regular(base_trainer):
 
         # Initialize agent
         self.agent = agent_factory.create(agent_pms.name,
+                                          path = path,
                                           dim  = self.env.dim(),
                                           xmin = self.env.xmin(),
                                           xmax = self.env.xmax(),
@@ -25,19 +26,22 @@ class regular(base_trainer):
         # Check compatibility between the number of parallel workers
         # and the number of degrees of freedom required by the agent
         if (self.agent.ndof()%mpi.size !=0):
-            error("trainer::regaular", "init", "Number of degress of freedom of the agent must be a multiple of the number of parallel workers")
+            error("trainer::regular", "init", "Number of degress of freedom of the agent must be a multiple of the number of parallel workers")
 
         # Initialize timer
         self.timer_global = timer("global   ")
 
+    # Reset
+    def reset(self, run):
+
+        self.env.reset(run)
+        self.agent.reset(run)
+
     # Optimize
-    def optimize(self, run):
+    def optimize(self):
 
         # Start global timer
         self.timer_global.tic()
-
-        # Reset agent
-        self.agent.reset()
 
         # Set counter and make initial rendering
         self.it = 0
@@ -55,6 +59,8 @@ class regular(base_trainer):
 
             if (self.it%self.render_every == 0):
                 self.env.render(self.agent.dof())
+
+        self.agent.dump()
 
         # Close timer and show
         self.timer_global.toc()

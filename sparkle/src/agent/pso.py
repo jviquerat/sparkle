@@ -7,8 +7,9 @@ import numpy as np
 ###############################################
 ### Particle swarm optimization
 class pso():
-    def __init__(self, dim, xmin, xmax, pms):
+    def __init__(self, path, dim, xmin, xmax, pms):
 
+        self.base_path   = path
         self.dim         = dim
         self.xmin        = xmin
         self.xmax        = xmax
@@ -29,13 +30,23 @@ class pso():
         if hasattr(pms, "w"):           self.w           = pms.w
         if hasattr(pms, "print_x"):     self.print_x     = pms.print_x
 
-        self.reset()
+        # Data storage
+        self.n_steps_total = self.n_steps_max*self.n_particles
+        self.hist_t        = np.zeros((self.n_steps_total))           # time
+        self.hist_c        = np.zeros((self.n_steps_total))           # cost
+        self.hist_b        = np.zeros((self.n_steps_total))           # best cost
+        self.hist_x        = np.zeros((self.n_steps_total, self.dim)) # dofs
 
     # Reset
-    def reset(self):
+    def reset(self, run):
 
-        # Iteration counter
+        # Step counter       (one step = n_particles cost evaluations)
+        # Total step counter (one total step = 1 particle cost evaluation)
         self.stp = 0
+        self.total_stp = 0
+
+        # Path
+        self.path = self.base_path+"/"+str(run)
 
         # Positions and velocities
         self.x = np.random.rand(self.n_particles, self.dim)
@@ -51,9 +62,13 @@ class pso():
         return self.x
 
     # Step
+    # Data storage is performed between update of best points
+    # and update of positions and velocities so the recorded (x,v)
+    # matches with the correct cost
     def step(self, c):
 
         self.update_best(c)
+        self.store(c)
         self.update_xv()
 
         self.stp += 1
@@ -81,7 +96,8 @@ class pso():
             self.v[i,:]  = (self.w*self.v[i,:] +
                             self.c1*r1*(self.p_best[i,:] - self.x[i,:]) +
                             self.c2*r2*(self.g_best[:]   - self.x[i,:]))
-            self.x[i,:] += self.v[i,:]
+            v = np.random.randn(self.n_particles, self.dim)*self.v0
+            self.x[i,:] += self.v[i,:] + v[i,:]*0.1*self.v[i,:]/np.linalg.norm(self.v[i,:])
 
     # Return degrees of freedom
     def dof(self):
@@ -101,6 +117,28 @@ class pso():
 
         return False
 
+    # Store data
+    def store(self, c):
+
+        for i in range(self.n_particles):
+            self.hist_t[self.total_stp]   = self.total_stp
+            self.hist_x[self.total_stp,:] = self.x[i,:]
+            self.hist_c[self.total_stp]   = c[i]
+            self.hist_b[self.total_stp]   = self.g_score
+
+            self.total_stp += 1
+
+    # Dump data
+    def dump(self):
+
+        filename = self.path+'/raw.dat'
+        np.savetxt(filename,
+                   np.hstack([np.reshape(self.hist_t, (-1,1)),
+                              np.reshape(self.hist_c, (-1,1)),
+                              np.reshape(self.hist_b, (-1,1)),
+                              np.reshape(self.hist_x, (-1,self.dim))]),
+                   fmt='%.5e')
+
     # Print
     def print(self):
 
@@ -117,7 +155,7 @@ class pso():
 
         # Actual print
         if (self.cnt <= 1):
-            gs = f"{self.g_score:.3f}"
+            gs = f"{self.g_score:.5e}"
             gb = np.array2string(self.g_best, precision=5,
                                  threshold=5, separator=',')
             print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                 ", end=end)

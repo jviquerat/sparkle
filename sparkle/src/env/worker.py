@@ -45,14 +45,14 @@ class worker():
                 break
 
     # Compute cost
-    def cost(self, data):
+    def cost(self, x):
 
-        return self.env.cost(data)
+        return self.env.cost(x)
 
     # Resetting
-    def reset(self):
+    def reset(self, run):
 
-        return None
+        return self.env.reset(run)
 
     # Rendering
     def render(self, x):
