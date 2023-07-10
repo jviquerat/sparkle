@@ -43,9 +43,6 @@ class regular(base_trainer):
         # Start global timer
         self.timer_global.tic()
 
-        # Reset agent
-        #self.agent.reset()
-
         # Set counter and make initial rendering
         self.it = 0
         self.env.render(self.agent.dof())
