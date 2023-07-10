@@ -44,7 +44,7 @@ def train(json_file):
                                      pms       = pms.trainer)
 
     # Intialize averager
-    averager = data_avg(1, trainer.agent.n_steps_total, pms.n_avg)
+    averager = data_avg(2, trainer.agent.n_steps_total, pms.n_avg)
 
     # Run
     for run in range(pms.n_avg):
@@ -65,7 +65,7 @@ def train(json_file):
 
     # Plot
     filename = results_path+'/'+path
-    plot_avg(data, filename, pms.avg_type)
+    plot(data, filename, pms.avg_type)
 
     # Finalize main process
     mpi.finalize()

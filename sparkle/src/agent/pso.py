@@ -32,9 +32,10 @@ class pso():
 
         # Data storage
         self.n_steps_total = self.n_steps_max*self.n_particles
-        self.hist_t        = np.zeros((self.n_steps_total))
-        self.hist_c        = np.zeros((self.n_steps_total))
-        self.hist_x        = np.zeros((self.n_steps_total, self.dim))
+        self.hist_t        = np.zeros((self.n_steps_total))           # time
+        self.hist_c        = np.zeros((self.n_steps_total))           # cost
+        self.hist_b        = np.zeros((self.n_steps_total))           # best cost
+        self.hist_x        = np.zeros((self.n_steps_total, self.dim)) # dofs
 
     # Reset
     def reset(self, run):
@@ -122,6 +123,7 @@ class pso():
             self.hist_t[self.total_stp]   = self.total_stp
             self.hist_x[self.total_stp,:] = self.x[i,:]
             self.hist_c[self.total_stp]   = c[i]
+            self.hist_b[self.total_stp]   = self.g_score
 
             self.total_stp += 1
 
@@ -132,6 +134,7 @@ class pso():
         np.savetxt(filename,
                    np.hstack([np.reshape(self.hist_t, (-1,1)),
                               np.reshape(self.hist_c, (-1,1)),
+                              np.reshape(self.hist_b, (-1,1)),
                               np.reshape(self.hist_x, (-1,self.dim))]),
                    fmt='%.5e')
 
