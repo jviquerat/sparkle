@@ -1,10 +1,11 @@
 # Generic imports
+import math
 import random
 import numpy as np
 
 ###############################################
-### Particle swarm optimization
-class pso():
+### CMAES
+class cmaes():
     def __init__(self, path, dim, xmin, xmax, pms):
 
         self.base_path   = path
@@ -13,18 +14,29 @@ class pso():
         self.xmax        = xmax
 
         self.n_steps_max = 20
-        self.n_particles = 20
-        self.v0          = 0.1
-        self.c1          = 0.5
-        self.c2          = 0.5
-        self.w           = 0.8
+        self.sigma       = 0.5
+        self.lambda      = 4 + math.floor(3.0*math.log(self.dim))
 
-        if hasattr(pms, "n_steps_max"): self.n_steps_max = pms.n_steps_max
-        if hasattr(pms, "n_particles"): self.n_particles = pms.n_particles
-        if hasattr(pms, "v0"):          self.v0          = pms.v0
-        if hasattr(pms, "c1"):          self.c1          = pms.c1
-        if hasattr(pms, "c2"):          self.c2          = pms.c2
-        if hasattr(pms, "w"):           self.w           = pms.w
+        if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
+        if hasattr(pms, "lambda"):       self.lambda       = pms.lambda
+        if hasattr(pms, "sigma"):        self.sigma        = pms.sigma
+
+        self.mu     = math.floor(self.lambda/2)                               # nb of selected offsprings
+        self.w      = -np.log(np.arange(1,self.mu)) + math.log(self.mu + 0.5) # recombination weights
+        self.w      = self.w/np.sum(self.w)                                   # normalize weights
+        self.mu_eff = (np.sum(self.w))**2/(np.sum(np.square(self.w)))         # effective sample size
+
+        # shortcuts for following expressions
+        dim   = self.dim
+        mueff = self.mu_eff
+
+        self.cc = (4.0 + mueff/dim)/(dim + 4.0 + 2.0*mu_eff/dim) # constant for C evolution path
+        self.cs = (mu_eff + 2.0)/(dim + mu_eff + 5.0)            # constant for step size evolution path
+        self.c1 = 2.0/((dim + 1.3)**2 + mu_eff)                  # constant for rank-one evolution path
+        self.cm = min(1.0 - self.c1,
+                      2.0*(mu_eff - 2.0 + 1.0/mu_eff)/((dim+2.0)**2 + mueff))          # constant for rank-mu update
+        self.dp = 1.0 + 2.0*max(0.0, math.sqrt((mueff-1.0)/(dim+1.0)) - 1.0) + self.c1 # damping for step-size
+        self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))             # expectation of N(0,I)
 
         # Data storage
         self.n_steps_total = self.n_steps_max*self.n_particles
@@ -36,24 +48,20 @@ class pso():
     # Reset
     def reset(self, run):
 
-        # Step counter       (one step = n_particles cost evaluations)
-        # Total step counter (one total step = 1 particle cost evaluation)
+        # Step counter       (one step = lambda cost evaluations)
+        # Total step counter (one total step = 1 offspring cost evaluation)
         self.stp = 0
         self.total_stp = 0
 
         # Path
         self.path = self.base_path+"/"+str(run)
 
-        # Positions and velocities
-        self.x = np.random.rand(self.n_particles, self.dim)
-        self.x = self.xmin + self.x*(self.xmax-self.xmin)
-        self.v = np.random.randn(self.n_particles, self.dim)*self.v0
-
-        # Local best and global best
-        self.p_best  = np.copy(self.x)
-        self.p_score = np.ones(self.n_particles)*1.0e8
-        self.g_best  = np.zeros(self.dim)
-        self.g_score = 1.0e8
+        # Arrays
+        self.pc = np.zeros(self.dim)    # C evolution path
+        self.ps = np.zeros(self.dim)    # sigma evolution path
+        self.B  = np.identity(self.dim) # coordinate system
+        self.D  = np.identity(self.dim) # scaling matrix
+        self.C  = np.identity(self.dim) # covariance matrix
 
         return self.x
 
