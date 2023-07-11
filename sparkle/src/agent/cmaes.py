@@ -15,31 +15,31 @@ class cmaes():
 
         self.n_steps_max = 20
         self.sigma       = 0.5
-        self.lambda      = 4 + math.floor(3.0*math.log(self.dim))
+        self.lmbda       = 4 + math.floor(3.0*math.log(self.dim))
 
         if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
-        if hasattr(pms, "lambda"):       self.lambda       = pms.lambda
+        if hasattr(pms, "lambda"):       self.lmbda        = pms.lmbda
         if hasattr(pms, "sigma"):        self.sigma        = pms.sigma
 
-        self.mu     = math.floor(self.lambda/2)                               # nb of selected offsprings
-        self.w      = -np.log(np.arange(1,self.mu)) + math.log(self.mu + 0.5) # recombination weights
-        self.w      = self.w/np.sum(self.w)                                   # normalize weights
-        self.mu_eff = (np.sum(self.w))**2/(np.sum(np.square(self.w)))         # effective sample size
+        self.mu     = math.floor(self.lmbda/2)                               # nb of selected offsprings
+        self.w      =-np.log(np.arange(1,self.mu)) + math.log(self.mu + 0.5) # recombination weights
+        self.w      = self.w/np.sum(self.w)                                  # normalize weights
+        self.mu_eff = (np.sum(self.w))**2/(np.sum(np.square(self.w)))        # effective sample size
 
         # shortcuts for following expressions
-        dim   = self.dim
-        mueff = self.mu_eff
+        dim    = self.dim
+        mu_eff = self.mu_eff
 
-        self.cc = (4.0 + mueff/dim)/(dim + 4.0 + 2.0*mu_eff/dim) # constant for C evolution path
-        self.cs = (mu_eff + 2.0)/(dim + mu_eff + 5.0)            # constant for step size evolution path
-        self.c1 = 2.0/((dim + 1.3)**2 + mu_eff)                  # constant for rank-one evolution path
+        self.cc = (4.0 + mu_eff/dim)/(dim + 4.0 + 2.0*mu_eff/dim) # constant for C evolution path
+        self.cs = (mu_eff + 2.0)/(dim + mu_eff + 5.0)             # constant for step size evolution path
+        self.c1 = 2.0/((dim + 1.3)**2 + mu_eff)                   # constant for rank-one evolution path
         self.cm = min(1.0 - self.c1,
-                      2.0*(mu_eff - 2.0 + 1.0/mu_eff)/((dim+2.0)**2 + mueff))          # constant for rank-mu update
-        self.dp = 1.0 + 2.0*max(0.0, math.sqrt((mueff-1.0)/(dim+1.0)) - 1.0) + self.c1 # damping for step-size
-        self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))             # expectation of N(0,I)
+                      2.0*(mu_eff - 2.0 + 1.0/mu_eff)/((dim+2.0)**2 + mu_eff))          # constant for rank-mu update
+        self.dp = 1.0 + 2.0*max(0.0, math.sqrt((mu_eff-1.0)/(dim+1.0)) - 1.0) + self.c1 # damping for step-size
+        self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))              # expectation of N(0,I)
 
         # Data storage
-        self.n_steps_total = self.n_steps_max*self.n_particles
+        self.n_steps_total = self.n_steps_max*self.lmbda
         self.hist_t        = np.zeros((self.n_steps_total))           # time
         self.hist_c        = np.zeros((self.n_steps_total))           # cost
         self.hist_b        = np.zeros((self.n_steps_total))           # best cost
@@ -63,6 +63,13 @@ class cmaes():
         self.D  = np.identity(self.dim) # scaling matrix
         self.C  = np.identity(self.dim) # covariance matrix
 
+        # Values
+        self.xm = np.zeros(self.dim)     # mean vector
+        self.z  = np.random.randn(self.lmbda, self.dim) # draw from N(0,1)
+        self.x  = np.zeros_like(self.z)
+        for i in range(self.lmbda):
+            self.x[i,:]  = self.xm[:] + self.sigma*np.matmul(self.B*self.D,self.z[i,:])
+
         return self.x
 
     # Step
@@ -71,37 +78,31 @@ class cmaes():
     # matches with the correct cost
     def step(self, c):
 
-        self.update_best(c)
-        self.store(c)
-        self.update_xv()
+        # Sort
+        self.sort(c)
+
+        # Update xmean
+        self.xm = np.dot(self.x[:self.mu], self.w)
+
+        # Update ps
+
+
+        # Update pc
+
+        # Update C
 
         self.stp += 1
 
-    # Update local and global best
-    def update_best(self, c):
+    # Sort offsprings based on cost
+    # x and c arrays are actually modified here
+    def sort(self, c):
 
-        for i in range(self.n_particles):
+        sc        = np.argsort(c)
+        self.x[:] = self.x[sc[:]]
+        c[:]      = c[sc[:]]
 
-            # Update best local score
-            if (c[i] <= self.p_score[i]):
-                self.p_score[i]  = c[i]
-                self.p_best[i,:] = self.x[i,:]
+        return self.x
 
-            # Update best global score
-            if (c[i] <= self.g_score):
-                self.g_score   = c[i]
-                self.g_best[:] = self.x[i,:]
-
-    # Update positions and velocities
-    def update_xv(self):
-
-        for i in range(self.n_particles):
-            r1, r2 = np.random.rand(2)
-            self.v[i,:]  = (self.w*self.v[i,:] +
-                            self.c1*r1*(self.p_best[i,:] - self.x[i,:]) +
-                            self.c2*r2*(self.g_best[:]   - self.x[i,:]))
-            v = np.random.randn(self.n_particles, self.dim)*self.v0
-            self.x[i,:] += self.v[i,:]
 
     # Return degrees of freedom
     def dof(self):
@@ -111,7 +112,7 @@ class cmaes():
     # Return number of degress of freedom
     def ndof(self):
 
-        return self.n_particles
+        return self.lmbda
 
     # Check if done
     def done(self):
@@ -128,7 +129,7 @@ class cmaes():
             self.hist_t[self.total_stp]   = self.total_stp
             self.hist_x[self.total_stp,:] = self.x[i,:]
             self.hist_c[self.total_stp]   = c[i]
-            self.hist_b[self.total_stp]   = self.g_score
+            #self.hist_b[self.total_stp]   = self.g_score
 
             self.total_stp += 1
 
