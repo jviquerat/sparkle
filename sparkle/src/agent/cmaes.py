@@ -77,13 +77,15 @@ class cmaes():
         self.D     = np.identity(self.dim)     # scaling matrix
         self.BD    = np.matmul(self.B, self.D) # for efficiency
         self.C     = np.identity(self.dim)     # covariance matrix
-        self.xm    = self.x0                   # mean vector
+        self.xm    = self.x0.copy()            # mean vector
         self.zm    = np.zeros(self.dim)        # auxiliary mean vector
-        self.sigma = self.sigma0               # global standard deviation
+        self.sigma = self.sigma0.copy()        # global standard deviation
 
         # Initial sampling
         # This fills x and z arrays with samples
         self.sample()
+
+        print(self.xm, self.x, self.x0)
 
         return self.x
 
