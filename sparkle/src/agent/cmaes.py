@@ -23,22 +23,29 @@ class cmaes():
         if hasattr(pms, "sigma0"):       self.sigma0       = pms.sigma0
         if hasattr(pms, "x0"):           self.x0           = np.array(pms.x0)
 
-        self.mu     = math.floor(self.lmbda/2)                               # nb of selected offsprings
-        self.w      =-np.log(np.arange(0,self.mu)+1) + math.log(self.mu + 0.5) # recombination weights
-        self.w      = self.w/np.sum(self.w)                                  # normalize weights
-        self.mu_eff = (np.sum(self.w))**2/(np.sum(np.square(self.w)))        # effective sample size
+        # Number of selected samples
+        self.fmu    = self.lmbda/2.0
+        self.mu     = math.floor(self.fmu)
 
-        # shortcuts for following expressions
-        dim    = self.dim
-        mu_eff = self.mu_eff
+        # Recombination weights
+        self.w = np.zeros(self.mu)
+        for i in range(self.mu):
+            self.w[i] = math.log(self.fmu + 0.5) - math.log(i+1.0)
+        self.w = self.w/np.sum(self.w)
 
-        self.cm = 1.0                                             # constant for mean update
+        # Effective sample size
+        self.mu_eff = (np.sum(self.w))**2/(np.sum(np.square(self.w)))
+
+        # Shortcuts for following expressions
+        dim    = float(self.dim)
+        mu_eff = float(self.mu_eff)
+
         self.cc = (4.0 + mu_eff/dim)/(dim + 4.0 + 2.0*mu_eff/dim) # constant for C evolution path
         self.cs = (mu_eff + 2.0)/(dim + mu_eff + 5.0)             # constant for step size evolution path
         self.c1 = 2.0/((dim + 1.3)**2 + mu_eff)                   # constant for rank-one evolution path
         self.cmu = min(1.0 - self.c1,
-                       2.0*(mu_eff - 2.0 + 1.0/mu_eff)/((dim+2.0)**2 + mu_eff))         # constant for rank-mu update
-        self.dp = 1.0 + 2.0*max(0.0, math.sqrt((mu_eff-1.0)/(dim+1.0)) - 1.0) + self.c1 # damping for step-size
+                       2.0*(mu_eff - 2.0 + 1.0/mu_eff + 0.25)/((dim+2.0)**2 + mu_eff))  # constant for rank-mu update
+        self.dp = 1.0 + 2.0*max(0.0, math.sqrt((mu_eff-1.0)/(dim+1.0)) - 1.0) + self.cs # damping for step-size
         self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))              # expectation of N(0,I)
 
         # Data storage
