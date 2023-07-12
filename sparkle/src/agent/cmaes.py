@@ -122,25 +122,24 @@ class cmaes():
 
         # Update pc
         coeff   = math.sqrt(self.cc*(2.0-self.cc)*self.mu_eff)
-        norm_ps = math.sqrt(np.dot(self.ps, self.ps))
-        hs      = float(norm_ps/math.sqrt(1.0 - (1.0-self.cs)**(2.0*self.stp+1)) < (1.4 + 2.0/(self.stp+1))*self.cn)
+        norm_ps = np.linalg.norm(self.ps)
+        hs      = float(norm_ps/math.sqrt(1.0 - (1.0-self.cs)**(2.0*(self.stp+1))) < (1.4 + 2.0/(self.stp+1))*self.cn)
         self.pc = (1.0-self.cc)*self.pc + hs*coeff*np.matmul(self.BD, self.zm)
 
         # Update C
         y  = np.zeros((self.mu, self.dim))
-        wy = np.zeros((self.mu, self.dim))
         for i in range(self.mu):
-            y[i,:]  = np.matmul(self.BD, self.z[i,:])
-            wy[i,:] = self.w[i]*y[i,:]
+            y [i,:] = np.matmul(self.BD, self.z[i,:])
 
-        self.C = (1.0-self.c1-self.cmu)*self.C
-        + self.c1*(np.outer(self.pc,self.pc) + (1.0-hs)*self.cc*(2.0-self.cc)*self.C)
-        + self.cmu*(np.outer(wy,y))
+        self.C = ((1.0-self.c1-self.cmu)*self.C +
+                  self.c1*(np.outer(self.pc,self.pc) + (1.0-hs)*self.cc*(2.0-self.cc)*self.C) +
+                  self.cmu*(np.matmul(np.transpose(y),np.matmul(np.diag(self.w), y))))
 
         # Update sigma
-        self.sigma = self.sigma*np.exp((self.cs/self.dp)*(norm_ps/self.cn - 1.0))
+        self.sigma = self.sigma*np.exp(min(1.0,(self.cs/self.dp)*(norm_ps/self.cn - 1.0)))
 
         # Update B and D
+        self.C = np.triu(self.C) + np.transpose(np.triu(self.C,1))
         self.D, self.B = np.linalg.eigh(self.C)
         self.D         = np.diag(np.sqrt(self.D))
         self.BD        = np.matmul(self.B, self.D)
