@@ -1,5 +1,5 @@
 {
-    "n_avg": 3,
+    "n_avg": 1,
     "avg_type": "log",
     "naming": {
         "env": true,
@@ -13,7 +13,8 @@
     "agent": {
         "name": "cmaes",
         "n_steps_max": 50,
-        "sigma": 0.5
+        "sigma": 2.0,
+        "x0": [2.0, 2.0]
     },
     "trainer": {
         "name": "regular",

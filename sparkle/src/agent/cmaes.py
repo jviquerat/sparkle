@@ -14,15 +14,17 @@ class cmaes():
         self.xmax        = xmax
 
         self.n_steps_max = 20
-        self.sigma       = 0.5
+        self.sigma       = 0.25*(xmax-xmin)
+        self.x0          = np.zeros(self.dim)
         self.lmbda       = 4 + math.floor(3.0*math.log(self.dim))
 
         if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
         if hasattr(pms, "lambda"):       self.lmbda        = pms.lmbda
         if hasattr(pms, "sigma"):        self.sigma        = pms.sigma
+        if hasattr(pms, "x0"):           self.x0           = np.array(pms.x0)
 
         self.mu     = math.floor(self.lmbda/2)                               # nb of selected offsprings
-        self.w      =-np.log(np.arange(1,self.mu)) + math.log(self.mu + 0.5) # recombination weights
+        self.w      =-np.log(np.arange(0,self.mu)+1) + math.log(self.mu + 0.5) # recombination weights
         self.w      = self.w/np.sum(self.w)                                  # normalize weights
         self.mu_eff = (np.sum(self.w))**2/(np.sum(np.square(self.w)))        # effective sample size
 
@@ -30,15 +32,18 @@ class cmaes():
         dim    = self.dim
         mu_eff = self.mu_eff
 
+        self.cm = 1.0                                             # constant for mean update
         self.cc = (4.0 + mu_eff/dim)/(dim + 4.0 + 2.0*mu_eff/dim) # constant for C evolution path
         self.cs = (mu_eff + 2.0)/(dim + mu_eff + 5.0)             # constant for step size evolution path
         self.c1 = 2.0/((dim + 1.3)**2 + mu_eff)                   # constant for rank-one evolution path
-        self.cm = min(1.0 - self.c1,
-                      2.0*(mu_eff - 2.0 + 1.0/mu_eff)/((dim+2.0)**2 + mu_eff))          # constant for rank-mu update
+        self.cmu = min(1.0 - self.c1,
+                       2.0*(mu_eff - 2.0 + 1.0/mu_eff)/((dim+2.0)**2 + mu_eff))         # constant for rank-mu update
         self.dp = 1.0 + 2.0*max(0.0, math.sqrt((mu_eff-1.0)/(dim+1.0)) - 1.0) + self.c1 # damping for step-size
         self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))              # expectation of N(0,I)
 
         # Data storage
+        self.best_score    = 1.0e8
+        self.best_x        = np.zeros(self.dim)
         self.n_steps_total = self.n_steps_max*self.lmbda
         self.hist_t        = np.zeros((self.n_steps_total))           # time
         self.hist_c        = np.zeros((self.n_steps_total))           # cost
@@ -57,39 +62,81 @@ class cmaes():
         self.path = self.base_path+"/"+str(run)
 
         # Arrays
-        self.pc = np.zeros(self.dim)    # C evolution path
-        self.ps = np.zeros(self.dim)    # sigma evolution path
-        self.B  = np.identity(self.dim) # coordinate system
-        self.D  = np.identity(self.dim) # scaling matrix
-        self.C  = np.identity(self.dim) # covariance matrix
+        self.pc  = np.zeros(self.dim)        # C evolution path
+        self.ps  = np.zeros(self.dim)        # sigma evolution path
+        self.B   = np.identity(self.dim)     # coordinate system
+        self.D   = np.identity(self.dim)     # scaling matrix
+        self.BD  = np.matmul(self.B, self.D) # for efficiency
+        self.C   = np.identity(self.dim)     # covariance matrix
+        self.xm  = self.x0                   # mean vector
+        self.zm  = np.zeros(self.dim)        # auxiliary mean vector
 
-        # Values
-        self.xm = np.zeros(self.dim)     # mean vector
-        self.z  = np.random.randn(self.lmbda, self.dim) # draw from N(0,1)
-        self.x  = np.zeros_like(self.z)
-        for i in range(self.lmbda):
-            self.x[i,:]  = self.xm[:] + self.sigma*np.matmul(self.B*self.D,self.z[i,:])
+        # Initial sampling
+        # This fills x and z arrays with samples
+        self.sample()
 
         return self.x
 
+    # Sample from distribution
+    def sample(self):
+
+        self.z = np.random.randn(self.lmbda, self.dim) # draw from N(0,1)
+        self.x = np.zeros_like(self.z)
+        for i in range(self.lmbda):
+            self.x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, self.z[i,:])
+
+        # for i in range(self.lmbda):
+        #     self.x[i,:] = self.xmin[:] + 0.5*(self.x[i,:]+1.0)*(self.xmax[:]-self.xmin[:])
+
     # Step
-    # Data storage is performed between update of best points
-    # and update of positions and velocities so the recorded (x,v)
-    # matches with the correct cost
     def step(self, c):
 
         # Sort
         self.sort(c)
 
-        # Update xmean
-        self.xm = np.dot(self.x[:self.mu], self.w)
+        # Update best value
+        if (c[0] < self.best_score):
+            self.best_score = c[0]
+            self.best_x     = self.x[0,:]
+
+        # Update xmean and zmean
+        self.xm[:] = 0.0
+        self.zm[:] = 0.0
+        for i in range(self.mu):
+            self.xm[:] += self.x[i,:]*self.w[i]
+            self.zm[:] += self.z[i,:]*self.w[i] # = D^-1 * B^T * (x_mean-x_old)/sigma
 
         # Update ps
-
+        coeff   = math.sqrt(self.cs*(2.0-self.cs)*self.mu_eff)
+        self.ps = (1.0-self.cs)*self.ps + coeff*np.matmul(self.B, self.zm)
 
         # Update pc
+        coeff   = math.sqrt(self.cc*(2.0-self.cc)*self.mu_eff)
+        norm_ps = math.sqrt(np.dot(self.ps, self.ps))
+        hs      = float(norm_ps/math.sqrt(1.0 - (1.0-self.cs)**(2.0*self.stp+1)) < (1.4 + 2.0/(self.stp+1))*self.cn)
+        self.pc = (1.0-self.cc)*self.pc + hs*coeff*np.matmul(self.BD, self.zm)
 
         # Update C
+        y  = np.zeros((self.mu, self.dim))
+        wy = np.zeros((self.mu, self.dim))
+        for i in range(self.mu):
+            y[i,:]  = np.matmul(self.BD, self.z[i,:])
+            wy[i,:] = self.w[i]*y[i,:]
+
+        self.C = (1.0-self.c1-self.cmu)*self.C
+        + self.c1*(np.outer(self.pc,self.pc) + (1.0-hs)*self.cc*(2.0-self.cc)*self.C)
+        + self.cmu*(np.outer(wy,y))
+
+        # Update sigma
+        self.sigma = self.sigma*np.exp((self.cs/self.dp)*(norm_ps/self.cn - 1.0))
+
+        # Update B and D
+        self.D, self.B = np.linalg.eigh(self.C)
+        self.D         = np.diag(np.sqrt(self.D))
+        self.BD        = np.matmul(self.B, self.D)
+
+        # Sample
+        self.sample()
 
         self.stp += 1
 
@@ -99,10 +146,8 @@ class cmaes():
 
         sc        = np.argsort(c)
         self.x[:] = self.x[sc[:]]
+        self.z[:] = self.z[sc[:]]
         c[:]      = c[sc[:]]
-
-        return self.x
-
 
     # Return degrees of freedom
     def dof(self):
@@ -125,11 +170,11 @@ class cmaes():
     # Store data
     def store(self, c):
 
-        for i in range(self.n_particles):
+        for i in range(self.lmbda):
             self.hist_t[self.total_stp]   = self.total_stp
             self.hist_x[self.total_stp,:] = self.x[i,:]
             self.hist_c[self.total_stp]   = c[i]
-            #self.hist_b[self.total_stp]   = self.g_score
+            self.hist_b[self.total_stp]   = self.best_score
 
             self.total_stp += 1
 
@@ -148,7 +193,7 @@ class cmaes():
     def print(self):
 
         # Total nb of evaluations
-        n_eval = self.stp*self.n_particles
+        n_eval = self.stp*self.lmbda
 
         # Handle no-printing after max step
         if (self.stp < self.n_steps_max-1):
@@ -160,8 +205,8 @@ class cmaes():
 
         # Actual print
         if (self.cnt <= 1):
-            gs = f"{self.g_score:.5e}"
-            gb = np.array2string(self.g_best, precision=5,
+            gs = f"{self.best_score:.5e}"
+            gb = np.array2string(self.best_x, precision=5,
                                  threshold=5, separator=',')
             print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                 ", end=end)
 
