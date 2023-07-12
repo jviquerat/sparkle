@@ -14,13 +14,13 @@ class cmaes():
         self.xmax        = xmax
 
         self.n_steps_max = 20
-        self.sigma       = 0.25*(xmax-xmin)
+        self.sigma0      = 0.25*(xmax-xmin)
         self.x0          = np.zeros(self.dim)
         self.lmbda       = 4 + math.floor(3.0*math.log(self.dim))
 
         if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
         if hasattr(pms, "lambda"):       self.lmbda        = pms.lmbda
-        if hasattr(pms, "sigma"):        self.sigma        = pms.sigma
+        if hasattr(pms, "sigma0"):       self.sigma0       = pms.sigma0
         if hasattr(pms, "x0"):           self.x0           = np.array(pms.x0)
 
         self.mu     = math.floor(self.lmbda/2)                               # nb of selected offsprings
@@ -42,8 +42,6 @@ class cmaes():
         self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))              # expectation of N(0,I)
 
         # Data storage
-        self.best_score    = 1.0e8
-        self.best_x        = np.zeros(self.dim)
         self.n_steps_total = self.n_steps_max*self.lmbda
         self.hist_t        = np.zeros((self.n_steps_total))           # time
         self.hist_c        = np.zeros((self.n_steps_total))           # cost
@@ -58,18 +56,23 @@ class cmaes():
         self.stp = 0
         self.total_stp = 0
 
+        # Best values
+        self.best_score    = 1.0e8
+        self.best_x        = np.zeros(self.dim)
+
         # Path
         self.path = self.base_path+"/"+str(run)
 
         # Arrays
-        self.pc  = np.zeros(self.dim)        # C evolution path
-        self.ps  = np.zeros(self.dim)        # sigma evolution path
-        self.B   = np.identity(self.dim)     # coordinate system
-        self.D   = np.identity(self.dim)     # scaling matrix
-        self.BD  = np.matmul(self.B, self.D) # for efficiency
-        self.C   = np.identity(self.dim)     # covariance matrix
-        self.xm  = self.x0                   # mean vector
-        self.zm  = np.zeros(self.dim)        # auxiliary mean vector
+        self.pc    = np.zeros(self.dim)        # C evolution path
+        self.ps    = np.zeros(self.dim)        # sigma evolution path
+        self.B     = np.identity(self.dim)     # coordinate system
+        self.D     = np.identity(self.dim)     # scaling matrix
+        self.BD    = np.matmul(self.B, self.D) # for efficiency
+        self.C     = np.identity(self.dim)     # covariance matrix
+        self.xm    = self.x0                   # mean vector
+        self.zm    = np.zeros(self.dim)        # auxiliary mean vector
+        self.sigma = self.sigma0               # global standard deviation
 
         # Initial sampling
         # This fills x and z arrays with samples
@@ -85,9 +88,6 @@ class cmaes():
         for i in range(self.lmbda):
             self.x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, self.z[i,:])
 
-        # for i in range(self.lmbda):
-        #     self.x[i,:] = self.xmin[:] + 0.5*(self.x[i,:]+1.0)*(self.xmax[:]-self.xmin[:])
-
     # Step
     def step(self, c):
 
@@ -98,6 +98,9 @@ class cmaes():
         if (c[0] < self.best_score):
             self.best_score = c[0]
             self.best_x     = self.x[0,:]
+
+        # Store
+        self.store(c)
 
         # Update xmean and zmean
         self.xm[:] = 0.0

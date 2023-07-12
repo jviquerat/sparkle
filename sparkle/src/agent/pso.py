@@ -38,7 +38,7 @@ class pso():
 
         # Step counter       (one step = n_particles cost evaluations)
         # Total step counter (one total step = 1 particle cost evaluation)
-        self.stp = 0
+        self.stp       = 0
         self.total_stp = 0
 
         # Path
