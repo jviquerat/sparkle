@@ -1,0 +1,27 @@
+{
+    "n_avg": 3,
+    "avg_type": "log",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "packing",
+        "args":{
+            "obj_type": "sphere",
+            "obj_size": 1.0,
+            "n_objs": 6,
+            "max_side": 7.0
+        }
+    },
+    "agent": {
+        "name": "cmaes",
+        "n_steps_max": 500
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 1
+    }
+}

@@ -34,8 +34,8 @@ class packing(base_env):
             self.xmax = np.ones(self.dim)*self.max_side - self.obj_size
 
             # For initial plotting
-            self.dx_min = 0.0
-            self.dy_min = 0.0
+            self.dx_min   = 0.0
+            self.dy_min   = 0.0
             self.min_side = self.max_side
 
         self.it_plt = 0
@@ -118,10 +118,24 @@ class packing(base_env):
         lx      = np.reshape(x, (-1,2))
         s       = self.cost_min_side(lx)
 
+        plt.clf()
+        plt.cla()
         fig, ax = plt.subplots()
-        ax.set_xlim([0, self.max_side])
-        ax.set_ylim([0, self.max_side])
-        plt.gca().set_aspect('equal', adjustable='box')
+        ax.set_aspect('equal', adjustable='box')
+        ax.set_xlim([-0.5*self.max_side, 1.5*self.max_side])
+        ax.set_ylim([-0.5*self.max_side, 1.5*self.max_side])
+        ax.set_axis_off()
+        fig.tight_layout()
+        plt.margins(0,0)
+        plt.subplots_adjust(0,0,1,1,0,0)
+        ax.xaxis.set_major_locator(plt.NullLocator())
+        ax.yaxis.set_major_locator(plt.NullLocator())
+
+        # Add rectangle
+        rct = plt.Rectangle((-0.5*self.max_side,-0.5*self.max_side),
+                            2.0*self.max_side, 2.0*self.max_side,
+                            fc='none', ec='black', lw=2)
+        plt.gca().add_patch(rct)
 
         # Add circles
         for i in range(self.n_objs):
@@ -131,7 +145,7 @@ class packing(base_env):
 
         # Add square
         rectangle = plt.Rectangle((self.dx_min, self.dy_min), s, s,
-                                  fc='none', ec='black', lw=2)
+                                  fc='none', ec='blue', lw=2)
         plt.gca().add_patch(rectangle)
 
         ax.set_xticks([])
@@ -142,7 +156,9 @@ class packing(base_env):
         # Save figure and close
         filename = self.path+"/png/"+str(self.it_plt)+".png"
         plt.axis('off')
-        plt.savefig(filename, dpi=100)
+        plt.savefig(filename, dpi=100,
+                    bbox_inches='tight',
+                    pad_inches=0)
         plt.close()
 
         self.it_plt += 1
