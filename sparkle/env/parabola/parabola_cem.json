@@ -1,0 +1,23 @@
+{
+    "n_avg": 3,
+    "avg_type": "log",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "parabola"
+    },
+    "agent": {
+        "name": "cem",
+        "n_steps_max": 50,
+        "n_points": 10,
+        "alpha": 0.2
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 1
+    }
+}
