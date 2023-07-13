@@ -1,0 +1,26 @@
+{
+    "n_avg": 3,
+    "avg_type": "log",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "parabola"
+    },
+    "agent": {
+        "name": "pso",
+        "n_steps_max": 50,
+        "n_particles": 10,
+        "v0": 0.1,
+        "c1": 0.5,
+        "c2": 0.5,
+        "w": 0.8
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 10000
+    }
+}

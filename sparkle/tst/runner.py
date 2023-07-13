@@ -1,13 +1,13 @@
 # Generic imports
 import os
+import sys
 import shutil
 
 # Custom imports
-from dragonfly.src.core.constants    import *
-from dragonfly.src.utils.json        import *
-from dragonfly.src.utils.data        import *
-from dragonfly.src.envs.environments import *
-from dragonfly.src.trainer.trainer   import *
+from sparkle.src.utils.json       import *
+from sparkle.src.utils.data       import *
+from sparkle.src.env.environments import *
+from sparkle.src.trainer.trainer  import *
 
 ###############################################
 ### Generic runner used in agent and trainer tests
@@ -21,29 +21,36 @@ def runner(json_file, agent_type):
     reader = json_parser()
     reader.read(json_file)
 
-    # Intialize averager
-    averager = data_avg(2, int(reader.pms.n_stp_max/step_report), reader.pms.n_avg)
-
     # Initialize trainer
-    trainer = trainer_factory.create(reader.pms.trainer.style,
-                                     env_pms   = reader.pms.env,
+    trainer = trainer_factory.create(reader.pms.trainer.name,
+                                     env_pms   = reader.pms.environment,
                                      agent_pms = reader.pms.agent,
                                      path      = ".",
-                                     n_stp_max = reader.pms.n_stp_max,
                                      pms       = reader.pms.trainer)
 
+    # Intialize averager
+    averager = data_avg(2, trainer.agent.n_steps_total, reader.pms.n_avg)
+
+    # Make two optimization runs and average
     print("Test "+agent_type)
     os.makedirs("0/", exist_ok=True)
     os.makedirs("1/", exist_ok=True)
-    trainer.reset()
-    trainer.loop(".", 0)
-    averager.store("0/0.dat", 0)
-    trainer.reset()
-    trainer.loop(".", 1)
-    averager.store("1/1.dat", 1)
+    trainer.reset(0)
+    trainer.optimize()
+    averager.store("0/raw.dat", 0)
+    trainer.reset(1)
+    trainer.optimize()
+    averager.store("1/raw.dat", 1)
     trainer.env.close()
-    averager.average("avg.dat")
+    data = averager.average("avg.dat")
 
+    # Check final average and best costs
+    avg = data[-1,1]
+    bst = data[-1,4]
+    assert(avg < 2.0e-3)
+    assert(bst < 1.0e-5)
+
+    # Clean
     shutil.rmtree("0")
     shutil.rmtree("1")
     os.remove("avg.dat")
