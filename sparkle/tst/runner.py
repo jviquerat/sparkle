@@ -53,5 +53,5 @@ def runner(json_file, agent_type, val_avg, val_bst):
     # Clean
     shutil.rmtree("0")
     shutil.rmtree("1")
-#    os.remove("avg.dat")
+    os.remove("avg.dat")
     print("")

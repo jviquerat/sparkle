@@ -11,14 +11,15 @@
 Implementation of the following algorithms is planned:
 
 - Particle swarm optimization (PSO)
+- Cross-entropy method (CEM)
 - Covariance matrix adaptation evolution strategy (CMAES)
 - Efficient global optimization (EGO)
 - Policy based optimization (PBO)
 
 More informations about each method can be obtained from the documentation. Below are several optimization examples performed with the different methods.
 
-| **`parabola (pso)`**                                                      | **`rosenbrock (cmaes)`**                                             | **`sinebump (pso)`**                                             |
+| **`parabola (cem)`**                                                      | **`rosenbrock (cmaes)`**                                             | **`sinebump (pso)`**                                             |
 | :-----------------------------------------------------------------------: | :------------------------------------------------------------------: | :--------------------------------------------------------------: |
-| <img height="250" alt="gif" src="sparkle/save/parabola_pso.gif">          | <img height="250" alt="gif" src="sparkle/save/rosenbrock_cmaes.gif"> | <img height="250" alt="gif" src="sparkle/save/sinebump_pso.gif"> |
+| <img height="250" alt="gif" src="sparkle/save/parabola_cem.gif">          | <img height="250" alt="gif" src="sparkle/save/rosenbrock_cmaes.gif"> | <img height="250" alt="gif" src="sparkle/save/sinebump_pso.gif"> |
 | **`packing (cmaes)`**                                                     | **`?`**                                                              | **`?`**                                                          |
 | <img height="250" alt="gif" src="sparkle/save/packing_circles_cmaes.gif"> | <img height="250" alt="gif" src="sparkle/msc/logo.png">              | <img height="250" alt="gif" src="sparkle/msc/logo.png">          |

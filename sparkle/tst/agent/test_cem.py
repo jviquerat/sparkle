@@ -6,12 +6,12 @@ from sparkle.tst.tst    import *
 from sparkle.tst.runner import *
 
 ###############################################
-### Test cmaes
-def test_cmaes():
+### Test pso
+def test_pso():
 
     # Add environment to PATH
-    sys.path.append("sparkle/env/rosenbrock")
+    sys.path.append("sparkle/env/parabola")
 
     # Run test
-    runner("sparkle/tst/agent/rosenbrock_cmaes.json",
-           "cmaes", 1.0e-7, 1.0e-9)
+    runner("sparkle/tst/agent/parabola_cem.json",
+           "pso", 1.0e-5, 1.0e-7)
