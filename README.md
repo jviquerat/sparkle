@@ -17,9 +17,8 @@ Implementation of the following algorithms is planned:
 
 More informations about each method can be obtained from the documentation. Below are several optimization examples performed with the different methods.
 
-| **`parabola (pso)`**                                                      | **`rosenbrock (cmaes)`**                                           | **`sinebump (pso)`**                                             |
-| :-----------------------------------------------------------------------: | :----------------------------------------------------------------: | :--------------------------------------------------------------: |
-| <img height="250" alt="gif" src="sparkle/save/parabola_pso.gif">          | <img height="250" alt="gif" src="sparkle/save/rosenbrock_pso.gif"> | <img height="250" alt="gif" src="sparkle/save/sinebump_pso.gif"> |
-| **`packing (cmaes)`**                                                     | **`?`**                                                            | **`?`**                                                          |
-| :-----------------------------------------------------------------------: | :----------------------------------------------------------------: | :--------------------------------------------------------------: |
-| <img height="250" alt="gif" src="sparkle/save/packing_circles_cmaes.gif"> | <img height="250" alt="gif" src="sparkle/msc/logo.png">            | <img height="250" alt="gif" src="sparkle/msc/logo.png">          |
+| **`parabola (pso)`**                                                      | **`rosenbrock (cmaes)`**                                             | **`sinebump (pso)`**                                             |
+| :-----------------------------------------------------------------------: | :------------------------------------------------------------------: | :--------------------------------------------------------------: |
+| <img height="250" alt="gif" src="sparkle/save/parabola_pso.gif">          | <img height="250" alt="gif" src="sparkle/save/rosenbrock_cmaes.gif"> | <img height="250" alt="gif" src="sparkle/save/sinebump_pso.gif"> |
+| **`packing (cmaes)`**                                                     | **`?`**                                                              | **`?`**                                                          |
+| <img height="250" alt="gif" src="sparkle/save/packing_circles_cmaes.gif"> | <img height="250" alt="gif" src="sparkle/msc/logo.png">              | <img height="250" alt="gif" src="sparkle/msc/logo.png">          |
