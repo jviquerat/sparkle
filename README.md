@@ -15,10 +15,11 @@ Implementation of the following algorithms is planned:
 - Efficient global optimization (EGO)
 - Policy based optimization (PBO)
 
-More informations about each method can be obtained from the documentation. Below are several optimization examples performed with each method.
+More informations about each method can be obtained from the documentation. Below are several optimization examples performed with the different methods.
 
-## Particle swarm
-
-| **`parabola`**                                                   | **`rosenbrock`**                                                   | **`sinebump`**                                                   |
-| :--------------------------------------------------------------: | :----------------------------------------------------------------: | :--------------------------------------------------------------: |
-| <img height="250" alt="gif" src="sparkle/save/parabola_pso.gif"> | <img height="250" alt="gif" src="sparkle/save/rosenbrock_pso.gif"> | <img height="250" alt="gif" src="sparkle/save/sinebump_pso.gif"> |
+| **`parabola (pso)`**                                                      | **`rosenbrock (cmaes)`**                                           | **`sinebump (pso)`**                                             |
+| :-----------------------------------------------------------------------: | :----------------------------------------------------------------: | :--------------------------------------------------------------: |
+| <img height="250" alt="gif" src="sparkle/save/parabola_pso.gif">          | <img height="250" alt="gif" src="sparkle/save/rosenbrock_pso.gif"> | <img height="250" alt="gif" src="sparkle/save/sinebump_pso.gif"> |
+| **`packing (cmaes)`**                                                     | **`?`**                                                            | **`?`**                                                          |
+| :-----------------------------------------------------------------------: | :----------------------------------------------------------------: | :--------------------------------------------------------------: |
+| <img height="250" alt="gif" src="sparkle/save/packing_circles_cmaes.gif"> | <img height="250" alt="gif" src="sparkle/msc/logo.png">            | <img height="250" alt="gif" src="sparkle/msc/logo.png">          |

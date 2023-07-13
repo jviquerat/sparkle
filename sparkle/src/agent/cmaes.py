@@ -14,8 +14,8 @@ class cmaes():
         self.xmax        = xmax
 
         self.n_steps_max = 20
-        self.sigma0      = 0.25*(xmax-xmin)
-        self.x0          = np.zeros(self.dim)
+        self.sigma0      = 0.25*(np.min(xmax)-np.max(xmin))
+        self.x0          = 0.5*(xmax+xmin)
         self.lmbda       = 4 + math.floor(3.0*math.log(self.dim))
 
         if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
@@ -79,13 +79,11 @@ class cmaes():
         self.C     = np.identity(self.dim)     # covariance matrix
         self.xm    = self.x0.copy()            # mean vector
         self.zm    = np.zeros(self.dim)        # auxiliary mean vector
-        self.sigma = self.sigma0.copy()        # global standard deviation
+        self.sigma = self.sigma0               # global standard deviation
 
         # Initial sampling
         # This fills x and z arrays with samples
         self.sample()
-
-        print(self.xm, self.x, self.x0)
 
         return self.x
 
@@ -217,7 +215,7 @@ class cmaes():
         # Actual print
         if (self.cnt <= 1):
             gs = f"{self.best_score:.5e}"
-            gb = np.array2string(self.best_x, precision=5,
+            gb = np.array2string(self.best_x, precision=5, floatmode='fixed',
                                  threshold=5, separator=',')
-            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                 ", end=end)
+            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                                                                                   ", end=end)
 
