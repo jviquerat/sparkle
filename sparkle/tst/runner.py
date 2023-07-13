@@ -11,7 +11,7 @@ from sparkle.src.trainer.trainer  import *
 
 ###############################################
 ### Generic runner used in agent and trainer tests
-def runner(json_file, agent_type):
+def runner(json_file, agent_type, val_avg, val_bst):
 
     # Initial space
     print("")
@@ -47,11 +47,11 @@ def runner(json_file, agent_type):
     # Check final average and best costs
     avg = data[-1,1]
     bst = data[-1,4]
-    assert(avg < 2.0e-3)
-    assert(bst < 1.0e-5)
+    assert(avg < val_avg)
+    assert(bst < val_bst)
 
     # Clean
     shutil.rmtree("0")
     shutil.rmtree("1")
-    os.remove("avg.dat")
+#    os.remove("avg.dat")
     print("")
