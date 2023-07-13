@@ -119,6 +119,7 @@ class packing(base_env):
         s       = self.cost_min_side(lx)
 
         plt.clf()
+        plt.cla()
         fig, ax = plt.subplots()
         ax.set_aspect('equal', adjustable='box')
         ax.set_xlim([-0.5*self.max_side, 1.5*self.max_side])
@@ -155,7 +156,9 @@ class packing(base_env):
         # Save figure and close
         filename = self.path+"/png/"+str(self.it_plt)+".png"
         plt.axis('off')
-        plt.savefig(filename, dpi=100)
+        plt.savefig(filename, dpi=100,
+                    bbox_inches='tight',
+                    pad_inches=0)
         plt.close()
 
         self.it_plt += 1
