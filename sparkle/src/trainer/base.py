@@ -4,8 +4,6 @@ import math
 import shutil
 import numpy as np
 
-# Custom imports
-
 ###############################################
 ### Base trainer
 class base_trainer():

@@ -1,3 +1,5 @@
+import os
+import warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '10'
 warnings.filterwarnings('ignore',category=FutureWarning)
 import tensorflow                    as     tf
@@ -8,7 +10,7 @@ from   tensorflow.keras.layers       import Dense
 from   tensorflow.keras.initializers import Orthogonal, LecunNormal
 
 # Define alias
-tf.keras.backend.set_floatx('float64')
+tf.keras.backend.set_floatx('float32')
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 tfd = tfp.distributions
 
@@ -25,14 +27,12 @@ class nn(Model):
         for layer in range(len(arch)):
             self.net.append(Dense(arch[layer],
                                   kernel_initializer=LecunNormal(),
-                                  activation=act,
-                                  dtype='float64'))
+                                  activation=act))
 
         # Define last layer
         self.net.append(Dense(dim,
                               kernel_initializer=LecunNormal(),
-                              activation=last,
-                              dtype='float64'))
+                              activation=last))
 
         # Define optimizer
         self.opt = tk.optimizers.Adam(learning_rate = lr)
@@ -48,4 +48,4 @@ class nn(Model):
         for layer in range(len(self.net)):
             x = self.net[layer](x)
 
-        return x
+        return tf.cast(x, tf.float32)
