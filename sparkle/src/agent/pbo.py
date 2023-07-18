@@ -16,11 +16,11 @@ class pbo():
         self.xmin        = xmin
         self.xmax        = xmax
 
-        self.sigma0      = 0.25*(np.min(xmax)-np.max(xmin))
+        self.sigma0      = 0.5*(np.min(xmax)-np.max(xmin))
         self.x0          = 0.5*(xmax+xmin)
+        self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
 
         self.n_steps_max = 20
-        self.n_points    = 10
         self.lr_mu       = 5.0e-3
         self.lr_sg       = 5.0e-3
         self.lr_cr       = 1.0e-3
@@ -45,11 +45,22 @@ class pbo():
         if hasattr(pms, "n_points"):    self.n_points    = pms.n_points
         if hasattr(pms, "obs_dim"):     self.obs_dim     = pms.obs_dim
 
+        self.net_mu = nn(self.mu_arch, self.obs_dim, self.dim,
+                         'relu', 'tanh', self.lr_mu)
+        self.net_sg = nn(self.sg_arch, self.obs_dim, self.dim,
+                         'tanh', 'sigmoid', self.lr_sg)
+        self.net_cr = nn(self.cr_arch, self.obs_dim, self.cov_dim,
+                         'tanh', 'sigmoid', self.lr_cr)
+
+        self.obs = tf.zeros([1,self.obs_dim])
+
+        self.n_steps_total = self.n_steps_max*self.n_points
+
     # Reset
     def reset(self, run):
 
-        # Step counter       (one step = lambda cost evaluations)
-        # Total step counter (one total step = 1 offspring cost evaluation)
+        # Step counter       (one step = n_points cost evaluations)
+        # Total step counter (one total step = 1 point cost evaluation)
         self.stp = 0
         self.total_stp = 0
 
@@ -61,28 +72,22 @@ class pbo():
         self.path = self.base_path+"/"+str(run)
 
         # Data storage
-        self.n_steps_total = self.n_steps_max*self.n_points
-        self.hist_t        = np.zeros((self.n_steps_total))           # time
-        self.hist_c        = np.zeros((self.n_steps_total))           # cost
-        self.hist_a        = np.zeros((self.n_steps_total))           # advantage
-        self.hist_b        = np.zeros((self.n_steps_total))           # best cost
-        self.hist_x        = np.zeros((self.n_steps_total, self.dim)) # dofs
+        self.hist_t = np.zeros((self.n_steps_total))           # time
+        self.hist_c = np.zeros((self.n_steps_total))           # cost
+        self.hist_a = np.zeros((self.n_steps_total))           # advantage
+        self.hist_b = np.zeros((self.n_steps_total))           # best cost
+        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
 
         # Networks
-        self.net_mu = nn(self.mu_arch, self.dim,
-                         'relu', 'tanh', self.lr_mu)
-        self.net_sg = nn(self.sg_arch, self.dim,
-                         'tanh', 'sigmoid', self.lr_sg)
-        self.net_cr = nn(self.cr_arch, self.cov_dim,
-                         'tanh', 'sigmoid', self.lr_cr)
-
-        # Arrays
-        self.obs = tf.ones([1,self.obs_dim])
-
-        # Initialze networks with forward pass
-        self.net_mu(self.obs)
-        self.net_sg(self.obs)
-        self.net_cr(self.obs)
+        #self.net_mu = nn(self.mu_arch, self.dim, self.dim,
+        #                 'relu', 'tanh', self.lr_mu)
+        #self.net_sg = nn(self.sg_arch, self.dim, self.dim,
+        #                 'tanh', 'sigmoid', self.lr_sg)
+        #self.net_cr = nn(self.cr_arch, self.dim, self.cov_dim,
+        #                 'tanh', 'sigmoid', self.lr_cr)
+        self.net_mu.reset()
+        self.net_sg.reset()
+        self.net_cr.reset()
 
         # Initial sampling
         # This fills x and z arrays with samples
@@ -107,6 +112,8 @@ class pbo():
         x  = tf.convert_to_tensor(self.obs)
         cr = self.net_cr.call(x)
         cr = np.asarray(cr)[0]
+
+        #print(mu, sg, cr)
 
         # Define pdf
         pdf = self.get_cov_pdf(mu, sg, cr)
@@ -138,9 +145,9 @@ class pbo():
         self.compute_advantages()
 
         # Update
+        self.train_loop_mu()
         self.train_loop_sg()
         self.train_loop_cr()
-        self.train_loop_mu()
 
         # Sample
         self.sample()
@@ -175,7 +182,7 @@ class pbo():
 
         # Start and end indices of last generation
         start   = max(0,self.total_stp - self.n_points)
-        end     = self.total_stp# + self.n_points
+        end     = self.total_stp
 
         # Compute normalized advantage
         avg_rwd = np.mean(self.hist_c[start:end])
@@ -211,7 +218,7 @@ class pbo():
 
                 btc_x = x[start:end]
                 btc_a = a[start:end]
-                btc_o = tf.ones([end-start, self.obs_dim])
+                btc_o = tf.zeros([end-start, self.obs_dim])
 
                 self.train_mu(btc_o, btc_a, btc_x)
 
@@ -235,7 +242,7 @@ class pbo():
 
                 btc_x = x[start:end]
                 btc_a = a[start:end]
-                btc_o = tf.ones([end-start, self.obs_dim])
+                btc_o = tf.zeros([end-start, self.obs_dim])
 
                 self.train_sg(btc_o, btc_a, btc_x)
 
@@ -260,7 +267,7 @@ class pbo():
 
                 btc_x = x[start:end]
                 btc_a = a[start:end]
-                btc_o = tf.ones([end-start, self.obs_dim])
+                btc_o = tf.zeros([end-start, self.obs_dim])
 
                 self.train_cr(btc_o, btc_a, btc_x)
 

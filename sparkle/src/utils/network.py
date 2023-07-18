@@ -8,6 +8,7 @@ import tensorflow_probability        as     tfp
 from   tensorflow.keras              import Model
 from   tensorflow.keras.layers       import Dense
 from   tensorflow.keras.initializers import Orthogonal, LecunNormal
+from   tensorflow.keras.optimizers   import Adam
 
 # Define alias
 tf.keras.backend.set_floatx('float32')
@@ -17,11 +18,13 @@ tfd = tfp.distributions
 ###############################################
 ### Neural network for mu and sg prediction
 class nn(Model):
-    def __init__(self, arch, dim, act, last, lr):
+    def __init__(self, arch, i_dim, o_dim, act, last, lr):
         super(nn, self).__init__()
 
         # Initialize network as empty list
-        self.net = []
+        self.lr   = lr
+        self.arch = arch
+        self.net  = []
 
         # Define hidden layers
         for layer in range(len(arch)):
@@ -30,12 +33,31 @@ class nn(Model):
                                   activation=act))
 
         # Define last layer
-        self.net.append(Dense(dim,
+        self.net.append(Dense(o_dim,
                               kernel_initializer=LecunNormal(),
                               activation=last))
 
+        # Initialize with dummy forward pass
+        self.call(tf.zeros([1,i_dim]))
+
         # Define optimizer
-        self.opt = tk.optimizers.Adam(learning_rate = lr)
+        #self.opt = Adam(learning_rate = self.lr)
+        #zero_grads = [tf.zeros_like(w) for w in self.net.trainable_variables]
+        #self.opt.apply_gradients(zip(zero_grads, self.net.trainable_variables))
+
+        # Save network initial weights
+        self.net_weights = []
+
+        for i in range(len(self.net)):
+            self.net_weights.append(self.net[i].get_weights())
+            #self.get_weights()
+        #self.net_weights = self.variables.copy()
+        #print(self.net_weights)
+
+        # Save optimizer initial config
+        #self.opt_var = self.opt.save_own_variables()
+        #self.opt_weights = self.opt.variables()
+        #self.opt_config  = self.opt.get_config()
 
     # Network forward pass
     @tf.function
@@ -49,3 +71,27 @@ class nn(Model):
             x = self.net[layer](x)
 
         return tf.cast(x, tf.float32)
+
+    # Reset weights
+    def reset(self):
+        #self.opt.load_own_variables(self.opt_var)
+        #print(self.net_weights)
+
+        #self.opt.from_config(self.opt_config)
+        #self.opt.set_weights(self.opt_weights)
+        #self.opt._variables = self.opt_weights.copy()
+        #self.opt.lr(self.lr)
+
+        #self.set_weights(self.net_weig)
+        #self.variables = self.net_weights.copy()
+        for i in range(len(self.net)):
+            self.net[i].set_weights(self.net_weights[i])
+            #self.net_weights.append(self.net[i].get_weights())
+            #for l, w in zip(self.net, self.net_weights):
+            #l.set_weights(w)
+
+
+        self.opt = Adam(learning_rate = self.lr,
+                        use_ema=True)
+        zero_grads = [tf.zeros_like(w) for w in self.net.weights]
+        self.opt.apply_gradients(zip(zero_grads, self.net.weights))
