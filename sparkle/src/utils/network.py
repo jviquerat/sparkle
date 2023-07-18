@@ -8,7 +8,7 @@ import tensorflow_probability        as     tfp
 from   tensorflow.keras              import Model
 from   tensorflow.keras.layers       import Dense
 from   tensorflow.keras.initializers import Orthogonal, LecunNormal
-from   tensorflow.keras.optimizers   import Adam
+from   tensorflow.keras.optimizers.legacy   import Adam
 
 # Define alias
 tf.keras.backend.set_floatx('float32')
@@ -41,23 +41,25 @@ class nn(Model):
         self.call(tf.zeros([1,i_dim]))
 
         # Define optimizer
-        #self.opt = Adam(learning_rate = self.lr)
-        #zero_grads = [tf.zeros_like(w) for w in self.net.trainable_variables]
-        #self.opt.apply_gradients(zip(zero_grads, self.net.trainable_variables))
+        self.opt = Adam(learning_rate = self.lr)
+        zero_grads = [tf.zeros_like(w) for w in self.trainable_weights]
+        self.opt.apply_gradients(zip(zero_grads, self.trainable_weights))
 
         # Save network initial weights
-        self.net_weights = []
+        self.net_weights = self.get_weights()
+        #self.net_weights = []
 
-        for i in range(len(self.net)):
-            self.net_weights.append(self.net[i].get_weights())
+        #for i in range(len(self.net)):
+         #   self.net_weights.append(self.net[i].get_weights())
+
             #self.get_weights()
         #self.net_weights = self.variables.copy()
         #print(self.net_weights)
 
         # Save optimizer initial config
         #self.opt_var = self.opt.save_own_variables()
-        #self.opt_weights = self.opt.variables()
-        #self.opt_config  = self.opt.get_config()
+        self.opt_weights = self.opt.get_weights()
+        self.opt_config  = self.opt.get_config()
 
     # Network forward pass
     @tf.function
@@ -77,21 +79,20 @@ class nn(Model):
         #self.opt.load_own_variables(self.opt_var)
         #print(self.net_weights)
 
-        #self.opt.from_config(self.opt_config)
-        #self.opt.set_weights(self.opt_weights)
+        self.opt.set_weights(self.opt_weights)
+        self.opt.from_config(self.opt_config)
         #self.opt._variables = self.opt_weights.copy()
         #self.opt.lr(self.lr)
 
-        #self.set_weights(self.net_weig)
+        self.set_weights(self.net_weights)
         #self.variables = self.net_weights.copy()
-        for i in range(len(self.net)):
-            self.net[i].set_weights(self.net_weights[i])
+        #for i in range(len(self.net)):
+        #    self.net[i].set_weights(self.net_weights[i])
             #self.net_weights.append(self.net[i].get_weights())
             #for l, w in zip(self.net, self.net_weights):
             #l.set_weights(w)
 
 
-        self.opt = Adam(learning_rate = self.lr,
-                        use_ema=True)
-        zero_grads = [tf.zeros_like(w) for w in self.net.weights]
-        self.opt.apply_gradients(zip(zero_grads, self.net.weights))
+        #self.opt = Adam(learning_rate = self.lr)
+        #zero_grads = [tf.zeros_like(w) for w in self.net.weights]
+        #self.opt.apply_gradients(zip(zero_grads, self.net.weights))
