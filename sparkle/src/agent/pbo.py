@@ -114,17 +114,22 @@ class pbo():
         # Draw actions
         self.x = pdf.sample(self.n_points)
         self.x = np.asarray(self.x)
-        #self.x = np.clip(self.x, -1.0, 1.0)
 
         return self.x
+
+    # Update global best
+    def update_best(self, c):
+
+        for i in range(self.n_points):
+            if (c[i] <= self.best_score):
+                self.best_score = c[i]
+                self.best_x     = self.x[i,:]
 
     # Step
     def step(self, c):
 
-        # Update best value
-        if (c[0] < self.best_score):
-            self.best_score = c[0]
-            self.best_x     = self.x[0,:]
+        # Update best point
+        self.update_best(c)
 
         # Store
         self.store(c)
@@ -176,6 +181,7 @@ class pbo():
         avg_rwd = np.mean(self.hist_c[start:end])
         std_rwd = np.std( self.hist_c[start:end])
         adv     = (self.hist_c[start:end] - avg_rwd)/(std_rwd + 1.0e-12)
+        adv    *=-1.0
 
         # Clip advantages if required
         if (self.adv_clip):
@@ -205,7 +211,7 @@ class pbo():
 
                 btc_x = x[start:end]
                 btc_a = a[start:end]
-                btc_o = tf.ones([1, self.obs_dim])
+                btc_o = tf.ones([end-start, self.obs_dim])
 
                 self.train_mu(btc_o, btc_a, btc_x)
 
@@ -229,7 +235,7 @@ class pbo():
 
                 btc_x = x[start:end]
                 btc_a = a[start:end]
-                btc_o = tf.ones([1, self.obs_dim])
+                btc_o = tf.ones([end-start, self.obs_dim])
 
                 self.train_sg(btc_o, btc_a, btc_x)
 
@@ -238,7 +244,7 @@ class pbo():
 
         # Loop on epochs
         for epoch in range(self.cr_epochs):
-            n    = self.sg_gen
+            n    = self.cr_gen
             x, a = self.get_history(n)
             done = False
             btc  = 0
@@ -248,12 +254,13 @@ class pbo():
 
                 start    = btc*self.cr_batch*self.n_points
                 end      = min((btc+1)*self.cr_batch*self.n_points,len(a))
+
                 btc     += 1
                 if (end == len(a)): done = True
 
                 btc_x = x[start:end]
                 btc_a = a[start:end]
-                btc_o = tf.ones([1, self.obs_dim])
+                btc_o = tf.ones([end-start, self.obs_dim])
 
                 self.train_cr(btc_o, btc_a, btc_x)
 
@@ -266,8 +273,8 @@ class pbo():
             tape.watch(var)
 
             cr = tf.convert_to_tensor(self.net_cr.call(obs))
-            sg = tf.convert_to_tensor(self.net_sg.call(obs))
-            mu = tf.convert_to_tensor(self.net_mu.call(obs))
+            sg = tf.convert_to_tensor(self.net_sg.call(obs)*self.sigma0)
+            mu = tf.convert_to_tensor(self.net_mu.call(obs)+self.x0)
 
             loss = self.get_loss(obs, adv, act, mu, sg, cr)
 
@@ -284,8 +291,8 @@ class pbo():
             tape.watch(var)
 
             cr = tf.convert_to_tensor(self.net_cr.call(obs))
-            sg = tf.convert_to_tensor(self.net_sg.call(obs))
-            mu = tf.convert_to_tensor(self.net_mu.call(obs))
+            sg = tf.convert_to_tensor(self.net_sg.call(obs)*self.sigma0)
+            mu = tf.convert_to_tensor(self.net_mu.call(obs)+self.x0)
 
             loss = self.get_loss(obs, adv, act, mu, sg, cr)
 
@@ -302,8 +309,8 @@ class pbo():
             tape.watch(var)
 
             cr = tf.convert_to_tensor(self.net_cr.call(obs))
-            sg = tf.convert_to_tensor(self.net_sg.call(obs))
-            mu = tf.convert_to_tensor(self.net_mu.call(obs))
+            sg = tf.convert_to_tensor(self.net_sg.call(obs)*self.sigma0)
+            mu = tf.convert_to_tensor(self.net_mu.call(obs)+self.x0)
 
             loss = self.get_loss(obs, adv, act, mu, sg, cr)
 
@@ -329,7 +336,7 @@ class pbo():
 
         cov  = self.get_cov(sg, cr)
         scl  = tf.linalg.cholesky(cov)
-        pdf  = tfd.MultivariateNormalTriL(tf.cast(mu, tf.float32),
+        pdf  = tfd.MultivariateNormalTriL(tf.cast(mu,  tf.float32),
                                           tf.cast(scl, tf.float32))
 
         return pdf
@@ -338,7 +345,8 @@ class pbo():
     def get_cov(self, sg, cr):
 
         # Extract sigmas and thetas
-        sigmas = 0.85*sg
+        #sigmas = 0.85*sg
+        sigmas = sg
         thetas = cr*math.pi
 
         # Build initial theta matrix
