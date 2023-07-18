@@ -45,14 +45,6 @@ class pbo():
         if hasattr(pms, "n_points"):    self.n_points    = pms.n_points
         if hasattr(pms, "obs_dim"):     self.obs_dim     = pms.obs_dim
 
-        # Data storage
-        self.n_steps_total = self.n_steps_max*self.n_points
-        self.hist_t        = np.zeros((self.n_steps_total))           # time
-        self.hist_c        = np.zeros((self.n_steps_total))           # cost
-        self.hist_a        = np.zeros((self.n_steps_total))           # advantage
-        self.hist_b        = np.zeros((self.n_steps_total))           # best cost
-        self.hist_x        = np.zeros((self.n_steps_total, self.dim)) # dofs
-
     # Reset
     def reset(self, run):
 
@@ -67,6 +59,14 @@ class pbo():
 
         # Path
         self.path = self.base_path+"/"+str(run)
+
+        # Data storage
+        self.n_steps_total = self.n_steps_max*self.n_points
+        self.hist_t        = np.zeros((self.n_steps_total))           # time
+        self.hist_c        = np.zeros((self.n_steps_total))           # cost
+        self.hist_a        = np.zeros((self.n_steps_total))           # advantage
+        self.hist_b        = np.zeros((self.n_steps_total))           # best cost
+        self.hist_x        = np.zeros((self.n_steps_total, self.dim)) # dofs
 
         # Networks
         self.net_mu = nn(self.mu_arch, self.dim,
