@@ -37,13 +37,32 @@ class pbo():
         self.sg_batch    = 4
         self.cr_batch    = 8
         self.adv_clip    = True
-        self.adv_decay   = 0.5
+        self.adv_decay   = 1.0 - math.exp(-0.35*self.dim)
         self.obs_dim     = self.dim
         self.cov_dim     = math.floor(self.dim*(self.dim - 1)/2)
 
         if hasattr(pms, "n_steps_max"): self.n_steps_max = pms.n_steps_max
         if hasattr(pms, "n_points"):    self.n_points    = pms.n_points
         if hasattr(pms, "obs_dim"):     self.obs_dim     = pms.obs_dim
+        if hasattr(pms, "sigma0"):      self.sigma0      = pms.sigma0
+        if hasattr(pms, "x0"):          self.x0          = np.array(pms.x0)
+        if hasattr(pms, "lr_mu"):       self.lr_mu       = np.array(pms.lr_mu)
+        if hasattr(pms, "lr_sg"):       self.lr_sg       = np.array(pms.lr_sg)
+        if hasattr(pms, "lr_cr"):       self.lr_cr       = np.array(pms.lr_cr)
+        if hasattr(pms, "mu_arch"):     self.mu_arch     = np.array(pms.mu_arch)
+        if hasattr(pms, "sg_arch"):     self.sg_arch     = np.array(pms.sg_arch)
+        if hasattr(pms, "cr_arch"):     self.cr_arch     = np.array(pms.cr_arch)
+        if hasattr(pms, "mu_epochs"):   self.mu_epochs   = np.array(pms.mu_epochs)
+        if hasattr(pms, "sg_epochs"):   self.sg_epochs   = np.array(pms.sg_epochs)
+        if hasattr(pms, "cr_epochs"):   self.cr_epochs   = np.array(pms.cr_epochs)
+        if hasattr(pms, "mu_gen"):      self.mu_gen      = np.array(pms.mu_gen)
+        if hasattr(pms, "sg_gen"):      self.sg_gen      = np.array(pms.sg_gen)
+        if hasattr(pms, "cr_gen"):      self.cr_gen      = np.array(pms.cr_gen)
+        if hasattr(pms, "mu_batch"):    self.mu_batch    = np.array(pms.mu_batch)
+        if hasattr(pms, "sg_batch"):    self.sg_batch    = np.array(pms.sg_batch)
+        if hasattr(pms, "cr_batch"):    self.cr_batch    = np.array(pms.cr_batch)
+        if hasattr(pms, "adv_clip"):    self.adv_clip    = np.array(pms.adv_clip)
+        if hasattr(pms, "adv_decay"):   self.adv_decay   = np.array(pms.adv_decay)
 
         self.net_mu = nn(self.mu_arch, self.obs_dim, self.dim,
                          'relu', 'tanh', self.lr_mu)
