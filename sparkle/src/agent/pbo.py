@@ -16,7 +16,7 @@ class pbo():
         self.xmin        = xmin
         self.xmax        = xmax
 
-        self.sigma0      = 0.5*(np.min(xmax)-np.max(xmin))
+        self.sigma0      = 0.25*(np.min(xmax)-np.max(xmin))
         self.x0          = 0.5*(xmax+xmin)
         self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
 
@@ -52,7 +52,7 @@ class pbo():
         self.net_cr = nn(self.cr_arch, self.obs_dim, self.cov_dim,
                          'tanh', 'sigmoid', self.lr_cr)
 
-        self.obs = tf.zeros([1,self.obs_dim])
+        self.obs = 1.0
 
         self.n_steps_total = self.n_steps_max*self.n_points
 
@@ -78,13 +78,7 @@ class pbo():
         self.hist_b = np.zeros((self.n_steps_total))           # best cost
         self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
 
-        # Networks
-        #self.net_mu = nn(self.mu_arch, self.dim, self.dim,
-        #                 'relu', 'tanh', self.lr_mu)
-        #self.net_sg = nn(self.sg_arch, self.dim, self.dim,
-        #                 'tanh', 'sigmoid', self.lr_sg)
-        #self.net_cr = nn(self.cr_arch, self.dim, self.cov_dim,
-        #                 'tanh', 'sigmoid', self.lr_cr)
+        # Reset networks
         self.net_mu.reset()
         self.net_sg.reset()
         self.net_cr.reset()
@@ -98,22 +92,23 @@ class pbo():
     # Sample from distribution
     def sample(self):
 
+        # Observation vector
+        obs = tf.ones([1,self.dim])*self.obs
+
         # Predict mu
-        x  = tf.convert_to_tensor(self.obs)
+        x  = tf.convert_to_tensor(obs)
         mu = self.net_mu.call(x)
         mu = np.asarray(mu)[0] + self.x0
 
         # Predict sigma
-        x  = tf.convert_to_tensor(self.obs)
+        x  = tf.convert_to_tensor(obs)
         sg = self.net_sg.call(x)
         sg = np.asarray(sg)[0]*self.sigma0
 
         # Predict correlations
-        x  = tf.convert_to_tensor(self.obs)
+        x  = tf.convert_to_tensor(obs)
         cr = self.net_cr.call(x)
         cr = np.asarray(cr)[0]
-
-        #print(mu, sg, cr)
 
         # Define pdf
         pdf = self.get_cov_pdf(mu, sg, cr)
@@ -218,7 +213,7 @@ class pbo():
 
                 btc_x = x[start:end]
                 btc_a = a[start:end]
-                btc_o = tf.zeros([end-start, self.obs_dim])
+                btc_o = tf.ones([end-start, self.obs_dim])*self.obs
 
                 self.train_mu(btc_o, btc_a, btc_x)
 
@@ -242,7 +237,7 @@ class pbo():
 
                 btc_x = x[start:end]
                 btc_a = a[start:end]
-                btc_o = tf.zeros([end-start, self.obs_dim])
+                btc_o = tf.ones([end-start, self.obs_dim])*self.obs
 
                 self.train_sg(btc_o, btc_a, btc_x)
 
@@ -267,7 +262,7 @@ class pbo():
 
                 btc_x = x[start:end]
                 btc_a = a[start:end]
-                btc_o = tf.zeros([end-start, self.obs_dim])
+                btc_o = tf.ones([end-start, self.obs_dim])*self.obs
 
                 self.train_cr(btc_o, btc_a, btc_x)
 

@@ -47,17 +47,8 @@ class nn(Model):
 
         # Save network initial weights
         self.net_weights = self.get_weights()
-        #self.net_weights = []
-
-        #for i in range(len(self.net)):
-         #   self.net_weights.append(self.net[i].get_weights())
-
-            #self.get_weights()
-        #self.net_weights = self.variables.copy()
-        #print(self.net_weights)
 
         # Save optimizer initial config
-        #self.opt_var = self.opt.save_own_variables()
         self.opt_weights = self.opt.get_weights()
         self.opt_config  = self.opt.get_config()
 
@@ -76,23 +67,7 @@ class nn(Model):
 
     # Reset weights
     def reset(self):
-        #self.opt.load_own_variables(self.opt_var)
-        #print(self.net_weights)
 
         self.opt.set_weights(self.opt_weights)
         self.opt.from_config(self.opt_config)
-        #self.opt._variables = self.opt_weights.copy()
-        #self.opt.lr(self.lr)
-
         self.set_weights(self.net_weights)
-        #self.variables = self.net_weights.copy()
-        #for i in range(len(self.net)):
-        #    self.net[i].set_weights(self.net_weights[i])
-            #self.net_weights.append(self.net[i].get_weights())
-            #for l, w in zip(self.net, self.net_weights):
-            #l.set_weights(w)
-
-
-        #self.opt = Adam(learning_rate = self.lr)
-        #zero_grads = [tf.zeros_like(w) for w in self.net.weights]
-        #self.opt.apply_gradients(zip(zero_grads, self.net.weights))
