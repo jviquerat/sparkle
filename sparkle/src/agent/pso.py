@@ -26,12 +26,7 @@ class pso():
         if hasattr(pms, "c2"):          self.c2          = pms.c2
         if hasattr(pms, "w"):           self.w           = pms.w
 
-        # Data storage
         self.n_steps_total = self.n_steps_max*self.n_particles
-        self.hist_t        = np.zeros((self.n_steps_total))           # time
-        self.hist_c        = np.zeros((self.n_steps_total))           # cost
-        self.hist_b        = np.zeros((self.n_steps_total))           # best cost
-        self.hist_x        = np.zeros((self.n_steps_total, self.dim)) # dofs
 
     # Reset
     def reset(self, run):
@@ -43,6 +38,12 @@ class pso():
 
         # Path
         self.path = self.base_path+"/"+str(run)
+
+        # Data storage
+        self.hist_t = np.zeros((self.n_steps_total))           # time
+        self.hist_c = np.zeros((self.n_steps_total))           # cost
+        self.hist_b = np.zeros((self.n_steps_total))           # best cost
+        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
 
         # Positions and velocities
         self.x = np.random.rand(self.n_particles, self.dim)

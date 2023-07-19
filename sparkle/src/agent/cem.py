@@ -23,12 +23,7 @@ class cem():
         if hasattr(pms, "n_elites"):     self.n_elites     = pms.n_elites
         if hasattr(pms, "alpha"):        self.alpha        = pms.alpha
 
-        # Data storage
         self.n_steps_total = self.n_steps_max*self.n_points
-        self.hist_t        = np.zeros((self.n_steps_total))           # time
-        self.hist_c        = np.zeros((self.n_steps_total))           # cost
-        self.hist_b        = np.zeros((self.n_steps_total))           # best cost
-        self.hist_x        = np.zeros((self.n_steps_total, self.dim)) # dofs
 
     # Reset
     def reset(self, run):
@@ -44,6 +39,12 @@ class cem():
 
         # Path
         self.path = self.base_path+"/"+str(run)
+
+        # Data storage
+        self.hist_t = np.zeros((self.n_steps_total))           # time
+        self.hist_c = np.zeros((self.n_steps_total))           # cost
+        self.hist_b = np.zeros((self.n_steps_total))           # best cost
+        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
 
         # Min and max arrays used for cem adaptation
         self.xmin_cem = self.xmin.copy()

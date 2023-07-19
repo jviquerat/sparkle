@@ -48,12 +48,7 @@ class cmaes():
         self.dp = 1.0 + 2.0*max(0.0, math.sqrt((mu_eff-1.0)/(dim+1.0)) - 1.0) + self.cs # damping for step-size
         self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))              # expectation of N(0,I)
 
-        # Data storage
         self.n_steps_total = self.n_steps_max*self.lmbda
-        self.hist_t        = np.zeros((self.n_steps_total))           # time
-        self.hist_c        = np.zeros((self.n_steps_total))           # cost
-        self.hist_b        = np.zeros((self.n_steps_total))           # best cost
-        self.hist_x        = np.zeros((self.n_steps_total, self.dim)) # dofs
 
     # Reset
     def reset(self, run):
@@ -69,6 +64,12 @@ class cmaes():
 
         # Path
         self.path = self.base_path+"/"+str(run)
+
+        # Data storage
+        self.hist_t = np.zeros((self.n_steps_total))           # time
+        self.hist_c = np.zeros((self.n_steps_total))           # cost
+        self.hist_b = np.zeros((self.n_steps_total))           # best cost
+        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
 
         # Arrays
         self.pc    = np.zeros(self.dim)        # C evolution path

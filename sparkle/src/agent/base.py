@@ -2,8 +2,6 @@
 import random
 import numpy as np
 
-# Custom imports
-
 ###############################################
 ### Base agent
 class base_agent():
