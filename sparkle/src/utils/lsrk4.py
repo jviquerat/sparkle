@@ -31,5 +31,6 @@ class lsrk4():
     # lsrk update
     def update(self, u, uk, f, j, dt):
 
-        u[:]   = self.a[j]*u[:] + dt*f[:]
-        uk[:] += self.b[j]*u[:]
+        for i in range(len(u)):
+            u[i]   = self.a[j]*u[i] + dt*f[i]
+            uk[i] += self.b[j]*u[i]
