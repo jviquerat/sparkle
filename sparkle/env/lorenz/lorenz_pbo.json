@@ -1,0 +1,22 @@
+{
+    "n_avg": 2,
+    "avg_type": "linear",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "lorenz"
+    },
+    "agent": {
+        "name": "pbo",
+        "n_steps_max": 200,
+        "n_points": 10
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 10
+    }
+}
