@@ -1,8 +1,9 @@
 # Generic imports
 import os
 import math
-import numpy             as np
+import matplotlib
 import matplotlib.pyplot as plt
+import numpy             as np
 
 ###############################################
 ### Base environment
