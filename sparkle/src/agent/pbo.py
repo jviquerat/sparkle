@@ -366,7 +366,6 @@ class pbo():
     def get_cov(self, sg, cr):
 
         # Extract sigmas and thetas
-        #sigmas = 0.85*sg
         sigmas = sg
         thetas = cr*math.pi
 
