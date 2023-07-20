@@ -4,8 +4,6 @@ __pycache__/
 *.dat
 *.gif
 *.png
-vids
-lorenz
 results
 *.egg-info
 checkpoint
