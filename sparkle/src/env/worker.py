@@ -13,7 +13,6 @@ class worker():
         module    = __import__(env_name)
         env_build = getattr(module, env_name)
         if args is not None:
-            #self.env = env_build(cpu, path, **args.__dict__)
             self.env = env_build(cpu, path, args)
         else:
             self.env = env_build(cpu, path)
@@ -32,7 +31,7 @@ class worker():
                 mpi.comm.gather((c), root=0)
 
             if command == 'reset':
-                r = self.reset()
+                r = self.reset(data)
                 mpi.comm.gather((r), root=0)
 
             if command == 'render':
