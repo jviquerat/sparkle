@@ -17,11 +17,13 @@ class cmaes():
         self.sigma0      = 0.25*(np.min(xmax)-np.max(xmin))
         self.x0          = 0.5*(xmax+xmin)
         self.lmbda       = 4 + math.floor(3.0*math.log(self.dim))
+        self.clip        = False
 
         if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
         if hasattr(pms, "lambda"):       self.lmbda        = pms.lmbda
         if hasattr(pms, "sigma0"):       self.sigma0       = pms.sigma0
         if hasattr(pms, "x0"):           self.x0           = np.array(pms.x0)
+        if hasattr(pms, "clip"):         self.clip         = np.array(pms.clip)
 
         # Number of selected samples
         self.fmu    = self.lmbda/2.0
@@ -95,6 +97,10 @@ class cmaes():
         self.x = np.zeros_like(self.z)
         for i in range(self.lmbda):
             self.x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, self.z[i,:])
+
+        if (self.clip):
+            for i in range(self.dim):
+                self.x[:,i] = np.clip(self.x[:,i], self.xmin[i], self.xmax[i])
 
     # Step
     def step(self, c):
