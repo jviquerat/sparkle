@@ -1,7 +1,8 @@
 # Custom imports
-from sparkle.src.trainer.base     import *
-from sparkle.src.env.environments import *
-from sparkle.src.agent.agent      import *
+from sparkle.src.trainer.base import *
+from sparkle.src.agent.agent  import *
+from sparkle.src.utils.timer  import *
+from sparkle.src.env.parallel import parallel
 
 ###############################################
 ### Class for regular trainer
@@ -13,7 +14,10 @@ class regular(base_trainer):
         if hasattr(pms, "render_every"): self.render_every = pms.render_every
 
         # Initialize environment
-        self.env = environments(path, env_pms)
+        #self.parallel = parallel
+        #parallel.set(pms)
+        self.env = parallel.environments(path, env_pms)
+        #self.env = environments(path, env_pms)
 
         # Initialize agent
         self.agent = agent_factory.create(agent_pms.name,
@@ -25,7 +29,7 @@ class regular(base_trainer):
 
         # Check compatibility between the number of parallel workers
         # and the number of degrees of freedom required by the agent
-        if (self.agent.ndof()%mpi.size !=0):
+        if (self.agent.ndof()%parallel.size() !=0):
             error("trainer::regular", "init", "Number of degress of freedom of the agent must be a multiple of the number of parallel workers")
 
         # Initialize timer

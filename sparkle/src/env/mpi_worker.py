@@ -2,11 +2,12 @@
 import sys
 
 # Custom imports
-from sparkle.src.env.mpi import *
+from sparkle.src.env.parallel import parallel
+#from sparkle.src.env.mpi import *
 
 ###############################################
 # Worker class for slave processes
-class worker():
+class mpi_worker():
     def __init__(self, env_name, args, cpu, path):
 
         # Build environment
@@ -21,26 +22,26 @@ class worker():
     def work(self):
         while True:
             data    = None
-            data    = mpi.comm.scatter(data, root=0)
+            data    = parallel.comm.scatter(data, root=0)
             command = data[0]
             data    = data[1]
 
             # Execute commands
             if command == 'cost':
                 c = self.cost(data)
-                mpi.comm.gather((c), root=0)
+                parallel.comm.gather((c), root=0)
 
             if command == 'reset':
                 r = self.reset(data)
-                mpi.comm.gather((r), root=0)
+                parallel.comm.gather((r), root=0)
 
             if command == 'render':
                 rnd = self.render(data)
-                mpi.comm.gather((rnd), root=0)
+                parallel.comm.gather((rnd), root=0)
 
             if command == 'close':
                 self.close()
-                mpi.finalize()
+                parallel.finalize()
                 break
 
     # Compute cost

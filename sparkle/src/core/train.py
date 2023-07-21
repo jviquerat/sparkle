@@ -7,17 +7,12 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.trainer.trainer import *
-from sparkle.src.utils.json      import *
 from sparkle.src.utils.prints    import *
 from sparkle.src.utils.data      import *
 from sparkle.src.plot.plot       import *
 
 # Average training over multiple runs
-def train(json_file):
-
-    # Initialize json parser and read parameters
-    parser = json_parser()
-    pms    = parser.read(json_file)
+def train(json_file, pms):
 
     # Add paths to PATH
     base_path = os.path.abspath(os.getcwd())
@@ -36,8 +31,12 @@ def train(json_file):
     # Copy json file to results folder
     shutil.copyfile(json_file, results_path+'/params.json')
 
+    # Handle parallel wrapper
+    #parallel = spk_parallel(pms)
+
     # Initialize trainer
     trainer = trainer_factory.create(pms.trainer.name,
+                                     #parallel  = parallel,
                                      env_pms   = pms.environment,
                                      agent_pms = pms.agent,
                                      path      = results_path,
@@ -67,8 +66,8 @@ def train(json_file):
     filename = results_path+'/'+path
     plot(data, filename, pms.avg_type)
 
-    # Finalize main process
-    mpi.finalize()
+    # Finalize parallel process
+    parallel.finalize()
 
 # Generate results folder name
 def folder_name(pms):

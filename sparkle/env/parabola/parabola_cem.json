@@ -1,5 +1,6 @@
 {
     "n_avg": 3,
+    "parallel_type": "mpi",
     "avg_type": "log",
     "naming": {
         "env": true,
