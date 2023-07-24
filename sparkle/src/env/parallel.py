@@ -1,12 +1,3 @@
-# Generic imports
-import mpi4py
-mpi4py.rc.initialize = False
-mpi4py.rc.finalize   = False
-from mpi4py import MPI
-
-# Custom imports
-from sparkle.src.utils.error  import *
-
 ###############################################
 ### A wrapper class for parallelism
 class spk_parallel:
@@ -23,12 +14,19 @@ class spk_parallel:
 
         if (self._type == "multiprocessing"):
             if (not hasattr(pms, "n_env")):
-                error("spk_parallel", "__init__",
-                      "Multiprocessing requires argument n_env")
+                #error("spk_parallel", "__init__",
+                #      "Multiprocessing requires argument n_env")
+                print("Error: multiprocessing requires argument n_env")
+                exit(1)
             else:
                 self._size = pms.n_env
 
         if (self._type == "mpi"):
+            import mpi4py
+            mpi4py.rc.initialize = False
+            mpi4py.rc.finalize   = False
+            from mpi4py import MPI
+
             if (not MPI.Is_initialized()):
                 MPI.Init()
                 self._comm = MPI.COMM_WORLD
@@ -53,8 +51,10 @@ class spk_parallel:
             return self._comm
 
         if (self._type == "multiprocessing"):
-            error("spk_parallel", "comm",
-                  "comm() is not defined for multiprocessing")
+            #error("spk_parallel", "comm",
+            #      "comm() is not defined for multiprocessing")
+            print("Error: comm() is not defined for multiprocessing")
+            exit(1)
 
     def size(self):
 
@@ -66,8 +66,10 @@ class spk_parallel:
             return self._rank
 
         if (self._type == "multiprocessing"):
-            error("spk_parallel", "rank",
-                  "rank() is not defined for multiprocessing")
+            #error("spk_parallel", "rank",
+            #      "rank() is not defined for multiprocessing")
+            print("Error: rank() is not defined for multiprocessing")
+            exit(1)
 
     def environments(self, path, pms):
 
@@ -77,11 +79,14 @@ class spk_parallel:
 
         if (self._type == "multiprocessing"):
             from sparkle.src.env.multiproc_environments import multiproc_environments
-            return mpi_environments(path, pms)
+            return multiproc_environments(path, pms)
 
     def finalize(self):
 
         if (self._type == "mpi"):
+            import mpi4py
+            from mpi4py import MPI
+
             MPI.Finalize()
             exit(0)
 

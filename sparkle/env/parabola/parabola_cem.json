@@ -1,6 +1,7 @@
 {
     "n_avg": 3,
-    "parallel_type": "mpi",
+    "parallel_type": "multiprocessing",
+    "n_env": 5,
     "avg_type": "log",
     "naming": {
         "env": true,

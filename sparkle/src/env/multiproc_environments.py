@@ -84,7 +84,7 @@ class multiproc_environments:
 
             # Send
             for p in range(parallel.size()):
-                p.send(('step', x[i*parallel.size()+p]))
+                self.pipes[p].send(('cost', x[i*parallel.size()+p]))
 
             # Receive
             for p in range(parallel.size()):
