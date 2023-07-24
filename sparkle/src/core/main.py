@@ -33,6 +33,12 @@ def main():
         liner_simple()
         bold('Training mode')
 
+        if (parallel.is_root()):
+            spacer()
+            print("Parallelism based on "+parallel.type())
+            spacer()
+            print("Number of parallel environments: "+str(parallel.size()))
+
         train(json_file, pms)
         return
 

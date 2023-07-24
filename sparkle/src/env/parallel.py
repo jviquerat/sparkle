@@ -35,6 +35,10 @@ class spk_parallel:
                 self._rank = MPI.COMM_WORLD.Get_rank()
                 self._size = MPI.COMM_WORLD.Get_size()
 
+    def type(self):
+
+        return self._type
+
     def is_root(self):
 
         if (self._type == "mpi"):
@@ -78,6 +82,7 @@ class spk_parallel:
 
         if (self._type == "mpi"):
             MPI.Finalize()
+            exit(0)
 
         if (self._type == "multiprocessing"):
             pass
