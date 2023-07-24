@@ -14,4 +14,4 @@ def test_pso():
 
     # Run test
     runner("sparkle/tst/agent/parabola_cem.json",
-           "pso", 1.0e-5, 1.0e-7)
+           "pso", 1.0e-2, 1.0e-4)

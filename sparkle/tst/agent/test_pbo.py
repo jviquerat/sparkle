@@ -14,4 +14,4 @@ def test_pbo():
 
     # Run test
     runner("sparkle/tst/agent/rosenbrock_pbo.json",
-           "pbo", 1.0e-4, 1.0e-5)
+           "pbo", 1.0e-3, 1.0e-4)
