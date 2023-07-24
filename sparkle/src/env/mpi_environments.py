@@ -2,11 +2,10 @@
 import os
 import sys
 import numpy as np
-import time
 
 # Custom imports
-from sparkle.src.env.mpi_worker  import *
-from sparkle.src.utils.timer import *
+from sparkle.src.env.mpi_worker import *
+from sparkle.src.utils.timer    import *
 
 ###############################################
 ### A wrapper class for mpi parallel environments
@@ -20,7 +19,8 @@ class mpi_environments:
         if hasattr(pms, "args"): self.args = pms.args
 
         # Generate workers
-        self.worker = mpi_worker(self.name, self.args, parallel.rank(), path)
+        self.worker = mpi_worker(self.name, self.args,
+                                 parallel.rank(), path)
 
         # Set all slaves to wait for instructions
         if (not parallel.is_root()):

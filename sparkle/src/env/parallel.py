@@ -76,7 +76,8 @@ class spk_parallel:
             return mpi_environments(path, pms)
 
         if (self._type == "multiprocessing"):
-            pass
+            from sparkle.src.env.multiproc_environments import multiproc_environments
+            return mpi_environments(path, pms)
 
     def finalize(self):
 
