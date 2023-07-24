@@ -14,10 +14,7 @@ class regular(base_trainer):
         if hasattr(pms, "render_every"): self.render_every = pms.render_every
 
         # Initialize environment
-        #self.parallel = parallel
-        #parallel.set(pms)
         self.env = parallel.environments(path, env_pms)
-        #self.env = environments(path, env_pms)
 
         # Initialize agent
         self.agent = agent_factory.create(agent_pms.name,

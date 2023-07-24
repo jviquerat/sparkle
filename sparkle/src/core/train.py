@@ -31,12 +31,8 @@ def train(json_file, pms):
     # Copy json file to results folder
     shutil.copyfile(json_file, results_path+'/params.json')
 
-    # Handle parallel wrapper
-    #parallel = spk_parallel(pms)
-
     # Initialize trainer
     trainer = trainer_factory.create(pms.trainer.name,
-                                     #parallel  = parallel,
                                      env_pms   = pms.environment,
                                      agent_pms = pms.agent,
                                      path      = results_path,

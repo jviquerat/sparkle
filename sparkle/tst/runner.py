@@ -6,7 +6,7 @@ import shutil
 # Custom imports
 from sparkle.src.utils.json       import *
 from sparkle.src.utils.data       import *
-from sparkle.src.env.environments import *
+#from sparkle.src.env.parallel     import parallel
 from sparkle.src.trainer.trainer  import *
 
 ###############################################
@@ -20,6 +20,9 @@ def runner(json_file, agent_type, val_avg, val_bst):
     # Initialize json parser and read test json file
     reader = json_parser()
     reader.read(json_file)
+
+    # Initialize parallel framework
+    parallel.set(reader.pms)
 
     # Initialize trainer
     trainer = trainer_factory.create(reader.pms.trainer.name,
