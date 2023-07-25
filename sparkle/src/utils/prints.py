@@ -3,7 +3,7 @@ import os
 import subprocess
 
 # Custom improts
-from sparkle.src.env.mpi import *
+from sparkle.src.env.parallel import parallel
 
 ###############################################
 ### A set of functions to format printings
@@ -16,33 +16,33 @@ bld_clr = '\033[1m'
 
 ### New line
 def new_line():
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         print("")
 
 ### Header
 def header():
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         print("#################################")
 
 ### Liner
 def liner():
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         new_line()
         print("###", end=" ")
 
 ### Liner with no newline
 def liner_simple():
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         print("###", end=" ")
 
 ### Spacer
 def spacer():
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         print("#", end=" ")
 
 ### Sparkle disclaimer
 def disclaimer():
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         header()
         liner_simple()
         bold("Sparkle, an optimization library")
@@ -52,22 +52,22 @@ def disclaimer():
 
 ### Print with warning color
 def warn(text):
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         print(wrn_clr + text + end_clr)
 
 ### Print with error color
 def errr(text):
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         print(err_clr + text + end_clr)
 
 ### Print with bold text
 def bold(text):
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         print(bld_clr + text + end_clr)
 
 ### Print git revision
 def git_short_hash() -> str:
-    if (mpi.rank == 0):
+    if (parallel.is_root()):
         try:
             process = subprocess.Popen(['git', 'rev-parse', '--short', 'HEAD'],
                                        shell=False,

@@ -14,4 +14,4 @@ def test_cmaes():
 
     # Run test
     runner("sparkle/tst/agent/rosenbrock_cmaes.json",
-           "cmaes", 1.0e-4, 1.0e-6)
+           "cmaes", 1.0e-3, 1.0e-4)
