@@ -20,7 +20,7 @@ class cmaes():
         self.clip        = False
 
         if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
-        if hasattr(pms, "lambda"):       self.lmbda        = pms.lmbda
+        if hasattr(pms, "lmbda"):        self.lmbda        = pms.lmbda
         if hasattr(pms, "sigma0"):       self.sigma0       = pms.sigma0
         if hasattr(pms, "x0"):           self.x0           = np.array(pms.x0)
         if hasattr(pms, "clip"):         self.clip         = np.array(pms.clip)
