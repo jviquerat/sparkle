@@ -8,7 +8,7 @@ import tensorflow_probability        as     tfp
 from   tensorflow.keras              import Model
 from   tensorflow.keras.layers       import Dense
 from   tensorflow.keras.initializers import Orthogonal, LecunNormal
-from   tensorflow.keras.optimizers.legacy   import Adam
+from   tensorflow.keras.optimizers   import Adam
 
 # Define alias
 tf.keras.backend.set_floatx('float32')
