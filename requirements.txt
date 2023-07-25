@@ -1,8 +1,6 @@
 absl-py==1.1.0
 astunparse==1.6.3
-atari-py==0.2.9
 attrs==21.2.0
-Box2D==2.3.10
 cachetools==4.2.2
 certifi==2020.12.5
 cffi==1.15.0
@@ -21,9 +19,6 @@ google-auth==1.30.0
 google-auth-oauthlib==0.4.4
 google-pasta==0.2.0
 grpcio==1.37.1
-gym==0.26.1
-gym-notices==0.0.7
-gymnasium-notices==0.0.1
 h5py==2.10.0
 idna==2.10
 imageio==2.19.3
@@ -38,8 +33,6 @@ llvmlite==0.39.1
 Markdown==3.3.4
 matplotlib==3.4.2
 mpi4py==3.1.4
-mujoco==2.2.0
-mujoco-py==2.1.2.14
 numba==0.56.2
 numpy==1.22.4
 oauthlib==3.1.0
