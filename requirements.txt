@@ -64,7 +64,6 @@ requests-oauthlib==1.3.0
 rsa==4.7.2
 scipy==1.6.3
 six==1.15.0
--e git+ssh://git@github.com/jviquerat/sparkle.git@94239f4d09d6387112d7360a72bd46035939837b#egg=spk
 swig==4.1.1
 tensorboard==2.9.0
 tensorboard-data-server==0.6.0
