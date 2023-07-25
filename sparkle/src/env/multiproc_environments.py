@@ -100,7 +100,7 @@ class multiproc_environments:
 
         # Send
         for p in self.pipes:
-            p.send(('reset', None))
+            p.send(('reset', run))
 
         # Receive
         data = np.array([])
