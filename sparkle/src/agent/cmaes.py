@@ -3,6 +3,9 @@ import math
 import random
 import numpy as np
 
+# Custom imports
+from sparkle.src.utils.prints import *
+
 ###############################################
 ### CMAES
 class cmaes():
@@ -51,6 +54,16 @@ class cmaes():
         self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))              # expectation of N(0,I)
 
         self.n_steps_total = self.n_steps_max*self.lmbda
+
+        self.summary()
+
+    # Print informations
+    def summary(self):
+
+        spacer()
+        print("Using CMAES algorithm with "+str(self.lmbda)+" points")
+        spacer()
+        print("Problem dimensionality is "+str(self.dim))
 
     # Reset
     def reset(self, run):
