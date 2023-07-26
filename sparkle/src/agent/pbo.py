@@ -5,6 +5,7 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.utils.network import *
+from sparkle.src.utils.prints  import *
 
 ###############################################
 ### PBO
@@ -74,6 +75,16 @@ class pbo():
         self.obs = 1.0
 
         self.n_steps_total = self.n_steps_max*self.n_points
+
+        self.summary()
+
+    # Print informations
+    def summary(self):
+
+        spacer()
+        print("Using PBO algorithm with "+str(self.n_points)+" points")
+        spacer()
+        print("Problem dimensionality is "+str(self.dim))
 
     # Reset
     def reset(self, run):

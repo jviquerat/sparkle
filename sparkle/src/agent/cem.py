@@ -3,6 +3,9 @@ import math
 import random
 import numpy as np
 
+# Custom imports
+from sparkle.src.utils.prints import *
+
 ###############################################
 ### CEM
 class cem():
@@ -24,6 +27,16 @@ class cem():
         if hasattr(pms, "alpha"):        self.alpha        = pms.alpha
 
         self.n_steps_total = self.n_steps_max*self.n_points
+
+        self.summary()
+
+    # Print informations
+    def summary(self):
+
+        spacer()
+        print("Using CEM algorithm with "+str(self.n_points)+" points")
+        spacer()
+        print("Problem dimensionality is "+str(self.dim))
 
     # Reset
     def reset(self, run):

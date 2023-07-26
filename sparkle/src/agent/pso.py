@@ -2,6 +2,9 @@
 import random
 import numpy as np
 
+# Custom imports
+from sparkle.src.utils.prints import *
+
 ###############################################
 ### Particle swarm optimization
 class pso():
@@ -27,6 +30,16 @@ class pso():
         if hasattr(pms, "w"):           self.w           = pms.w
 
         self.n_steps_total = self.n_steps_max*self.n_particles
+
+        self.summary()
+
+    # Print informations
+    def summary(self):
+
+        spacer()
+        print("Using PSO algorithm with "+str(self.n_particles)+" points")
+        spacer()
+        print("Problem dimensionality is "+str(self.dim))
 
     # Reset
     def reset(self, run):
