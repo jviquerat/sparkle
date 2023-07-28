@@ -472,5 +472,5 @@ class pbo():
             gs = f"{self.best_score:.5e}"
             gb = np.array2string(self.best_x, precision=5, floatmode='fixed',
                                  threshold=5, separator=',')
-            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                                                                                   ", end=end)
+            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                                                                                              ", end=end)
 

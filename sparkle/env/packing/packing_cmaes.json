@@ -1,6 +1,6 @@
 {
-    "n_avg": 3,
-    "avg_type": "log",
+    "n_avg": 10,
+    "avg_type": "linear",
     "naming": {
         "env": true,
         "agent": true,
@@ -10,15 +10,17 @@
     "environment": {
         "name": "packing",
         "args":{
-            "obj_type": "sphere",
+            "obj_type": "triangle",
             "obj_size": 1.0,
-            "n_objs": 6,
-            "max_side": 7.0
+            "n_objs": 5,
+            "max_side": 3.0
         }
     },
     "agent": {
         "name": "cmaes",
-        "n_steps_max": 500
+        "n_steps_max": 1000,
+        "lmbda": 20,
+        "escape": true
     },
     "trainer": {
         "name": "regular",

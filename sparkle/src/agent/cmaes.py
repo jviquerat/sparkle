@@ -21,12 +21,15 @@ class cmaes():
         self.x0          = 0.5*(xmax+xmin)
         self.lmbda       = 4 + math.floor(3.0*math.log(self.dim))
         self.clip        = False
+        self.escape      = False
 
         if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
         if hasattr(pms, "lmbda"):        self.lmbda        = pms.lmbda
         if hasattr(pms, "sigma0"):       self.sigma0       = pms.sigma0
         if hasattr(pms, "x0"):           self.x0           = np.array(pms.x0)
         if hasattr(pms, "clip"):         self.clip         = np.array(pms.clip)
+        if hasattr(pms, "escape"):       self.escape       = np.array(pms.escape)
+        if hasattr(pms, "n_escape"):     self.n_escape     = np.array(pms.n_escape)
 
         # Number of selected samples
         self.fmu    = self.lmbda/2.0
@@ -164,6 +167,11 @@ class cmaes():
         self.D         = np.diag(np.sqrt(self.D))
         self.BD        = np.matmul(self.B, self.D)
 
+        # Escape flat cost function
+        if (self.escape):
+            if (c[0] > 0.999*c[-1]):
+                self.sigma *= np.exp(2.0+self.cs/self.dp)
+
         # Sample
         self.sample()
 
@@ -236,6 +244,6 @@ class cmaes():
         if (self.cnt <= 1):
             gs = f"{self.best_score:.5e}"
             gb = np.array2string(self.best_x, precision=5, floatmode='fixed',
-                                 threshold=5, separator=',')
-            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                                                                                   ", end=end)
+                                 threshold=4, separator=',')
+            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                                                                                                           ", end=end)
 
