@@ -8,11 +8,11 @@
         "time": false
     },
     "environment": {
-        "name": "rosenbrock"
+        "name": "parabola"
     },
     "agent": {
         "name": "pbo",
-        "n_steps_max": 150
+        "n_steps_max": 50
     },
     "trainer": {
         "name": "regular",

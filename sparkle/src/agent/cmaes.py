@@ -1,16 +1,12 @@
-# Generic imports
-import math
-import random
-import numpy as np
-
 # Custom imports
-from sparkle.src.utils.prints import *
+from sparkle.src.agent.base import *
 
 ###############################################
 ### CMAES
-class cmaes():
+class cmaes(base_agent):
     def __init__(self, path, dim, xmin, xmax, pms):
 
+        self.name        = "CMAES"
         self.base_path   = path
         self.dim         = dim
         self.xmin        = xmin
@@ -19,12 +15,12 @@ class cmaes():
         self.n_steps_max = 20
         self.sigma0      = 0.25*(np.min(xmax)-np.max(xmin))
         self.x0          = 0.5*(xmax+xmin)
-        self.lmbda       = 4 + math.floor(3.0*math.log(self.dim))
+        self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
         self.clip        = False
         self.escape      = False
 
         if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
-        if hasattr(pms, "lmbda"):        self.lmbda        = pms.lmbda
+        if hasattr(pms, "n_points"):     self.n_points     = pms.n_points
         if hasattr(pms, "sigma0"):       self.sigma0       = pms.sigma0
         if hasattr(pms, "x0"):           self.x0           = np.array(pms.x0)
         if hasattr(pms, "clip"):         self.clip         = np.array(pms.clip)
@@ -32,7 +28,7 @@ class cmaes():
         if hasattr(pms, "n_escape"):     self.n_escape     = np.array(pms.n_escape)
 
         # Number of selected samples
-        self.fmu    = self.lmbda/2.0
+        self.fmu    = self.n_points/2.0
         self.mu     = math.floor(self.fmu)
 
         # Recombination weights
@@ -56,17 +52,9 @@ class cmaes():
         self.dp = 1.0 + 2.0*max(0.0, math.sqrt((mu_eff-1.0)/(dim+1.0)) - 1.0) + self.cs # damping for step-size
         self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))              # expectation of N(0,I)
 
-        self.n_steps_total = self.n_steps_max*self.lmbda
+        self.n_steps_total = self.n_steps_max*self.n_points
 
         self.summary()
-
-    # Print informations
-    def summary(self):
-
-        spacer()
-        print("Using CMAES algorithm with "+str(self.lmbda)+" points")
-        spacer()
-        print("Problem dimensionality is "+str(self.dim))
 
     # Reset
     def reset(self, run):
@@ -109,9 +97,9 @@ class cmaes():
     # Sample from distribution
     def sample(self):
 
-        self.z = np.random.randn(self.lmbda, self.dim) # draw from N(0,1)
+        self.z = np.random.randn(self.n_points, self.dim) # draw from N(0,1)
         self.x = np.zeros_like(self.z)
-        for i in range(self.lmbda):
+        for i in range(self.n_points):
             self.x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, self.z[i,:])
 
         if (self.clip):
@@ -185,65 +173,3 @@ class cmaes():
         self.x[:] = self.x[sc[:]]
         self.z[:] = self.z[sc[:]]
         c[:]      = c[sc[:]]
-
-    # Return degrees of freedom
-    def dof(self):
-
-        return self.x
-
-    # Return number of degress of freedom
-    def ndof(self):
-
-        return self.lmbda
-
-    # Check if done
-    def done(self):
-
-        if (self.stp == self.n_steps_max):
-            return True
-
-        return False
-
-    # Store data
-    def store(self, c):
-
-        for i in range(self.lmbda):
-            self.hist_t[self.total_stp]   = self.total_stp
-            self.hist_x[self.total_stp,:] = self.x[i,:]
-            self.hist_c[self.total_stp]   = c[i]
-            self.hist_b[self.total_stp]   = self.best_score
-
-            self.total_stp += 1
-
-    # Dump data
-    def dump(self):
-
-        filename = self.path+'/raw.dat'
-        np.savetxt(filename,
-                   np.hstack([np.reshape(self.hist_t, (-1,1)),
-                              np.reshape(self.hist_c, (-1,1)),
-                              np.reshape(self.hist_b, (-1,1)),
-                              np.reshape(self.hist_x, (-1,self.dim))]),
-                   fmt='%.5e')
-
-    # Print
-    def print(self):
-
-        # Total nb of evaluations
-        n_eval = self.stp*self.lmbda
-
-        # Handle no-printing after max step
-        if (self.stp < self.n_steps_max-1):
-            end = "\r"
-            self.cnt = 0
-        else:
-            end  = "\n"
-            self.cnt += 1
-
-        # Actual print
-        if (self.cnt <= 1):
-            gs = f"{self.best_score:.5e}"
-            gb = np.array2string(self.best_x, precision=5, floatmode='fixed',
-                                 threshold=4, separator=',')
-            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                                                                                                           ", end=end)
-

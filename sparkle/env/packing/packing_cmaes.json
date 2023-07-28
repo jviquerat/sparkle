@@ -19,7 +19,7 @@
     "agent": {
         "name": "cmaes",
         "n_steps_max": 1000,
-        "lmbda": 20,
+        "n_points": 20,
         "escape": true
     },
     "trainer": {

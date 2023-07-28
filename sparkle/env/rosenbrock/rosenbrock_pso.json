@@ -13,7 +13,7 @@
     "agent": {
         "name": "pso",
         "n_steps_max": 150,
-        "n_particles": 10,
+        "n_points": 10,
         "v0": 0.1,
         "c1": 1.0,
         "c2": 1.0,

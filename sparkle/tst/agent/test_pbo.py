@@ -10,8 +10,8 @@ from sparkle.tst.runner import *
 def test_pbo():
 
     # Add environment to PATH
-    sys.path.append("sparkle/env/rosenbrock")
+    sys.path.append("sparkle/env/parabola")
 
     # Run test
-    runner("sparkle/tst/agent/rosenbrock_pbo.json",
+    runner("sparkle/tst/agent/parabola_pbo.json",
            "pbo", 1.0e-3, 1.0e-4)
