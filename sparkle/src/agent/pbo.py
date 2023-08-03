@@ -181,12 +181,19 @@ class pbo(base_agent):
         np.random.shuffle(sample)
 
         # Draw elements as lists
-        buff_x = [self.hist_x[i] for i in sample]
-        buff_a = [self.hist_a[i] for i in sample]
+        buff_x = tf.convert_to_tensor([self.hist_x[i] for i in sample])
+        buff_a = tf.convert_to_tensor([self.hist_a[i] for i in sample])
+
+        # Remove elements with zero advantage
+        # if (self.adv_clip):
+        #     idx    = tf.where(buff_a > 0)
+        #     idx    = tf.reshape(idx, [-1])
+        #     buff_a = tf.gather(buff_a, idx)
+        #     buff_x = tf.gather(buff_x, idx)
 
         # Reshape
-        buff_x = tf.reshape(buff_x, [buff_size, self.dim])
-        buff_a = tf.reshape(buff_a, [buff_size])
+        buff_x = tf.reshape(buff_x, [-1, self.dim])
+        buff_a = tf.reshape(buff_a, [-1])
 
         return buff_x, buff_a
 
@@ -364,6 +371,29 @@ class pbo(base_agent):
     # Compute covariance matrix
     def get_cov(self, sg, cr):
 
+        # # Create skew-symmetric matrix
+        # t = tf.zeros([self.dim, self.dim])
+
+        # idx = 0
+        # for dg in range(self.dim-1):
+        #     diag = cr[idx:idx+self.dim-(dg+1)]
+        #     idx += self.dim-(dg+1)
+        #     t    = tf.linalg.set_diag(t,  diag, k=-(dg+1))
+        #     t    = tf.linalg.set_diag(t, -diag, k= (dg+1))
+
+        # # Exponentiate to get orthogonal matrix
+        # et = tf.linalg.expm(t)
+
+        # # Generate diagonal matrix
+        # s = tf.zeros([self.dim, self.dim])
+        # s = tf.linalg.set_diag(s, sg, k=0)
+
+        # # Generate covariance matrix
+        # cov = tf.matmul(et,s)
+        # cov = tf.matmul(cov, tf.transpose(et))
+
+        # return cov
+
         # Extract sigmas and thetas
         sigmas = sg
         thetas = cr*math.pi
@@ -395,7 +425,7 @@ class pbo(base_agent):
 
         cor = tf.matmul(cor, tf.transpose(cor))
         scl = tf.zeros([self.dim, self.dim])
-        scl = tf.linalg.set_diag(scl, sigmas, k=0)
+        scl = tf.linalg.set_diag(scl, tf.sqrt(sigmas), k=0)
         cov = tf.matmul(scl, cor)
         cov = tf.matmul(cov, scl)
 
