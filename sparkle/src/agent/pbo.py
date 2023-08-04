@@ -18,6 +18,8 @@ class pbo(base_agent):
         self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
 
         self.n_steps_max = 20
+        self.p_elite     = 2
+        self.n_elite     = self.n_points//self.p_elite
         self.lr_mu       = 5.0e-3
         self.lr_sg       = 5.0e-3
         self.lr_cr       = 1.0e-3
@@ -62,7 +64,7 @@ class pbo(base_agent):
         if hasattr(pms, "adv_decay"):   self.adv_decay   = np.array(pms.adv_decay)
 
         self.net_mu = nn(self.mu_arch, self.obs_dim, self.dim,
-                         'tanh', 'tanh', self.lr_mu)
+                         'tanh', 'tanh',    self.lr_mu)
         self.net_sg = nn(self.sg_arch, self.obs_dim, self.dim,
                          'tanh', 'sigmoid', self.lr_sg)
         self.net_cr = nn(self.cr_arch, self.obs_dim, self.cov_dim,
@@ -215,7 +217,9 @@ class pbo(base_agent):
 
         # Clip advantages if required
         if (self.adv_clip):
-            adv = np.maximum(adv, 0.0)
+            sc = np.argsort(adv)
+            adv[sc[:self.n_elite]] = 0.0
+            # adv = np.maximum(adv, 0.0)
 
         # Decay advantage history
         self.hist_a[:] *= self.adv_decay
