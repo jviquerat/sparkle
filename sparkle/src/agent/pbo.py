@@ -158,9 +158,12 @@ class pbo(base_agent):
         self.compute_advantages()
 
         # Update
-        self.train_loop_mu()
-        self.train_loop_sg()
-        self.train_loop_cr()
+        self.train_loop(self.mu_epochs, self.mu_gen,
+                        self.mu_batch,  self.net_mu)
+        self.train_loop(self.sg_epochs, self.sg_gen,
+                        self.sg_batch,  self.net_sg)
+        self.train_loop(self.cr_epochs, self.cr_gen,
+                        self.cr_batch,  self.net_cr)
 
         # Sample
         self.sample()
@@ -218,21 +221,20 @@ class pbo(base_agent):
         self.hist_a[:] *= self.adv_decay
         self.hist_a[start:end] = adv[:]
 
-    # Train loop for mu
-    def train_loop_mu(self):
+    # Train loop
+    def train_loop(self, n_epochs, n_gens, n_batch, net):
 
         # Loop on epochs
-        for epoch in range(self.mu_epochs):
-            n    = self.mu_gen
-            x, a = self.get_history(n)
+        for epoch in range(n_epochs):
+            x, a = self.get_history(n_gens)
             done = False
             btc  = 0
 
             # Visit all available history
             while not done:
 
-                start    = btc*self.mu_batch*self.n_points
-                end      = min((btc+1)*self.mu_batch*self.n_points,len(a))
+                start    = btc*n_batch*self.n_points
+                end      = min((btc+1)*n_batch*self.n_points,len(a))
                 btc     += 1
                 if (end == len(a)): done = True
 
@@ -240,58 +242,9 @@ class pbo(base_agent):
                 btc_a = a[start:end]
                 btc_o = tf.ones([end-start, self.obs_dim])*self.obs
 
-                self.train(btc_o, btc_a, btc_x, self.net_mu)
+                self.train(btc_o, btc_a, btc_x, net)
 
-    # Train loop for sg
-    def train_loop_sg(self):
-
-        # Loop on epochs
-        for epoch in range(self.sg_epochs):
-            n    = self.sg_gen
-            x, a = self.get_history(n)
-            done = False
-            btc  = 0
-
-            # Visit all available history
-            while not done:
-
-                start    = btc*self.sg_batch*self.n_points
-                end      = min((btc+1)*self.sg_batch*self.n_points,len(a))
-                btc     += 1
-                if (end == len(a)): done = True
-
-                btc_x = x[start:end]
-                btc_a = a[start:end]
-                btc_o = tf.ones([end-start, self.obs_dim])*self.obs
-
-                self.train(btc_o, btc_a, btc_x, self.net_sg)
-
-    # Train loop for cr
-    def train_loop_cr(self):
-
-        # Loop on epochs
-        for epoch in range(self.cr_epochs):
-            n    = self.cr_gen
-            x, a = self.get_history(n)
-            done = False
-            btc  = 0
-
-            # Visit all available history
-            while not done:
-
-                start    = btc*self.cr_batch*self.n_points
-                end      = min((btc+1)*self.cr_batch*self.n_points,len(a))
-
-                btc     += 1
-                if (end == len(a)): done = True
-
-                btc_x = x[start:end]
-                btc_a = a[start:end]
-                btc_o = tf.ones([end-start, self.obs_dim])*self.obs
-
-                self.train(btc_o, btc_a, btc_x, self.net_cr)
-
-    # Train mu network
+    # Train network
     @tf.function
     def train(self, obs, adv, act, net):
 
