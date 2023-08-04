@@ -102,7 +102,7 @@ class pbo(base_agent):
         self.net_cr.reset()
 
         # Initial sampling
-        # This fills x and z arrays with samples
+        # This fills x array with samples
         self.sample()
 
         return self.x
@@ -240,7 +240,7 @@ class pbo(base_agent):
                 btc_a = a[start:end]
                 btc_o = tf.ones([end-start, self.obs_dim])*self.obs
 
-                self.train_mu(btc_o, btc_a, btc_x)
+                self.train(btc_o, btc_a, btc_x, self.net_mu)
 
     # Train loop for sg
     def train_loop_sg(self):
@@ -264,7 +264,7 @@ class pbo(base_agent):
                 btc_a = a[start:end]
                 btc_o = tf.ones([end-start, self.obs_dim])*self.obs
 
-                self.train_sg(btc_o, btc_a, btc_x)
+                self.train(btc_o, btc_a, btc_x, self.net_sg)
 
     # Train loop for cr
     def train_loop_cr(self):
@@ -289,13 +289,13 @@ class pbo(base_agent):
                 btc_a = a[start:end]
                 btc_o = tf.ones([end-start, self.obs_dim])*self.obs
 
-                self.train_cr(btc_o, btc_a, btc_x)
+                self.train(btc_o, btc_a, btc_x, self.net_cr)
 
     # Train mu network
     @tf.function
-    def train_mu(self, obs, adv, act):
+    def train(self, obs, adv, act, net):
 
-        var = self.net_mu.trainable_variables
+        var = net.trainable_variables
         with tf.GradientTape() as tape:
             tape.watch(var)
 
@@ -307,43 +307,7 @@ class pbo(base_agent):
 
         grads = tape.gradient(loss, var)
         norm  = tf.linalg.global_norm(grads)
-        self.net_mu.opt.apply_gradients(zip(grads, var))
-
-    # Train sg network
-    @tf.function
-    def train_sg(self, obs, adv, act):
-
-        var = self.net_sg.trainable_variables
-        with tf.GradientTape() as tape:
-            tape.watch(var)
-
-            cr = tf.convert_to_tensor(self.net_cr.call(obs))
-            sg = tf.convert_to_tensor(self.net_sg.call(obs)*self.sigma0)
-            mu = tf.convert_to_tensor(self.net_mu.call(obs)+self.x0)
-
-            loss = self.get_loss(obs, adv, act, mu, sg, cr)
-
-        grads = tape.gradient(loss, var)
-        norm  = tf.linalg.global_norm(grads)
-        self.net_sg.opt.apply_gradients(zip(grads, var))
-
-    # Train cr network
-    @tf.function
-    def train_cr(self, obs, adv, act):
-
-        var = self.net_cr.trainable_variables
-        with tf.GradientTape() as tape:
-            tape.watch(var)
-
-            cr = tf.convert_to_tensor(self.net_cr.call(obs))
-            sg = tf.convert_to_tensor(self.net_sg.call(obs)*self.sigma0)
-            mu = tf.convert_to_tensor(self.net_mu.call(obs)+self.x0)
-
-            loss = self.get_loss(obs, adv, act, mu, sg, cr)
-
-        grads = tape.gradient(loss, var)
-        norm  = tf.linalg.global_norm(grads)
-        self.net_cr.opt.apply_gradients(zip(grads, var))
+        net.opt.apply_gradients(zip(grads, var))
 
     # Compute loss
     def get_loss(self, obs, adv, act, mu, sg, cr):
