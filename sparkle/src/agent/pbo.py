@@ -62,7 +62,7 @@ class pbo(base_agent):
         if hasattr(pms, "adv_decay"):   self.adv_decay   = np.array(pms.adv_decay)
 
         self.net_mu = nn(self.mu_arch, self.obs_dim, self.dim,
-                         'relu', 'tanh', self.lr_mu)
+                         'tanh', 'tanh', self.lr_mu)
         self.net_sg = nn(self.sg_arch, self.obs_dim, self.dim,
                          'tanh', 'sigmoid', self.lr_sg)
         self.net_cr = nn(self.cr_arch, self.obs_dim, self.cov_dim,
