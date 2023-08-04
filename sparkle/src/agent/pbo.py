@@ -18,6 +18,8 @@ class pbo(base_agent):
         self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
 
         self.n_steps_max = 20
+        self.p_elite     = 2
+        self.n_elite     = self.n_points//self.p_elite
         self.lr_mu       = 5.0e-3
         self.lr_sg       = 5.0e-3
         self.lr_cr       = 1.0e-3
@@ -62,7 +64,7 @@ class pbo(base_agent):
         if hasattr(pms, "adv_decay"):   self.adv_decay   = np.array(pms.adv_decay)
 
         self.net_mu = nn(self.mu_arch, self.obs_dim, self.dim,
-                         'relu', 'tanh', self.lr_mu)
+                         'tanh', 'tanh',    self.lr_mu)
         self.net_sg = nn(self.sg_arch, self.obs_dim, self.dim,
                          'tanh', 'sigmoid', self.lr_sg)
         self.net_cr = nn(self.cr_arch, self.obs_dim, self.cov_dim,
@@ -102,7 +104,7 @@ class pbo(base_agent):
         self.net_cr.reset()
 
         # Initial sampling
-        # This fills x and z arrays with samples
+        # This fills x array with samples
         self.sample()
 
         return self.x
@@ -158,9 +160,12 @@ class pbo(base_agent):
         self.compute_advantages()
 
         # Update
-        self.train_loop_mu()
-        self.train_loop_sg()
-        self.train_loop_cr()
+        self.train_loop(self.mu_epochs, self.mu_gen,
+                        self.mu_batch,  self.net_mu)
+        self.train_loop(self.sg_epochs, self.sg_gen,
+                        self.sg_batch,  self.net_sg)
+        self.train_loop(self.cr_epochs, self.cr_gen,
+                        self.cr_batch,  self.net_cr)
 
         # Sample
         self.sample()
@@ -181,12 +186,19 @@ class pbo(base_agent):
         np.random.shuffle(sample)
 
         # Draw elements as lists
-        buff_x = [self.hist_x[i] for i in sample]
-        buff_a = [self.hist_a[i] for i in sample]
+        buff_x = tf.convert_to_tensor([self.hist_x[i] for i in sample])
+        buff_a = tf.convert_to_tensor([self.hist_a[i] for i in sample])
+
+        # Remove elements with zero advantage
+        # if (self.adv_clip):
+        #     idx    = tf.where(buff_a > 0)
+        #     idx    = tf.reshape(idx, [-1])
+        #     buff_a = tf.gather(buff_a, idx)
+        #     buff_x = tf.gather(buff_x, idx)
 
         # Reshape
-        buff_x = tf.reshape(buff_x, [buff_size, self.dim])
-        buff_a = tf.reshape(buff_a, [buff_size])
+        buff_x = tf.reshape(buff_x, [-1, self.dim])
+        buff_a = tf.reshape(buff_a, [-1])
 
         return buff_x, buff_a
 
@@ -205,27 +217,28 @@ class pbo(base_agent):
 
         # Clip advantages if required
         if (self.adv_clip):
-            adv = np.maximum(adv, 0.0)
+            sc = np.argsort(adv)
+            adv[sc[:self.n_elite]] = 0.0
+            # adv = np.maximum(adv, 0.0)
 
         # Decay advantage history
         self.hist_a[:] *= self.adv_decay
         self.hist_a[start:end] = adv[:]
 
-    # Train loop for mu
-    def train_loop_mu(self):
+    # Train loop
+    def train_loop(self, n_epochs, n_gens, n_batch, net):
 
         # Loop on epochs
-        for epoch in range(self.mu_epochs):
-            n    = self.mu_gen
-            x, a = self.get_history(n)
+        for epoch in range(n_epochs):
+            x, a = self.get_history(n_gens)
             done = False
             btc  = 0
 
             # Visit all available history
             while not done:
 
-                start    = btc*self.mu_batch*self.n_points
-                end      = min((btc+1)*self.mu_batch*self.n_points,len(a))
+                start    = btc*n_batch*self.n_points
+                end      = min((btc+1)*n_batch*self.n_points,len(a))
                 btc     += 1
                 if (end == len(a)): done = True
 
@@ -233,62 +246,13 @@ class pbo(base_agent):
                 btc_a = a[start:end]
                 btc_o = tf.ones([end-start, self.obs_dim])*self.obs
 
-                self.train_mu(btc_o, btc_a, btc_x)
+                self.train(btc_o, btc_a, btc_x, net)
 
-    # Train loop for sg
-    def train_loop_sg(self):
-
-        # Loop on epochs
-        for epoch in range(self.sg_epochs):
-            n    = self.sg_gen
-            x, a = self.get_history(n)
-            done = False
-            btc  = 0
-
-            # Visit all available history
-            while not done:
-
-                start    = btc*self.sg_batch*self.n_points
-                end      = min((btc+1)*self.sg_batch*self.n_points,len(a))
-                btc     += 1
-                if (end == len(a)): done = True
-
-                btc_x = x[start:end]
-                btc_a = a[start:end]
-                btc_o = tf.ones([end-start, self.obs_dim])*self.obs
-
-                self.train_sg(btc_o, btc_a, btc_x)
-
-    # Train loop for cr
-    def train_loop_cr(self):
-
-        # Loop on epochs
-        for epoch in range(self.cr_epochs):
-            n    = self.cr_gen
-            x, a = self.get_history(n)
-            done = False
-            btc  = 0
-
-            # Visit all available history
-            while not done:
-
-                start    = btc*self.cr_batch*self.n_points
-                end      = min((btc+1)*self.cr_batch*self.n_points,len(a))
-
-                btc     += 1
-                if (end == len(a)): done = True
-
-                btc_x = x[start:end]
-                btc_a = a[start:end]
-                btc_o = tf.ones([end-start, self.obs_dim])*self.obs
-
-                self.train_cr(btc_o, btc_a, btc_x)
-
-    # Train mu network
+    # Train network
     @tf.function
-    def train_mu(self, obs, adv, act):
+    def train(self, obs, adv, act, net):
 
-        var = self.net_mu.trainable_variables
+        var = net.trainable_variables
         with tf.GradientTape() as tape:
             tape.watch(var)
 
@@ -300,43 +264,7 @@ class pbo(base_agent):
 
         grads = tape.gradient(loss, var)
         norm  = tf.linalg.global_norm(grads)
-        self.net_mu.opt.apply_gradients(zip(grads, var))
-
-    # Train sg network
-    @tf.function
-    def train_sg(self, obs, adv, act):
-
-        var = self.net_sg.trainable_variables
-        with tf.GradientTape() as tape:
-            tape.watch(var)
-
-            cr = tf.convert_to_tensor(self.net_cr.call(obs))
-            sg = tf.convert_to_tensor(self.net_sg.call(obs)*self.sigma0)
-            mu = tf.convert_to_tensor(self.net_mu.call(obs)+self.x0)
-
-            loss = self.get_loss(obs, adv, act, mu, sg, cr)
-
-        grads = tape.gradient(loss, var)
-        norm  = tf.linalg.global_norm(grads)
-        self.net_sg.opt.apply_gradients(zip(grads, var))
-
-    # Train cr network
-    @tf.function
-    def train_cr(self, obs, adv, act):
-
-        var = self.net_cr.trainable_variables
-        with tf.GradientTape() as tape:
-            tape.watch(var)
-
-            cr = tf.convert_to_tensor(self.net_cr.call(obs))
-            sg = tf.convert_to_tensor(self.net_sg.call(obs)*self.sigma0)
-            mu = tf.convert_to_tensor(self.net_mu.call(obs)+self.x0)
-
-            loss = self.get_loss(obs, adv, act, mu, sg, cr)
-
-        grads = tape.gradient(loss, var)
-        norm  = tf.linalg.global_norm(grads)
-        self.net_cr.opt.apply_gradients(zip(grads, var))
+        net.opt.apply_gradients(zip(grads, var))
 
     # Compute loss
     def get_loss(self, obs, adv, act, mu, sg, cr):
@@ -363,6 +291,29 @@ class pbo(base_agent):
 
     # Compute covariance matrix
     def get_cov(self, sg, cr):
+
+        # # Create skew-symmetric matrix
+        # t = tf.zeros([self.dim, self.dim])
+
+        # idx = 0
+        # for dg in range(self.dim-1):
+        #     diag = cr[idx:idx+self.dim-(dg+1)]
+        #     idx += self.dim-(dg+1)
+        #     t    = tf.linalg.set_diag(t,  diag, k=-(dg+1))
+        #     t    = tf.linalg.set_diag(t, -diag, k= (dg+1))
+
+        # # Exponentiate to get orthogonal matrix
+        # et = tf.linalg.expm(t)
+
+        # # Generate diagonal matrix
+        # s = tf.zeros([self.dim, self.dim])
+        # s = tf.linalg.set_diag(s, sg, k=0)
+
+        # # Generate covariance matrix
+        # cov = tf.matmul(et,s)
+        # cov = tf.matmul(cov, tf.transpose(et))
+
+        # return cov
 
         # Extract sigmas and thetas
         sigmas = sg
@@ -395,7 +346,7 @@ class pbo(base_agent):
 
         cor = tf.matmul(cor, tf.transpose(cor))
         scl = tf.zeros([self.dim, self.dim])
-        scl = tf.linalg.set_diag(scl, sigmas, k=0)
+        scl = tf.linalg.set_diag(scl, tf.sqrt(sigmas), k=0)
         cov = tf.matmul(scl, cor)
         cov = tf.matmul(cov, scl)
 
