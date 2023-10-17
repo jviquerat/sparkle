@@ -32,6 +32,7 @@ class base_agent():
         # Best point
         self.best_x     = np.zeros(self.dim)
         self.best_score = 1.0e8
+        self.best_stp   =-1
 
     # Sample
     def sample(self):
@@ -44,6 +45,16 @@ class base_agent():
     # Render
     def render(self):
         raise NotImplementedError
+
+    # Update best value
+    def update_best(self, c):
+
+        for i in range(self.n_points):
+
+            if (c[i] <= self.best_score):
+                self.best_score = c[i]
+                self.best_x[:]  = self.x[i,:]
+                self.best_stp   = self.total_stp + i
 
     # Print informations
     def summary(self):
@@ -112,4 +123,4 @@ class base_agent():
             gs = f"{self.best_score:.5e}"
             gb = np.array2string(self.best_x, precision=5, floatmode='fixed',
                                  threshold=4, separator=',')
-            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at x = "+str(gb)+"                                                                                                           ", end=end)
+            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at individual "+str(self.best_stp)+" for x = "+str(gb)+"                                                                                                           ", end=end)
