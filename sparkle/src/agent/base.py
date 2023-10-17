@@ -27,6 +27,7 @@ class base_agent():
         self.hist_t = np.zeros((self.n_steps_total))           # time
         self.hist_c = np.zeros((self.n_steps_total))           # cost
         self.hist_b = np.zeros((self.n_steps_total))           # best cost
+        self.hist_s = np.zeros((self.n_steps_total))           # best step
         self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
 
         # Best point
@@ -90,6 +91,7 @@ class base_agent():
             self.hist_x[self.total_stp,:] = self.x[i,:]
             self.hist_c[self.total_stp]   = c[i]
             self.hist_b[self.total_stp]   = self.best_score
+            self.hist_s[self.total_stp]   = self.best_stp
 
             self.total_stp += 1
 
@@ -101,6 +103,7 @@ class base_agent():
                    np.hstack([np.reshape(self.hist_t, (-1,1)),
                               np.reshape(self.hist_c, (-1,1)),
                               np.reshape(self.hist_b, (-1,1)),
+                              np.reshape(self.hist_s, (-1,1)),
                               np.reshape(self.hist_x, (-1,self.dim))]),
                    fmt='%.5e')
 
