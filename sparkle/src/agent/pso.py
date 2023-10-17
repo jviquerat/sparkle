@@ -55,14 +55,20 @@ class pso(base_agent):
     # matches with the correct cost
     def step(self, c):
 
+        # Update best
         self.update_best(c)
+        self.update_local_best(c)
+
+        # Store
         self.store(c)
+
+        # Update position and velocities
         self.update_xv()
 
         self.stp += 1
 
-    # Update local and global best
-    def update_best(self, c):
+    # Update local best
+    def update_local_best(self, c):
 
         for i in range(self.n_points):
 
@@ -70,11 +76,6 @@ class pso(base_agent):
             if (c[i] <= self.p_score[i]):
                 self.p_score[i]  = c[i]
                 self.p_best[i,:] = self.x[i,:]
-
-            # Update best global score
-            if (c[i] <= self.best_score):
-                self.best_score   = c[i]
-                self.best_x[:] = self.x[i,:]
 
     # Update positions and velocities
     def update_xv(self):

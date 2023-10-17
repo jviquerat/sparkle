@@ -56,13 +56,11 @@ class cem(base_agent):
     # Step
     def step(self, c):
 
+        # Update best value
+        self.update_best(c)
+
         # Sort
         self.sort(c)
-
-        # Update best value
-        if (c[0] < self.best_score):
-            self.best_score = c[0]
-            self.best_x     = self.x[0,:]
 
         # Store
         self.store(c)

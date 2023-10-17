@@ -128,14 +128,6 @@ class pbo(base_agent):
 
         return self.x
 
-    # Update global best
-    def update_best(self, c):
-
-        for i in range(self.n_points):
-            if (c[i] <= self.best_score):
-                self.best_score = c[i]
-                self.best_x     = self.x[i,:]
-
     # Step
     def step(self, c):
 
