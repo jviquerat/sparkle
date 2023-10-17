@@ -6,6 +6,8 @@ from sparkle.src.agent.base import *
 class cem(base_agent):
     def __init__(self, path, dim, xmin, xmax, pms):
 
+        super().__init__(pms)
+
         self.name        = "CEM"
         self.base_path   = path
         self.dim         = dim
@@ -29,23 +31,8 @@ class cem(base_agent):
     # Reset
     def reset(self, run):
 
-        # Step counter       (one step = lambda cost evaluations)
-        # Total step counter (one total step = 1 offspring cost evaluation)
-        self.stp = 0
-        self.total_stp = 0
-
-        # Best values
-        self.best_score = 1.0e8
-        self.best_x     = np.zeros(self.dim)
-
-        # Path
-        self.path = self.base_path+"/"+str(run)
-
-        # Data storage
-        self.hist_t = np.zeros((self.n_steps_total))           # time
-        self.hist_c = np.zeros((self.n_steps_total))           # cost
-        self.hist_b = np.zeros((self.n_steps_total))           # best cost
-        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
+        # Mother class reset
+        super().reset(run)
 
         # Min and max arrays used for cem adaptation
         self.xmin_cem = self.xmin.copy()

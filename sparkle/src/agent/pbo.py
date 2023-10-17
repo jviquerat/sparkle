@@ -7,6 +7,8 @@ from sparkle.src.agent.base import *
 class pbo(base_agent):
     def __init__(self, path, dim, xmin, xmax, pms):
 
+        super().__init__(pms)
+
         self.name        = "PBO"
         self.base_path   = path
         self.dim         = dim
@@ -79,24 +81,11 @@ class pbo(base_agent):
     # Reset
     def reset(self, run):
 
-        # Step counter       (one step = n_points cost evaluations)
-        # Total step counter (one total step = 1 point cost evaluation)
-        self.stp = 0
-        self.total_stp = 0
+        # Mother class reset
+        super().reset(run)
 
-        # Best values
-        self.best_score = 1.0e8
-        self.best_x     = np.zeros(self.dim)
-
-        # Path
-        self.path = self.base_path+"/"+str(run)
-
-        # Data storage
-        self.hist_t = np.zeros((self.n_steps_total))           # time
-        self.hist_c = np.zeros((self.n_steps_total))           # cost
-        self.hist_a = np.zeros((self.n_steps_total))           # advantage
-        self.hist_b = np.zeros((self.n_steps_total))           # best cost
-        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
+        # Additional data storage
+        self.hist_a = np.zeros((self.n_steps_total)) # advantage
 
         # Reset networks
         self.net_mu.reset()

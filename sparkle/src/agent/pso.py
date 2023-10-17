@@ -6,6 +6,8 @@ from sparkle.src.agent.base import *
 class pso(base_agent):
     def __init__(self, path, dim, xmin, xmax, pms):
 
+        super().__init__(pms)
+
         self.name        = "PSO"
         self.base_path   = path
         self.dim         = dim
@@ -33,30 +35,17 @@ class pso(base_agent):
     # Reset
     def reset(self, run):
 
-        # Step counter       (one step = n_points cost evaluations)
-        # Total step counter (one total step = 1 particle cost evaluation)
-        self.stp       = 0
-        self.total_stp = 0
-
-        # Path
-        self.path = self.base_path+"/"+str(run)
-
-        # Data storage
-        self.hist_t = np.zeros((self.n_steps_total))           # time
-        self.hist_c = np.zeros((self.n_steps_total))           # cost
-        self.hist_b = np.zeros((self.n_steps_total))           # best cost
-        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
+        # Mother class reset
+        super().reset(run)
 
         # Positions and velocities
         self.x = np.random.rand(self.n_points, self.dim)
         self.x = self.xmin + self.x*(self.xmax-self.xmin)
         self.v = np.random.randn(self.n_points, self.dim)*self.v0
 
-        # Local best and global best
+        # Local best point
         self.p_best  = np.copy(self.x)
         self.p_score = np.ones(self.n_points)*1.0e8
-        self.best_x  = np.zeros(self.dim)
-        self.best_score = 1.0e8
 
         return self.x
 

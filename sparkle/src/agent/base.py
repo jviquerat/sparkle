@@ -9,12 +9,29 @@ from sparkle.src.utils.prints import *
 ###############################################
 ### Base agent
 class base_agent():
-    def __init__(self):
+    def __init__(self, pms):
         pass
 
     # Reset
     def reset(self, run):
-        raise NotImplementedError
+
+        # Step counter       (one step = n_points cost evaluations)
+        # Total step counter (one total step = 1 particle cost evaluation)
+        self.stp       = 0
+        self.total_stp = 0
+
+        # Path
+        self.path = self.base_path+"/"+str(run)
+
+        # Data storage
+        self.hist_t = np.zeros((self.n_steps_total))           # time
+        self.hist_c = np.zeros((self.n_steps_total))           # cost
+        self.hist_b = np.zeros((self.n_steps_total))           # best cost
+        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
+
+        # Best point
+        self.best_x     = np.zeros(self.dim)
+        self.best_score = 1.0e8
 
     # Sample
     def sample(self):
