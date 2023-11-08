@@ -3,6 +3,7 @@ import sys
 
 # Custom imports
 from sparkle.src.core.train   import *
+from sparkle.src.core.average import *
 from sparkle.src.utils.json   import *
 from sparkle.src.utils.prints import *
 
@@ -41,6 +42,21 @@ def main():
 
         train(json_file, pms)
         return
+
+    # Averaging mode
+    if ("--avg" in args):
+
+        # Set parallel framework
+        parallel.set({})
+
+        # Printings
+        disclaimer()
+        new_line()
+        liner_simple()
+        bold('Average mode')
+
+        dat_args = args[args.index("--avg")+1:]
+        average(dat_args)
 
 if __name__ == "__main__":
     main()
