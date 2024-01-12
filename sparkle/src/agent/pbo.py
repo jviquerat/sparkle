@@ -17,8 +17,8 @@ class pbo(base_agent):
         self.xmin        = xmin
         self.xmax        = xmax
 
-        self.sigma0      = 0.25*(np.min(xmax)-np.max(xmin))
-        self.x0          = 0.5*(xmax+xmin)
+        self.sigma0      = torch.tensor(0.25*(np.min(xmax)-np.max(xmin)))
+        self.x0          = torch.tensor(0.5*(xmax+xmin))
         self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
 
         self.n_steps_max = 20
@@ -33,8 +33,8 @@ class pbo(base_agent):
         if hasattr(pms, "n_steps_max"): self.n_steps_max = pms.n_steps_max
         if hasattr(pms, "n_points"):    self.n_points    = pms.n_points
         if hasattr(pms, "obs_dim"):     self.obs_dim     = pms.obs_dim
-        if hasattr(pms, "sigma0"):      self.sigma0      = pms.sigma0
-        if hasattr(pms, "x0"):          self.x0          = np.array(pms.x0)
+        if hasattr(pms, "sigma0"):      self.sigma0      = torch.tensor(pms.sigma0)
+        if hasattr(pms, "x0"):          self.x0          = torch.tensor(pms.x0)
 
         if hasattr(pms, "adv_clip"):    self.adv_clip    = np.array(pms.adv_clip)
         if hasattr(pms, "adv_decay"):   self.adv_decay   = np.array(pms.adv_decay)
@@ -95,8 +95,8 @@ class pbo(base_agent):
     def sample(self):
 
         obs = torch.ones(1,self.dim)*self.obs
-        mu  = self.net_mu(obs) + torch.tensor(self.x0)
-        sg  = self.net_sg(obs)*torch.tensor(self.sigma0)
+        mu  = self.net_mu(obs) + self.x0
+        sg  = self.net_sg(obs)*self.sigma0
         cr  = self.net_cr(obs)
 
         pdf = self.get_pdf(mu[0], sg[0], cr[0])
@@ -107,7 +107,9 @@ class pbo(base_agent):
     # Compute full cov pdf
     def get_pdf(self, mu, sg, cr):
 
-        pdf = td.MultivariateNormal(mu.float(), torch.diag(sg.float()))
+        cov = self.get_cov(sg, cr)
+        pdf = td.MultivariateNormal(mu.float(), cov)
+        #pdf = td.MultivariateNormal(mu.float(), torch.diag(sg.float()))
 
         return pdf
 
@@ -219,8 +221,8 @@ class pbo(base_agent):
     def get_loss(self, obs, adv, act):
 
         # Compute pdf
-        mu  = self.net_mu(obs) + torch.tensor(self.x0)
-        sg  = self.net_sg(obs)*torch.tensor(self.sigma0)
+        mu  = self.net_mu(obs) + self.x0
+        sg  = self.net_sg(obs)*self.sigma0
         cr  = self.net_cr(obs)
 
         pdf = self.get_pdf(mu[0], sg[0], cr[0])
@@ -233,7 +235,22 @@ class pbo(base_agent):
         return loss
 
     # Compute covariance matrix
-    # def get_cov(self, sg, cr):
+    def get_cov(self, sg, cr):
+
+        t       = torch.zeros([self.dim, self.dim])
+        lidx    = torch.tril_indices(self.dim, self.dim)#, m=self.dim)
+        uidx    = torch.triu_indices(self.dim, self.dim)#, m=self.dim)
+        t[lidx] = cr
+        t[uidx] =-cr
+
+        et  = torch.matrix_exp(t)
+
+        s   = torch.diag(sg)
+        #s.fill_diagonal_(sg)
+        cov = torch.matmul(et, s)
+        cov = torch.matmul(cov, torch.transpose(et,0,1))
+
+        return cov
 
     #     # # Create skew-symmetric matrix
     #     # t = tf.zeros([self.dim, self.dim])
