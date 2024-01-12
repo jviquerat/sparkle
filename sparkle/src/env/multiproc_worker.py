@@ -40,6 +40,9 @@ def multiproc_worker(env_name, args, cpu, path, pipe):
             if command == 'dim':
                 pipe.send(env.dim)
 
+            if command == 'x0':
+                pipe.send(env.x0)
+
             if command == 'xmin':
                 pipe.send(env.xmin)
 

@@ -2,22 +2,19 @@
 from sparkle.env.base_env import *
 
 ###############################################
-### Environment for parabola
-class parabola(base_env):
+### Environment for griewank
+class griewank(base_env):
 
     # Create object
     def __init__(self, cpu, path, pms=None):
 
         # Fill structure
-        self.name      = 'parabola'
+        self.name      = 'griewank'
         self.base_path = path
         self.cpu       = cpu
         self.dim       = 2
-        if hasattr(pms, "dim"): self.dim = pms.dim
-
-        self.x0        = 2.5*np.ones(self.dim)
-        self.xmin      =-5.0*np.ones(self.dim)
-        self.xmax      = 5.0*np.ones(self.dim)
+        self.xmin      = np.array([-10.0, -10.0])
+        self.xmax      = np.array([ 10.0,  10.0])
         self.it_plt    = 0
 
         # Check inputs
@@ -25,8 +22,6 @@ class parabola(base_env):
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
         # Generate map of cost values for rendering
-        if (self.dim != 2): return
-
         nx = 100
         ny = 100
 
@@ -49,16 +44,10 @@ class parabola(base_env):
     # Cost function
     def cost(self, x):
 
-        v = 0.0
-        for i in range(len(x)):
-            v += (x[i])**2
-
-        return v
+        return 1.0 + (x[0]**2+x[1]**2)/4000.0 - math.cos(x[0])*math.cos(x[1]/math.sqrt(2.0))
 
     # Rendering
     def render(self, x):
-
-        if (self.dim != 2): return
 
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)

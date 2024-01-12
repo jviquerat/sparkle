@@ -13,15 +13,22 @@ class rosenbrock(base_env):
         self.base_path = path
         self.cpu       = cpu
         self.dim       = 2
-        self.xmin      = np.array([-2.0,-2.0])
-        self.xmax      = np.array([ 2.0, 2.0])
+        if hasattr(pms, "dim"): self.dim = pms.dim
+
+        self.x0        =-1.0*np.ones(self.dim)
+        self.x0[0]     = 0.0
+        self.xmin      =-2.0*np.ones(self.dim)
+        self.xmax      = 2.0*np.ones(self.dim)
         self.it_plt    = 0
 
         # Check inputs
+        if hasattr(pms, "x0"):   self.x0   = pms.x0
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
         # Generate map of cost values for rendering
+        if (self.dim != 2): return
+
         nx = 100
         ny = 100
 
@@ -52,6 +59,8 @@ class rosenbrock(base_env):
 
     # Rendering
     def render(self, x):
+
+        if (self.dim != 2): return
 
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)

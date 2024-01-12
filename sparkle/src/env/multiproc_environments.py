@@ -48,6 +48,17 @@ class multiproc_environments:
 
         return d
 
+    # Return x0 value
+    def x0(self):
+
+        # Send
+        self.pipes[0].send(('x0', None))
+
+        # Receive
+        x0 = self.pipes[0].recv()
+
+        return x0
+
     # Return xmin value
     def xmin(self):
 

@@ -2,22 +2,20 @@
 from sparkle.env.base_env import *
 
 ###############################################
-### Environment for parabola
-class parabola(base_env):
+### Environment for branin
+class branin(base_env):
 
     # Create object
     def __init__(self, cpu, path, pms=None):
 
         # Fill structure
-        self.name      = 'parabola'
+        self.name      = 'branin'
         self.base_path = path
         self.cpu       = cpu
         self.dim       = 2
-        if hasattr(pms, "dim"): self.dim = pms.dim
-
-        self.x0        = 2.5*np.ones(self.dim)
-        self.xmin      =-5.0*np.ones(self.dim)
-        self.xmax      = 5.0*np.ones(self.dim)
+        self.x0        = np.array([ 7.5,  7.5])
+        self.xmin      = np.array([ 0.0,  0.0])
+        self.xmax      = np.array([15.0, 15.0])
         self.it_plt    = 0
 
         # Check inputs
@@ -25,8 +23,6 @@ class parabola(base_env):
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
         # Generate map of cost values for rendering
-        if (self.dim != 2): return
-
         nx = 100
         ny = 100
 
@@ -49,16 +45,17 @@ class parabola(base_env):
     # Cost function
     def cost(self, x):
 
-        v = 0.0
-        for i in range(len(x)):
-            v += (x[i])**2
+        a = 1.0
+        b = 5.1/(4.0*math.pi**2)
+        c = 5.0/math.pi
+        r = 6.0
+        s = 10.0
+        t = 1.0/(8.0*math.pi)
 
-        return v
+        return a*(x[1]-b*x[0]**2+c*x[0]-r)**2 + s*(1.0-t)*math.cos(x[0]) + s
 
     # Rendering
     def render(self, x):
-
-        if (self.dim != 2): return
 
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)

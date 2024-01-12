@@ -1,5 +1,5 @@
 {
-    "n_avg": 3,
+    "n_avg": 5,
     "avg_type": "log",
     "naming": {
         "env": true,
@@ -8,14 +8,12 @@
         "time": false
     },
     "environment": {
-        "name": "parabola",
-        "args": {
-            "dim": 2
-        }
+        "name": "branin"
     },
     "agent": {
         "name": "pbo",
         "n_steps_max": 50,
+        "x0": [7.5, 7.5],
         "sg": {
             "arch": [[8,8],[[null]]],
             "acts": [["tanh","relu"],[["sigmoid"]]],

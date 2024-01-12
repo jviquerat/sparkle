@@ -35,6 +35,12 @@ class mpi_environments:
         if (parallel.is_root()):
             return self.worker.env.dim
 
+    # Return x0 value
+    def x0(self):
+
+        if (parallel.is_root()):
+            return self.worker.env.x0
+
     # Return xmin value
     def xmin(self):
 
