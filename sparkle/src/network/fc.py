@@ -17,6 +17,7 @@ class fc(base):
         self.nf_trunk_   = 0
         self.nf_heads_   = [0]*self.n_heads_
         self.dropout_    = 0.0
+        self.lr_         = lr
 
         # Build activations
         self.trunk_acts_ = acts[0]
@@ -64,7 +65,7 @@ class fc(base):
                                                   self.heads_acts_[h][k])
 
         # Create optimizer
-        self.opt_ = toptim.Adam(self.params(), lr=lr)
+        self.opt_ = toptim.Adam(self.params(), lr=self.lr_)
 
     # Forward pass
     def forward(self, x_in):
@@ -99,7 +100,7 @@ class fc(base):
             if hasattr(layer, 'reset_parameters'):
                 layer.reset_parameters()
 
-        self.opt_ = toptim.Adam(self.parameters(), lr=lr)
+        self.opt_ = toptim.Adam(self.parameters(), lr=self.lr_)
 
     # Infos on network
     def info(self):

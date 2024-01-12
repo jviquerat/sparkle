@@ -1,5 +1,5 @@
 # Custom imports
-from sparkle.src.utils.network import *
+from sparkle.src.network.fc import *
 from sparkle.src.agent.base import *
 
 import torch.distributions as td
@@ -39,20 +39,32 @@ class pbo(base_agent):
         if hasattr(pms, "adv_clip"):    self.adv_clip    = np.array(pms.adv_clip)
         if hasattr(pms, "adv_decay"):   self.adv_decay   = np.array(pms.adv_decay)
 
-        self.net_mu = nn(inp_dim=self.obs_dim,
+        self.net_mu = fc(inp_dim=self.obs_dim,
                          arch=pms.mu.arch,
                          acts=pms.mu.acts,
                          lr=pms.mu.lr)
 
-        self.net_sg = nn(inp_dim=self.obs_dim,
+        self.net_sg = fc(inp_dim=self.obs_dim,
                          arch=pms.sg.arch,
                          acts=pms.sg.acts,
                          lr=pms.sg.lr)
 
-        self.net_cr = nn(inp_dim=self.obs_dim,
+        self.net_cr = fc(inp_dim=self.obs_dim,
                          arch=pms.cr.arch,
                          acts=pms.cr.acts,
                          lr=pms.cr.lr)
+
+        self.mu_epochs = pms.mu.epochs
+        self.mu_gen    = pms.mu.gen
+        self.mu_batch  = pms.mu.batch
+
+        self.sg_epochs = pms.sg.epochs
+        self.sg_gen    = pms.sg.gen
+        self.sg_batch  = pms.sg.batch
+
+        self.cr_epochs = pms.cr.epochs
+        self.cr_gen    = pms.cr.gen
+        self.cr_batch  = pms.cr.batch
 
 
         self.obs = 1.0
@@ -77,49 +89,28 @@ class pbo(base_agent):
 
         # Initial sampling
         # This fills x array with samples
-        self.sample()
-
-        return self.x
+        return self.sample()
 
     # Sample from distribution
     def sample(self):
 
         obs = torch.ones(1,self.dim)*self.obs
-        mu  = self.net_mu(obs) + self.x0
-        sg  = self.net_sg(obs)*self.sigma0
+        mu  = self.net_mu(obs) + torch.tensor(self.x0)
+        sg  = self.net_sg(obs)*torch.tensor(self.sigma0)
         cr  = self.net_cr(obs)
 
-        pdf = self.get_cov_pdf(mu, sg, cr)
-        self.x = pdf.sample(self.n_points)
+        self.pdf = self.get_pdf(mu[0], sg[0], cr[0])
+        self.x = self.pdf.sample([self.n_points])
 
         return self.x
 
-        # # Observation vector
-        # obs = tf.ones([1,self.dim])*self.obs
+    # Compute full cov pdf
+    def get_pdf(self, mu, sg, cr):
 
-        # # Predict mu
-        # x  = tf.convert_to_tensor(obs)
-        # mu = self.net_mu.call(x)
-        # mu = np.asarray(mu)[0] + self.x0
 
-        # # Predict sigma
-        # x  = tf.convert_to_tensor(obs)
-        # sg = self.net_sg.call(x)
-        # sg = np.asarray(sg)[0]*self.sigma0
+        pdf = td.MultivariateNormal(mu.float(), torch.diag(sg.float()))
 
-        # # Predict correlations
-        # x  = tf.convert_to_tensor(obs)
-        # cr = self.net_cr.call(x)
-        # cr = np.asarray(cr)[0]
-
-        # # Define pdf
-        # pdf = self.get_cov_pdf(mu, sg, cr)
-
-        # # Draw actions
-        # self.x = pdf.sample(self.n_points)
-        # self.x = np.asarray(self.x)
-
-        # return self.x
+        return pdf
 
     # Step
     def step(self, c):
@@ -142,7 +133,7 @@ class pbo(base_agent):
                         self.cr_batch,  self.net_cr)
 
         # Sample
-        self.sample()
+        self.x = self.sample()
 
         self.stp += 1
 
@@ -171,8 +162,8 @@ class pbo(base_agent):
         #     buff_x = tf.gather(buff_x, idx)
 
         # Reshape
-        buff_x = torch.reshape(buff_x, (-1, self.dim))
-        buff_a = torch.reshape(buff_a, (-1))
+        buff_x = torch.reshape(buff_x, [-1, self.dim])
+        buff_a = torch.reshape(buff_a, [-1])
 
         return buff_x, buff_a
 
@@ -220,44 +211,20 @@ class pbo(base_agent):
                 adv = a[start:end]
                 obs = torch.ones((end-start, self.obs_dim))*self.obs
 
-                #self.train(btc_o, btc_a, btc_x, net)
-               # cr = tf.convert_to_tensor(self.net_cr.call(obs))
-               # sg = tf.convert_to_tensor(self.net_sg.call(obs)*self.sigma0#)
- #               mu = tf.convert_to_tensor(self.net_mu.call(obs)+self.x0)
-
                 loss = self.get_loss(obs, adv, act)
-                self.opt_.zero_grad()
+                net.opt_.zero_grad()
                 loss.backward()
-                self.opt_.step()
-
-    # Train network
-    #@tf.function
-    # def train(self, obs, adv, act, net):
-
-    #     var = net.trainable_variables
-    #     with tf.GradientTape() as tape:
-    #         tape.watch(var)
-
-    #         cr = tf.convert_to_tensor(self.net_cr.call(obs))
-    #         sg = tf.convert_to_tensor(self.net_sg.call(obs)*self.sigma0)
-    #         mu = tf.convert_to_tensor(self.net_mu.call(obs)+self.x0)
-
-    #         loss = self.get_loss(obs, adv, act, mu, sg, cr)
-
-    #     grads = tape.gradient(loss, var)
-    #     norm  = tf.linalg.global_norm(grads)
-    #     net.opt.apply_gradients(zip(grads, var))
+                net.opt_.step()
 
     # Compute loss
     def get_loss(self, obs, adv, act):
 
         # Compute pdf
-
-        mu  = self.net_mu(obs) + self.x0
-        sg  = self.net_sg(obs)*self.sigma0
+        mu  = self.net_mu(obs) + torch.tensor(self.x0)
+        sg  = self.net_sg(obs)*torch.tensor(self.sigma0)
         cr  = self.net_cr(obs)
 
-        pdf = self.get_cov_pdf(mu, sg, cr)
+        pdf = self.get_pdf(mu[0], sg[0], cr[0])
         log = pdf.log_prob(torch.tensor(act))
 
         # Compute loss
@@ -266,17 +233,7 @@ class pbo(base_agent):
 
         return loss
 
-    # Compute full cov pdf
-    def get_cov_pdf(self, mu, sg, cr):
 
-        #cov  = self.get_cov(sg, cr)
-        #scl  = tf.linalg.cholesky(cov)
-        #pdf  = tfd.MultivariateNormalTriL(tf.cast(mu,  tf.float32),
-        #                                  tf.cast(scl, tf.float32))
-
-        pdf = td.MultivariateNormal(mu, torch.diag(sg))
-
-        return pdf
 
     # Compute covariance matrix
     # def get_cov(self, sg, cr):

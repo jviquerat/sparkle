@@ -17,26 +17,26 @@
         "mu": {
             "arch": [[2,2],[[2]]],
             "acts": [["tanh"],[["tanh"]]],
-            "lr": 5.0e-3
+            "lr": 5.0e-3,
             "epochs": 128,
             "gen": 1,
-            "batch": 1,
+            "batch": 1
         },
         "sg": {
             "arch": [[2,2],[[2]]],
             "acts": [["tanh"],[["sigmoid"]]],
-            "lr": 5.0e-3
+            "lr": 5.0e-3,
             "epochs": 16,
             "gen": 8,
-            "batch": 4,
+            "batch": 4
         },
         "cr": {
             "arch": [[2,2],[[2]]],
             "acts": [["tanh"],[["sigmoid"]]],
-            "lr": 1.0e-3
+            "lr": 1.0e-3,
             "epochs": 16,
             "gen": 16,
-            "batch": 8,
+            "batch": 8
         },
         "adv_clip": true,
         "adv_decay": 0.5

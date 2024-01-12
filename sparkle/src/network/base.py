@@ -6,8 +6,8 @@ import torch.nn as tnn
 import torch.optim as toptim
 
 # Custom imports
-from hummingbird.src.network.torch_dicts import *
-from hummingbird.src.utils.prints        import *
+from sparkle.src.network.torch_dicts import *
+from sparkle.src.utils.prints import *
 
 ###############################################
 ### Base network class
