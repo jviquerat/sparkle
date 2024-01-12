@@ -51,8 +51,6 @@ class spk_parallel:
             return self._comm
 
         if (self._type == "multiprocessing"):
-            #error("spk_parallel", "comm",
-            #      "comm() is not defined for multiprocessing")
             print("Error: comm() is not defined for multiprocessing")
             exit(1)
 
@@ -66,8 +64,6 @@ class spk_parallel:
             return self._rank
 
         if (self._type == "multiprocessing"):
-            #error("spk_parallel", "rank",
-            #      "rank() is not defined for multiprocessing")
             print("Error: rank() is not defined for multiprocessing")
             exit(1)
 

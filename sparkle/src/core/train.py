@@ -56,7 +56,7 @@ def train(json_file, pms):
 
     # Write to file
     filename = results_path+'/avg.dat'
-    data = averager.average(filename)
+    data = averager.average(filename, pms.avg_type)
 
     # Plot
     filename = results_path+'/'+path

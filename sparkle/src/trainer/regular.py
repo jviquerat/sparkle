@@ -20,6 +20,7 @@ class regular(base_trainer):
         self.agent = agent_factory.create(agent_pms.name,
                                           path = path,
                                           dim  = self.env.dim(),
+                                          x0   = self.env.x0(),
                                           xmin = self.env.xmin(),
                                           xmax = self.env.xmax(),
                                           pms  = agent_pms)

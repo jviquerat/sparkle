@@ -25,7 +25,7 @@ class data_avg():
         for field in range(self.n_fields):
             self.data[run,:,field] = f[:self.n_stp,field+1]
 
-    def average(self, filename):
+    def average(self, filename, avg_type="linear"):
 
         array = np.vstack(self.stp)
         smoother = ema(0.5, 5)
@@ -35,6 +35,14 @@ class data_avg():
             std   = np.std (self.data[:,:,field], axis=0)
             p     = avg + std
             m     = avg - std
+
+            if (avg_type == "log"):
+                log_avg = np.log(avg)
+                log_std = 0.434*(p-avg)/avg
+                log_p   = log_avg + log_std
+                log_m   = log_avg - log_std
+                p       = np.exp(log_p)
+                m       = np.exp(log_m)
 
             smooth_avg = smoother.smooth(avg)
             smooth_p   = smoother.smooth(p)
