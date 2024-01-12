@@ -2,6 +2,8 @@
 from sparkle.src.utils.network import *
 from sparkle.src.agent.base import *
 
+import torch.distributions as td
+
 ###############################################
 ### PBO
 class pbo(base_agent):
@@ -83,9 +85,9 @@ class pbo(base_agent):
     def sample(self):
 
         obs = torch.ones(1,self.dim)*self.obs
-        mu  = self.net_mu(obs).numpy() + self.x0
-        sg  = self.net_sg(obs).numpy()*self.sigma0
-        cr  = self.net_cr(obs).numpy()
+        mu  = self.net_mu(obs) + self.x0
+        sg  = self.net_sg(obs)*self.sigma0
+        cr  = self.net_cr(obs)
 
         pdf = self.get_cov_pdf(mu, sg, cr)
         self.x = pdf.sample(self.n_points)
@@ -251,9 +253,9 @@ class pbo(base_agent):
 
         # Compute pdf
 
-        mu  = self.net_mu(obs).numpy() + self.x0
-        sg  = self.net_sg(obs).numpy()*self.sigma0
-        cr  = self.net_cr(obs).numpy()
+        mu  = self.net_mu(obs) + self.x0
+        sg  = self.net_sg(obs)*self.sigma0
+        cr  = self.net_cr(obs)
 
         pdf = self.get_cov_pdf(mu, sg, cr)
         log = pdf.log_prob(torch.tensor(act))
@@ -267,72 +269,74 @@ class pbo(base_agent):
     # Compute full cov pdf
     def get_cov_pdf(self, mu, sg, cr):
 
-        cov  = self.get_cov(sg, cr)
-        scl  = tf.linalg.cholesky(cov)
-        pdf  = tfd.MultivariateNormalTriL(tf.cast(mu,  tf.float32),
-                                          tf.cast(scl, tf.float32))
+        #cov  = self.get_cov(sg, cr)
+        #scl  = tf.linalg.cholesky(cov)
+        #pdf  = tfd.MultivariateNormalTriL(tf.cast(mu,  tf.float32),
+        #                                  tf.cast(scl, tf.float32))
+
+        pdf = td.MultivariateNormal(mu, torch.diag(sg))
 
         return pdf
 
     # Compute covariance matrix
-    def get_cov(self, sg, cr):
+    # def get_cov(self, sg, cr):
 
-        # # Create skew-symmetric matrix
-        # t = tf.zeros([self.dim, self.dim])
+    #     # # Create skew-symmetric matrix
+    #     # t = tf.zeros([self.dim, self.dim])
 
-        # idx = 0
-        # for dg in range(self.dim-1):
-        #     diag = cr[idx:idx+self.dim-(dg+1)]
-        #     idx += self.dim-(dg+1)
-        #     t    = tf.linalg.set_diag(t,  diag, k=-(dg+1))
-        #     t    = tf.linalg.set_diag(t, -diag, k= (dg+1))
+    #     # idx = 0
+    #     # for dg in range(self.dim-1):
+    #     #     diag = cr[idx:idx+self.dim-(dg+1)]
+    #     #     idx += self.dim-(dg+1)
+    #     #     t    = tf.linalg.set_diag(t,  diag, k=-(dg+1))
+    #     #     t    = tf.linalg.set_diag(t, -diag, k= (dg+1))
 
-        # # Exponentiate to get orthogonal matrix
-        # et = tf.linalg.expm(t)
+    #     # # Exponentiate to get orthogonal matrix
+    #     # et = tf.linalg.expm(t)
 
-        # # Generate diagonal matrix
-        # s = tf.zeros([self.dim, self.dim])
-        # s = tf.linalg.set_diag(s, sg, k=0)
+    #     # # Generate diagonal matrix
+    #     # s = tf.zeros([self.dim, self.dim])
+    #     # s = tf.linalg.set_diag(s, sg, k=0)
 
-        # # Generate covariance matrix
-        # cov = tf.matmul(et,s)
-        # cov = tf.matmul(cov, tf.transpose(et))
+    #     # # Generate covariance matrix
+    #     # cov = tf.matmul(et,s)
+    #     # cov = tf.matmul(cov, tf.transpose(et))
 
-        # return cov
+    #     # return cov
 
-        # Extract sigmas and thetas
-        sigmas = sg
-        thetas = cr*math.pi
+    #     # Extract sigmas and thetas
+    #     sigmas = sg
+    #     thetas = cr*math.pi
 
-        # Build initial theta matrix
-        t   = tf.ones([self.dim,self.dim])*math.pi/2.0
-        t   = tf.linalg.set_diag(t, tf.zeros(self.dim), k=0)
-        idx = 0
-        for dg in range(self.dim-1):
-            diag = thetas[idx:idx+self.dim-(dg+1)]
-            idx += self.dim-(dg+1)
-            t    = tf.linalg.set_diag(t, diag, k=-(dg+1))
-        cor = tf.cos(t)
+    #     # Build initial theta matrix
+    #     t   = tf.ones([self.dim,self.dim])*math.pi/2.0
+    #     t   = tf.linalg.set_diag(t, tf.zeros(self.dim), k=0)
+    #     idx = 0
+    #     for dg in range(self.dim-1):
+    #         diag = thetas[idx:idx+self.dim-(dg+1)]
+    #         idx += self.dim-(dg+1)
+    #         t    = tf.linalg.set_diag(t, diag, k=-(dg+1))
+    #     cor = tf.cos(t)
 
-        # Correct upper part to exact zero
-        for dg in range(self.dim-1):
-            size = self.dim-(dg+1)
-            cor  = tf.linalg.set_diag(cor, tf.zeros(size), k=(dg+1))
+    #     # Correct upper part to exact zero
+    #     for dg in range(self.dim-1):
+    #         size = self.dim-(dg+1)
+    #         cor  = tf.linalg.set_diag(cor, tf.zeros(size), k=(dg+1))
 
-        # Roll and compute additional terms
-        for roll in range(self.dim-1):
-            vec = tf.ones([self.dim, 1])
-            vec = tf.scalar_mul(math.pi/2, vec)
-            t   = tf.concat([vec, t[:, :self.dim-1]], axis=1)
-            for dg in range(self.dim-1):
-                zero = tf.zeros(self.dim-(dg+1))
-                t    = tf.linalg.set_diag(t, zero, k=dg+1)
-            cor = tf.multiply(cor, tf.sin(t))
+    #     # Roll and compute additional terms
+    #     for roll in range(self.dim-1):
+    #         vec = tf.ones([self.dim, 1])
+    #         vec = tf.scalar_mul(math.pi/2, vec)
+    #         t   = tf.concat([vec, t[:, :self.dim-1]], axis=1)
+    #         for dg in range(self.dim-1):
+    #             zero = tf.zeros(self.dim-(dg+1))
+    #             t    = tf.linalg.set_diag(t, zero, k=dg+1)
+    #         cor = tf.multiply(cor, tf.sin(t))
 
-        cor = tf.matmul(cor, tf.transpose(cor))
-        scl = tf.zeros([self.dim, self.dim])
-        scl = tf.linalg.set_diag(scl, tf.sqrt(sigmas), k=0)
-        cov = tf.matmul(scl, cor)
-        cov = tf.matmul(cov, scl)
+    #     cor = tf.matmul(cor, tf.transpose(cor))
+    #     scl = tf.zeros([self.dim, self.dim])
+    #     scl = tf.linalg.set_diag(scl, tf.sqrt(sigmas), k=0)
+    #     cov = tf.matmul(scl, cor)
+    #     cov = tf.matmul(cov, scl)
 
-        return cov
+    #     return cov
