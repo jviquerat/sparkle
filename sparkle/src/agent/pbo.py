@@ -99,14 +99,13 @@ class pbo(base_agent):
         sg  = self.net_sg(obs)*torch.tensor(self.sigma0)
         cr  = self.net_cr(obs)
 
-        self.pdf = self.get_pdf(mu[0], sg[0], cr[0])
-        self.x = self.pdf.sample([self.n_points])
+        pdf = self.get_pdf(mu[0], sg[0], cr[0])
+        self.x = pdf.sample([self.n_points])
 
         return self.x
 
     # Compute full cov pdf
     def get_pdf(self, mu, sg, cr):
-
 
         pdf = td.MultivariateNormal(mu.float(), torch.diag(sg.float()))
 
@@ -150,9 +149,9 @@ class pbo(base_agent):
         sample = np.arange(start, end)
         np.random.shuffle(sample)
 
-        # Draw elements as lists
-        buff_x = torch.tensor([self.hist_x[i] for i in sample])
-        buff_a = torch.tensor([self.hist_a[i] for i in sample])
+        # Draw elements
+        buff_x = torch.from_numpy(self.hist_x[sample])
+        buff_a = torch.from_numpy(self.hist_a[sample])
 
         # Remove elements with zero advantage
         # if (self.adv_clip):
@@ -225,15 +224,13 @@ class pbo(base_agent):
         cr  = self.net_cr(obs)
 
         pdf = self.get_pdf(mu[0], sg[0], cr[0])
-        log = pdf.log_prob(torch.tensor(act))
+        log = pdf.log_prob(act)
 
         # Compute loss
-        s     = torch.multiply(torch.tensor(adv), log)
-        loss  =-torch.mean(s)
+        s    = torch.multiply(adv, log)
+        loss =-torch.mean(s)
 
         return loss
-
-
 
     # Compute covariance matrix
     # def get_cov(self, sg, cr):
