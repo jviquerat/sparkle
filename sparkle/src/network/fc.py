@@ -1,3 +1,6 @@
+# Generic imports
+import copy
+
 # Custom imports
 from sparkle.src.network.base import *
 
@@ -67,6 +70,12 @@ class fc(base):
         # Create optimizer
         self.opt_ = toptim.Adam(self.params(), lr=self.lr_)
 
+        # Save model parameters in memory
+        self.net_weights = copy.deepcopy(self.net_.state_dict())
+
+        # Save optimizer parameters in memory
+        self.opt_weights = copy.deepcopy(self.opt_.state_dict())
+
     # Forward pass
     def forward(self, x_in):
 
@@ -96,11 +105,8 @@ class fc(base):
     # Reset
     def reset(self):
 
-        for layer in self.children():
-            if hasattr(layer, 'reset_parameters'):
-                layer.reset_parameters()
-
-        self.opt_ = toptim.Adam(self.parameters(), lr=self.lr_)
+        self.net_.load_state_dict(self.net_weights)
+        self.opt_.load_state_dict(self.opt_weights)
 
     # Infos on network
     def info(self):
