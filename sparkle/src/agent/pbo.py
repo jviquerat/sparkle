@@ -108,7 +108,9 @@ class pbo(base_agent):
     def get_pdf(self, mu, sg, cr):
 
         cov = self.get_cov(sg, cr)
-        pdf = td.MultivariateNormal(mu.float(), cov)
+        scl = torch.linalg.cholesky(cov)
+        #pdf = td.MultivariateNormal(mu.float(), covariance_matrix=cov)
+        pdf = td.MultivariateNormal(mu.float(), scale_tril=scl)
         #pdf = td.MultivariateNormal(mu.float(), torch.diag(sg.float()))
 
         return pdf
@@ -237,64 +239,62 @@ class pbo(base_agent):
     # Compute covariance matrix
     def get_cov(self, sg, cr):
 
-        t       = torch.zeros([self.dim, self.dim])
-        lidx    = torch.tril_indices(self.dim, self.dim)#, m=self.dim)
-        uidx    = torch.triu_indices(self.dim, self.dim)#, m=self.dim)
-        t[lidx] = cr
-        t[uidx] =-cr
+        # t       = torch.zeros([self.dim, self.dim])
+        # lidx    = torch.tril_indices(self.dim, self.dim)#, m=self.dim)
+        # uidx    = torch.triu_indices(self.dim, self.dim)#, m=self.dim)
+        # t[lidx] = cr
+        # t[uidx] =-cr
 
-        et  = torch.matrix_exp(t)
+        # et  = torch.matrix_exp(t)
 
-        s   = torch.diag(sg)
-        #s.fill_diagonal_(sg)
-        cov = torch.matmul(et, s)
-        cov = torch.matmul(cov, torch.transpose(et,0,1))
+        # s   = torch.diag(sg)
+        # #s.fill_diagonal_(sg)
+        # cov = torch.matmul(et, s)
+        # cov = torch.matmul(cov, torch.transpose(et,0,1))
+
+        # return cov
+
+        # Extract sigmas and thetas
+        sigmas = sg
+        thetas = cr*math.pi
+
+        # Build initial theta matrix
+        t = torch.ones([self.dim, self.dim])*math.pi/2.0
+        t = torch.diagonal_scatter(t, torch.zeros(self.dim), offset=0)
+
+        idx = 0
+        for d in range(self.dim-1):
+            diag = thetas[idx:idx+self.dim-(d+1)]
+            idx += self.dim - (d+1)
+            t    = torch.diagonal_scatter(t, diag, offset=-(d+1))
+            cor = torch.cos(t)
+
+        # Correct upper part to exact zero
+        for d in range(self.dim-1):
+            size = self.dim - (d+1)
+            cor  = torch.diagonal_scatter(cor, torch.zeros(size), offset=(d+1))
+
+        # Roll and compute additional terms
+        for roll in range(self.dim-1):
+            vec = torch.ones([self.dim, 1])
+            vec = torch.mul(vec, math.pi/2.0)
+            t   = torch.cat([vec, t[:, :self.dim-1]], axis=1)
+
+            for d in range(self.dim-1):
+                zero = torch.zeros(self.dim - (d+1))
+                t    = torch.diagonal_scatter(t, zero, offset=(d+1))
+
+            cor = torch.matmul(cor, torch.sin(t))
+
+        cor = torch.matmul(cor, torch.transpose(cor,0,1))
+        scl = torch.zeros([self.dim, self.dim])
+        scl = torch.diagonal_scatter(scl, torch.sqrt(sigmas), offset=0)
+        cov = torch.matmul(scl, cor)
+        cov = torch.matmul(cov, scl)
 
         return cov
 
-    #     # # Create skew-symmetric matrix
-    #     # t = tf.zeros([self.dim, self.dim])
 
-    #     # idx = 0
-    #     # for dg in range(self.dim-1):
-    #     #     diag = cr[idx:idx+self.dim-(dg+1)]
-    #     #     idx += self.dim-(dg+1)
-    #     #     t    = tf.linalg.set_diag(t,  diag, k=-(dg+1))
-    #     #     t    = tf.linalg.set_diag(t, -diag, k= (dg+1))
-
-    #     # # Exponentiate to get orthogonal matrix
-    #     # et = tf.linalg.expm(t)
-
-    #     # # Generate diagonal matrix
-    #     # s = tf.zeros([self.dim, self.dim])
-    #     # s = tf.linalg.set_diag(s, sg, k=0)
-
-    #     # # Generate covariance matrix
-    #     # cov = tf.matmul(et,s)
-    #     # cov = tf.matmul(cov, tf.transpose(et))
-
-    #     # return cov
-
-    #     # Extract sigmas and thetas
-    #     sigmas = sg
-    #     thetas = cr*math.pi
-
-    #     # Build initial theta matrix
-    #     t   = tf.ones([self.dim,self.dim])*math.pi/2.0
-    #     t   = tf.linalg.set_diag(t, tf.zeros(self.dim), k=0)
-    #     idx = 0
-    #     for dg in range(self.dim-1):
-    #         diag = thetas[idx:idx+self.dim-(dg+1)]
-    #         idx += self.dim-(dg+1)
-    #         t    = tf.linalg.set_diag(t, diag, k=-(dg+1))
-    #     cor = tf.cos(t)
-
-    #     # Correct upper part to exact zero
-    #     for dg in range(self.dim-1):
-    #         size = self.dim-(dg+1)
-    #         cor  = tf.linalg.set_diag(cor, tf.zeros(size), k=(dg+1))
-
-    #     # Roll and compute additional terms
     #     for roll in range(self.dim-1):
     #         vec = tf.ones([self.dim, 1])
     #         vec = tf.scalar_mul(math.pi/2, vec)
