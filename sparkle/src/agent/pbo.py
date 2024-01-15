@@ -110,7 +110,7 @@ class pbo(base_agent):
         cov = self.get_cov(sg, cr)
         scl = torch.linalg.cholesky(cov)
         #pdf = td.MultivariateNormal(mu.float(), covariance_matrix=cov)
-        pdf = td.MultivariateNormal(mu.float(), scale_tril=scl)
+        pdf = td.MultivariateNormal(mu.float(), scale_tril=scl.float())
         #pdf = td.MultivariateNormal(mu.float(), torch.diag(sg.float()))
 
         return pdf

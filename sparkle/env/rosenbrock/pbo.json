@@ -1,5 +1,5 @@
 {
-    "n_avg": 5,
+    "n_avg": 2,
     "avg_type": "log",
     "naming": {
         "env": true,

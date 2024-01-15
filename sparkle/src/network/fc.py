@@ -40,9 +40,14 @@ class fc(base):
 
         self.net_ = tnn.ModuleList()
 
+        #self.rnn = tnn.RNN(inp_dim, 2, 1, batch_first=True)
+        self.hidden = torch.zeros(1, 2)
+
+        self.net_.append(tnn.RNN(inp_dim, 2, 1, batch_first=True))
+
         # Add trunk
         self.nf_trunk_ += add_fc_layer(self.net_,
-                                       self.inp_dim_,
+                                       2,
                                        self.trunk_arch_[0],
                                        self.trunk_acts_[0],
                                        self.dropout_)
@@ -84,6 +89,12 @@ class fc(base):
         x = x.float()
         out = []
         l   = 0
+
+        x, self.hidden = self.net_[l](x, self.hidden)
+
+        self.hidden = self.hidden.detach()
+
+        l += 1
 
         # Forward pass in trunk
         for k in range(self.nf_trunk_):
