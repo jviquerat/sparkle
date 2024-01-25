@@ -229,7 +229,7 @@ class pbo(base_agent):
         s       = torch.multiply(adv, log)
         loss_pg =-torch.mean(s)
 
-        return loss
+        return loss_pg
 
     # Compute covariance matrix
     def get_cov(self, sg, cr):
