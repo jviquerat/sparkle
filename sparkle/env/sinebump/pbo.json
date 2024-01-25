@@ -14,23 +14,21 @@
         "name": "pbo",
         "n_steps_max": 50,
         "sg": {
-            "arch": [[4,4],[[null]]],
-            "acts": [["relu"],[["sigmoid"]]],
-            "lr": 2.0e-3,
-            "epochs": 16,
+            "arch": [[8,8],[[null]]],
+            "acts": [["tanh","relu"],[["sigmoid"]]],
+            "lr": 5.0e-3,
+            "epochs": 8,
             "gen": 8,
             "batch": 0.5
         },
         "cr": {
-            "arch": [[4,4],[[null]]],
-            "acts": [["relu"],[["sigmoid"]]],
-            "lr": 1.0e-4,
-            "epochs": 16,
-            "gen": 8,
+            "arch": [[8,8],[[null]]],
+            "acts": [["tanh","relu"],[["sigmoid"]]],
+            "lr": 1.0e-3,
+            "epochs": 8,
+            "gen": 16,
             "batch": 0.5
-        },
-        "entropy": 0.0,
-        "adv_decay": 0.5
+        }
     },
     "trainer": {
         "name": "regular",

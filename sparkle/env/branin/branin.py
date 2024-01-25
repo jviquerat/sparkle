@@ -19,6 +19,7 @@ class branin(base_env):
         self.it_plt    = 0
 
         # Check inputs
+        if hasattr(pms, "x0"):   self.x0   = pms.x0
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
 

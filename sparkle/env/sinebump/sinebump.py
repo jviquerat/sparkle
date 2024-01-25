@@ -16,11 +16,13 @@ class sinebump(base_env):
         self.base_path = path
         self.cpu       = cpu
         self.dim       = 2
+        self.x0        = np.array([2.5, 2.5])
         self.xmin      = np.array([0.0, 0.0])
         self.xmax      = np.array([5.0, 5.0])
         self.it_plt    = 0
 
         # Check inputs
+        if hasattr(pms, "x0"):   self.x0   = pms.x0
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
