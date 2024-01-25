@@ -4,7 +4,7 @@ from sparkle.src.agent.base import *
 ###############################################
 ### CMAES
 class cmaes(base_agent):
-    def __init__(self, path, dim, xmin, xmax, pms):
+    def __init__(self, path, dim, x0, xmin, xmax, pms):
 
         super().__init__(pms)
 
@@ -14,20 +14,20 @@ class cmaes(base_agent):
         self.xmin        = xmin
         self.xmax        = xmax
 
-        self.n_steps_max = 20
         self.sigma0      = 0.25*(np.min(xmax)-np.max(xmin))
-        self.x0          = 0.5*(xmax+xmin)
-        self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
-        self.clip        = False
-        self.escape      = False
-
-        if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
-        if hasattr(pms, "n_points"):     self.n_points     = pms.n_points
         if hasattr(pms, "sigma0"):       self.sigma0       = pms.sigma0
-        if hasattr(pms, "x0"):           self.x0           = np.array(pms.x0)
+
+        self.x0          = x0
+        self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
+        if hasattr(pms, "n_points"):     self.n_points     = pms.n_points
+
+        self.n_steps_max = 20
+        if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
+
+        self.clip        = False
         if hasattr(pms, "clip"):         self.clip         = np.array(pms.clip)
+        self.escape      = False
         if hasattr(pms, "escape"):       self.escape       = np.array(pms.escape)
-        if hasattr(pms, "n_escape"):     self.n_escape     = np.array(pms.n_escape)
 
         # Number of selected samples
         self.fmu    = self.n_points/2.0

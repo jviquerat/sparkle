@@ -4,13 +4,14 @@ from sparkle.src.agent.base import *
 ###############################################
 ### Particle swarm optimization
 class pso(base_agent):
-    def __init__(self, path, dim, xmin, xmax, pms):
+    def __init__(self, path, dim, x0, xmin, xmax, pms):
 
         super().__init__(pms)
 
         self.name        = "PSO"
         self.base_path   = path
         self.dim         = dim
+        self.x0          = x0
         self.xmin        = xmin
         self.xmax        = xmax
 
