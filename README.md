@@ -38,8 +38,8 @@ spk --train <json_file>
 
 Below are several optimization examples performed with the different methods.
 
-| **`parabola (cem)`**                                                      | **`rosenbrock (cmaes)`**                                             | **`sinebump (pso)`**                                                        |
-| :-----------------------------------------------------------------------: | :------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
-| <img height="200" alt="gif" src="sparkle/save/parabola_cem.gif">          | <img height="200" alt="gif" src="sparkle/save/rosenbrock_cmaes.gif"> | <img height="200" alt="gif" src="sparkle/save/sinebump_pso.gif">            |
-| **`packing (cmaes)`**                                                     | **`lorenz (pbo)`**                                                   | **`packing (cmaes)`**                                                       |
-| <img height="200" alt="gif" src="sparkle/save/packing_circles_cmaes.gif"> | <img height="200" alt="gif" src="sparkle/save/lorenz_pbo.gif">       | <img height="200" alt="gif" src="sparkle/save/packing_triangles_cmaes.gif"> |
+| **`parabola (cem)`**                                                     | **`rosenbrock (cmaes)`**                                            | **`sinebump (pso)`**                                                       |
+| :----------------------------------------------------------------------: | :-----------------------------------------------------------------: | :------------------------------------------------------------------------: |
+| <img height="200" alt="gif" src="sparkle/msc/parabola_cem.gif">          | <img height="200" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> | <img height="200" alt="gif" src="sparkle/msc/sinebump_pso.gif">            |
+| **`packing (cmaes)`**                                                    | **`lorenz (pbo)`**                                                  | **`packing (cmaes)`**                                                      |
+| <img height="200" alt="gif" src="sparkle/msc/packing_circles_cmaes.gif"> | <img height="200" alt="gif" src="sparkle/msc/lorenz_pbo.gif">       | <img height="200" alt="gif" src="sparkle/msc/packing_triangles_cmaes.gif"> |
