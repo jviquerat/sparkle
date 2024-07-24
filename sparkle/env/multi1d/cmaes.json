@@ -1,0 +1,22 @@
+{
+    "n_avg": 3,
+    "avg_type": "regular",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "multi1d"
+    },
+    "agent": {
+        "name": "cmaes",
+        "n_steps_max": 20,
+	      "clip": true
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 1
+    }
+}
