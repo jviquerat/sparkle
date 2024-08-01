@@ -20,6 +20,7 @@ class lhs(base_pex):
         high = np.arange(1,self.n_points_+1)/self.n_points_
 
         self.x_ = np.random.uniform(low=low,high=high,size=[self.dim_,self.n_points_]).T
+        
         for d in range(1,self.dim_):
             np.random.shuffle(self.x_[:,d])
 

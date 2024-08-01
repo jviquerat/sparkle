@@ -46,7 +46,7 @@ class kriging():
             self.theta_ = np.exp(theta)
 
         self.K_ = self.kernel(self.x_, self.x_, self.theta_)
-        self.L_ = np.linalg.cholesky(self.K_)# + 1.0e-8*np.eye(self.ns_))
+        self.L_ = np.linalg.cholesky(self.K_)
 
     # Evaluate at test points
     def evaluate(self, xt, theta=None):
@@ -66,7 +66,7 @@ class kriging():
         theta = np.exp(log_theta)
 
         self.K_ = self.kernel(self.x_, self.x_, theta)
-        self.L_ = np.linalg.cholesky(self.K_)# + 1.0e-8*np.eye(self.ns_))
+        self.L_ = np.linalg.cholesky(self.K_)
 
         ones    = np.ones(self.ns_)
         mu      = matmul(ones.T, solve(self.K_, self.y_))
