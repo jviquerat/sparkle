@@ -101,10 +101,10 @@ class mpi_environments:
         return data
 
     # Render environment
-    def render(self, x):
+    def render(self, x, **kwargs):
 
         if (parallel.is_root()):
-            return self.worker.env.render(x)
+            return self.worker.env.render(x, **kwargs)
 
     # Close
     def close(self):
