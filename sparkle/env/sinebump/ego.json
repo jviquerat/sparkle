@@ -1,0 +1,27 @@
+{
+    "n_avg": 1,
+    "avg_type": "regular",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "sinebump"
+    },
+    "agent": {
+        "name": "ego",
+        "n_steps_max": 10,
+        "pex": {
+            "name": "lhs",
+            "n_points": 40
+        }
+    },
+    "trainer": {
+        "name": "pex_based",
+        "load_pex": false,
+        "render_every": 1,
+        "plot_estimates": true
+    }
+}

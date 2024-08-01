@@ -1,0 +1,168 @@
+# Generic imports
+import numpy as np
+
+# Custom imports
+from sparkle.src.trainer.base import base_trainer
+from sparkle.src.agent.agent  import agent_factory
+from sparkle.src.utils.timer  import timer
+from sparkle.src.env.parallel import parallel
+from sparkle.src.utils.error  import error
+
+###############################################
+### Class for pex-based trainer
+class pex_based(base_trainer):
+    def __init__(self, env_pms, agent_pms, path, pms):
+
+        # Set parameters
+        self.render_every   = 100000
+        self.load_pex       = False
+        self.plot_estimates = False
+
+        if hasattr(pms, "render_every"):   self.render_every   = pms.render_every
+        if hasattr(pms, "load_pex"):       self.load_pex       = pms.load_pex
+        if hasattr(pms, "plot_estimates"): self.plot_estimates = pms.plot_estimates
+
+        # Initialize environment
+        self.env = parallel.environments(path, env_pms)
+
+        # Initialize agent
+        self.agent = agent_factory.create(agent_pms.name,
+                                          path = path,
+                                          dim  = self.env.dim(),
+                                          x0   = self.env.x0(),
+                                          xmin = self.env.xmin(),
+                                          xmax = self.env.xmax(),
+                                          pms  = agent_pms)
+
+        # Such agents are only sequential for now
+        if (parallel.size() > 1):
+            error("trainer::pex_based", "init",
+                  "pex_based methods are only sequential for now")
+
+        # Initialize timer
+        self.timer_global = timer("global ")
+        self.timer_opt    = timer("opt    ")
+        self.timer_mod    = timer("model  ")
+        self.timer_pex    = timer("pex    ")
+
+    # Reset
+    def reset(self, run):
+
+        self.env.reset(run)
+        self.agent.reset(run)
+
+    # Optimize
+    def optimize(self):
+
+        self.timer_global.tic()
+
+        # Load pex or run it based on load_pex parameter
+        if (self.load_pex):
+            pass # TO DO
+        else:
+            self.timer_pex.tic()
+
+            pex_costs = np.zeros(self.agent.n_points_pex())
+            for i in range(self.agent.n_points_pex()):
+                x = self.agent.pex_point(i)
+                c = self.env.cost(x)
+                pex_costs[i] = c
+
+            self.timer_pex.toc()
+            self.timer_pex.show()
+
+            # Build model
+            self.timer_mod.tic()
+            self.agent.build_model(y=pex_costs)
+            self.timer_mod.toc()
+            self.timer_mod.show()
+
+        # Set counter and make initial rendering
+        self.timer_opt.tic()
+        self.it = 0
+
+        # Loop until done
+        while (not self.agent.done()):
+
+            # Sample new point
+            x = self.agent.sample()
+
+            # Render if necessary
+            if (self.it%self.render_every == 0):
+                self.render(x)
+
+            # Compute cost and step
+            c = self.env.cost(x)
+            self.agent.step(x, c)
+            self.agent.print()
+
+            self.it += 1
+
+        self.agent.dump()
+
+        # Close timers
+        self.timer_opt.toc()
+        self.timer_global.toc()
+        self.timer_opt.show()
+        self.timer_global.show()
+
+        exit()
+
+    # Rendering interface to output plots with metamodel informations
+    # x_last is the unevaluated last sample point
+    def render(self, x_last):
+
+        # Rendering with metamodel informations (can be expensive to compute)
+        if (self.plot_estimates):
+
+            if (self.env.dim() > 2):
+                error("pex_based", "render",
+                      "plot_estimates is only available for dim <= 2")
+
+            xmin    = self.env.xmin()
+            xmax    = self.env.xmax()
+            x_last  = np.reshape(x_last, (-1))
+
+            if (self.env.dim() == 1):
+                nx_plot = 200
+                x_plot  = np.linspace(xmin[0], xmax[0], num=nx_plot)
+                x_plot  = np.reshape(x_plot, (-1,1))
+
+                x0      = self.agent.normalize(x_plot)
+                y       = self.agent.model.evaluate(x0)
+                ei      = self.agent.exp_imp(x0)
+                y_mu    = y[0]
+                y_std   = y[1]
+
+                x_den = self.agent.denormalize(self.agent.x_)
+                self.env.render(x_den, x_mu=x_plot.squeeze(),
+                                y_mu=y_mu, y_std=y_std, ei=ei, x_ei=x_last)
+
+            if (self.env.dim() == 2):
+                nx = 100
+                ny = 100
+
+                x     = np.linspace(xmin[0], xmax[0], num=nx)
+                y     = np.linspace(xmax[1], xmin[1], num=ny)
+                x, y  = np.array(np.meshgrid(x, y))
+                x0    = np.zeros((nx,ny))
+                y_mu  = np.zeros((nx,ny))
+                y_std = np.zeros((nx,ny))
+
+                for i in range(nx):
+                    for j in range(ny):
+                        xx = np.array((x[i,j],y[i,j]))
+                        xx = np.reshape(xx, (-1,2))
+                        xx = self.agent.normalize(xx)
+                        yy = self.agent.model.evaluate(xx)
+
+                        y_mu[i,j]  = yy[0]
+                        y_std[i,j] = yy[1]
+
+                x_den = self.agent.denormalize(self.agent.x_)
+                self.env.render(x_den, y_mu=y_mu, y_std=y_std, x_ei=x_last)
+
+        else:
+            # Regular rendering without metamodel informations
+            x = self.agent.denormalize(self.agent.x_)
+            self.env.render(x)
