@@ -1,5 +1,5 @@
 # Generic imports
-from  math import sin
+from math import sin
 
 # Custom imports
 from sparkle.env.base_env import *
@@ -27,11 +27,11 @@ class multi1d(base_env):
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
         # Generate map of cost values for rendering
-        nx = 200
-        self.x = np.linspace(self.xmin[0], self.xmax[0], num=nx)
-        self.z = np.zeros((nx))
-        for i in range(nx):
-            self.z[i] = self.cost([self.x[i]])
+        self.nx_plot = 200
+        self.x_plot  = np.linspace(self.xmin[0], self.xmax[0], num=self.nx_plot)
+        self.y_plot  = np.zeros(self.nx_plot)
+        for i in range(self.nx_plot):
+            self.y_plot[i] = self.cost([self.x_plot[i]])
 
     # Reset environment
     def reset(self, run):
@@ -49,30 +49,9 @@ class multi1d(base_env):
         return v
 
     # Rendering
-    def render(self, x):
+    def render(self, x, x_mu=None, y_mu=None, y_std=None, ei=None, x_ei=None):
 
-        if (self.it_plt == 0):
-            os.makedirs(self.path+'/png', exist_ok=True)
-
-        plt.clf()
-        fig, ax = plt.subplots()
-        ax.set_xlim([self.xmin[0], self.xmax[0]])
-        ax.set_ylim([-2.0, 2.5])
-        fig.subplots_adjust(0,0,1,1)
-        plt.plot(self.x, self.z)
-
-        z = np.zeros_like(x)
-        for i in range(len(x)):
-            z[i] = self.cost(x[i])
-
-        plt.scatter(x[:,0], z[:,0], c="black", marker='o', alpha=0.8)
-
-        filename = self.path+"/png/"+str(self.it_plt)+".png"
-        plt.axis('off')
-        plt.savefig(filename, dpi=100)
-        plt.close()
-
-        self.it_plt += 1
+        self.render_1d(x, x_mu=x_mu, y_mu=y_mu, y_std=y_std, ei=ei, x_ei=x_ei)
 
     # Close environment
     def close(self):

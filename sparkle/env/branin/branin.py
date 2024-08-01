@@ -24,16 +24,7 @@ class branin(base_env):
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
         # Generate map of cost values for rendering
-        nx = 100
-        ny = 100
-
-        self.x         = np.linspace(self.xmin[0], self.xmax[0], num=100)
-        self.y         = np.linspace(self.xmax[1], self.xmin[1], num=100)
-        self.x, self.y = np.array(np.meshgrid(self.x, self.y))
-        self.z         = np.zeros((nx,ny))
-        for i in range(nx):
-            for j in range(ny):
-                self.z[i,j] = self.cost([self.x[i,j], self.y[i,j]])
+        self.generate_cost_map_2d()
 
     # Reset environment
     def reset(self, run):
