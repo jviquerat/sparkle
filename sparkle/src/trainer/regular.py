@@ -1,7 +1,7 @@
 # Custom imports
-from sparkle.src.trainer.base import *
-from sparkle.src.agent.agent  import *
-from sparkle.src.utils.timer  import *
+from sparkle.src.trainer.base import base_trainer
+from sparkle.src.agent.agent  import agent_factory
+from sparkle.src.utils.timer  import timer
 from sparkle.src.env.parallel import parallel
 
 ###############################################
