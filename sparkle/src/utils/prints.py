@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-# Custom improts
+# Custom imports
 from sparkle.src.env.parallel import parallel
 
 ###############################################

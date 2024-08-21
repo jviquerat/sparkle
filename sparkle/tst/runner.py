@@ -4,9 +4,10 @@ import sys
 import shutil
 
 # Custom imports
-from sparkle.src.utils.json      import *
-from sparkle.src.utils.data      import *
-from sparkle.src.trainer.trainer import *
+from sparkle.src.utils.json      import json_parser
+from sparkle.src.utils.data      import data_avg
+from sparkle.src.trainer.trainer import trainer_factory
+from sparkle.src.env.parallel    import parallel
 
 ###############################################
 ### Generic runner used in agent and trainer tests

@@ -6,10 +6,10 @@ import shutil
 import numpy as np
 
 # Custom imports
-from sparkle.src.trainer.trainer import *
+from sparkle.src.trainer.trainer import trainer_factory
+from sparkle.src.utils.data      import data_avg
+from sparkle.src.plot.plot       import plot
 from sparkle.src.utils.prints    import *
-from sparkle.src.utils.data      import *
-from sparkle.src.plot.plot       import *
 
 # Average training over multiple runs
 def train(json_file, pms):

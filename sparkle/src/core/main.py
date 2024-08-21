@@ -2,9 +2,9 @@
 import sys
 
 # Custom imports
-from sparkle.src.core.train   import *
-from sparkle.src.core.average import *
-from sparkle.src.utils.json   import *
+from sparkle.src.core.train   import train
+from sparkle.src.core.average import average
+from sparkle.src.utils.json   import json_parser
 from sparkle.src.utils.prints import *
 
 def error():
