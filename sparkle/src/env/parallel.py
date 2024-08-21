@@ -3,7 +3,10 @@
 class spk_parallel:
 
     def __init__(self):
-        pass
+
+        # Default values
+        self._size = 1
+        self._type = None
 
     def set(self, pms):
 
@@ -14,8 +17,6 @@ class spk_parallel:
 
         if (self._type == "multiprocessing"):
             if (not hasattr(pms, "n_env")):
-                #error("spk_parallel", "__init__",
-                #      "Multiprocessing requires argument n_env")
                 print("Error: multiprocessing requires argument n_env")
                 exit(1)
             else:
@@ -44,6 +45,8 @@ class spk_parallel:
 
         if (self._type == "multiprocessing"):
             return True
+
+        return True
 
     def comm(self):
 
