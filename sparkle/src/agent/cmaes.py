@@ -56,7 +56,8 @@ class cmaes(base_agent):
 
         self.n_steps_total = self.n_steps_max*self.n_points
 
-        self.summary()
+        if (not self.silent):
+            self.summary()
 
     # Reset
     def reset(self, run):

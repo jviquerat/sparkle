@@ -10,7 +10,8 @@ from sparkle.src.utils.prints import *
 ### Base agent
 class base_agent():
     def __init__(self, pms):
-        pass
+        self.silent = False
+        if hasattr(pms, "silent"): self.silent = pms.silent
 
     # Reset
     def reset(self, run):
