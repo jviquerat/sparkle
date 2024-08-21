@@ -2,13 +2,11 @@
 import numpy as np
 from math import sqrt, pi, exp, erf
 
-from ..model.ga import genetic_algorithm
-
 # Custom imports
-#from sparkle.src.agent.base    import base_agent
-from sparkle.src.pex.pex       import pex_factory
-from sparkle.src.model.kriging import kriging
-from sparkle.src.utils.prints  import spacer
+from sparkle.src.agent.optimizer import optimizer
+from sparkle.src.pex.pex         import pex_factory
+from sparkle.src.model.kriging   import kriging
+from sparkle.src.utils.prints    import spacer
 
 ###############################################
 ### EGO
@@ -107,15 +105,18 @@ class ego():
     # Sample new point based on expected improvement
     def sample(self):
 
-        bnd    = [0.0, 1.0]
-        bounds = []
-        for i in range(self.model.nf_):
-            bounds.append(bnd)
+        name        = "cmaes"
+        dim         = self.model.nf_
+        x0          = 0.5*np.ones(dim)
+        xmin        = np.zeros(dim)
+        xmax        = np.ones(dim)
+        n_points    = 200
+        n_steps_max = 10
 
-        x, ei  = genetic_algorithm(self.exp_imp,
-                                   bounds, 16, 10, 200, 0.9,
-                                   1.0/(16*len(bounds)))
-        x      = np.reshape(x, (-1,self.dim))
+        opt  = optimizer(name, dim, x0, xmin, xmax,
+                         n_points, n_steps_max, self.exp_imp)
+        x, c = opt.optimize()
+        x    = np.reshape(x, (-1,dim))
 
         return self.denormalize(x)
 

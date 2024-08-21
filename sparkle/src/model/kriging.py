@@ -3,11 +3,10 @@ import numpy as np
 from   numpy import matmul
 from   numpy.linalg import solve
 
-from .ga import genetic_algorithm
-
 # Custom imports
-from sparkle.src.utils.error  import error
-from sparkle.src.utils.prints import spacer
+from sparkle.src.agent.optimizer import optimizer
+from sparkle.src.utils.error     import error
+from sparkle.src.utils.prints    import spacer
 
 ###############################################
 ### Kriging model
@@ -37,13 +36,20 @@ class kriging():
         self.ns_ = x.shape[0] # nb of samples
         self.nf_ = x.shape[1] # nb of features
 
-        #self.theta_ = np.ones(self.nf_)*0.1
-        if (self.theta_ is None):
-            bounds = [[-2.0, 1.0]*self.nf_, [-3.0, 1.0], [-3.0, 1.0]]
-            theta, score = genetic_algorithm(self.log_likelihood,
-                                             bounds, 32, 10, 100, 0.9,
-                                             1.0/(32*len(bounds)))
-            self.theta_ = np.exp(theta)
+        name        = "cmaes"
+        dim         = self.nf_ + 2
+        x0          = np.zeros(dim)
+        xmin        =-2.0*np.ones(dim)
+        xmin[-2:]   =-3.0
+        xmax        = np.ones(dim)
+        n_points    = 100
+        n_steps_max = 10
+
+        opt  = optimizer(name, dim, x0, xmin, xmax,
+                         n_points, n_steps_max, self.log_likelihood)
+        theta, c = opt.optimize()
+
+        self.theta_ = np.exp(theta)
 
         self.K_ = self.kernel(self.x_, self.x_, self.theta_)
         self.L_ = np.linalg.cholesky(self.K_)
