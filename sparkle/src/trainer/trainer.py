@@ -1,7 +1,7 @@
 # Custom imports
-from sparkle.src.core.factory      import *
-from sparkle.src.trainer.regular   import *
-from sparkle.src.trainer.pex_based import *
+from sparkle.src.core.factory      import factory
+from sparkle.src.trainer.regular   import regular
+from sparkle.src.trainer.pex_based import pex_based
 
 # Declare factory
 trainer_factory = factory()
