@@ -1,6 +1,6 @@
 # Custom imports
-from sparkle.src.network.fc import *
-from sparkle.src.agent.base import *
+from sparkle.src.network.mlp import *
+from sparkle.src.agent.base  import *
 
 import torch.distributions as td
 
@@ -36,17 +36,17 @@ class pbo(base_agent):
         if hasattr(pms, "obs_dim"):     self.obs_dim     = pms.obs_dim
         self.cov_dim     = math.floor(self.dim*(self.dim - 1)/2)
 
-        self.net_sg = fc(inp_dim=self.obs_dim,
-                         out_dim=self.dim,
-                         arch=pms.sg.arch,
-                         acts=pms.sg.acts,
-                         lr=pms.sg.lr)
+        self.net_sg = mlp(inp_dim = self.obs_dim,
+                          out_dim = self.dim,
+                          arch    = pms.sg.arch,
+                          acts    = pms.sg.acts,
+                          lr      = pms.sg.lr)
 
-        self.net_cr = fc(inp_dim=self.obs_dim,
-                         out_dim=self.cov_dim,
-                         arch=pms.cr.arch,
-                         acts=pms.cr.acts,
-                         lr=pms.cr.lr)
+        self.net_cr = mlp(inp_dim = self.obs_dim,
+                          out_dim = self.cov_dim,
+                          arch    = pms.cr.arch,
+                          acts    = pms.cr.acts,
+                          lr      = pms.cr.lr)
 
         self.sg_epochs = pms.sg.epochs
         self.sg_gen    = pms.sg.gen
