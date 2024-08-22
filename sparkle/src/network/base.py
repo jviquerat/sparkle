@@ -10,7 +10,7 @@ torch.set_default_dtype(torch.double)
 
 # Custom imports
 from sparkle.src.network.torch_dicts import *
-from sparkle.src.utils.prints import *
+from sparkle.src.utils.prints        import *
 
 ###############################################
 ### Base network class
