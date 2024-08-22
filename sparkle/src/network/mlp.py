@@ -5,8 +5,8 @@ import copy
 from sparkle.src.network.base import *
 
 ###############################################
-### Fully connected network class
-class fc(base):
+### MLP class
+class mlp(base):
     def __init__(self, inp_dim, out_dim, arch, acts, lr):
         super().__init__()
 
@@ -37,7 +37,7 @@ class fc(base):
 
         # Check heads sizes
         if (self.n_heads_ != len(self.heads_acts_)):
-            error("fc", "__init__",
+            error("mlp", "__init__",
                   "The nb of heads does not match the nb of activations")
 
         self.net_ = tnn.ModuleList()
@@ -72,16 +72,12 @@ class fc(base):
         # Create optimizer
         self.opt_ = toptim.Adam(self.params(),
                                  lr=self.lr_)
-                #self.opt_ = toptim.LBFGS(self.params(),
-        #                        lr=self.lr_,)
 
         # Save model parameters in memory
         self.net_weights = copy.deepcopy(self.net_.state_dict())
 
         # Save optimizer parameters in memory
         self.opt_weights = copy.deepcopy(self.opt_.state_dict())
-
-        #print(self.net_weights['0.weight'].type())
 
     # Forward pass
     def forward(self, x_in):
