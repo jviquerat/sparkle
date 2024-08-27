@@ -28,7 +28,7 @@ class data_avg():
     def average(self, filename, avg_type="linear"):
 
         array = np.vstack(self.stp)
-        smoother = ema(0.5, 5)
+        smoother = ema(0.2, int(self.n_stp/10))
 
         for field in range(self.n_fields):
             avg   = np.mean(self.data[:,:,field], axis=0)

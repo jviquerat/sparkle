@@ -4,40 +4,21 @@ import numpy as np
 ###############################################
 ### Exponential moving average class
 class ema:
-    def __init__(self, alpha, n_layers=1):
-        self.alpha    = alpha
-        self.n_layers = n_layers
-        self.y        = np.zeros(n_layers)
-        self.first    = True
-
-    ### Add a value to the buffer
-    def add(self, value):
-        v = value
-        if (self.first):
-            self.y[:]  = value
-            self.first = False
-        else:
-            for i in range(self.n_layers):
-                if (i>0): v = self.y[i-1]
-                self.y[i] = self.alpha*v + (1.0-self.alpha)*self.y[i]
-
-    ### Add a chunk of data to the buffer
-    def add_buffer(self, array):
-        for i in range(len(array)):
-            self.add(array[i])
-
-    ### Return average
-    def avg(self):
-        return self.y[-1]
+    def __init__(self, alpha, n):
+        self.alpha = alpha
+        self.n     = n
 
     ### Smooth entire array
     def smooth(self, array):
 
-        self.y = np.zeros(self.n_layers)
-        s      = np.zeros_like(array)
-        for i in range(len(array)):
-            self.add(array[i])
-            s[i] = self.avg()
+        s    = np.zeros_like(array)
+        y    = array[0]
+        s[0] = y
+
+        for i in range(1,len(array)):
+            v    = array[i]
+            s[i] = self.alpha*v + (1.0-self.alpha)*y
+            y    = np.mean(array[max(i-self.n,0):i])
 
         return s
 
