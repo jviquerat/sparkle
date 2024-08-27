@@ -39,50 +39,41 @@ class cem(base_agent):
         self.xmin_cem = self.xmin.copy()
         self.xmax_cem = self.xmax.copy()
 
-        # Initial sampling
-        # This fills x and z arrays with samples
-        self.sample()
-
-        return self.x
-
     # Sample from distribution
     def sample(self):
 
-        self.x = np.zeros((self.n_points, self.dim))
+        x = np.zeros((self.n_points, self.dim))
 
         for i in range(self.n_points):
-            self.x[i,:] = np.random.uniform(low  = self.xmin_cem,
-                                            high = self.xmax_cem)
+            x[i,:] = np.random.uniform(low  = self.xmin_cem,
+                                       high = self.xmax_cem)
+
+        return x
 
     # Step
-    def step(self, c):
+    def step(self, x, c):
 
         # Update best value
-        self.update_best(c)
+        self.update_best(x, c)
 
         # Sort
-        self.sort(c)
+        self.sort(x, c)
 
         # Store
-        self.store(c)
+        self.store(x, c)
 
         # Update xmin and xmax
-        xmin = np.amin(self.x[:self.n_elites,:], axis=0)
-        xmax = np.amax(self.x[:self.n_elites,:], axis=0)
-        self.xmin_cem[:] = ((1.0-self.alpha)*self.xmin_cem[:] +
-                            self.alpha*xmin[:])
-        self.xmax_cem[:] = ((1.0-self.alpha)*self.xmax_cem[:] +
-                            self.alpha*xmax[:])
-
-        # Sample
-        self.sample()
+        xmin = np.amin(x[:self.n_elites,:], axis=0)
+        xmax = np.amax(x[:self.n_elites,:], axis=0)
+        self.xmin_cem[:] = ((1.0-self.alpha)*self.xmin_cem[:] + self.alpha*xmin[:])
+        self.xmax_cem[:] = ((1.0-self.alpha)*self.xmax_cem[:] + self.alpha*xmax[:])
 
         self.stp += 1
 
     # Sort offsprings based on cost
     # x and c arrays are actually modified here
-    def sort(self, c):
+    def sort(self, x, c):
 
-        sc        = np.argsort(c)
-        self.x[:] = self.x[sc[:]]
-        c[:]      = c[sc[:]]
+        sc   = np.argsort(c)
+        x[:] = x[sc[:]]
+        c[:] = c[sc[:]]

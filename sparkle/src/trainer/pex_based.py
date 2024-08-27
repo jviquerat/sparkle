@@ -77,7 +77,7 @@ class pex_based(base_trainer):
             self.timer_mod.toc()
             self.timer_mod.show()
 
-        # Set counter and make initial rendering
+        # Set counter
         self.timer_opt.tic()
         self.it = 0
 

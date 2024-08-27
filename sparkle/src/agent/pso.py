@@ -39,52 +39,47 @@ class pso(base_agent):
         # Mother class reset
         super().reset(run)
 
-        # Positions and velocities
-        self.x = np.random.rand(self.n_points, self.dim)
-        self.x = self.xmin + self.x*(self.xmax-self.xmin)
-        self.v = np.random.randn(self.n_points, self.dim)*self.v0
-
         # Local best point
-        self.p_best  = np.copy(self.x)
+        self.p_best  = np.zeros((self.n_points, self.dim))
         self.p_score = np.ones(self.n_points)*1.0e8
+
+    # Sample points
+    # A local copy of x is required as sample() does not take previous samples as argument
+    def sample(self):
+
+        if (self.stp == 0):
+            self.x = np.random.rand(self.n_points, self.dim)
+            self.x = self.xmin + self.x*(self.xmax-self.xmin)
+            self.v = np.random.randn(self.n_points, self.dim)*self.v0
+        else:
+            for i in range(self.n_points):
+                r1, r2       = np.random.rand(2)
+                self.v[i,:]  = (self.w*self.v[i,:] +
+                                self.c1*r1*(self.p_best[i,:] - self.x[i,:]) +
+                                self.c2*r2*(self.best_x[:]   - self.x[i,:]))
+                self.x[i,:] += self.v[i,:]
 
         return self.x
 
     # Step
-    # Data storage is performed between update of best points
-    # and update of positions and velocities so the recorded (x,v)
-    # matches with the correct cost
-    def step(self, c):
+    def step(self, x, c):
 
         # Update best
-        self.update_best(c)
-        self.update_local_best(c)
+        self.update_best(x, c)
+        self.update_local_best(x, c)
 
         # Store
-        self.store(c)
-
-        # Update position and velocities
-        self.update_xv()
+        self.store(x, c)
 
         self.stp += 1
 
     # Update local best
-    def update_local_best(self, c):
+    def update_local_best(self, x, c):
 
         for i in range(self.n_points):
 
             # Update best local score
             if (c[i] <= self.p_score[i]):
                 self.p_score[i]  = c[i]
-                self.p_best[i,:] = self.x[i,:]
+                self.p_best[i,:] = x[i,:]
 
-    # Update positions and velocities
-    def update_xv(self):
-
-        for i in range(self.n_points):
-            r1, r2 = np.random.rand(2)
-            self.v[i,:]  = (self.w*self.v[i,:] +
-                            self.c1*r1*(self.p_best[i,:] - self.x[i,:]) +
-                            self.c2*r2*(self.best_x[:]   - self.x[i,:]))
-            v = np.random.randn(self.n_points, self.dim)*self.v0
-            self.x[i,:] += self.v[i,:]

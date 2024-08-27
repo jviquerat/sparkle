@@ -49,13 +49,13 @@ class base_agent():
         raise NotImplementedError
 
     # Update best value
-    def update_best(self, c):
+    def update_best(self, x, c):
 
         for i in range(self.n_points):
 
             if (c[i] <= self.best_score):
                 self.best_score = c[i]
-                self.best_x[:]  = self.x[i,:]
+                self.best_x[:]  = x[i,:]
                 self.best_stp   = self.total_stp + i
 
     # Print informations
@@ -65,11 +65,6 @@ class base_agent():
         print("Using "+self.name+" algorithm with "+str(self.n_points)+" points")
         spacer()
         print("Problem dimensionality is "+str(self.dim))
-
-    # Return degrees of freedom
-    def dof(self):
-
-        return self.x
 
     # Return number of degress of freedom
     def ndof(self):
@@ -85,11 +80,11 @@ class base_agent():
         return False
 
     # Store data
-    def store(self, c):
+    def store(self, x, c):
 
         for i in range(self.n_points):
             self.hist_t[self.total_stp]   = self.total_stp
-            self.hist_x[self.total_stp,:] = self.x[i,:]
+            self.hist_x[self.total_stp,:] = x[i,:]
             self.hist_c[self.total_stp]   = c[i]
             self.hist_b[self.total_stp]   = self.best_score
             self.hist_s[self.total_stp]   = self.best_stp

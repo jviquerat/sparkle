@@ -42,25 +42,26 @@ class regular(base_trainer):
     # Optimize
     def optimize(self):
 
-        # Start global timer
+        # Set counter
         self.timer_global.tic()
-
-        # Set counter and make initial rendering
         self.it = 0
-        self.env.render(self.agent.dof())
 
         # Loop until done
         while (not self.agent.done()):
 
-            x = self.agent.dof()
+            # Sample points
+            x = self.agent.sample()
+
+            # Render if necessary
+            if (self.it%self.render_every == 0):
+                self.env.render(x)
+
+            # Compute cost and step
             c = self.env.cost(x)
-            self.agent.step(c)
+            self.agent.step(x, c)
             self.agent.print()
 
             self.it += 1
-
-            if (self.it%self.render_every == 0):
-                self.env.render(self.agent.dof())
 
         self.agent.dump()
 
