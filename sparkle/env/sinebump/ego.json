@@ -12,10 +12,10 @@
     },
     "agent": {
         "name": "ego",
-        "n_steps_max": 10,
+        "n_steps_max": 25,
         "pex": {
             "name": "lhs",
-            "n_points": 40
+            "n_points": 25
         }
     },
     "trainer": {

@@ -120,6 +120,7 @@ class base_env():
             ax = fig.add_subplot(131)
             fig.set_size_inches(8, 3)
             fig.tight_layout()
+            plt.subplots_adjust(bottom=0.01, top=0.99, left=0.01, right=0.99)
             plt.rcParams.update({'axes.titlesize': 'small'})
         else:
             ax = fig.add_subplot(111)

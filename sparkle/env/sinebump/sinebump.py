@@ -1,6 +1,3 @@
-# Generic imports
-from  math import cos, sqrt
-
 # Custom imports
 from sparkle.env.base_env import *
 
