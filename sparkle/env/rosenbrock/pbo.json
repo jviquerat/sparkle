@@ -1,5 +1,5 @@
 {
-    "n_avg": 5,
+    "n_avg": 3,
     "avg_type": "log",
     "naming": {
         "env": true,
@@ -10,12 +10,12 @@
     "environment": {
         "name": "rosenbrock",
         "args": {
-            "dim": 10
+            "dim": 2
         }
     },
     "agent": {
         "name": "pbo",
-        "n_steps_max": 600,
+        "n_steps_max": 150,
         "sg": {
             "arch": [[8,8],[[null]]],
             "acts": [["tanh","relu"],[["sigmoid"]]],

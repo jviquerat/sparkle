@@ -81,7 +81,7 @@ class pbo(base_agent):
 
         # Initial sampling
         # This fills x array with samples
-        return self.sample()
+        #return self.sample()
 
     # Sample from distribution
     def sample(self):
@@ -92,9 +92,9 @@ class pbo(base_agent):
         cr  = self.net_cr(obs)
 
         pdf = self.get_pdf(self.mu, sg[0], cr[0])
-        self.x = pdf.sample([self.n_points])
+        x   = pdf.sample([self.n_points])
 
-        return self.x
+        return x
 
     # Compute full cov pdf
     def get_pdf(self, mu, sg, cr):
@@ -108,16 +108,17 @@ class pbo(base_agent):
         return pdf
 
     # Step
-    def step(self, c):
+    def step(self, x, c):
 
         # Update best point
-        self.update_best(c)
+        self.update_best(x, c)
 
         # Store
-        self.store(c)
+        self.store(x, c)
 
         # Compute advantages
-        self.compute_advantages()
+        # x is modified during this process
+        x_elite = self.compute_advantages(x)
 
         # Update
         self.train_loop(self.sg_epochs, self.sg_gen,
@@ -129,15 +130,12 @@ class pbo(base_agent):
         w = w/np.sum(w)
         self.mu[:] = 0.0
         for i in range(self.n_elite):
-           self.mu[:] += w[i]*self.x[i,:]
-
-        # Sample
-        self.x = self.sample()
+           self.mu[:] += w[i]*x_elite[i,:]
 
         self.stp += 1
 
     # Compute advantages
-    def compute_advantages(self):
+    def compute_advantages(self, x):
 
         # Update elite_step
         self.elite_stp += self.n_elite
@@ -156,15 +154,17 @@ class pbo(base_agent):
 
         # Retain only elite points
         sc       = np.argsort(self.adv)
-        self.x   = self.x[sc[-self.n_elite:]].clone()
+        x_elite  = x[sc[-self.n_elite:]].clone()
         self.adv = self.adv[sc[-self.n_elite:]]
 
         # Decay advantage history
         start = self.elite_stp - self.n_elite
         end   = self.elite_stp
-        self.hist_x_elite[start:end] = self.x[:]
+        self.hist_x_elite[start:end] = x_elite[:]
         self.hist_a_elite[:] *= self.adv_decay
         self.hist_a_elite[start:end] = self.adv[:]
+
+        return x_elite
 
     # Get data history
     def get_history(self, n_gen):

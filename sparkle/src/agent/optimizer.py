@@ -57,13 +57,13 @@ class optimizer():
         # Loop until done
         while (not self.agent.done()):
 
-            x = self.agent.dof()
+            x = self.agent.sample()
 
             n_pts = x.shape[0]
             c     = np.zeros(n_pts)
             for p in range(n_pts):
                 c[p] = self.cost(x[p])
 
-            self.agent.step(c)
+            self.agent.step(x, c)
 
         return self.agent.best_x, self.agent.best_score

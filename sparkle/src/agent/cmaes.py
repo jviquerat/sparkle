@@ -76,41 +76,37 @@ class cmaes(base_agent):
         self.zm    = np.zeros(self.dim)        # auxiliary mean vector
         self.sigma = self.sigma0               # global standard deviation
 
-        # Initial sampling
-        # This fills x and z arrays with samples
-        self.sample()
-
-        return self.x
-
     # Sample from distribution
     def sample(self):
 
+        x      = np.zeros((self.n_points, self.dim))
         self.z = np.random.randn(self.n_points, self.dim) # draw from N(0,1)
-        self.x = np.zeros_like(self.z)
         for i in range(self.n_points):
-            self.x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, self.z[i,:])
+            x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, self.z[i,:])
 
         if (self.clip):
             for i in range(self.dim):
-                self.x[:,i] = np.clip(self.x[:,i], self.xmin[i], self.xmax[i])
+                x[:,i] = np.clip(x[:,i], self.xmin[i], self.xmax[i])
+
+        return x
 
     # Step
-    def step(self, c):
+    def step(self, x, c):
 
         # Update best value
-        self.update_best(c)
+        self.update_best(x, c)
 
         # Sort
-        self.sort(c)
+        self.sort(x, c)
 
         # Store
-        self.store(c)
+        self.store(x, c)
 
         # Update xmean and zmean
         self.xm[:] = 0.0
         self.zm[:] = 0.0
         for i in range(self.mu):
-            self.xm[:] += self.x[i,:]*self.w[i]
+            self.xm[:] += x[i,:]*self.w[i]
             self.zm[:] += self.z[i,:]*self.w[i] # = D^-1 * B^T * (x_mean-x_old)/sigma
 
         # Update ps
@@ -146,16 +142,13 @@ class cmaes(base_agent):
             if (c[0] > 0.999*c[-1]):
                 self.sigma *= np.exp(2.0+self.cs/self.dp)
 
-        # Sample
-        self.sample()
-
         self.stp += 1
 
     # Sort offsprings based on cost
     # x and c arrays are actually modified here
-    def sort(self, c):
+    def sort(self, x, c):
 
         sc        = np.argsort(c)
-        self.x[:] = self.x[sc[:]]
+        x[:]      = x[sc[:]]
         self.z[:] = self.z[sc[:]]
         c[:]      = c[sc[:]]
