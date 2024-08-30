@@ -131,7 +131,6 @@ class base_env():
         ax.set_xlim([self.xmin[0], self.xmax[0]])
         ax.set_ylim([self.xmin[1], self.xmax[1]])
         ax.axis('off')
-
         ax.imshow(self.z,
                   extent=[self.xmin[0], self.xmax[0],
                           self.xmin[1], self.xmax[1]],

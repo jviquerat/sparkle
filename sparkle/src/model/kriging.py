@@ -31,8 +31,8 @@ class kriging():
 
         self.reset()
 
-        self.x_ = x
-        self.y_ = y
+        self.x_  = x
+        self.y_  = y
         self.ns_ = x.shape[0] # nb of samples
         self.nf_ = x.shape[1] # nb of features
 
@@ -42,7 +42,7 @@ class kriging():
         xmin        =-2.0*np.ones(dim)
         xmin[-2:]   =-3.0
         xmax        = np.ones(dim)
-        n_points    = 100
+        n_points    = 200
         n_steps_max = 10
 
         opt  = optimizer(name, dim, x0, xmin, xmax,
@@ -52,17 +52,17 @@ class kriging():
         self.theta_ = np.exp(theta)
 
         self.K_ = self.kernel(self.x_, self.x_, self.theta_)
-        self.L_ = np.linalg.cholesky(self.K_)
 
     # Evaluate at test points
     def evaluate(self, xt, theta=None):
 
         if theta is None: theta = self.theta_
 
-        Lt  = np.linalg.solve(self.L_, self.kernel(self.x_, xt, theta))
-        mu  = np.dot(Lt.T, np.linalg.solve(self.L_, self.y_))
+        Kl  = self.kernel(xt, self.x_, theta)
+        mu  = matmul(Kl, solve(self.K_, self.y_))
         Kt  = self.kernel(xt, xt, theta)
-        std = np.sqrt(np.diag(Kt) - np.sum(Lt**2, axis=0))
+        std = np.diag(Kt - matmul(Kl, solve(self.K_, Kl.T)))
+        std = np.sqrt(np.abs(std))
 
         return mu, std
 
@@ -71,16 +71,15 @@ class kriging():
 
         theta = np.exp(log_theta)
 
-        self.K_ = self.kernel(self.x_, self.x_, theta)
-        self.L_ = np.linalg.cholesky(self.K_)
+        K_   = self.kernel(self.x_, self.x_, theta)
+        ones = np.ones(self.ns_)
+        mu   = matmul(ones.T, solve(K_, self.y_))
+        mu  /= matmul(ones.T, solve(K_, ones))
 
-        ones    = np.ones(self.ns_)
-        mu      = matmul(ones.T, solve(self.K_, self.y_))
-        mu     /= matmul(ones.T, solve(self.K_, ones))
         res     = self.y_ - mu
-        var     = matmul(res.T, solve(self.K_, res))/self.ns_
+        var     = matmul(res.T, solve(K_, res))/self.ns_
         if (var < 0.0): return 1.0e10
-        log_lkh =-0.5*(-self.ns_*np.log(var) + np.linalg.slogdet(self.K_)[1])
+        log_lkh =-0.5*(-self.ns_*np.log(var) + np.linalg.slogdet(K_)[1])
 
         return log_lkh
 
