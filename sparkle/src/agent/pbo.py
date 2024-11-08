@@ -92,7 +92,7 @@ class pbo(base_agent):
         cr  = self.net_cr(obs)
 
         pdf = self.get_pdf(self.mu, sg[0], cr[0])
-        x   = pdf.sample([self.n_points])
+        x   = pdf.sample([self.n_points]).numpy()
 
         return x
 
@@ -154,7 +154,7 @@ class pbo(base_agent):
 
         # Retain only elite points
         sc       = np.argsort(self.adv)
-        x_elite  = x[sc[-self.n_elite:]].clone()
+        x_elite  = x[sc[-self.n_elite:]].copy()
         self.adv = self.adv[sc[-self.n_elite:]]
 
         # Decay advantage history
@@ -164,7 +164,7 @@ class pbo(base_agent):
         self.hist_a_elite[:] *= self.adv_decay
         self.hist_a_elite[start:end] = self.adv[:]
 
-        return x_elite
+        return torch.tensor(x_elite)
 
     # Get data history
     def get_history(self, n_gen):
