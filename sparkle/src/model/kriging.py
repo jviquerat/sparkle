@@ -20,32 +20,33 @@ class kriging():
 
         self.theta_ = None
         self.K_     = None
-        self.L_     = None
         self.x_     = None
         self.y_     = None
         self.ns_    = None
         self.nf_    = None
+
+        self.diag_eps_ = 1.0e-8
 
     # Build model from input
     def build(self, x, y):
 
         self.reset()
 
-        self.x_  = x
-        self.y_  = y
-        self.ns_ = x.shape[0] # nb of samples
-        self.nf_ = x.shape[1] # nb of features
+        self.x_   = x
+        self.y_   = y
+        self.ns_  = x.shape[0] # nb of samples
+        self.nf_  = x.shape[1] # nb of features
+        self.dim_ = self.nf_ + 2
 
         name        = "cmaes"
-        dim         = self.nf_ + 2
-        x0          = np.zeros(dim)
-        xmin        =-2.0*np.ones(dim)
+        x0          = np.zeros(self.dim_)
+        xmin        =-2.0*np.ones(self.dim_)
         xmin[-2:]   =-3.0
-        xmax        = np.ones(dim)
+        xmax        = np.ones(self.dim_)
         n_points    = 200
         n_steps_max = 10
 
-        opt  = optimizer(name, dim, x0, xmin, xmax,
+        opt  = optimizer(name, self.dim_, x0, xmin, xmax,
                          n_points, n_steps_max, self.log_likelihood)
         theta, c = opt.optimize()
 
@@ -92,7 +93,7 @@ class kriging():
         for i in range(nx):
             for j in range(ny):
                 corr[i,j] = self.cov_function(theta, abs(x[i] - y[j]))
-                if (i==j): corr[i,j] += 1.0e-8
+                if (i==j): corr[i,j] += self.diag_eps_
 
         return corr
 
@@ -105,3 +106,55 @@ class kriging():
             val *= np.exp(-0.5*np.square(dist[i]/theta[i]))
 
         return theta[-2]*val + theta[-1]
+
+    # Dump kriging data
+    def dump(self, filename):
+
+        with open(filename, "w") as f:
+            f.write(f"{self.nf_} \n")
+            f.write(f"{self.ns_} \n")
+            f.write(f"{self.dim_} \n")
+            f.write(f"{self.diag_eps_} \n")
+            np.savetxt(f, self.theta_)
+            np.savetxt(f, self.K_)
+            np.savetxt(f, self.x_)
+            np.savetxt(f, self.y_)
+
+    # Load kriging data
+    def load(self, filename):
+
+        self.reset()
+
+        with open(filename, "r") as f:
+            self.nf_       = int(f.readline().split(" ")[0])
+            self.ns_       = int(f.readline().split(" ")[0])
+            self.dim_      = int(f.readline().split(" ")[0])
+            self.diag_eps_ = float(f.readline().split(" ")[0])
+
+            self.theta_ = np.zeros(self.dim_)
+            self.K_     = np.zeros((self.ns_, self.ns_))
+            self.x_     = np.zeros((self.ns_, self.nf_))
+            self.y_     = np.zeros(self.ns_)
+
+            l = 4
+            self.theta_ = np.loadtxt(filename,
+                                     skiprows=l,
+                                     max_rows=self.dim_)
+
+            l += self.dim_
+            for i in range(self.dim_): f.readline()
+            self.K_ = np.loadtxt(filename,
+                                 skiprows=l,
+                                 max_rows=self.ns_)
+
+            l += self.ns_
+            for i in range(self.ns_): f.readline()
+            self.x_ = np.loadtxt(filename,
+                                 skiprows=l,
+                                 max_rows=self.ns_)
+
+            l += self.ns_
+            for i in range(self.ns_): f.readline()
+            self.y_ = np.loadtxt(filename,
+                                 skiprows=l,
+                                 max_rows=self.ns_)
