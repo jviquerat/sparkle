@@ -1,4 +1,5 @@
 # Generic imports
+import os
 import pytest
 import types
 import numpy as np
@@ -20,5 +21,6 @@ def test_random():
     pms.n_points = n_points
 
     pex = random(dim, xmin, xmax, pms)
-    assert(pex.x_.shape[0] == n_points)
-    #pex.render_2d()
+    assert(pex.n_points() == n_points)
+    pex.render_2d()
+    os.remove(pex.render_2d_filename)

@@ -10,16 +10,18 @@ from sparkle.src.pex.base import base_pex
 class random(base_pex):
     def __init__(self, dim, xmin, xmax, pms):
 
-        self.name_ = "random"
-        self.reset(dim, xmin, xmax, pms)
+        super().__init__()
+
+        self.name_     = "random"
+        self.dim_      = dim
+        self.xmin_     = xmin
+        self.xmax_     = xmax
+        self.n_points_ = pms.n_points
+
+        self.reset()
 
     # Reset sampling
-    def reset(self, dim, xmin, xmax, pms):
-
-        self.dim_              = dim
-        self.xmin_             = xmin
-        self.xmax_             = xmax
-        self.n_points_         = pms.n_points
+    def reset(self):
 
         # Generate x points for pex
         self.x_ = np.random.uniform(low  = self.xmin_,
