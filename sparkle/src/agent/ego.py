@@ -16,13 +16,14 @@ class ego(base_agent):
 
         super().__init__(pms)
 
-        self.name        = "EGO"
-        self.base_path   = path
-        self.dim         = dim
-        self.x0          = x0
-        self.xmin        = xmin
-        self.xmax        = xmax
-        self.n_steps_max = pms.n_steps_max
+        self.name            = "EGO"
+        self.base_path       = path
+        self.dim             = dim
+        self.x0              = x0
+        self.xmin            = xmin
+        self.xmax            = xmax
+        self.n_steps_max     = pms.n_steps_max
+        self.recompute_theta = pms.recompute_theta
 
         self.x_          = None
         self.y_          = None
@@ -64,14 +65,15 @@ class ego(base_agent):
         if (self.x_ is None):
             self.x_ = self.normalize(self.pex.x())
             self.y_ = y
+
+            self.model.build(self.x_, self.y_, True)
         else:
             self.x_ = self.denormalize(self.x_)
             self.x_ = np.vstack((self.x_, x))
             self.y_ = np.hstack((self.y_, y))
             self.x_ = self.normalize(self.x_)
-
-        # Build model
-        self.model.build(self.x_, self.y_)
+            
+            self.model.build(self.x_, self.y_, self.recompute_theta)
 
         # Initial screen output
         if (not self.is_built_):

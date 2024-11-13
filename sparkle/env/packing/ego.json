@@ -18,6 +18,7 @@
     },
     "agent": {
         "name": "ego",
+        "recompute_theta": false,
         "n_steps_max": 50,
         "pex": {
             "name": "lhs",

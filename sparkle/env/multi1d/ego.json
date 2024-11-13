@@ -13,6 +13,7 @@
     "agent": {
         "name": "ego",
         "n_steps_max": 9,
+        "recompute_theta": false,
         "pex": {
             "name": "lhs",
             "n_points": 6
