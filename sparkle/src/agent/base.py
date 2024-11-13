@@ -4,7 +4,7 @@ import random
 import numpy as np
 
 # Custom imports
-from sparkle.src.utils.prints import *
+from sparkle.src.utils.prints import spacer
 
 ###############################################
 ### Base agent

@@ -1,6 +1,6 @@
 # Custom imports
-from sparkle.src.utils.data import *
-from sparkle.src.plot.plot  import *
+from sparkle.src.utils.data import data_avg
+from sparkle.src.plot.plot  import plot
 
 # Average existing runs
 def average(args):

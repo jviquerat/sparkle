@@ -1,5 +1,8 @@
+# Generic imports
+import numpy as np
+
 # Custom imports
-from sparkle.src.agent.base import *
+from sparkle.src.agent.base import base_agent
 
 ###############################################
 ### Particle swarm optimization

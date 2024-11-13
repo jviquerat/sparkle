@@ -2,7 +2,7 @@
 import numpy as np
 
 # Custom imports
-from sparkle.src.utils.ema import *
+from sparkle.src.utils.ema import ema
 
 ###############################################
 ### Data averager class

@@ -5,7 +5,7 @@ import sys
 from sparkle.src.core.train   import train
 from sparkle.src.core.average import average
 from sparkle.src.utils.json   import json_parser
-from sparkle.src.utils.prints import *
+from sparkle.src.utils.prints import new_line, disclaimer, liner_simple, spacer
 
 def error():
     new_line()

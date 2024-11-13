@@ -1,5 +1,9 @@
+# Generic imports
+import math
+import numpy as np
+
 # Custom imports
-from sparkle.src.agent.base import *
+from sparkle.src.agent.base import base_agent
 
 ###############################################
 ### CEM

@@ -1,8 +1,13 @@
 # Generic imports
 import copy
+import torch
+import torch.nn as tnn
+import torch.optim as toptim
 
 # Custom imports
-from sparkle.src.network.base import *
+from sparkle.src.network.base        import base
+from sparkle.src.network.torch_dicts import add_fc_layer
+from sparkle.src.utils.prints        import spacer
 
 ###############################################
 ### MLP class

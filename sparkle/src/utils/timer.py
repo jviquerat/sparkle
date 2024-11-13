@@ -2,7 +2,7 @@
 import time
 
 # Custom imports
-from sparkle.src.utils.prints import *
+from sparkle.src.utils.prints import spacer
 
 ###############################################
 ### timer class
