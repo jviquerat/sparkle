@@ -3,6 +3,7 @@ import numpy as np
 from math import sqrt, pi, exp, erf
 
 # Custom imports
+from sparkle.src.agent.base      import base_agent
 from sparkle.src.agent.optimizer import optimizer
 from sparkle.src.pex.pex         import pex_factory
 from sparkle.src.model.kriging   import kriging
@@ -10,8 +11,10 @@ from sparkle.src.utils.prints    import spacer
 
 ###############################################
 ### EGO
-class ego():
+class ego(base_agent):
     def __init__(self, path, dim, x0, xmin, xmax, pms):
+
+        super().__init__(pms)
 
         self.name        = "EGO"
         self.base_path   = path
@@ -32,9 +35,26 @@ class ego():
                                       pms  = pms.pex)
         self.model = kriging()
 
+        self.n_points      = 1
         self.n_steps_total = self.pex.n_points() + self.n_steps_max
 
-        self.summary()
+        if (not self.silent):
+            self.summary()
+
+    # Reset
+    def reset(self, run):
+
+        # Mother class reset
+        super().reset(run)
+
+        self.cnt = 0
+
+        self.pex.reset()
+        self.model.reset()
+
+        self.x_        = None
+        self.y_        = None
+        self.is_built_ = False
 
     # Build initial kriging model
     def build_model(self, x=None, y=None):
@@ -93,15 +113,6 @@ class ego():
 
         return self.xmin + (self.xmax - self.xmin)*x
 
-    # Reset
-    def reset(self, run):
-
-        self.stp = 0
-        self.cnt = 0
-
-        #self.pex.reset()
-        self.model.reset()
-
     # Sample new point based on expected improvement
     def sample(self):
 
@@ -144,6 +155,8 @@ class ego():
     # Step
     def step(self, x, c):
 
+        self.update_best(x, c)
+        self.store(x, c)
         self.build_model(x, c)
 
         self.stp += 1
@@ -192,7 +205,3 @@ class ego():
             gb = np.array2string(xb, precision=5, floatmode='fixed', threshold=4, separator=',')
 
             print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" for x = "+str(gb)+"                                                                                                           ", end=end)
-
-    # Dump data
-    def dump(self):
-        pass
