@@ -9,13 +9,14 @@ from sparkle.src.utils.prints import *
 ###############################################
 ### Base experiment plan
 class base_pex():
-    def __init__(self, pms):
-        pass
+    def __init__(self):
+
+        self.render_2d_filename = "pex_render_2d.png"
 
     # Return total nb of points
     def n_points(self):
 
-        return self.n_points_
+        return self.x().shape[0]
 
     # Return i-th point of pex
     def point(self, i):
@@ -47,6 +48,5 @@ class base_pex():
         plt.yticks(major_ticks)
         plt.grid()
         plt.scatter(self.x_[:,0], self.x_[:,1], c="black", marker="o")
-        filename = "pex_render_2d.png"
-        plt.savefig(filename, dpi=100)
+        plt.savefig(self.render_2d_filename, dpi=100)
         plt.close()
