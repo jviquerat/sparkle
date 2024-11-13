@@ -1,6 +1,6 @@
 {
-    "n_avg": 2,
-    "avg_type": "linear",
+    "n_avg": 1,
+    "avg_type": "regular",
     "naming": {
         "env": true,
         "agent": true,
@@ -8,20 +8,25 @@
         "time": false
     },
     "environment": {
-        "name": "rosenbrock"
+        "name": "packing",
+        "args":{
+            "obj_type": "triangle",
+            "obj_size": 1.0,
+            "n_objs": 2,
+            "max_side": 3.0
+        }
     },
     "agent": {
         "name": "ego",
-        "n_steps_max": 10,
+        "n_steps_max": 50,
         "pex": {
             "name": "lhs",
-            "n_points": 10
+            "n_points": 200
         }
     },
     "trainer": {
         "name": "pex_based",
         "load_pex": false,
-        "render_every": 1,
-        "plot_estimates": true
+        "render_every": 1
     }
 }
