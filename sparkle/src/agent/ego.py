@@ -72,7 +72,7 @@ class ego(base_agent):
             self.x_ = np.vstack((self.x_, x))
             self.y_ = np.hstack((self.y_, y))
             self.x_ = self.normalize(self.x_)
-            
+
             self.model.build(self.x_, self.y_, self.recompute_theta)
 
         # Initial screen output

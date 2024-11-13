@@ -2,15 +2,8 @@
 import math
 import numpy as np
 import torch
-
 import torch.nn as tnn
-import torch.optim as toptim
-
 torch.set_default_dtype(torch.double)
-
-# Custom imports
-from sparkle.src.network.torch_dicts import *
-from sparkle.src.utils.prints        import *
 
 ###############################################
 ### Base network class

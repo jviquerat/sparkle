@@ -1,5 +1,5 @@
 # Custom imports
-from sparkle.src.utils.error import *
+from sparkle.src.utils.error import error
 
 ###############################################
 ### A very basic factory

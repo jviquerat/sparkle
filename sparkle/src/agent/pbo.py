@@ -1,8 +1,12 @@
-# Custom imports
-from sparkle.src.network.mlp import *
-from sparkle.src.agent.base  import *
-
+# Generic imports
+import math
+import numpy as np
+import torch
 import torch.distributions as td
+
+# Custom imports
+from sparkle.src.network.mlp import mlp
+from sparkle.src.agent.base  import base_agent
 
 ###############################################
 ### PBO

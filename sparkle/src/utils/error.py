@@ -1,5 +1,5 @@
 # Custom imports
-from sparkle.src.utils.prints import *
+from sparkle.src.utils.prints import liner, spacer, new_line
 
 ###############################################
 ### A set of functions to print errors and warnings

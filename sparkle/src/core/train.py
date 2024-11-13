@@ -9,7 +9,7 @@ import numpy as np
 from sparkle.src.trainer.trainer import trainer_factory
 from sparkle.src.utils.data      import data_avg
 from sparkle.src.plot.plot       import plot
-from sparkle.src.utils.prints    import *
+from sparkle.src.utils.prints    import liner
 
 # Average training over multiple runs
 def train(json_file, pms):

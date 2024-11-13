@@ -1,5 +1,5 @@
 # Custom imports
-from lorenz import *
+from lorenz import lorenz
 
 l = lorenz(0, '.')
 l.reset(0)

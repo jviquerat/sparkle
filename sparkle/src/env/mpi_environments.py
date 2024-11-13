@@ -4,8 +4,9 @@ import sys
 import numpy as np
 
 # Custom imports
-from sparkle.src.env.mpi_worker import *
-from sparkle.src.utils.timer    import *
+from sparkle.src.env.parallel   import parallel
+from sparkle.src.env.mpi_worker import mpi_worker
+from sparkle.src.utils.timer    import timer
 
 ###############################################
 ### A wrapper class for mpi parallel environments
