@@ -16,21 +16,23 @@ class kriging():
         self.reset()
 
     # Reset model
-    def reset(self):
+    def reset(self, recompute_theta=True):
 
-        self.theta_ = None
+        self.diag_eps_ = 1.0e-8
+
         self.K_     = None
         self.x_     = None
         self.y_     = None
         self.ns_    = None
         self.nf_    = None
 
-        self.diag_eps_ = 1.0e-8
+        if (recompute_theta):
+            self.theta_ = None
 
     # Build model from input
-    def build(self, x, y):
+    def build(self, x, y, recompute_theta=True):
 
-        self.reset()
+        self.reset(recompute_theta)
 
         self.x_   = x
         self.y_   = y
@@ -38,19 +40,20 @@ class kriging():
         self.nf_  = x.shape[1] # nb of features
         self.dim_ = self.nf_ + 2
 
-        name        = "cmaes"
-        x0          = np.zeros(self.dim_)
-        xmin        =-2.0*np.ones(self.dim_)
-        xmin[-2:]   =-3.0
-        xmax        = np.ones(self.dim_)
-        n_points    = 200
-        n_steps_max = 10
+        if (recompute_theta):
+            name        = "cmaes"
+            x0          = np.zeros(self.dim_)
+            xmin        =-2.0*np.ones(self.dim_)
+            xmin[-2:]   =-3.0
+            xmax        = np.ones(self.dim_)
+            n_points    = 200
+            n_steps_max = 10
 
-        opt  = optimizer(name, self.dim_, x0, xmin, xmax,
-                         n_points, n_steps_max, self.log_likelihood)
-        theta, c = opt.optimize()
+            opt  = optimizer(name, self.dim_, x0, xmin, xmax,
+                             n_points, n_steps_max, self.log_likelihood)
+            theta, c = opt.optimize()
 
-        self.theta_ = np.exp(theta)
+            self.theta_ = np.exp(theta)
 
         self.K_ = self.kernel(self.x_, self.x_, self.theta_)
 

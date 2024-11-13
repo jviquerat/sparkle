@@ -13,9 +13,10 @@
     "agent": {
         "name": "ego",
         "n_steps_max": 20,
+        "recompute_theta": false,
         "pex": {
             "name": "lhs",
-            "n_points": 5
+            "n_points": 20
         }
     },
     "trainer": {
