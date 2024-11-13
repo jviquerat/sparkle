@@ -1,4 +1,5 @@
 # Generic imports
+import os
 import math
 import pytest
 import types
@@ -30,5 +31,4 @@ def test_kriging():
     model.load(filename)
 
     assert(model.evaluate(x_new) == y_new)
-
-
+    os.remove(filename)
