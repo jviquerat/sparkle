@@ -66,7 +66,7 @@ class pex_based(base_trainer):
             for i in range(self.agent.n_points_pex()):
                 x = self.agent.pex_point(i)
                 c = self.env.cost(x)
-                pex_costs[i] = c
+                pex_costs[i] = c[0]
                 self.agent.update_best(x, c)
                 self.agent.store(x, c)
 
