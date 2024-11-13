@@ -62,7 +62,11 @@ class optimizer():
             n_pts = x.shape[0]
             c     = np.zeros(n_pts)
             for p in range(n_pts):
-                c[p] = self.cost(x[p])
+                res = self.cost(x[p])
+                if (hasattr(res, "__len__")):
+                    c[p] = res[0]
+                else:
+                    c[p] = res
 
             self.agent.step(x, c)
 
