@@ -31,11 +31,6 @@ def add_fc_layer(net, dim_in, dim_out, activation, dropout=0.0):
     std = math.sqrt(1.0/dim_in)
     tnn.init.normal_(net[-1].weight, -std, std)
 
-    #tnn.init.kaiming_normal_(net[-1].weight,
-    #                         mode='fan_in',
-    #                         nonlinearity=activation)
-    #torch.nn.init.zeros_(net[-1].bias)
-
     n += 1
     if (activation != "linear"):
         net.append(torch_activations[activation])
