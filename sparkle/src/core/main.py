@@ -4,8 +4,9 @@ import sys
 # Custom imports
 from sparkle.src.core.train   import train
 from sparkle.src.core.average import average
+from sparkle.src.env.parallel import parallel
 from sparkle.src.utils.json   import json_parser
-from sparkle.src.utils.prints import new_line, disclaimer, liner_simple, spacer
+from sparkle.src.utils.prints import new_line, disclaimer, liner_simple, spacer, bold
 
 def error():
     new_line()

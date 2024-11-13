@@ -6,6 +6,7 @@ import shutil
 import numpy as np
 
 # Custom imports
+from sparkle.src.env.parallel    import parallel
 from sparkle.src.trainer.trainer import trainer_factory
 from sparkle.src.utils.data      import data_avg
 from sparkle.src.plot.plot       import plot
