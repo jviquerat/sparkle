@@ -67,6 +67,8 @@ class pex_based(base_trainer):
                 x = self.agent.pex_point(i)
                 c = self.env.cost(x)
                 pex_costs[i] = c
+                self.agent.update_best(x, c)
+                self.agent.store(x, c)
 
             self.timer_pex.toc()
             self.timer_pex.show()
@@ -105,8 +107,6 @@ class pex_based(base_trainer):
         self.timer_global.toc()
         self.timer_opt.show()
         self.timer_global.show()
-
-        exit()
 
     # Rendering interface to output plots with metamodel informations
     # x_last is the unevaluated last sample point
