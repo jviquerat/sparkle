@@ -2,6 +2,9 @@
 import numpy             as np
 import matplotlib.pyplot as plt
 
+# Custom imports
+from sparkle.src.utils.error import error
+
 plt.rcParams['font.size'] = 10
 plt.rcParams['axes.labelsize'] = 10
 plt.rcParams['xtick.labelsize'] = 10
@@ -52,6 +55,9 @@ def plot(data, filename, avg_type):
 
 # Return avg, p and m fields depending on avg type
 def return_plottables(avg, p, m, avg_type):
+
+    if (avg_type not in ["linear", "log"]):
+        error("plot", "return_plottable", "avg_type should be either linear or log")
 
     if (avg_type == "linear"):
         ylabel = "cost"
