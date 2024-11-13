@@ -15,11 +15,9 @@ class pex_based(base_trainer):
 
         # Set parameters
         self.render_every   = 100000
-        self.load_pex       = False
         self.plot_estimates = False
 
         if hasattr(pms, "render_every"):   self.render_every   = pms.render_every
-        if hasattr(pms, "load_pex"):       self.load_pex       = pms.load_pex
         if hasattr(pms, "plot_estimates"): self.plot_estimates = pms.plot_estimates
 
         # Initialize environment
@@ -56,9 +54,9 @@ class pex_based(base_trainer):
 
         self.timer_global.tic()
 
-        # Load pex or run it based on load_pex parameter
-        if (self.load_pex):
-            pass # TO DO
+        # Check if model is loaded from file or if it must be computed
+        if (self.agent.load_model_):
+            self.agent.load_model()
         else:
             self.timer_pex.tic()
 
@@ -73,9 +71,10 @@ class pex_based(base_trainer):
             self.timer_pex.toc()
             self.timer_pex.show()
 
-            # Build model
+            # Build and dump model
             self.timer_mod.tic()
             self.agent.build_model(y=pex_costs)
+            self.agent.dump_model(self.agent.path+"/model.dat")
             self.timer_mod.toc()
             self.timer_mod.show()
 

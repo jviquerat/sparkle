@@ -8,6 +8,7 @@ from sparkle.src.agent.optimizer import optimizer
 from sparkle.src.pex.pex         import pex_factory
 from sparkle.src.model.kriging   import kriging
 from sparkle.src.utils.prints    import spacer
+from sparkle.src.utils.error     import error
 
 ###############################################
 ### EGO
@@ -23,18 +24,24 @@ class ego(base_agent):
         self.xmin            = xmin
         self.xmax            = xmax
         self.n_steps_max     = pms.n_steps_max
-        self.recompute_theta = pms.recompute_theta
 
-        self.x_          = None
-        self.y_          = None
-        self.is_built_   = False
+        self.recompute_theta_ = False
+        if hasattr(pms, "recompute_theta"): self.recompute_theta_ = pms.recompute_theta
 
-        self.pex = pex_factory.create(pms.pex.name,
-                                      dim  = self.dim,
-                                      xmin = self.xmin,
-                                      xmax = self.xmax,
-                                      pms  = pms.pex)
+        self.load_model_ = False
+        if hasattr(pms, "load_model"): self.load_model_ = pms.load_model
+        if (self.load_model_):
+            if not hasattr(pms, "model_file"):
+                error("ego", "__init__",
+                      "load_model option requires model_file parameter")
+            self.model_file_ = pms.model_file
+
         self.model = kriging()
+        self.pex   = pex_factory.create(pms.pex.name,
+                                        dim  = self.dim,
+                                        xmin = self.xmin,
+                                        xmax = self.xmax,
+                                        pms  = pms.pex)
 
         self.n_points      = 1
         self.n_steps_total = self.pex.n_points() + self.n_steps_max
@@ -73,9 +80,31 @@ class ego(base_agent):
             self.y_ = np.hstack((self.y_, y))
             self.x_ = self.normalize(self.x_)
 
-            self.model.build(self.x_, self.y_, self.recompute_theta)
+            self.model.build(self.x_, self.y_, self.recompute_theta_)
 
-        # Initial screen output
+        if (not self.is_built_): self.finalize_initial_model()
+
+    # Load saved model
+    def load_model(self):
+
+        self.model.load(self.model_file_)
+        self.x_ = self.model.x_
+        self.y_ = self.model.y_
+
+        for k in range(self.x_.shape[0]):
+            self.store(np.reshape(self.x_[k], (-1,self.dim)),
+                       np.reshape(self.y_[k], (-1,1)))
+
+        self.finalize_initial_model()
+
+    # Dump model
+    def dump_model(self, filename):
+
+        self.model.dump(filename)
+
+    # Wrap initial model
+    def finalize_initial_model(self):
+
         if (not self.is_built_):
             self.is_built_ = True
 
@@ -84,7 +113,8 @@ class ego(base_agent):
             gb = np.array2string(xb, precision=5, floatmode='fixed', threshold=4, separator=',')
 
             spacer()
-            print("Built initial model")
+            if (self.load_model_): print("Loaded initial model")
+            else: print("Built initial model")
             spacer()
             print("Best initial score = "+str(gs)+" for x = "+str(gb))
 
