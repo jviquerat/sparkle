@@ -51,12 +51,12 @@ def disclaimer():
         header()
 
 ### Print with warning color
-def warn(text):
+def warn_print(text):
     if (parallel.is_root()):
         print(wrn_clr + text + end_clr)
 
 ### Print with error color
-def errr(text):
+def err_print(text):
     if (parallel.is_root()):
         print(err_clr + text + end_clr)
 
