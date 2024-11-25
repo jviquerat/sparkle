@@ -62,6 +62,10 @@ class pex_based(base_trainer):
 
             pex_costs = np.zeros(self.agent.n_points_pex())
             for i in range(self.agent.n_points_pex()):
+                end = "\r"
+                if (i == self.agent.n_points_pex()-1): end = "\n"
+                print("# Computing pex step #"+str(i), end=end)
+
                 x = self.agent.pex_point(i)
                 c = self.env.cost(x)
                 pex_costs[i] = c[0]
