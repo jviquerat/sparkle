@@ -2,11 +2,12 @@
 import sys
 
 # Custom imports
-from sparkle.src.core.train   import train
-from sparkle.src.core.average import average
-from sparkle.src.env.parallel import parallel
-from sparkle.src.utils.json   import json_parser
-from sparkle.src.utils.prints import new_line, disclaimer, liner_simple, spacer, bold
+from sparkle.src.core.train    import train
+from sparkle.src.core.evaluate import evaluate
+from sparkle.src.core.average  import average
+from sparkle.src.env.parallel  import parallel
+from sparkle.src.utils.json    import json_parser
+from sparkle.src.utils.prints  import new_line, disclaimer, liner_simple, spacer, bold
 
 def error():
     new_line()
@@ -44,8 +45,26 @@ def main():
         train(json_file, pms)
         return
 
+    # Evaluation mode
+    if ("--evaluate" in args):
+
+        if ("-dat" not in args): error()
+        dat_file  = args[args.index("-dat")+1]
+
+        if ("-json" not in args): error()
+        json_file = args[args.index("-json")+1]
+
+        # Printings
+        disclaimer()
+        new_line()
+        liner_simple()
+        bold('Evaluation mode')
+
+        evaluate(dat_file, json_file)
+        return
+
     # Averaging mode
-    if ("--avg" in args):
+    if ("--average" in args):
 
         # Set parallel framework
         parallel.set({})
