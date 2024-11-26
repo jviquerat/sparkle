@@ -33,6 +33,7 @@ def evaluate(dat_file, json_file):
 
     # Run environment
     x = np.array([x])
+    c = env.cost(x)
     env.render(x)
 
     # Finalize
