@@ -92,6 +92,8 @@ class ego(base_agent):
         self.y_ = self.model.y_
 
         for k in range(self.x_.shape[0]):
+            self.update_best(np.reshape(self.x_[k], (-1,self.dim)),
+                             np.reshape(self.y_[k], (-1,1)))
             self.store(np.reshape(self.x_[k], (-1,self.dim)),
                        np.reshape(self.y_[k], (-1,1)))
 
