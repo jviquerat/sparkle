@@ -91,10 +91,12 @@ class ego(base_agent):
         self.x_ = self.model.x_
         self.y_ = self.model.y_
 
+        x_den = self.denormalize(self.x_)
+
         for k in range(self.x_.shape[0]):
-            self.update_best(np.reshape(self.x_[k], (-1,self.dim)),
+            self.update_best(np.reshape(x_den[k], (-1,self.dim)),
                              np.reshape(self.y_[k], (-1,1)))
-            self.store(np.reshape(self.x_[k], (-1,self.dim)),
+            self.store(np.reshape(x_den[k], (-1,self.dim)),
                        np.reshape(self.y_[k], (-1,1)))
 
         self.finalize_initial_model()
@@ -112,7 +114,8 @@ class ego(base_agent):
 
             xb, yb = self.best()
             gs = f"{yb:.5e}"
-            gb = np.array2string(xb, precision=5, floatmode='fixed', threshold=4, separator=',')
+            gb = np.array2string(self.denormalize(xb), precision=5,
+                                 floatmode='fixed', threshold=4, separator=',')
 
             spacer()
             if (self.load_model_): print("Loaded initial model")
@@ -236,6 +239,7 @@ class ego(base_agent):
         if (self.cnt <= 1):
             xb, yb = self.best()
             gs = f"{yb:.5e}"
-            gb = np.array2string(xb, precision=5, floatmode='fixed', threshold=4, separator=',')
+            gb = np.array2string(self.denormalize(xb), precision=5,
+                                 floatmode='fixed', threshold=4, separator=',')
 
             print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" for x = "+str(gb)+"                                                                                                           ", end=end)
