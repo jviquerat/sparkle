@@ -35,5 +35,3 @@ class lhs(base_pex):
 
         for i in range(self.n_points_):
             self.x_[i] = self.xmin_ + self.x_[i]*(self.xmax_ - self.xmin_)
-
-
