@@ -6,7 +6,7 @@ from sparkle.src.trainer.base import base_trainer
 from sparkle.src.agent.agent  import agent_factory
 from sparkle.src.utils.timer  import timer
 from sparkle.src.env.parallel import parallel
-from sparkle.src.utils.error  import error
+from sparkle.src.utils.error  import error, warning
 
 ###############################################
 ### Class for pex-based trainer
@@ -32,11 +32,6 @@ class pex_based(base_trainer):
                                           xmax = self.env.xmax(),
                                           pms  = agent_pms)
 
-        # Such agents are only sequential for now
-        if (parallel.size() > 1):
-            error("trainer::pex_based", "init",
-                  "pex_based methods are only sequential for now")
-
         # Initialize timer
         self.timer_global = timer("global ")
         self.timer_opt    = timer("opt    ")
@@ -60,17 +55,32 @@ class pex_based(base_trainer):
         else:
             self.timer_pex.tic()
 
-            pex_costs = np.zeros(self.agent.n_points_pex())
-            for i in range(self.agent.n_points_pex()):
-                end = "\r"
-                if (i == self.agent.n_points_pex()-1): end = "\n"
-                print("# Computing pex step #"+str(i), end=end)
+            if (self.agent.n_points_pex()%parallel.size() != 0):
+                error("trainer::pex_based", "optimize",
+                      "nb of pex points should be a multiple of nb of parallel envs")
 
-                x = self.agent.pex_point(i)
-                c = self.env.cost(x)
-                pex_costs[i] = c[0]
-                self.agent.update_best(x, c)
-                self.agent.store(x, c)
+            n_steps   = self.agent.n_points_pex()//parallel.size()
+            pex_costs = np.zeros(self.agent.n_points_pex())
+
+            step = 0
+            while (step < n_steps):
+                end = "\r"
+                if (step == n_steps-1): end = "\n"
+                i_start = step*parallel.size()
+                i_end   = (step+1)*parallel.size() - 1
+                print("# Computing pex individuals #"+str(i_start)+" to #"+str(i_end), end=end)
+
+                xp = np.zeros((parallel.size(), self.env.dim()))
+                for k in range(parallel.size()):
+                    xp[k,:] = self.agent.pex_point(step*parallel.size() + k)
+
+                c = self.env.cost(xp)
+                for k in range(parallel.size()):
+                    pex_costs[step*parallel.size() + k] = c[k]
+
+                self.agent.update_best(xp, c)
+                self.agent.store(xp, c)
+                step += 1
 
             self.timer_pex.toc()
             self.timer_pex.show()
@@ -81,6 +91,12 @@ class pex_based(base_trainer):
             self.agent.dump_model(self.agent.path+"/model.dat")
             self.timer_mod.toc()
             self.timer_mod.show()
+
+        # Such agents are only sequential for now
+        if (parallel.size() > 1):
+            warning("trainer::pex_based", "optimize",
+                    "only pex generation can be performed in parallel")
+            return
 
         # Set counter
         self.timer_opt.tic()
