@@ -1,6 +1,6 @@
 # Custom imports
 from sparkle.src.env.parallel import parallel
-from sparkle.src.utils.prints import liner, spacer, new_line, err_print
+from sparkle.src.utils.prints import liner, spacer, new_line, err_print, warn_print
 
 ###############################################
 ### A set of functions to print errors and warnings
@@ -15,7 +15,7 @@ def error(module, function, text, call_exit=True):
     print(text)
 
     if (call_exit): exit(1)
-    
+
 ### Warning
 def warning(module, function, text):
     liner()
