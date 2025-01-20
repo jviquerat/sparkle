@@ -40,7 +40,7 @@ class griewank(base_env):
         return 1.0 + (x[0]**2+x[1]**2)/4000.0 - math.cos(x[0])*math.cos(x[1]/math.sqrt(2.0))
 
     # Rendering
-    def render(self, x):
+    def render(self, x, c):
 
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)

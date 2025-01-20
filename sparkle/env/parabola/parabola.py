@@ -47,7 +47,7 @@ class parabola(base_env):
         return v
 
     # Rendering
-    def render(self, x):
+    def render(self, x, c):
 
         if (self.dim != 2): return
 

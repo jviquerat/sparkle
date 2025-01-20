@@ -133,10 +133,10 @@ class multiproc_environments:
         return data
 
     # Render environment
-    def render(self, x):
+    def render(self, x, c):
 
         # Send
-        self.pipes[0].send(('render', x))
+        self.pipes[0].send(('render', [x,c]))
 
         # Receive
         rnd = self.pipes[0].recv()

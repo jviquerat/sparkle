@@ -105,12 +105,14 @@ class pex_based(base_trainer):
             # Sample new point
             x = self.agent.sample()
 
+            # Compute cost
+            c = self.env.cost(x)
+
             # Render if necessary
             if (self.it%self.render_every == 0):
-                self.render(x)
+                self.render(x, c)
 
-            # Compute cost and step
-            c = self.env.cost(x)
+            # Step and output
             self.agent.step(x, c)
             self.agent.print()
 
@@ -126,7 +128,7 @@ class pex_based(base_trainer):
 
     # Rendering interface to output plots with metamodel informations
     # x_last is the unevaluated last sample point
-    def render(self, x_last):
+    def render(self, x_last, c_last):
 
         # Rendering with metamodel informations (can be expensive to compute)
         if (self.plot_estimates):
@@ -151,7 +153,7 @@ class pex_based(base_trainer):
                 y_std   = y[1]
 
                 x_den = self.agent.denormalize(self.agent.x_)
-                self.env.render(x_den, x_mu=x_plot.squeeze(),
+                self.env.render(x_den, c_last, x_mu=x_plot.squeeze(),
                                 y_mu=y_mu, y_std=y_std, ei=ei, x_ei=x_last)
 
             if (self.env.spaces.dim() == 2):
@@ -176,9 +178,9 @@ class pex_based(base_trainer):
                         y_std[i,j] = yy[1]
 
                 x_den = self.agent.denormalize(self.agent.x_)
-                self.env.render(x_den, y_mu=y_mu, y_std=y_std, x_ei=x_last)
+                self.env.render(x_den, c_last, y_mu=y_mu, y_std=y_std, x_ei=x_last)
 
         else:
             # Regular rendering without metamodel informations
-            x = self.agent.denormalize(self.agent.x_)
-            self.env.render(x)
+            x = self.agent.denormalize(x_last)
+            self.env.render(x, c_last)

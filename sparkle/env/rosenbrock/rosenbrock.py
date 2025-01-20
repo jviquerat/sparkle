@@ -48,7 +48,7 @@ class rosenbrock(base_env):
         return v
 
     # Rendering
-    def render(self, x, y_mu=None, y_std=None, x_ei=None):
+    def render(self, x, c, y_mu=None, y_std=None, x_ei=None):
 
         if (self.dim != 2): return
 

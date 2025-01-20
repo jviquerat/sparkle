@@ -52,12 +52,14 @@ class regular(base_trainer):
             # Sample points
             x = self.agent.sample()
 
+            # Compute cost
+            c = self.env.cost(x)
+
             # Render if necessary
             if (self.it%self.render_every == 0):
-                self.env.render(x)
+                self.env.render(x, c)
 
-            # Compute cost and step
-            c = self.env.cost(x)
+            # Step and output
             self.agent.step(x, c)
             self.agent.print()
 
