@@ -25,12 +25,9 @@ class pex_based(base_trainer):
 
         # Initialize agent
         self.agent = agent_factory.create(agent_pms.name,
-                                          path = path,
-                                          dim  = self.env.dim(),
-                                          x0   = self.env.x0(),
-                                          xmin = self.env.xmin(),
-                                          xmax = self.env.xmax(),
-                                          pms  = agent_pms)
+                                          path   = path,
+                                          spaces = self.env.spaces,
+                                          pms    = agent_pms)
 
         # Initialize timer
         self.timer_global = timer("global ")
@@ -70,7 +67,7 @@ class pex_based(base_trainer):
                 i_end   = (step+1)*parallel.size() - 1
                 print("# Computing pex individuals #"+str(i_start)+" to #"+str(i_end), end=end)
 
-                xp = np.zeros((parallel.size(), self.env.dim()))
+                xp = np.zeros((parallel.size(), self.env.spaces.dim()))
                 for k in range(parallel.size()):
                     xp[k,:] = self.agent.pex_point(step*parallel.size() + k)
 
@@ -134,7 +131,7 @@ class pex_based(base_trainer):
         # Rendering with metamodel informations (can be expensive to compute)
         if (self.plot_estimates):
 
-            if (self.env.dim() > 2):
+            if (self.env.spaces.dim() > 2):
                 error("pex_based", "render",
                       "plot_estimates is only available for dim <= 2")
 
@@ -142,7 +139,7 @@ class pex_based(base_trainer):
             xmax    = self.env.xmax()
             x_last  = np.reshape(x_last, (-1))
 
-            if (self.env.dim() == 1):
+            if (self.env.spaces.dim() == 1):
                 nx_plot = 200
                 x_plot  = np.linspace(xmin[0], xmax[0], num=nx_plot)
                 x_plot  = np.reshape(x_plot, (-1,1))
@@ -157,7 +154,7 @@ class pex_based(base_trainer):
                 self.env.render(x_den, x_mu=x_plot.squeeze(),
                                 y_mu=y_mu, y_std=y_std, ei=ei, x_ei=x_last)
 
-            if (self.env.dim() == 2):
+            if (self.env.spaces.dim() == 2):
                 nx = 100
                 ny = 100
 

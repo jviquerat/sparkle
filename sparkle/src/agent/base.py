@@ -9,9 +9,28 @@ from sparkle.src.utils.prints import spacer
 ###############################################
 ### Base agent
 class base_agent():
-    def __init__(self, pms):
+    def __init__(self, spaces, pms):
+
+        self.spaces = spaces
+
         self.silent = False
         if hasattr(pms, "silent"): self.silent = pms.silent
+
+    # Accessor
+    def dim(self):
+        return self.spaces.dim()
+
+    # Accessor
+    def x0(self):
+        return self.spaces.x0()
+
+    # Accessor
+    def xmin(self):
+        return self.spaces.xmin()
+
+    # Accessor
+    def xmax(self):
+        return self.spaces.xmax()
 
     # Reset
     def reset(self, run):
@@ -25,14 +44,14 @@ class base_agent():
         self.path = self.base_path+"/"+str(run)
 
         # Data storage
-        self.hist_t = np.zeros((self.n_steps_total))           # time
-        self.hist_c = np.zeros((self.n_steps_total))           # cost
-        self.hist_b = np.zeros((self.n_steps_total))           # best cost
-        self.hist_s = np.zeros((self.n_steps_total))           # best step
-        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
+        self.hist_t = np.zeros((self.n_steps_total))             # time
+        self.hist_c = np.zeros((self.n_steps_total))             # cost
+        self.hist_b = np.zeros((self.n_steps_total))             # best cost
+        self.hist_s = np.zeros((self.n_steps_total))             # best step
+        self.hist_x = np.zeros((self.n_steps_total, self.dim())) # dofs
 
         # Best point
-        self.best_x     = np.zeros(self.dim)
+        self.best_x     = np.zeros(self.dim())
         self.best_score = 1.0e8
         self.best_stp   =-1
 
@@ -64,7 +83,7 @@ class base_agent():
         spacer()
         print("Using "+self.name+" algorithm with "+str(self.n_points)+" points")
         spacer()
-        print("Problem dimensionality is "+str(self.dim))
+        print("Problem dimensionality is "+str(self.dim()))
 
     # Return number of degress of freedom
     def ndof(self):
@@ -100,7 +119,7 @@ class base_agent():
                               np.reshape(self.hist_c, (-1,1)),
                               np.reshape(self.hist_b, (-1,1)),
                               np.reshape(self.hist_s, (-1,1)),
-                              np.reshape(self.hist_x, (-1,self.dim))]),
+                              np.reshape(self.hist_x, (-1,self.dim()))]),
                    fmt='%.5e')
 
     # Print

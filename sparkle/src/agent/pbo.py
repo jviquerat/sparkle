@@ -11,20 +11,16 @@ from sparkle.src.agent.base  import base_agent
 ###############################################
 ### PBO
 class pbo(base_agent):
-    def __init__(self, path, dim, x0, xmin, xmax, pms):
+    def __init__(self, path, spaces, pms):
 
-        super().__init__(pms)
+        super().__init__(spaces, pms)
 
         self.name        = "PBO"
         self.base_path   = path
-        self.dim         = dim
-        self.xmin        = xmin
-        self.xmax        = xmax
 
-        self.sigma0      = torch.tensor(0.25*(np.min(xmax)-np.max(xmin)))
+        self.sigma0      = torch.tensor(0.25*(np.min(self.xmax())-np.max(self.xmin())))
         if hasattr(pms, "sigma0"):   self.sigma0   = torch.tensor(pms.sigma0)
-        self.x0          = torch.tensor(x0)
-        self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
+        self.n_points    = 4 + math.floor(3.0*math.log(self.dim()))
         if hasattr(pms, "n_points"): self.n_points = pms.n_points
 
         self.n_steps_max = 20
@@ -34,14 +30,14 @@ class pbo(base_agent):
 
         self.adv_clip    = True
         if hasattr(pms, "adv_clip"):    self.adv_clip    = np.array(pms.adv_clip)
-        self.adv_decay   = 1.0 - math.exp(-0.35*self.dim)
+        self.adv_decay   = 1.0 - math.exp(-0.35*self.dim())
         if hasattr(pms, "adv_decay"):   self.adv_decay   = np.array(pms.adv_decay)
-        self.obs_dim     = self.dim
+        self.obs_dim     = self.dim()
         if hasattr(pms, "obs_dim"):     self.obs_dim     = pms.obs_dim
-        self.cov_dim     = math.floor(self.dim*(self.dim - 1)/2)
+        self.cov_dim     = math.floor(self.dim()*(self.dim() - 1)/2)
 
         self.net_sg = mlp(inp_dim = self.obs_dim,
-                          out_dim = self.dim,
+                          out_dim = self.dim(),
                           arch    = pms.sg.arch,
                           acts    = pms.sg.acts,
                           lr      = pms.sg.lr)
@@ -75,11 +71,11 @@ class pbo(base_agent):
 
         # Additional data storage
         self.elite_stp    = 0
-        self.hist_x_elite = np.zeros((self.n_steps_elite, self.dim))
+        self.hist_x_elite = np.zeros((self.n_steps_elite, self.dim()))
         self.hist_a_elite = np.zeros((self.n_steps_elite))
 
         # Reset networks
-        self.mu = torch.clone(self.x0)
+        self.mu = torch.tensor(self.x0())
         self.net_sg.reset()
         self.net_cr.reset()
 
@@ -90,7 +86,7 @@ class pbo(base_agent):
     # Sample from distribution
     def sample(self):
 
-        obs = torch.ones(1,self.dim)*self.obs
+        obs = torch.ones(1,self.dim())*self.obs
 
         sg  = self.net_sg(obs)*self.sigma0
         cr  = self.net_cr(obs)
@@ -185,7 +181,7 @@ class pbo(base_agent):
         # Draw elements
         buff_x = torch.from_numpy(self.hist_x_elite[sample])
         buff_a = torch.from_numpy(self.hist_a_elite[sample])
-        buff_x = torch.reshape(buff_x, [-1, self.dim])
+        buff_x = torch.reshape(buff_x, [-1, self.dim()])
         buff_a = torch.reshape(buff_a, [-1])
 
         return buff_x, buff_a
@@ -243,35 +239,35 @@ class pbo(base_agent):
         thetas = cr*math.pi
 
         # Build initial theta matrix
-        t = torch.ones([self.dim, self.dim])*math.pi/2.0
-        t = torch.diagonal_scatter(t, torch.zeros(self.dim), offset=0)
+        t = torch.ones([self.dim(), self.dim()])*math.pi/2.0
+        t = torch.diagonal_scatter(t, torch.zeros(self.dim()), offset=0)
 
         idx = 0
-        for d in range(self.dim-1):
-            diag = thetas[idx:idx+self.dim-(d+1)]
-            idx += self.dim - (d+1)
+        for d in range(self.dim()-1):
+            diag = thetas[idx:idx+self.dim()-(d+1)]
+            idx += self.dim() - (d+1)
             t    = torch.diagonal_scatter(t, diag, offset=-(d+1))
         cor = torch.cos(t)
 
         # Correct upper part to exact zero
-        for d in range(self.dim-1):
-            size = self.dim - (d+1)
+        for d in range(self.dim()-1):
+            size = self.dim() - (d+1)
             cor  = torch.diagonal_scatter(cor, torch.zeros(size), offset=(d+1))
 
         # Roll and compute additional terms
-        for roll in range(self.dim-1):
-            vec = torch.ones([self.dim, 1])
+        for roll in range(self.dim()-1):
+            vec = torch.ones([self.dim(), 1])
             vec = torch.mul(vec, math.pi/2.0)
-            t   = torch.cat([vec, t[:, :self.dim-1]], axis=1)
+            t   = torch.cat([vec, t[:, :self.dim()-1]], axis=1)
 
-            for d in range(self.dim-1):
-                zero = torch.zeros(self.dim - (d+1))
+            for d in range(self.dim()-1):
+                zero = torch.zeros(self.dim() - (d+1))
                 t    = torch.diagonal_scatter(t, zero, offset=(d+1))
 
             cor = torch.mul(cor, torch.sin(t))
 
         cor = torch.matmul(cor, torch.transpose(cor,0,1))
-        scl = torch.zeros([self.dim, self.dim])
+        scl = torch.zeros([self.dim(), self.dim()])
         scl = torch.diagonal_scatter(scl, torch.sqrt(sigmas), offset=0)
         cov = torch.matmul(scl, cor)
         cov = torch.matmul(cov, scl)

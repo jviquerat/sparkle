@@ -4,6 +4,7 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.agent.optimizer import optimizer
+from sparkle.src.env.spaces      import environment_spaces
 from sparkle.tst.tst             import *
 
 ###############################################
@@ -27,7 +28,8 @@ def test_optimizer():
     n_points    = 10
     n_steps_max = 30
 
-    opt  = optimizer(name, dim, x0, xmin, xmax, n_points, n_steps_max, parabola)
+    s    = environment_spaces([dim, x0, xmin, xmax], None)
+    opt  = optimizer(name, s, n_points, n_steps_max, parabola)
     x, c = opt.optimize()
 
     assert(np.all(np.abs(x) < 1.0e-3))

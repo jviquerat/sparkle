@@ -5,6 +5,7 @@ from   numpy.linalg import solve
 
 # Custom imports
 from sparkle.src.agent.optimizer import optimizer
+from sparkle.src.env.spaces      import environment_spaces
 from sparkle.src.utils.error     import error
 from sparkle.src.utils.prints    import spacer
 
@@ -49,8 +50,8 @@ class kriging():
             n_points    = 200
             n_steps_max = 10
 
-            opt  = optimizer(name, self.dim_, x0, xmin, xmax,
-                             n_points, n_steps_max, self.log_likelihood)
+            s   = environment_spaces([self.dim_, x0, xmin, xmax], None)
+            opt = optimizer(name, s, n_points, n_steps_max, self.log_likelihood)
             theta, c = opt.optimize()
 
             self.theta_ = np.exp(theta)
