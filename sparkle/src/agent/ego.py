@@ -16,11 +16,10 @@ from sparkle.src.utils.error     import error
 class ego(base_agent):
     def __init__(self, path, spaces, pms):
 
-        super().__init__(spaces, pms)
+        super().__init__(path, spaces, pms)
 
-        self.name            = "EGO"
-        self.base_path       = path
-        self.n_steps_max     = pms.n_steps_max
+        self.name        = "EGO"
+        self.n_steps_max = pms.n_steps_max
 
         self.recompute_theta_ = False
         if hasattr(pms, "recompute_theta"): self.recompute_theta_ = pms.recompute_theta

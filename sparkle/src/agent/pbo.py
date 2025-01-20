@@ -13,10 +13,9 @@ from sparkle.src.agent.base  import base_agent
 class pbo(base_agent):
     def __init__(self, path, spaces, pms):
 
-        super().__init__(spaces, pms)
+        super().__init__(path, spaces, pms)
 
         self.name        = "PBO"
-        self.base_path   = path
 
         self.sigma0      = torch.tensor(0.25*(np.min(self.xmax())-np.max(self.xmin())))
         if hasattr(pms, "sigma0"):   self.sigma0   = torch.tensor(pms.sigma0)
