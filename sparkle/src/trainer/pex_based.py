@@ -1,4 +1,5 @@
 # Generic imports
+import types
 import numpy as np
 
 # Custom imports
@@ -152,9 +153,15 @@ class pex_based(base_trainer):
                 y_mu    = y[0]
                 y_std   = y[1]
 
+                pms       = types.SimpleNamespace()
+                pms.x_mu  = x_plot.squeeze()
+                pms.y_mu  = y_mu
+                pms.y_std = y_std
+                pms.ei    = ei
+                pms.x_ei  = x_last
+
                 x_den = self.agent.denormalize(self.agent.x_)
-                self.env.render(x_den, c_last, x_mu=x_plot.squeeze(),
-                                y_mu=y_mu, y_std=y_std, ei=ei, x_ei=x_last)
+                self.env.render(x_den, c_last, pms)
 
             if (self.env.spaces.dim() == 2):
                 nx = 100
@@ -177,8 +184,13 @@ class pex_based(base_trainer):
                         y_mu[i,j]  = yy[0]
                         y_std[i,j] = yy[1]
 
+                pms       = types.SimpleNamespace()
+                pms.y_mu  = y_mu
+                pms.y_std = y_std
+                pms.x_ei  = x_last
+
                 x_den = self.agent.denormalize(self.agent.x_)
-                self.env.render(x_den, c_last, y_mu=y_mu, y_std=y_std, x_ei=x_last)
+                self.env.render(x_den, c_last, pms)
 
         else:
             # Regular rendering without metamodel informations

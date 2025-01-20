@@ -48,13 +48,11 @@ class rosenbrock(base_env):
         return v
 
     # Rendering
-    def render(self, x, c, y_mu=None, y_std=None, x_ei=None):
+    def render(self, x, c, pms=None):
 
         if (self.dim != 2): return
 
-        self.render_2d(x, vmin=0, vmax=200,
-                       levels=[1.0, 10.0, 50.0, 200.0, 500.0],
-                       y_mu=y_mu, y_std=y_std, x_ei=x_ei)
+        self.render_2d(x, vmin=0, vmax=200, levels=[1.0, 10.0, 50.0, 200.0, 500.0], pms=pms)
 
     # Close environment
     def close(self):

@@ -179,7 +179,7 @@ class rayleigh(base_env):
         return nu
 
     # Render environment
-    def render(self, x, c):
+    def render(self, x, c, pms=None):
 
         # Zero-mean the actions
         xx    = x[0].copy()

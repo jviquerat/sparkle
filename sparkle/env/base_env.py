@@ -43,17 +43,21 @@ class base_env():
                 self.z[i,j] = self.cost([self.x[i,j], self.y[i,j]])
 
     # Render 1D envs
-    def render_1d(self, x, x_mu=None, y_mu=None, y_std=None, ei=None, x_ei=None):
+    def render_1d(self, x, pms):
 
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)
 
         # Check inputs
         plot_estimates = False
-        if ((y_mu  is not None) and
-            (y_std is not None) and
-            (ei    is not None) and
-            (x_ei  is not None)): plot_estimates = True
+        if (hasattr(pms, "x_mu")  and hasattr(pms, "y_mu") and
+            hasattr(pms, "y_std") and hasattr(pms, "ei")   and hasattr(pms, "x_ei")):
+            plot_estimates = True
+            x_mu  = pms.x_mu
+            y_mu  = pms.y_mu
+            y_std = pms.y_std
+            ei    = pms.ei
+            x_ei  = pms.x_ei
 
         # Set number of subplots
         plt.clf()
@@ -102,16 +106,18 @@ class base_env():
         self.it_plt += 1
 
     # Render 2D envs
-    def render_2d(self, x, vmin, vmax, levels, y_mu=None, y_std=None, x_ei=None):
+    def render_2d(self, x, vmin, vmax, levels, pms):
 
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)
 
         # Check inputs
         plot_estimates = False
-        if ((y_mu  is not None) and
-            (y_std is not None) and
-            (x_ei  is not None)): plot_estimates = True
+        if (hasattr(pms, "y_mu") and hasattr(pms, "y_std") and  hasattr(pms, "x_ei")):
+            plot_estimates = True
+            y_mu  = pms.y_mu
+            y_std = pms.y_std
+            x_ei  = pms.x_ei
 
         # Set number of subplots
         plt.clf()
