@@ -13,8 +13,7 @@
     "agent": {
         "name": "cmaes",
         "n_steps_max": 50,
-        "sigma0": 2.0,
-        "x0": [2.0, 2.0]
+        "sigma0": 2.0
     },
     "trainer": {
         "name": "regular",

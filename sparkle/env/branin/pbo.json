@@ -13,7 +13,6 @@
     "agent": {
         "name": "pbo",
         "n_steps_max": 50,
-        "x0": [7.5, 7.5],
         "sg": {
             "arch": [[8,8],[[null]]],
             "acts": [["tanh","relu"],[["sigmoid"]]],
