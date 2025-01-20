@@ -8,14 +8,11 @@ from sparkle.src.pex.base import base_pex
 ###############################################
 ### Random experiment plan
 class random(base_pex):
-    def __init__(self, dim, xmin, xmax, pms):
+    def __init__(self, spaces, pms):
 
-        super().__init__()
+        super().__init__(spaces)
 
         self.name_     = "random"
-        self.dim_      = dim
-        self.xmin_     = xmin
-        self.xmax_     = xmax
         self.n_points_ = pms.n_points
 
         self.reset()
@@ -24,7 +21,7 @@ class random(base_pex):
     def reset(self):
 
         # Generate x points for pex
-        self.x_ = np.random.uniform(low  = self.xmin_,
-                                    high = self.xmax_,
-                                    size = (self.n_points_,self.dim_))
+        self.x_ = np.random.uniform(low  = self.xmin(),
+                                    high = self.xmax(),
+                                    size = (self.n_points_,self.dim()))
 

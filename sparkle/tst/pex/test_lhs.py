@@ -5,8 +5,9 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.tst.tst     import *
-from sparkle.src.pex.lhs import *
+from sparkle.tst.tst        import *
+from sparkle.src.pex.lhs    import lhs
+from sparkle.src.env.spaces import environment_spaces
 
 ###############################################
 ### Test lhs pex
@@ -20,7 +21,8 @@ def test_lhs():
     pms          = types.SimpleNamespace()
     pms.n_points = n_points
 
-    pex = lhs(dim, xmin, xmax, pms)
+    s = environment_spaces([dim, None, xmin, xmax])
+    pex = lhs(s, pms)
     assert(pex.n_points() == n_points)
     pex.render_2d()
     os.remove(pex.render_2d_filename)

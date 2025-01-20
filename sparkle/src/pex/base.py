@@ -9,9 +9,26 @@ from sparkle.src.utils.prints import spacer
 ###############################################
 ### Base experiment plan
 class base_pex():
-    def __init__(self):
+    def __init__(self, spaces):
 
+        self.spaces = spaces
         self.render_2d_filename = "pex_render_2d.png"
+
+    # Accessor
+    def dim(self):
+        return self.spaces.dim()
+
+    # Accessor
+    def x0(self):
+        return self.spaces.x0()
+
+    # Accessor
+    def xmin(self):
+        return self.spaces.xmin()
+
+    # Accessor
+    def xmax(self):
+        return self.spaces.xmax()
 
     # Return total nb of points
     def n_points(self):
@@ -37,13 +54,13 @@ class base_pex():
     # 2D rendering (for debugging purpose)
     def render_2d(self):
 
-        if (self.dim_ != 2): return
+        if (self.dim() != 2): return
 
         plt.clf()
         fig = plt.figure()
-        plt.xlim([self.xmin_[0], self.xmax_[0]])
-        plt.ylim([self.xmin_[1], self.xmax_[1]])
-        major_ticks = np.arange(self.xmin_[0], self.xmax_[0]+1.0e-8, 1.0/self.n_points_)
+        plt.xlim([self.xmin()[0], self.xmax()[0]])
+        plt.ylim([self.xmin()[1], self.xmax()[1]])
+        major_ticks = np.arange(self.xmin()[0], self.xmax()[0]+1.0e-8, 1.0/self.n_points_)
         plt.xticks(major_ticks)
         plt.yticks(major_ticks)
         plt.grid()

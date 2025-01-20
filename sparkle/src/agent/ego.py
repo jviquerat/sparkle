@@ -35,10 +35,8 @@ class ego(base_agent):
 
         self.model = kriging()
         self.pex   = pex_factory.create(pms.pex.name,
-                                        dim  = self.dim(),
-                                        xmin = self.xmin(),
-                                        xmax = self.xmax(),
-                                        pms  = pms.pex)
+                                        spaces = spaces,
+                                        pms    = pms.pex)
 
         self.n_points      = 1
         self.n_steps_total = self.pex.n_points() + self.n_steps_max
@@ -158,7 +156,7 @@ class ego(base_agent):
         n_points    = 200
         n_steps_max = 10
 
-        s    = environment_spaces([dim, x0, xmin, xmax], None)
+        s    = environment_spaces([dim, x0, xmin, xmax])
         opt  = optimizer(name, s, n_points, n_steps_max, self.exp_imp)
         x, c = opt.optimize()
         x    = np.reshape(x, (-1,dim))
