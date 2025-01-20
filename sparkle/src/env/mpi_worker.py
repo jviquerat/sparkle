@@ -54,9 +54,9 @@ class mpi_worker():
         return self.env.reset(run)
 
     # Rendering
-    def render(self, x, **kwargs):
+    def render(self, x, c, **kwargs):
 
-        return self.env.render(x, **kwargs)
+        return self.env.render(x, c, **kwargs)
 
     # Closing
     def close(self):

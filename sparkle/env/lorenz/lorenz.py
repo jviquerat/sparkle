@@ -103,7 +103,7 @@ class lorenz(base_env):
         return v
 
     # Rendering
-    def render(self, x):
+    def render(self, x, c):
 
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)

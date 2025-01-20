@@ -42,7 +42,7 @@ class sinebump(base_env):
         return v
 
     # Rendering
-    def render(self, x, y_mu=None, y_std=None, x_ei=None):
+    def render(self, x, c, y_mu=None, y_std=None, x_ei=None):
 
         self.render_2d(x, vmin=0, vmax=16,
                        levels=[0, 2, 4, 6, 8],
