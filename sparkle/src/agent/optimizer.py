@@ -23,7 +23,7 @@ local_factory.register("pbo",   pbo)
 ### It does not comply to the other agents interface
 ### It is assumed to run sequentially
 class optimizer():
-    def __init__(self, name, dim, x0, xmin, xmax, n_points, n_steps_max, cost):
+    def __init__(self, name, spaces, n_points, n_steps_max, cost):
 
         agent_pms             = types.SimpleNamespace()
         agent_pms.n_points    = n_points
@@ -32,13 +32,7 @@ class optimizer():
         agent_pms.clip        = True
 
         # Initialize agent
-        self.agent = local_factory.create(name,
-                                          path = ".",
-                                          dim  = dim,
-                                          x0   = x0,
-                                          xmin = xmin,
-                                          xmax = xmax,
-                                          pms  = agent_pms)
+        self.agent = local_factory.create(name, path=".", spaces=spaces, pms=agent_pms)
 
         # Cost function
         self.cost = cost

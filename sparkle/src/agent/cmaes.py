@@ -8,21 +8,17 @@ from sparkle.src.agent.base import base_agent
 ###############################################
 ### CMAES
 class cmaes(base_agent):
-    def __init__(self, path, dim, x0, xmin, xmax, pms):
+    def __init__(self, path, spaces, pms):
 
-        super().__init__(pms)
+        super().__init__(spaces, pms)
 
         self.name        = "CMAES"
         self.base_path   = path
-        self.dim         = dim
-        self.xmin        = xmin
-        self.xmax        = xmax
 
-        self.sigma0      = 0.25*(np.min(xmax)-np.max(xmin))
+        self.sigma0      = 0.25*(np.min(self.xmax())-np.max(self.xmin()))
         if hasattr(pms, "sigma0"):       self.sigma0       = pms.sigma0
 
-        self.x0          = x0
-        self.n_points    = 4 + math.floor(3.0*math.log(self.dim))
+        self.n_points    = 4 + math.floor(3.0*math.log(self.dim()))
         if hasattr(pms, "n_points"):     self.n_points     = pms.n_points
 
         self.n_steps_max = 20
@@ -47,7 +43,7 @@ class cmaes(base_agent):
         self.mu_eff = (np.sum(self.w))**2/(np.sum(np.square(self.w)))
 
         # Shortcuts for following expressions
-        dim    = float(self.dim)
+        dim    = float(self.dim())
         mu_eff = float(self.mu_eff)
 
         self.cc = (4.0 + mu_eff/dim)/(dim + 4.0 + 2.0*mu_eff/dim) # constant for C evolution path
@@ -70,27 +66,27 @@ class cmaes(base_agent):
         super().reset(run)
 
         # Arrays
-        self.pc    = np.zeros(self.dim)        # C evolution path
-        self.ps    = np.zeros(self.dim)        # sigma evolution path
-        self.B     = np.identity(self.dim)     # coordinate system
-        self.D     = np.identity(self.dim)     # scaling matrix
-        self.BD    = np.matmul(self.B, self.D) # for efficiency
-        self.C     = np.identity(self.dim)     # covariance matrix
-        self.xm    = self.x0.copy()            # mean vector
-        self.zm    = np.zeros(self.dim)        # auxiliary mean vector
-        self.sigma = self.sigma0               # global standard deviation
+        self.pc    = np.zeros(self.dim())        # C evolution path
+        self.ps    = np.zeros(self.dim())        # sigma evolution path
+        self.B     = np.identity(self.dim())     # coordinate system
+        self.D     = np.identity(self.dim())     # scaling matrix
+        self.BD    = np.matmul(self.B, self.D)   # for efficiency
+        self.C     = np.identity(self.dim())     # covariance matrix
+        self.xm    = self.x0()                   # mean vector
+        self.zm    = np.zeros(self.dim())        # auxiliary mean vector
+        self.sigma = self.sigma0                 # global standard deviation
 
     # Sample from distribution
     def sample(self):
 
-        x      = np.zeros((self.n_points, self.dim))
-        self.z = np.random.randn(self.n_points, self.dim) # draw from N(0,1)
+        x      = np.zeros((self.n_points, self.dim()))
+        self.z = np.random.randn(self.n_points, self.dim()) # draw from N(0,1)
         for i in range(self.n_points):
             x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, self.z[i,:])
 
         if (self.clip):
-            for i in range(self.dim):
-                x[:,i] = np.clip(x[:,i], self.xmin[i], self.xmax[i])
+            for i in range(self.dim()):
+                x[:,i] = np.clip(x[:,i], self.xmin()[i], self.xmax()[i])
 
         return x
 
@@ -124,7 +120,7 @@ class cmaes(base_agent):
         self.pc = (1.0-self.cc)*self.pc + hs*coeff*np.matmul(self.BD, self.zm)
 
         # Update C
-        y  = np.zeros((self.mu, self.dim))
+        y  = np.zeros((self.mu, self.dim()))
         for i in range(self.mu):
             y [i,:] = np.matmul(self.BD, self.z[i,:])
 

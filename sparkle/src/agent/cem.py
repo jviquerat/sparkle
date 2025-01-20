@@ -8,19 +8,15 @@ from sparkle.src.agent.base import base_agent
 ###############################################
 ### CEM
 class cem(base_agent):
-    def __init__(self, path, dim, x0, xmin, xmax, pms):
+    def __init__(self, path, spaces, pms):
 
-        super().__init__(pms)
+        super().__init__(spaces, pms)
 
         self.name        = "CEM"
         self.base_path   = path
-        self.dim         = dim
-        self.x0          = x0
-        self.xmin        = xmin
-        self.xmax        = xmax
 
         self.n_steps_max = 20
-        self.n_points    = 2*self.dim
+        self.n_points    = 2*self.dim()
         self.n_elites    = math.floor(self.n_points/2)
         self.alpha       = 0.2
 
@@ -40,13 +36,13 @@ class cem(base_agent):
         super().reset(run)
 
         # Min and max arrays used for cem adaptation
-        self.xmin_cem = self.xmin.copy()
-        self.xmax_cem = self.xmax.copy()
+        self.xmin_cem = self.xmin().copy()
+        self.xmax_cem = self.xmax().copy()
 
     # Sample from distribution
     def sample(self):
 
-        x = np.zeros((self.n_points, self.dim))
+        x = np.zeros((self.n_points, self.dim()))
 
         for i in range(self.n_points):
             x[i,:] = np.random.uniform(low  = self.xmin_cem,

@@ -7,6 +7,7 @@ import multiprocessing as mp
 # Custom imports
 from sparkle.src.env.parallel         import parallel
 from sparkle.src.env.multiproc_worker import multiproc_worker
+from sparkle.src.env.spaces           import environment_spaces
 from sparkle.src.utils.timer          import timer
 
 ###############################################
@@ -20,6 +21,7 @@ class multiproc_environments:
         self.pipes = []
         self.procs = []
 
+        # Optional arguments to pass to environments
         if hasattr(pms, "args"): self.args = pms.args
 
         # Start environments
@@ -35,8 +37,16 @@ class multiproc_environments:
             process.daemon = True
             process.start()
 
+        # Declare spaces object
+        self.spaces = environment_spaces(self.get_spaces(), pms)
+
         # Initialize timer
         self.timer_env = timer("env      ")
+
+    # Get environment spaces
+    def get_spaces(self):
+
+        return [self.dim(), self.x0(), self.xmin(), self.xmax()]
 
     # Return dimension of environment
     def dim(self):

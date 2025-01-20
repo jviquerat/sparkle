@@ -5,6 +5,7 @@ from math import sqrt, pi, exp, erf
 # Custom imports
 from sparkle.src.agent.base      import base_agent
 from sparkle.src.agent.optimizer import optimizer
+from sparkle.src.env.spaces      import environment_spaces
 from sparkle.src.pex.pex         import pex_factory
 from sparkle.src.model.kriging   import kriging
 from sparkle.src.utils.prints    import spacer
@@ -13,16 +14,12 @@ from sparkle.src.utils.error     import error
 ###############################################
 ### EGO
 class ego(base_agent):
-    def __init__(self, path, dim, x0, xmin, xmax, pms):
+    def __init__(self, path, spaces, pms):
 
-        super().__init__(pms)
+        super().__init__(spaces, pms)
 
         self.name            = "EGO"
         self.base_path       = path
-        self.dim             = dim
-        self.x0              = x0
-        self.xmin            = xmin
-        self.xmax            = xmax
         self.n_steps_max     = pms.n_steps_max
 
         self.recompute_theta_ = False
@@ -38,9 +35,9 @@ class ego(base_agent):
 
         self.model = kriging()
         self.pex   = pex_factory.create(pms.pex.name,
-                                        dim  = self.dim,
-                                        xmin = self.xmin,
-                                        xmax = self.xmax,
+                                        dim  = self.dim(),
+                                        xmin = self.xmin(),
+                                        xmax = self.xmax(),
                                         pms  = pms.pex)
 
         self.n_points      = 1
@@ -94,9 +91,9 @@ class ego(base_agent):
         x_den = self.denormalize(self.x_)
 
         for k in range(self.x_.shape[0]):
-            self.update_best(np.reshape(x_den[k], (-1,self.dim)),
+            self.update_best(np.reshape(x_den[k], (-1,self.dim())),
                              np.reshape(self.y_[k], (-1,1)))
-            self.store(np.reshape(x_den[k], (-1,self.dim)),
+            self.store(np.reshape(x_den[k], (-1,self.dim())),
                        np.reshape(self.y_[k], (-1,1)))
 
         self.finalize_initial_model()
@@ -143,12 +140,12 @@ class ego(base_agent):
     # Normalize inputs
     def normalize(self, x):
 
-        return (x - self.xmin)/(self.xmax - self.xmin)
+        return (x - self.xmin())/(self.xmax() - self.xmin())
 
     # Denormalize inputs
     def denormalize(self, x):
 
-        return self.xmin + (self.xmax - self.xmin)*x
+        return self.xmin() + (self.xmax() - self.xmin())*x
 
     # Sample new point based on expected improvement
     def sample(self):
@@ -161,8 +158,8 @@ class ego(base_agent):
         n_points    = 200
         n_steps_max = 10
 
-        opt  = optimizer(name, dim, x0, xmin, xmax,
-                         n_points, n_steps_max, self.exp_imp)
+        s    = environment_spaces([dim, x0, xmin, xmax], None)
+        opt  = optimizer(name, s, n_points, n_steps_max, self.exp_imp)
         x, c = opt.optimize()
         x    = np.reshape(x, (-1,dim))
 
@@ -172,7 +169,7 @@ class ego(base_agent):
     # We actually return -ei so it can be directly minimized
     def exp_imp(self, x):
 
-        x       = np.reshape(x, (-1,self.dim))
+        x       = np.reshape(x, (-1,self.dim()))
         mu, std = self.model.evaluate(x)
         xb, yb  = self.best()
 

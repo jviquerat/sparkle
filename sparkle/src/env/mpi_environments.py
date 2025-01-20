@@ -6,6 +6,7 @@ import numpy as np
 # Custom imports
 from sparkle.src.env.parallel   import parallel
 from sparkle.src.env.mpi_worker import mpi_worker
+from sparkle.src.env.spaces     import environment_spaces
 from sparkle.src.utils.timer    import timer
 
 ###############################################
@@ -17,42 +18,25 @@ class mpi_environments:
         self.name = pms.name
         self.args = None
 
+        # Optional arguments to pass to environments
         if hasattr(pms, "args"): self.args = pms.args
 
         # Generate workers
-        self.worker = mpi_worker(self.name, self.args,
-                                 parallel.rank(), path)
+        self.worker = mpi_worker(self.name, self.args, parallel.rank(), path)
 
         # Set all slaves to wait for instructions
-        if (not parallel.is_root()):
-            self.worker.work()
+        if (not parallel.is_root()): self.worker.work()
+
+        # Declare spaces object
+        self.spaces = environment_spaces(self.get_spaces(), pms)
 
         # Initialize timer
         self.timer_env = timer("env      ")
 
-    # Return dimension of environment
-    def dim(self):
+    # Get environment spaces
+    def get_spaces(self):
 
-        if (parallel.is_root()):
-            return self.worker.env.dim
-
-    # Return x0 value
-    def x0(self):
-
-        if (parallel.is_root()):
-            return self.worker.env.x0
-
-    # Return xmin value
-    def xmin(self):
-
-        if (parallel.is_root()):
-            return self.worker.env.xmin
-
-    # Return xmax value
-    def xmax(self):
-
-        if (parallel.is_root()):
-            return self.worker.env.xmax
+        return [self.worker.env.dim, self.worker.env.x0, self.worker.env.xmin, self.worker.env.xmax]
 
     # Compute cost in all environments
     def cost(self, x):
