@@ -50,7 +50,7 @@ class kriging():
             n_points    = 200
             n_steps_max = 10
 
-            s   = environment_spaces([self.dim_, x0, xmin, xmax], None)
+            s   = environment_spaces([self.dim_, x0, xmin, xmax])
             opt = optimizer(name, s, n_points, n_steps_max, self.log_likelihood)
             theta, c = opt.optimize()
 

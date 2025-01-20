@@ -9,6 +9,7 @@ import numpy as np
 from sparkle.tst.tst           import *
 from sparkle.src.model.kriging import kriging
 from sparkle.src.pex.lhs       import lhs
+from sparkle.src.env.spaces    import environment_spaces
 
 ###############################################
 ### Test kriging model
@@ -17,8 +18,10 @@ def test_kriging():
     # Create pex
     pms          = types.SimpleNamespace()
     pms.n_points = 10
-    lhs_pex      = lhs(2, np.array([0,0]), np.array([1,1]), pms)
-    y            = np.cos(lhs_pex.x()[:,0]) + np.cos(lhs_pex.x()[:,1])
+
+    s       = environment_spaces([2, None, np.array([0,0]), np.array([1,1])])
+    lhs_pex = lhs(s, pms)
+    y       = np.cos(lhs_pex.x()[:,0]) + np.cos(lhs_pex.x()[:,1])
 
     model = kriging()
     model.build(lhs_pex.x(), y)

@@ -6,7 +6,8 @@ import numpy as np
 
 # Custom imports
 from sparkle.tst.tst        import *
-from sparkle.src.pex.random import *
+from sparkle.src.pex.random import random
+from sparkle.src.env.spaces import environment_spaces
 
 ###############################################
 ### Test random pex
@@ -20,7 +21,8 @@ def test_random():
     pms          = types.SimpleNamespace()
     pms.n_points = n_points
 
-    pex = random(dim, xmin, xmax, pms)
+    s = environment_spaces([dim, None, xmin, xmax])
+    pex = random(s, pms)
     assert(pex.n_points() == n_points)
     pex.render_2d()
     os.remove(pex.render_2d_filename)
