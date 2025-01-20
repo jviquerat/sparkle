@@ -9,10 +9,9 @@ from sparkle.src.agent.base import base_agent
 class pso(base_agent):
     def __init__(self, path, spaces, pms):
 
-        super().__init__(spaces, pms)
+        super().__init__(path, spaces, pms)
 
         self.name        = "PSO"
-        self.base_path   = path
 
         self.n_steps_max = 20
         self.n_points    = 20

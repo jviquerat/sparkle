@@ -9,9 +9,10 @@ from sparkle.src.utils.prints import spacer
 ###############################################
 ### Base agent
 class base_agent():
-    def __init__(self, spaces, pms):
+    def __init__(self, path, spaces, pms):
 
-        self.spaces = spaces
+        self.spaces    = spaces
+        self.base_path = path
 
         self.silent = False
         if hasattr(pms, "silent"): self.silent = pms.silent
