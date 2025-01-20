@@ -47,7 +47,7 @@ class branin(base_env):
         return a*(x[1]-b*x[0]**2+c*x[0]-r)**2 + s*(1.0-t)*math.cos(x[0]) + s
 
     # Rendering
-    def render(self, x, c):
+    def render(self, x, c, pms=None):
 
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)

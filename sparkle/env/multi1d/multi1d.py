@@ -49,9 +49,9 @@ class multi1d(base_env):
         return v
 
     # Rendering
-    def render(self, x, c, x_mu=None, y_mu=None, y_std=None, ei=None, x_ei=None):
+    def render(self, x, c, pms=None):
 
-        self.render_1d(x, x_mu=x_mu, y_mu=y_mu, y_std=y_std, ei=ei, x_ei=x_ei)
+        self.render_1d(x, c, pms)
 
     # Close environment
     def close(self):

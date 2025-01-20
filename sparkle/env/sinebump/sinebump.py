@@ -42,11 +42,9 @@ class sinebump(base_env):
         return v
 
     # Rendering
-    def render(self, x, c, y_mu=None, y_std=None, x_ei=None):
+    def render(self, x, c, pms=None):
 
-        self.render_2d(x, vmin=0, vmax=16,
-                       levels=[0, 2, 4, 6, 8],
-                       y_mu=y_mu, y_std=y_std, x_ei=x_ei)
+        self.render_2d(x, vmin=0, vmax=16, levels=[0, 2, 4, 6, 8], pms=pms)
 
     # Close environment
     def close(self):
