@@ -12,7 +12,7 @@ from sparkle.src.utils.prints        import spacer
 ###############################################
 ### MLP class
 class mlp(base):
-    def __init__(self, inp_dim, out_dim, arch, acts, lr):
+    def __init__(self, inp_dim, out_dim, arch, acts):
         super().__init__()
 
         # I/O dimensions
@@ -26,7 +26,6 @@ class mlp(base):
         self.nf_trunk_   = 0
         self.nf_heads_   = [0]*self.n_heads_
         self.dropout_    = 0.0
-        self.lr_         = lr
 
         # Fill output dimension in heads arch
         for h in range(self.n_heads_):
@@ -74,15 +73,11 @@ class mlp(base):
                                                   self.heads_arch_[h][k],
                                                   self.heads_acts_[h][k])
 
-        # Create optimizer
-        self.opt_ = toptim.Adam(self.params(),
-                                 lr=self.lr_)
-
         # Save model parameters in memory
         self.net_weights = copy.deepcopy(self.net_.state_dict())
 
         # Save optimizer parameters in memory
-        self.opt_weights = copy.deepcopy(self.opt_.state_dict())
+        #self.opt_weights = copy.deepcopy(self.opt_.state_dict())
 
     # Forward pass
     def forward(self, x_in):
@@ -113,7 +108,7 @@ class mlp(base):
     def reset(self):
 
         self.net_.load_state_dict(self.net_weights)
-        self.opt_.load_state_dict(self.opt_weights)
+        #self.opt_.load_state_dict(self.opt_weights)
 
     # Infos on network
     def info(self):
