@@ -5,8 +5,9 @@ import torch
 import torch.distributions as td
 
 # Custom imports
-from sparkle.src.network.mlp import mlp
-from sparkle.src.agent.base  import base_agent
+from sparkle.src.network.mlp         import mlp
+from sparkle.src.optimizer.optimizer import opt_factory
+from sparkle.src.agent.base          import base_agent
 
 ###############################################
 ### PBO
@@ -35,17 +36,26 @@ class pbo(base_agent):
         if hasattr(pms, "obs_dim"):     self.obs_dim     = pms.obs_dim
         self.cov_dim     = math.floor(self.dim()*(self.dim() - 1)/2)
 
+        # Create networks
         self.net_sg = mlp(inp_dim = self.obs_dim,
                           out_dim = self.dim(),
                           arch    = pms.sg.arch,
-                          acts    = pms.sg.acts,
-                          lr      = pms.sg.lr)
+                          acts    = pms.sg.acts)
 
         self.net_cr = mlp(inp_dim = self.obs_dim,
                           out_dim = self.cov_dim,
                           arch    = pms.cr.arch,
-                          acts    = pms.cr.acts,
-                          lr      = pms.cr.lr)
+                          acts    = pms.cr.acts)
+
+        # Create optimizers
+        self.pms_opt_sg = pms.opt_sg
+        self.pms_opt_cr = pms.opt_cr
+        # self.opt_sg = opt_factory.create(pms.opt_sg.type,
+        #                                  model=self.net_sg,
+        #                                  pms=pms.opt_sg)
+        # self.opt_cr = opt_factory.create(pms.opt_cr.type,
+        #                                  model=self.net_cr,
+        #                                  pms=pms.opt_cr)
 
         self.sg_epochs = pms.sg.epochs
         self.sg_gen    = pms.sg.gen
@@ -78,9 +88,13 @@ class pbo(base_agent):
         self.net_sg.reset()
         self.net_cr.reset()
 
-        # Initial sampling
-        # This fills x array with samples
-        #return self.sample()
+        # Create optimizers
+        self.opt_sg = opt_factory.create(self.pms_opt_sg.type,
+                                         model=self.net_sg,
+                                         pms=self.pms_opt_sg)
+        self.opt_cr = opt_factory.create(self.pms_opt_cr.type,
+                                         model=self.net_cr,
+                                         pms=self.pms_opt_cr)
 
     # Sample from distribution
     def sample(self):
@@ -99,8 +113,6 @@ class pbo(base_agent):
     def get_pdf(self, mu, sg, cr):
 
         cov = self.get_cov(sg, cr)
-
-        #print(cov)
         scl = torch.linalg.cholesky(cov)
         pdf = td.MultivariateNormal(mu, scale_tril=scl)
 
@@ -121,9 +133,9 @@ class pbo(base_agent):
 
         # Update
         self.train_loop(self.sg_epochs, self.sg_gen,
-                        self.sg_batch,  self.net_sg)
+                        self.sg_batch,  self.net_sg, self.opt_sg)
         self.train_loop(self.cr_epochs, self.cr_gen,
-                        self.cr_batch,  self.net_cr)
+                        self.cr_batch,  self.net_cr, self.opt_cr)
 
         w = self.adv
         w = w/np.sum(w)
@@ -186,7 +198,7 @@ class pbo(base_agent):
         return buff_x, buff_a
 
     # Train loop
-    def train_loop(self, n_epochs, n_gens, batch_frac, net):
+    def train_loop(self, n_epochs, n_gens, batch_frac, net, opt):
 
         # Loop on epochs
         for epoch in range(n_epochs):
@@ -210,9 +222,22 @@ class pbo(base_agent):
                 obs = torch.ones((end-start, self.obs_dim))*self.obs
 
                 loss = self.get_loss(obs, adv, act)
-                net.opt_.zero_grad()
+                opt.zero_grad()
                 loss.backward()
-                net.opt_.step()
+                opt.step()
+                #self.opt_step(opt, obs, adv, act)
+
+    # def opt_step(self, opt, obs, adv, act):
+
+    #     def closure():
+
+    #         opt.zero_grad()
+    #         loss = self.get_loss(obs, adv, act)
+    #         loss.backward()
+
+    #         return loss
+
+    #     return opt.step(closure)
 
     # Compute loss
     def get_loss(self, obs, adv, act):
