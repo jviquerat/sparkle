@@ -138,8 +138,8 @@ class pex_based(base_trainer):
                 error("pex_based", "render",
                       "plot_estimates is only available for dim <= 2")
 
-            xmin    = self.env.xmin()
-            xmax    = self.env.xmax()
+            xmin    = self.env.spaces.xmin()
+            xmax    = self.env.spaces.xmax()
             x_last  = np.reshape(x_last, (-1))
 
             if (self.env.spaces.dim() == 1):
@@ -161,7 +161,7 @@ class pex_based(base_trainer):
                 pms.x_ei  = x_last
 
                 x_den = self.agent.denormalize(self.agent.x_)
-                self.env.render(x_den, c_last, pms)
+                self.env.render(x_den, c_last, pms=pms)
 
             if (self.env.spaces.dim() == 2):
                 nx = 100
@@ -190,7 +190,7 @@ class pex_based(base_trainer):
                 pms.x_ei  = x_last
 
                 x_den = self.agent.denormalize(self.agent.x_)
-                self.env.render(x_den, c_last, pms)
+                self.env.render(x_den, c_last, pms=pms)
 
         else:
             # Regular rendering without metamodel informations
