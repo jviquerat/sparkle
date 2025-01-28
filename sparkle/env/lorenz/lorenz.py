@@ -17,22 +17,24 @@ class lorenz(base_env):
         self.base_path = path
         self.cpu       = cpu
         self.dim       = 4
-        self.xmin      = np.array([-1.0,-1.0,-1.0,-1.0])
-        self.xmax      = np.array([ 1.0, 1.0, 1.0, 1.0])
-        self.it_plt    = 0
+        self.x0        = np.zeros(self.dim)
+        self.xmin      =-np.ones(self.dim)
+        self.xmax      = np.ones(self.dim)
+        if hasattr(pms, "x0"):   self.x0   = pms.x0
+        if hasattr(pms, "xmin"): self.xmin = pms.xmin
+        if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
+        # Plotting data
+        self.it_plt    = 0
+        self.gif_steps = 300
+
+        # Physical and numerical parameters
         self.sigma     = 10.0
         self.rho       = 28.0
         self.beta      = 8.0/3.0
         self.t_max     = 25.0
         self.dt        = 0.005
         self.n_steps   = math.floor(self.t_max/self.dt)
-
-        self.gif_steps = 300
-
-        # Check inputs
-        if hasattr(pms, "xmin"): self.xmin = pms.xmin
-        if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
         # Arrays
         self.x  = np.zeros(3)                   # unknowns

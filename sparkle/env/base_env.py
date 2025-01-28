@@ -29,6 +29,16 @@ class base_env():
     def close(self):
         raise NotImplementedError
 
+    # Generate cost map for rendering of 1D envs
+    def generate_cost_map_1d(self):
+
+        self.n_plot    = 100
+        self.x         = np.linspace(self.xmin[0], self.xmax[0], num=self.n_plot)
+        self.y         = np.zeros(self.n_plot)
+
+        for i in range(self.n_plot):
+            self.y[i] = self.cost([self.x[i]])
+
     # Generate cost map for rendering of 2D envs
     def generate_cost_map_2d(self):
 
@@ -69,11 +79,11 @@ class base_env():
 
         # Plot function with sampling points
         ax.set_xlim([self.xmin[0], self.xmax[0]])
-        ax.set_ylim([-2.5, 3.0])
+        ax.set_ylim([self.vmin, self.vmax])
         ax.grid()
         ax.set_yticklabels([])
         ax.set_yticks([])
-        ax.plot(self.x_plot, self.y_plot, label="f(x)")
+        ax.plot(self.x, self.y, label="f(x)")
         ax.set_ylabel('y')
 
         y = np.zeros_like(x)
@@ -81,7 +91,7 @@ class base_env():
             y[i] = self.cost(x[i])
 
         ax.scatter(x[:,0], y[:,0], c="black", marker='o', alpha=0.8,
-                   label="observations")
+                   label="samples")
         ax.legend(loc='upper left')
 
         if (plot_estimates):
@@ -106,7 +116,9 @@ class base_env():
         self.it_plt += 1
 
     # Render 2D envs
-    def render_2d(self, x, vmin, vmax, levels, pms):
+    # This is specific to textbook 2D cases and uses some env-defined
+    # quantities from the environment (xmin, xmax, ...)
+    def render_2d(self, x, pms):
 
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)
@@ -140,10 +152,10 @@ class base_env():
         ax.imshow(self.z,
                   extent=[self.xmin[0], self.xmax[0],
                           self.xmin[1], self.xmax[1]],
-                  vmin=vmin, vmax=vmax,
+                  vmin=self.vmin, vmax=self.vmax,
                   alpha=0.8, cmap='RdBu_r')
         cnt = ax.contour(self.x, self.y, self.z,
-                         levels=levels,
+                         levels=self.levels,
                          colors='black', alpha=0.5)
         ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
         ax.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.8)
@@ -156,10 +168,10 @@ class base_env():
             ax.imshow(y_mu,
                       extent=[self.xmin[0], self.xmax[0],
                               self.xmin[1], self.xmax[1]],
-                      vmin=vmin, vmax=vmax,
+                      vmin=self.vmin, vmax=self.vmax,
                       alpha=0.8, cmap='RdBu_r')
             cnt = ax.contour(self.x, self.y, y_mu,
-                             levels=levels,
+                             levels=self.levels,
                              colors='black', alpha=0.5)
             ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
             ax.scatter(x_ei[0], x_ei[1], c='red', marker='o', alpha=0.8)
@@ -173,7 +185,7 @@ class base_env():
                               self.xmin[1], self.xmax[1]],
                       alpha=0.8, cmap='RdBu_r')
             cnt = ax.contour(self.x, self.y, y_mu,
-                             levels=levels,
+                             levels=self.levels,
                              colors='black', alpha=0.5)
             ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
             ax.set_title("confidence interval")

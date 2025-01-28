@@ -19,16 +19,18 @@ class rosenbrock(base_env):
         self.x0[0]     = 0.0
         self.xmin      =-2.0*np.ones(self.dim)
         self.xmax      = 2.0*np.ones(self.dim)
-        self.it_plt    = 0
-
-        # Check inputs
         if hasattr(pms, "x0"):   self.x0   = pms.x0
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
+        # Plotting data
+        self.it_plt    = 0
+        self.vmin      = 0.0
+        self.vmax      = 500.0
+        self.levels    = [1.0, 10.0, 50.0, 200.0, 500.0]
+
         # Generate map of cost values for rendering
-        if (self.dim != 2): return
-        self.generate_cost_map_2d()
+        if (self.dim == 2): self.generate_cost_map_2d()
 
     # Reset environment
     def reset(self, run):
@@ -50,9 +52,8 @@ class rosenbrock(base_env):
     # Rendering
     def render(self, x, c, pms=None):
 
-        if (self.dim != 2): return
-
-        self.render_2d(x, vmin=0, vmax=200, levels=[1.0, 10.0, 50.0, 200.0, 500.0], pms=pms)
+        if (self.dim == 2): self.render_2d(x, pms=pms)
+        else: return
 
     # Close environment
     def close(self):

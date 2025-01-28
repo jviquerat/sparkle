@@ -19,19 +19,17 @@ class multi1d(base_env):
         self.x0        = np.array([0.6])
         self.xmin      = np.array([0.0])
         self.xmax      = np.array([1.2])
-        self.it_plt    = 0
-
-        # Check inputs
         if hasattr(pms, "x0"):   self.x0   = pms.x0
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
 
+        # Plotting data
+        self.it_plt    = 0
+        self.vmin      =-2.0
+        self.vmax      = 3.0
+
         # Generate map of cost values for rendering
-        self.nx_plot = 200
-        self.x_plot  = np.linspace(self.xmin[0], self.xmax[0], num=self.nx_plot)
-        self.y_plot  = np.zeros(self.nx_plot)
-        for i in range(self.nx_plot):
-            self.y_plot[i] = self.cost([self.x_plot[i]])
+        self.generate_cost_map_1d()
 
     # Reset environment
     def reset(self, run):
@@ -51,7 +49,7 @@ class multi1d(base_env):
     # Rendering
     def render(self, x, c, pms=None):
 
-        self.render_1d(x, c, pms)
+        self.render_1d(x, pms)
 
     # Close environment
     def close(self):
