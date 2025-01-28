@@ -19,8 +19,8 @@ torch_activations = {
     'linear': None
 }
 
-torch.manual_seed(0)
-np.random.seed(0)
+#torch.manual_seed(0)
+#np.random.seed(0)
 
 # Helper function to append a layer to a ModuleList
 def add_fc_layer(net, dim_in, dim_out, activation, dropout=0.0):
@@ -29,7 +29,7 @@ def add_fc_layer(net, dim_in, dim_out, activation, dropout=0.0):
     net.append(tnn.Linear(dim_in, dim_out))
 
     std = math.sqrt(1.0/dim_in)
-    tnn.init.normal_(net[-1].weight, -std, std)
+    tnn.init.normal_(net[-1].weight, mean=0.0, std=std)
 
     n += 1
     if (activation != "linear"):
