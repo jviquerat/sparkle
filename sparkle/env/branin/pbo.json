@@ -1,5 +1,5 @@
 {
-    "n_avg": 5,
+    "n_avg": 3,
     "avg_type": "log",
     "naming": {
         "env": true,
@@ -16,18 +16,24 @@
         "sg": {
             "arch": [[8,8],[[null]]],
             "acts": [["tanh","relu"],[["sigmoid"]]],
-            "lr": 5.0e-3,
             "epochs": 8,
             "gen": 8,
             "batch": 0.5
         },
+        "opt_sg": {
+            "type": "adam",
+            "lr": 5.0e-3
+        },
         "cr": {
             "arch": [[8,8],[[null]]],
             "acts": [["tanh","relu"],[["sigmoid"]]],
-            "lr": 1.0e-3,
             "epochs": 8,
             "gen": 16,
             "batch": 0.5
+        },
+        "opt_cr": {
+            "type": "adam",
+            "lr": 1.0e-3
         }
     },
     "trainer": {

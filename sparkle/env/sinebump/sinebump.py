@@ -16,12 +16,15 @@ class sinebump(base_env):
         self.x0        = np.array([2.5, 2.5])
         self.xmin      = np.array([0.0, 0.0])
         self.xmax      = np.array([5.0, 5.0])
-        self.it_plt    = 0
-
-        # Check inputs
         if hasattr(pms, "x0"):   self.x0   = pms.x0
         if hasattr(pms, "xmin"): self.xmin = pms.xmin
         if hasattr(pms, "xmax"): self.xmax = pms.xmax
+
+        # Plotting data
+        self.it_plt    = 0
+        self.vmin      = 0.0
+        self.vmax      = 16.0
+        self.levels    = [0.0, 2.0, 4.0, 6.0, 8.0]
 
         # Generate map of cost values for rendering
         self.generate_cost_map_2d()
@@ -44,7 +47,7 @@ class sinebump(base_env):
     # Rendering
     def render(self, x, c, pms=None):
 
-        self.render_2d(x, vmin=0, vmax=16, levels=[0, 2, 4, 6, 8], pms=pms)
+        self.render_2d(x, pms=pms)
 
     # Close environment
     def close(self):
