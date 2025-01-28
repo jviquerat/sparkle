@@ -30,7 +30,7 @@ def multiproc_worker(env_name, args, cpu, path, pipe):
                 pipe.send(r)
 
             if (command == 'render'):
-                rnd = env.render(data)
+                rnd = env.render(data[0], data[1])
                 pipe.send(rnd)
 
             if command == 'close':
