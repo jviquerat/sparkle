@@ -76,9 +76,6 @@ class mlp(base):
         # Save model parameters in memory
         self.net_weights = copy.deepcopy(self.net_.state_dict())
 
-        # Save optimizer parameters in memory
-        #self.opt_weights = copy.deepcopy(self.opt_.state_dict())
-
     # Forward pass
     def forward(self, x_in):
 
@@ -108,7 +105,6 @@ class mlp(base):
     def reset(self):
 
         self.net_.load_state_dict(self.net_weights)
-        #self.opt_.load_state_dict(self.opt_weights)
 
     # Infos on network
     def info(self):
