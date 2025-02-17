@@ -18,7 +18,7 @@ class mpi_environments:
         self.name = pms.name
         self.args = None
 
-        # Optional arguments to pass to environments
+        # Optional parameters
         if hasattr(pms, "args"): self.args = pms.args
 
         # Generate workers
@@ -36,7 +36,16 @@ class mpi_environments:
     # Get environment spaces
     def get_spaces(self):
 
-        return [self.worker.env.dim, self.worker.env.x0, self.worker.env.xmin, self.worker.env.xmax]
+        spaces = [self.worker.env.dim,
+                  self.worker.env.x0,
+                  self.worker.env.xmin,
+                  self.worker.env.xmax]
+
+        if hasattr(self.worker.env, "vmin"):   spaces += [self.worker.env.vmin]
+        if hasattr(self.worker.env, "vmax"):   spaces += [self.worker.env.vmax]
+        if hasattr(self.worker.env, "levels"): spaces += [self.worker.env.levels]
+
+        return spaces
 
     # Compute cost in all environments
     def cost(self, x):
