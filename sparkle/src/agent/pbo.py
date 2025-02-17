@@ -50,12 +50,6 @@ class pbo(base_agent):
         # Create optimizers
         self.pms_opt_sg = pms.opt_sg
         self.pms_opt_cr = pms.opt_cr
-        # self.opt_sg = opt_factory.create(pms.opt_sg.type,
-        #                                  model=self.net_sg,
-        #                                  pms=pms.opt_sg)
-        # self.opt_cr = opt_factory.create(pms.opt_cr.type,
-        #                                  model=self.net_cr,
-        #                                  pms=pms.opt_cr)
 
         self.sg_epochs = pms.sg.epochs
         self.sg_gen    = pms.sg.gen
