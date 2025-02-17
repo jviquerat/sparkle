@@ -10,6 +10,7 @@ torch_activations = {
     'relu6': tnn.ReLU6(),
     'lrelu': tnn.LeakyReLU(negative_slope=0.2),
     'selu': tnn.SELU(),
+    'elu': tnn.ELU(),
     'mish': tnn.Mish(),
     'sigmoid': tnn.Sigmoid(),
     'tanh': tnn.Tanh(),
@@ -19,8 +20,8 @@ torch_activations = {
     'linear': None
 }
 
-#torch.manual_seed(0)
-#np.random.seed(0)
+#torch.manual_seed(1)
+#np.random.seed(1)
 
 # Helper function to append a layer to a ModuleList
 def add_fc_layer(net, dim_in, dim_out, activation, dropout=0.0):
@@ -32,6 +33,7 @@ def add_fc_layer(net, dim_in, dim_out, activation, dropout=0.0):
     tnn.init.normal_(net[-1].weight, mean=0.0, std=std)
 
     n += 1
+
     if (activation != "linear"):
         net.append(torch_activations[activation])
         n += 1
