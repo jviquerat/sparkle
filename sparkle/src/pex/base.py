@@ -45,6 +45,12 @@ class base_pex():
 
         return self.x_
 
+    # Compute volume of domain
+    def volume(self):
+
+        v = self.xmax() - self.xmin()
+        return np.prod(v)
+
     # Print informations
     def summary(self):
 
@@ -60,9 +66,6 @@ class base_pex():
         fig = plt.figure()
         plt.xlim([self.xmin()[0], self.xmax()[0]])
         plt.ylim([self.xmin()[1], self.xmax()[1]])
-        major_ticks = np.arange(self.xmin()[0], self.xmax()[0]+1.0e-8, 1.0/self.n_points_)
-        plt.xticks(major_ticks)
-        plt.yticks(major_ticks)
         plt.grid()
         plt.scatter(self.x_[:,0], self.x_[:,1], c="black", marker="o")
         plt.savefig(self.render_2d_filename, dpi=100)
