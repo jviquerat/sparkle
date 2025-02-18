@@ -24,7 +24,7 @@ torch_activations = {
 #np.random.seed(1)
 
 # Helper function to append a layer to a ModuleList
-def add_fc_layer(net, dim_in, dim_out, activation, dropout=0.0):
+def add_fc_layer(net, dim_in, dim_out, activation):
 
     n  = 0
     net.append(tnn.Linear(dim_in, dim_out))
@@ -36,9 +36,6 @@ def add_fc_layer(net, dim_in, dim_out, activation, dropout=0.0):
 
     if (activation != "linear"):
         net.append(torch_activations[activation])
-        n += 1
-    if (dropout != 0.0):
-        net.append(tnn.Dropout(dropout))
         n += 1
 
     return n

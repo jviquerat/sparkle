@@ -25,7 +25,6 @@ class mlp(base):
         self.n_heads_    = len(self.heads_arch_)
         self.nf_trunk_   = 0
         self.nf_heads_   = [0]*self.n_heads_
-        self.dropout_    = 0.0
 
         # Fill output dimension in heads arch
         for h in range(self.n_heads_):
@@ -50,15 +49,13 @@ class mlp(base):
         self.nf_trunk_ += add_fc_layer(self.net_,
                                        self.inp_dim_,
                                        self.trunk_arch_[0],
-                                       self.trunk_acts_[0],
-                                       self.dropout_)
+                                       self.trunk_acts_[0])
 
         for k in range(1,len(self.trunk_arch_)):
             self.nf_trunk_ += add_fc_layer(self.net_,
                                            self.trunk_arch_[k-1],
                                            self.trunk_arch_[k],
-                                           self.trunk_acts_[k],
-                                           self.dropout_)
+                                           self.trunk_acts_[k])
 
         # Add heads
         for h in range(self.n_heads_):
