@@ -73,6 +73,9 @@ class mlp(base):
     def info(self):
 
         spacer()
+        print("MLP")
+
+        spacer()
         print("Input layer, size "+str(self.inp_dim_))
 
         n = 0
