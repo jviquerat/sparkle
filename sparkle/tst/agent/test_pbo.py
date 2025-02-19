@@ -15,3 +15,14 @@ def test_pbo():
     # Run test
     runner("sparkle/tst/agent/parabola_pbo.json", "pbo",
            1.2965548977777777e-07, 3.329470133333333e-09)
+
+###############################################
+### Test pbo with default parameters
+def test_pbo_default():
+
+    # Add environment to PATH
+    sys.path.append("sparkle/env/parabola")
+
+    # Run test
+    runner("sparkle/tst/agent/parabola_pbo_default.json", "pbo",
+           1.2965548977777777e-07, 3.329470133333333e-09)
