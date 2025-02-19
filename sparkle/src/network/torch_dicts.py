@@ -23,12 +23,6 @@ torch_activations = {
     'linear': None
 }
 
-# Set numpy and torch seeds
-def set_seeds(seed):
-
-    torch.manual_seed(seed)
-    np.random.seed(seed)
-
 # Helper function to append a layer to a ModuleList
 def add_mlp_layer(net, dim_in, dim_out, activation):
 
