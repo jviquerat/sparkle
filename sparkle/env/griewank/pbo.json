@@ -12,29 +12,7 @@
     },
     "agent": {
         "name": "pbo",
-        "n_steps_max": 200,
-        "sg": {
-            "arch": [[8,8],[[null]]],
-            "acts": [["tanh","relu"],[["sigmoid"]]],
-            "epochs": 8,
-            "gen": 8,
-            "batch": 0.5
-        },
-        "opt_sg": {
-            "type": "adam",
-            "lr": 5.0e-3
-        },
-        "cr": {
-            "arch": [[8,8],[[null]]],
-            "acts": [["tanh","relu"],[["sigmoid"]]],
-            "epochs": 8,
-            "gen": 16,
-            "batch": 0.5
-        },
-        "opt_cr": {
-            "type": "adam",
-            "lr": 1.0e-3
-        }
+        "n_steps_max": 200
     },
     "trainer": {
         "name": "regular",
