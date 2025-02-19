@@ -15,7 +15,7 @@ def test_branched_mlp():
     # 2 layers of trunk, and 2 output branches with 2 layers in each
     net = branched_mlp(inp_dim = 3,
                        out_dim = 1,
-                       arch    = [[8,8],[[4,4],[2,2]]],
+                       arch    = [[8,8],[[4],[2]]],
                        acts    = [["relu"],[["relu","linear"],["relu","linear"]]])
 
     # input with size 3 and batch_size 1
@@ -32,7 +32,7 @@ def test_branched_mlp():
     # 2 layers of trunk, and 2 output branches with 2 layers in each
     net = branched_mlp(inp_dim = 3,
                        out_dim = 2,
-                       arch    = [[8,8],[[4,4],[2,2]]],
+                       arch    = [[8,8],[[4],[2]]],
                        acts    = [["relu"],[["relu","linear"],["relu","linear"]]])
 
     # input with size 3 and batch_size 1
@@ -50,7 +50,7 @@ def test_branched_mlp():
     net = branched_mlp(inp_dim = 3,
                        out_dim = 2,
                        arch    = [[8,8],[[2]]],
-                       acts    = [["relu"],[["linear"]]])
+                       acts    = [["relu"],[["relu","linear"]]])
 
     # input with size 3 and batch_size 1
     x = torch.zeros(1,3)
@@ -65,7 +65,7 @@ def test_branched_mlp():
     # branched mlp with specified activations for each layer of trunk
     net = branched_mlp(inp_dim = 3,
                        out_dim = 2,
-                       arch    = [[8,8],[[4,4],[2,2]]],
+                       arch    = [[8,8],[[4],[2]]],
                        acts    = [["relu","tanh"],[["relu","linear"],["relu","linear"]]])
 
     # input with size 3 and batch_size 1
