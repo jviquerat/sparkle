@@ -13,5 +13,5 @@ def test_pso():
     sys.path.append("sparkle/env/parabola")
 
     # Run test
-    runner("sparkle/tst/agent/parabola_pso.json",
-           "pso", 1.0e-2, 1.0e-4)
+    runner("sparkle/tst/agent/parabola_pso.json", "pso",
+           0.0005579100443309332, 1.2262383600000001e-07)
