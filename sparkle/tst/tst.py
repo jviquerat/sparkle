@@ -1,6 +1,5 @@
 # Generic imports
 import warnings
-import math
 import torch
 import numpy as np
 
@@ -12,11 +11,6 @@ def set_seeds(seed):
 
     torch.manual_seed(seed)
     np.random.seed(seed)
-
-# Compare two floats with given accuracy
-def compare(x, y, eps=1.0e-8):
-
-    return math.fabs(x-y) < eps
 
 # Distance between two torch tensors
 def tensor_distance(x, y):
