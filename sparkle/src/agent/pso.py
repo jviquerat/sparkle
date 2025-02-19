@@ -2,30 +2,22 @@
 import numpy as np
 
 # Custom imports
-from sparkle.src.agent.base import base_agent
+from sparkle.src.utils.default import set_default
+from sparkle.src.agent.base    import base_agent
 
 ###############################################
 ### Particle swarm optimization
 class pso(base_agent):
     def __init__(self, path, spaces, pms):
-
         super().__init__(path, spaces, pms)
 
         self.name        = "PSO"
-
-        self.n_steps_max = 20
-        self.n_points    = 20
-        self.v0          = 0.1
-        self.c1          = 0.5
-        self.c2          = 0.5
-        self.w           = 0.8
-
-        if hasattr(pms, "n_steps_max"): self.n_steps_max = pms.n_steps_max
-        if hasattr(pms, "n_points"):    self.n_points    = pms.n_points
-        if hasattr(pms, "v0"):          self.v0          = pms.v0
-        if hasattr(pms, "c1"):          self.c1          = pms.c1
-        if hasattr(pms, "c2"):          self.c2          = pms.c2
-        if hasattr(pms, "w"):           self.w           = pms.w
+        self.n_steps_max = set_default("n_steps_max", 20, pms)
+        self.n_points    = set_default("n_points", 20, pms)
+        self.v0          = set_default("v0", 0.1, pms)
+        self.c1          = set_default("c1", 0.5, pms)
+        self.c2          = set_default("c2", 0.5, pms)
+        self.w           = set_default("w", 0.8, pms)
 
         self.n_steps_total = self.n_steps_max*self.n_points
 

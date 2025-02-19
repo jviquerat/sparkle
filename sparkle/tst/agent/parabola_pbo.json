@@ -14,9 +14,9 @@
         "name": "pbo",
         "n_steps_max": 50,
         "sg": {
-            "arch": [[2,2],[[2]]],
-            "acts": [["tanh"],[["sigmoid"]]],
-            "epochs": 16,
+            "arch": [8,8],
+            "acts": ["tanh","sigmoid"],
+            "epochs": 8,
             "gen": 8,
             "batch": 0.5
         },
@@ -25,17 +25,16 @@
             "lr": 5.0e-3
         },
         "cr": {
-            "arch": [[2,2],[[2]]],
-            "acts": [["tanh"],[["sigmoid"]]],
-            "epochs": 16,
-            "gen": 8,
-            "batch": 0.5
+            "arch": [8,8],
+            "acts": ["tanh","sigmoid"],
+            "epochs": 8,
+            "gen": 16,
+            "batch": 1.0
         },
         "opt_cr": {
             "type": "adam",
             "lr": 1.0e-3
-        },
-        "adv_decay": 0.5
+        }
     },
     "trainer": {
         "name": "regular",

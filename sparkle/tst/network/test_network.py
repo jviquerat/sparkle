@@ -56,8 +56,6 @@ def test_mlp():
 ### Test branched_mlp
 def test_branched_mlp():
 
-    set_seeds(0)
-
     # branched mlp with input of size 3, output of size 1,
     # 2 layers of trunk, and 2 output branches with 2 layers in each
     net = branched_mlp(inp_dim = 3,

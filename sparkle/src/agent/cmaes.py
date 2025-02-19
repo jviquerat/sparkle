@@ -3,34 +3,27 @@ import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.agent.base import base_agent
+from sparkle.src.utils.default import set_default
+from sparkle.src.agent.base    import base_agent
 
 ###############################################
 ### CMAES
 class cmaes(base_agent):
     def __init__(self, path, spaces, pms):
-
         super().__init__(path, spaces, pms)
 
         self.name        = "CMAES"
-
-        self.sigma0      = 0.25*(np.min(self.xmax())-np.max(self.xmin()))
-        if hasattr(pms, "sigma0"):       self.sigma0       = pms.sigma0
-
-        self.n_points    = 4 + math.floor(3.0*math.log(self.dim()))
-        if hasattr(pms, "n_points"):     self.n_points     = pms.n_points
-
-        self.n_steps_max = 20
-        if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
-
-        self.clip        = False
-        if hasattr(pms, "clip"):         self.clip         = np.array(pms.clip)
-        self.escape      = False
-        if hasattr(pms, "escape"):       self.escape       = np.array(pms.escape)
+        sg0              = 0.25*(np.min(self.xmax())-np.max(self.xmin()))
+        self.sigma0      = set_default("sigma0", sg0, pms)
+        npts             = 4 + math.floor(3.0*math.log(self.dim()))
+        self.n_points    = set_default("n_points", npts, pms)
+        self.n_steps_max = set_default("n_steps_max", 20, pms)
+        self.clip        = set_default("clip", False, pms)
+        self.escape      = set_default("escape", False, pms)
 
         # Number of selected samples
-        self.fmu    = self.n_points/2.0
-        self.mu     = math.floor(self.fmu)
+        self.fmu = self.n_points/2.0
+        self.mu  = math.floor(self.fmu)
 
         # Recombination weights
         self.w = np.zeros(self.mu)
