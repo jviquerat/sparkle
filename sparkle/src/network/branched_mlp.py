@@ -7,18 +7,19 @@ import torch.optim as toptim
 # Custom imports
 from sparkle.src.network.base        import base
 from sparkle.src.network.torch_dicts import add_mlp_layer
-from sparkle.src.utils.prints        import spacer
+from sparkle.src.utils.prints        import spacer, new_line
 from sparkle.src.utils.error         import error
 
 ###############################################
 ### Branched MLP class
 class branched_mlp(base):
-    def __init__(self, inp_dim, out_dim, arch, acts):
+    def __init__(self, inp_dim, out_dim, arch, acts, name="default"):
         super().__init__()
 
         # I/O dimensions
         self.inp_dim_ = inp_dim
         self.out_dim_ = out_dim
+        self.name_    = name
 
         # Build architecture
         self.trunk_arch_ = arch[0]
@@ -102,8 +103,9 @@ class branched_mlp(base):
     # Infos on network
     def info(self):
 
+        new_line()
         spacer()
-        print("Branched MLP")
+        print("Branched MLP "+str(self.name_))
 
         spacer()
         print("Input layer, size "+str(self.inp_dim_))
