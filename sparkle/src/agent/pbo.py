@@ -30,25 +30,29 @@ class pbo(base_agent):
         self.cov_dim     = math.floor(self.dim()*(self.dim() - 1)/2)
 
         # Create networks
+        if (not hasattr(pms, "sg")): pms.sg = None
         self.sg_arch   = set_default("arch", [8,8], pms.sg)
-        self.sg_acts   = set_default("acts", ["tanh", "sigmoid"], pms.sg)
+        self.sg_acts   = set_default("acts", ["tanh", "tanh", "sigmoid"], pms.sg)
         self.sg_epochs = set_default("epochs", 8, pms.sg)
         self.sg_gen    = set_default("gen", 8, pms.sg)
         self.sg_batch  = set_default("batch", 0.5, pms.sg)
         self.net_sg = mlp(inp_dim = self.obs_dim,
                           out_dim = self.dim(),
                           arch    = self.sg_arch,
-                          acts    = self.sg_acts)
+                          acts    = self.sg_acts,
+                          name    = "sigma")
 
+        if (not hasattr(pms, "cr")): pms.cr = None
         self.cr_arch   = set_default("arch", [8,8], pms.cr)
-        self.cr_acts   = set_default("acts", ["tanh", "sigmoid"], pms.cr)
+        self.cr_acts   = set_default("acts", ["tanh", "tanh", "sigmoid"], pms.cr)
         self.cr_epochs = set_default("epochs", 8, pms.cr)
         self.cr_gen    = set_default("gen", 16, pms.cr)
         self.cr_batch  = set_default("batch", 1.0, pms.cr)
         self.net_cr = mlp(inp_dim = self.obs_dim,
                           out_dim = self.cov_dim,
                           arch    = self.cr_arch,
-                          acts    = self.cr_acts)
+                          acts    = self.cr_acts,
+                          name    = "correlations")
 
         # Create optimizers
         pms_opt_sg = types.SimpleNamespace()
@@ -66,6 +70,8 @@ class pbo(base_agent):
         self.n_steps_elite = self.n_steps_max*self.n_elite
 
         self.summary()
+        self.net_sg.info()
+        self.net_cr.info()
 
     # Reset
     def reset(self, run):
@@ -83,8 +89,6 @@ class pbo(base_agent):
         self.net_sg.reset()
         self.net_cr.reset()
 
-
-        self.net_sg.info()
         # Create optimizers
         self.opt_sg = opt_factory.create(self.pms_opt_sg.type,
                                          model=self.net_sg,
@@ -222,19 +226,6 @@ class pbo(base_agent):
                 opt.zero_grad()
                 loss.backward()
                 opt.step()
-                #self.opt_step(opt, obs, adv, act)
-
-    # def opt_step(self, opt, obs, adv, act):
-
-    #     def closure():
-
-    #         opt.zero_grad()
-    #         loss = self.get_loss(obs, adv, act)
-    #         loss.backward()
-
-    #         return loss
-
-    #     return opt.step(closure)
 
     # Compute loss
     def get_loss(self, obs, adv, act):
