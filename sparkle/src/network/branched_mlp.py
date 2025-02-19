@@ -109,6 +109,9 @@ class branched_mlp(base):
     def info(self):
 
         spacer()
+        print("Branched MLP")
+
+        spacer()
         print("Input layer, size "+str(self.inp_dim_))
 
         spacer()
