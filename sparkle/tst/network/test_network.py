@@ -5,7 +5,6 @@ import numpy as np
 
 # Custom imports
 from sparkle.tst.tst                  import *
-from sparkle.src.network.torch_dicts  import set_seeds
 from sparkle.src.network.mlp          import mlp
 from sparkle.src.network.branched_mlp import branched_mlp
 from sparkle.src.network.lip_mlp      import lip_mlp
