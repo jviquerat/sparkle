@@ -6,7 +6,7 @@ import torch.optim as toptim
 
 # Custom imports
 from sparkle.src.network.base        import base
-from sparkle.src.network.torch_dicts import add_fc_layer
+from sparkle.src.network.torch_dicts import add_mlp_layer
 from sparkle.src.utils.prints        import spacer
 
 ###############################################
@@ -20,55 +20,32 @@ class mlp(base):
         self.out_dim_ = out_dim
 
         # Build architecture
-        self.trunk_arch_ = arch[0]
-        self.heads_arch_ = arch[1]
-        self.n_heads_    = len(self.heads_arch_)
-        self.nf_trunk_   = 0
-        self.nf_heads_   = [0]*self.n_heads_
+        self.arch_ = arch
+        self.nf_   = 0
 
-        # Fill output dimension in heads arch
-        for h in range(self.n_heads_):
-            self.heads_arch_[h][-1] = self.out_dim_
+        # Fill output dimension in arch
+        self.arch_[-1] = self.out_dim_
 
         # Build activations
-        self.trunk_acts_ = acts[0]
-        self.heads_acts_ = acts[1]
+        self.acts_ = acts
 
-        # Allow the use of a single activation for all trunk layers
-        if ((len(self.trunk_acts_) == 1) and (len(self.trunk_arch_) > 1)):
-            self.trunk_acts_ = [acts[0][0]]*len(self.trunk_arch_)
-
-        # Check heads sizes
-        if (self.n_heads_ != len(self.heads_acts_)):
-            error("mlp", "__init__",
-                  "The nb of heads does not match the nb of activations")
+        # Allow the use of a single activation for all layers
+        if ((len(self.acts_) == 1) and (len(self.arch_) > 1)):
+            self.acts_ = [acts[0]]*len(self.arch_)
 
         self.net_ = tnn.ModuleList()
 
-        # Add trunk
-        self.nf_trunk_ += add_fc_layer(self.net_,
-                                       self.inp_dim_,
-                                       self.trunk_arch_[0],
-                                       self.trunk_acts_[0])
+        # Add layers
+        self.nf_ += add_mlp_layer(self.net_,
+                                  self.inp_dim_,
+                                  self.arch_[0],
+                                  self.acts_[0])
 
-        for k in range(1,len(self.trunk_arch_)):
-            self.nf_trunk_ += add_fc_layer(self.net_,
-                                           self.trunk_arch_[k-1],
-                                           self.trunk_arch_[k],
-                                           self.trunk_acts_[k])
-
-        # Add heads
-        for h in range(self.n_heads_):
-            self.nf_heads_[h] += add_fc_layer(self.net_,
-                                              self.trunk_arch_[-1],
-                                              self.heads_arch_[h][0],
-                                              self.heads_acts_[h][0])
-
-            for k in range(1,len(self.heads_arch_[h])):
-                self.nf_heads_[h] += add_fc_layer(self.net_,
-                                                  self.heads_arch_[h][k-1],
-                                                  self.heads_arch_[h][k],
-                                                  self.heads_acts_[h][k])
+        for k in range(1,len(self.arch_)):
+            self.nf_ += add_mlp_layer(self.net_,
+                                      self.arch_[k-1],
+                                      self.arch_[k],
+                                      self.acts_[k])
 
         # Save model parameters in memory
         self.net_weights = copy.deepcopy(self.net_.state_dict())
@@ -77,26 +54,15 @@ class mlp(base):
     def forward(self, x_in):
 
         # Initialize
-        x   = torch.clone(x_in)
-        out = []
-        l   = 0
+        x = torch.clone(x_in)
+        l = 0
 
-        # Forward pass in trunk
-        for k in range(self.nf_trunk_):
+        # Forward pass
+        for k in range(self.nf_):
             x  = self.net_[l](x)
             l += 1
 
-        # Forward pass in heads
-        for h in range(self.n_heads_):
-            hx = torch.clone(x)
-            for k in range(self.nf_heads_[h]):
-                hx = self.net_[l](hx)
-                l += 1
-            out.append(hx)
-
-        # Handle output shape
-        if (len(out) == 1): return out[0]
-        else: return out
+        return x
 
     # Reset
     def reset(self):
@@ -109,20 +75,8 @@ class mlp(base):
         spacer()
         print("Input layer, size "+str(self.inp_dim_))
 
-        spacer()
-        print("Trunk:")
-
         n = 0
-        for k in range(len(self.trunk_arch_)):
+        for k in range(len(self.arch_)):
             spacer()
-            print("Layer "+str(n)+", size "+str(self.trunk_arch_[k])+", activation "+str(self.trunk_acts_[k]))
+            print("Layer "+str(n)+", size "+str(self.arch_[k])+", activation "+str(self.acts_[k]))
             n += 1
-
-        for h in range(self.n_heads_):
-            spacer()
-            print("Head "+str(h)+":")
-
-            for k in range(len(self.heads_arch_[h])):
-                spacer()
-                print("Layer "+str(n)+", size "+str(self.heads_arch_[h][k])+", activation "+str(self.heads_acts_[h][k]))
-                n += 1
