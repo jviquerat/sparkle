@@ -3,25 +3,20 @@ import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.agent.base import base_agent
+from sparkle.src.utils.default import set_default
+from sparkle.src.agent.base    import base_agent
 
 ###############################################
 ### CEM
 class cem(base_agent):
     def __init__(self, path, spaces, pms):
-
         super().__init__(path, spaces, pms)
 
         self.name        = "CEM"
-        self.n_steps_max = 20
-        self.n_points    = 2*self.dim()
-        self.n_elites    = math.floor(self.n_points/2)
-        self.alpha       = 0.2
-
-        if hasattr(pms, "n_steps_max"):  self.n_steps_max  = pms.n_steps_max
-        if hasattr(pms, "n_points"):     self.n_points     = pms.n_points
-        if hasattr(pms, "n_elites"):     self.n_elites     = pms.n_elites
-        if hasattr(pms, "alpha"):        self.alpha        = pms.alpha
+        self.n_steps_max = set_default("n_steps_max", 20, pms)
+        self.n_points    = set_default("n_points", 2*self.dim(), pms)
+        self.n_elites    = set_default("n_elites", math.floor(self.n_points/2), pms)
+        self.alpha       = set_default("alpha", 0.2, pms)
 
         self.n_steps_total = self.n_steps_max*self.n_points
 

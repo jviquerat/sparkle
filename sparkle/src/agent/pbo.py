@@ -1,10 +1,12 @@
 # Generic imports
 import math
+import types
 import numpy as np
 import torch
 import torch.distributions as td
 
 # Custom imports
+from sparkle.src.utils.default       import set_default
 from sparkle.src.network.mlp         import mlp
 from sparkle.src.optimizer.optimizer import opt_factory
 from sparkle.src.agent.base          import base_agent
@@ -13,51 +15,50 @@ from sparkle.src.agent.base          import base_agent
 ### PBO
 class pbo(base_agent):
     def __init__(self, path, spaces, pms):
-
         super().__init__(path, spaces, pms)
 
         self.name        = "PBO"
-
-        self.sigma0      = torch.tensor(0.25*(np.min(self.xmax())-np.max(self.xmin())))
-        if hasattr(pms, "sigma0"):   self.sigma0   = torch.tensor(pms.sigma0)
-        self.n_points    = 4 + math.floor(3.0*math.log(self.dim()))
-        if hasattr(pms, "n_points"): self.n_points = pms.n_points
-
-        self.n_steps_max = 20
-        if hasattr(pms, "n_steps_max"): self.n_steps_max = pms.n_steps_max
-        self.n_elite     = int(0.5*self.n_points)
-        if hasattr(pms, "n_elite"):     self.n_elite     = pms.n_elite
-
-        self.adv_clip    = True
-        if hasattr(pms, "adv_clip"):    self.adv_clip    = np.array(pms.adv_clip)
-        self.adv_decay   = 1.0 - math.exp(-0.35*self.dim())
-        if hasattr(pms, "adv_decay"):   self.adv_decay   = np.array(pms.adv_decay)
-        self.obs_dim     = self.dim()
-        if hasattr(pms, "obs_dim"):     self.obs_dim     = pms.obs_dim
+        sg0              = torch.tensor(0.25*(np.min(self.xmax())-np.max(self.xmin())))
+        self.sigma0      = set_default("sigma0", sg0, pms)
+        npts             = 4 + math.floor(3.0*math.log(self.dim()))
+        self.n_points    = set_default("n_points", npts, pms)
+        self.n_steps_max = set_default("n_steps_max", 20, pms)
+        self.n_elite     = set_default("n_elite", int(0.5*self.n_points), pms)
+        self.adv_clip    = set_default("adv_clip", True, pms)
+        self.adv_decay   = set_default("adv_decay", 1.0-math.exp(-0.35*self.dim()), pms)
+        self.obs_dim     = set_default("obs_dim", self.dim(), pms)
         self.cov_dim     = math.floor(self.dim()*(self.dim() - 1)/2)
 
         # Create networks
+        self.sg_arch   = set_default("arch", [8,8], pms.sg)
+        self.sg_acts   = set_default("acts", ["tanh", "sigmoid"], pms.sg)
+        self.sg_epochs = set_default("epochs", 8, pms.sg)
+        self.sg_gen    = set_default("gen", 8, pms.sg)
+        self.sg_batch  = set_default("batch", 0.5, pms.sg)
         self.net_sg = mlp(inp_dim = self.obs_dim,
                           out_dim = self.dim(),
-                          arch    = pms.sg.arch,
-                          acts    = pms.sg.acts)
+                          arch    = self.sg_arch,
+                          acts    = self.sg_acts)
 
+        self.cr_arch   = set_default("arch", [8,8], pms.cr)
+        self.cr_acts   = set_default("acts", ["tanh", "sigmoid"], pms.cr)
+        self.cr_epochs = set_default("epochs", 8, pms.cr)
+        self.cr_gen    = set_default("gen", 16, pms.cr)
+        self.cr_batch  = set_default("batch", 1.0, pms.cr)
         self.net_cr = mlp(inp_dim = self.obs_dim,
                           out_dim = self.cov_dim,
-                          arch    = pms.cr.arch,
-                          acts    = pms.cr.acts)
+                          arch    = self.cr_arch,
+                          acts    = self.cr_acts)
 
         # Create optimizers
-        self.pms_opt_sg = pms.opt_sg
-        self.pms_opt_cr = pms.opt_cr
-
-        self.sg_epochs = pms.sg.epochs
-        self.sg_gen    = pms.sg.gen
-        self.sg_batch  = pms.sg.batch
-
-        self.cr_epochs = pms.cr.epochs
-        self.cr_gen    = pms.cr.gen
-        self.cr_batch  = pms.cr.batch
+        pms_opt_sg = types.SimpleNamespace()
+        pms_opt_sg.type = "adam"
+        pms_opt_sg.lr   = 5.0e-3
+        self.pms_opt_sg = set_default("opt_sg", pms_opt_sg, pms)
+        pms_opt_cr = types.SimpleNamespace()
+        pms_opt_cr.type = "adam"
+        pms_opt_cr.lr   = 1.0e-3
+        self.pms_opt_cr = set_default("opt_cr", pms_opt_cr, pms)
 
         self.obs = 0.0
 

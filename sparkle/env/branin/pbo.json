@@ -14,8 +14,8 @@
         "name": "pbo",
         "n_steps_max": 50,
         "sg": {
-            "arch": [[8,8],[[null]]],
-            "acts": [["tanh","relu"],[["sigmoid"]]],
+            "arch": [8,8],
+            "acts": ["tanh","sigmoid"],
             "epochs": 8,
             "gen": 8,
             "batch": 0.5
@@ -25,8 +25,8 @@
             "lr": 5.0e-3
         },
         "cr": {
-            "arch": [[8,8],[[null]]],
-            "acts": [["tanh","relu"],[["sigmoid"]]],
+            "arch": [8,8],
+            "acts": ["tanh","sigmoid"],
             "epochs": 8,
             "gen": 16,
             "batch": 0.5

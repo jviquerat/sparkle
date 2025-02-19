@@ -3,6 +3,7 @@ import numpy as np
 from math import sqrt, pi, exp, erf
 
 # Custom imports
+from sparkle.src.utils.default   import set_default
 from sparkle.src.agent.base      import base_agent
 from sparkle.src.agent.optimizer import optimizer
 from sparkle.src.env.spaces      import environment_spaces
@@ -15,17 +16,13 @@ from sparkle.src.utils.error     import error
 ### EGO
 class ego(base_agent):
     def __init__(self, path, spaces, pms):
-
         super().__init__(path, spaces, pms)
 
-        self.name        = "EGO"
-        self.n_steps_max = pms.n_steps_max
+        self.name             = "EGO"
+        self.n_steps_max      = set_default("n_steps_max", 20, pms)
+        self.recompute_theta_ = set_default("recompute_theta", False, pms)
 
-        self.recompute_theta_ = False
-        if hasattr(pms, "recompute_theta"): self.recompute_theta_ = pms.recompute_theta
-
-        self.load_model_ = False
-        if hasattr(pms, "load_model"): self.load_model_ = pms.load_model
+        self.load_model_      = set_default("load_model", False, pms)
         if (self.load_model_):
             if not hasattr(pms, "model_file"):
                 error("ego", "__init__",
