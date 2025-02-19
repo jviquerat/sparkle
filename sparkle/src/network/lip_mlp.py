@@ -9,7 +9,6 @@ from sparkle.src.network.torch_dicts import add_lip_layer
 from sparkle.src.utils.error import error
 from sparkle.src.utils.prints import new_line, spacer
 
-
 class LipMLP(BaseNetwork):
     """
     Lipschitz Multi-Layer Perceptron (LipMLP) neural network.
@@ -22,7 +21,7 @@ class LipMLP(BaseNetwork):
                  out_dim: int,
                  arch: List[int],
                  acts: List[str],
-                 lip_constant: float=1.0,
+                 lip_constant: List[float]=[1.0],
                  name: str="default") -> None:
         """
         Initializes the LipMLP.
@@ -38,10 +37,10 @@ class LipMLP(BaseNetwork):
         super().__init__()
 
         # I/O dimensions
-        self.inp_dim_      = inp_dim
-        self.out_dim_      = out_dim
-        self.lip_constant_ = lip_constant
-        self.name_         = name
+        self.inp_dim_   = inp_dim
+        self.out_dim_   = out_dim
+        self.lip_const_ = lip_constant
+        self.name_      = name
 
         # Build architecture
         self.arch_ = arch
@@ -58,6 +57,10 @@ class LipMLP(BaseNetwork):
             error("mlp", "__init__",
                   "Activations and architecture don't match")
 
+        # Check lipschitz constant list
+        if (len(self.lip_const_) == 1):
+            self.lip_const_ = [lip_constant[0]]*(len(self.arch_)-1)
+
         self.net_ = tnn.ModuleList()
 
         # Add layers
@@ -66,7 +69,7 @@ class LipMLP(BaseNetwork):
                                       self.arch_[k],
                                       self.arch_[k+1],
                                       self.acts_[k],
-                                      self.lip_constant_)
+                                      self.lip_const_[k])
 
         # Save model parameters in memory
         self.net_weights = copy.deepcopy(self.net_.state_dict())
