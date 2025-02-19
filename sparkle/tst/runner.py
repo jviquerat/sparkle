@@ -4,6 +4,7 @@ import sys
 import shutil
 
 # Custom imports
+from sparkle.tst.tst             import set_seeds, compare
 from sparkle.src.utils.json      import json_parser
 from sparkle.src.utils.data      import data_avg
 from sparkle.src.trainer.trainer import trainer_factory
@@ -12,6 +13,8 @@ from sparkle.src.env.parallel    import parallel
 ###############################################
 ### Generic runner used in agent and trainer tests
 def runner(json_file, agent_type, val_avg, val_bst):
+
+    set_seeds(0)
 
     # Initial space
     print("")
@@ -52,8 +55,8 @@ def runner(json_file, agent_type, val_avg, val_bst):
     bst = data[-1,4]
     print("Avg: "+str(avg))
     print("Bst: "+str(bst))
-    assert(avg < val_avg)
-    assert(bst < val_bst)
+    assert(compare(avg, val_avg, 1.0e-15))
+    assert(compare(bst, val_bst, 1.0e-15))
 
     # Clean
     shutil.rmtree("0")
