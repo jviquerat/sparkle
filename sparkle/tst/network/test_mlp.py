@@ -42,7 +42,7 @@ def test_mlp():
     net = mlp(inp_dim = 3,
               out_dim = 2,
               arch    = [8,8,8],
-              acts    = ["relu","relu","relu"])
+              acts    = ["relu","relu","relu","linear"])
 
     # input with size 3 and batch_size 4
     x = torch.zeros(4,3)

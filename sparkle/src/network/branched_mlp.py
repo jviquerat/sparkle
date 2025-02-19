@@ -8,6 +8,7 @@ import torch.optim as toptim
 from sparkle.src.network.base        import base
 from sparkle.src.network.torch_dicts import add_mlp_layer
 from sparkle.src.utils.prints        import spacer
+from sparkle.src.utils.error         import error
 
 ###############################################
 ### Branched MLP class
@@ -25,10 +26,9 @@ class branched_mlp(base):
         self.n_heads_    = len(self.heads_arch_)
         self.nf_trunk_   = 0
         self.nf_heads_   = [0]*self.n_heads_
-
-        # Fill output dimension in heads arch
-        for h in range(self.n_heads_):
-            self.heads_arch_[h][-1] = self.out_dim_
+        self.trunk_arch_ = [inp_dim] + self.trunk_arch_
+        for k in range(self.n_heads_):
+            self.heads_arch_[k] = [self.trunk_arch_[-1]] + self.heads_arch_[k] + [out_dim]
 
         # Build activations
         self.trunk_acts_ = acts[0]
@@ -43,32 +43,28 @@ class branched_mlp(base):
             error("mlp", "__init__",
                   "The nb of heads does not match the nb of activations")
 
+        # Check adequation between layers and activations
+        for k in range(self.n_heads_):
+            if (len(self.heads_acts_[k]) != len(self.heads_arch_[k])-1):
+                error("branched_mlp", "__init__",
+                      "Activations and architecture don't match")
+
         self.net_ = tnn.ModuleList()
 
         # Add trunk
-        self.nf_trunk_ += add_mlp_layer(self.net_,
-                                       self.inp_dim_,
-                                       self.trunk_arch_[0],
-                                       self.trunk_acts_[0])
-
-        for k in range(1,len(self.trunk_arch_)):
+        for k in range(0,len(self.trunk_arch_)-1):
             self.nf_trunk_ += add_mlp_layer(self.net_,
-                                           self.trunk_arch_[k-1],
-                                           self.trunk_arch_[k],
-                                           self.trunk_acts_[k])
+                                            self.trunk_arch_[k],
+                                            self.trunk_arch_[k+1],
+                                            self.trunk_acts_[k])
 
         # Add heads
         for h in range(self.n_heads_):
-            self.nf_heads_[h] += add_mlp_layer(self.net_,
-                                              self.trunk_arch_[-1],
-                                              self.heads_arch_[h][0],
-                                              self.heads_acts_[h][0])
-
-            for k in range(1,len(self.heads_arch_[h])):
+            for k in range(0,len(self.heads_arch_[h])-1):
                 self.nf_heads_[h] += add_mlp_layer(self.net_,
-                                                  self.heads_arch_[h][k-1],
-                                                  self.heads_arch_[h][k],
-                                                  self.heads_acts_[h][k])
+                                                   self.heads_arch_[h][k],
+                                                   self.heads_arch_[h][k+1],
+                                                   self.heads_acts_[h][k])
 
         # Save model parameters in memory
         self.net_weights = copy.deepcopy(self.net_.state_dict())
@@ -97,8 +93,6 @@ class branched_mlp(base):
 
         # Handle output shape
         return out
-        #if (len(out) == 1): return out[0]
-        #else: return out
 
     # Reset
     def reset(self):
@@ -118,16 +112,16 @@ class branched_mlp(base):
         print("Trunk:")
 
         n = 0
-        for k in range(len(self.trunk_arch_)):
+        for k in range(0,len(self.trunk_arch_)-1):
             spacer()
-            print("Layer "+str(n)+", size "+str(self.trunk_arch_[k])+", activation "+str(self.trunk_acts_[k]))
+            print("Layer "+str(n)+", size "+str(self.trunk_arch_[k+1])+", activation "+str(self.trunk_acts_[k]))
             n += 1
 
         for h in range(self.n_heads_):
             spacer()
             print("Head "+str(h)+":")
 
-            for k in range(len(self.heads_arch_[h])):
+            for k in range(0,len(self.heads_arch_[h])-1):
                 spacer()
-                print("Layer "+str(n)+", size "+str(self.heads_arch_[h][k])+", activation "+str(self.heads_acts_[h][k]))
+                print("Layer "+str(n)+", size "+str(self.heads_arch_[h][k+1])+", activation "+str(self.heads_acts_[h][k]))
                 n += 1

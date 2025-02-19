@@ -83,6 +83,8 @@ class pbo(base_agent):
         self.net_sg.reset()
         self.net_cr.reset()
 
+
+        self.net_sg.info()
         # Create optimizers
         self.opt_sg = opt_factory.create(self.pms_opt_sg.type,
                                          model=self.net_sg,

@@ -8,6 +8,7 @@ import torch.optim as toptim
 from sparkle.src.network.base        import base
 from sparkle.src.network.torch_dicts import add_mlp_layer
 from sparkle.src.utils.prints        import spacer
+from sparkle.src.utils.error         import error
 
 ###############################################
 ### MLP class
@@ -22,29 +23,25 @@ class mlp(base):
         # Build architecture
         self.arch_ = arch
         self.nf_   = 0
-
-        # Fill output dimension in arch
-        self.arch_[-1] = self.out_dim_
-
-        # Build activations
+        self.arch_ = [inp_dim] + self.arch_ + [out_dim]
         self.acts_ = acts
 
         # Allow the use of a single activation for all layers
         if ((len(self.acts_) == 1) and (len(self.arch_) > 1)):
-            self.acts_ = [acts[0]]*len(self.arch_)
+            self.acts_ = [acts[0]]*(len(self.arch_)-1)
+
+        # Check adequation between layers and activations
+        if (len(self.acts_) != len(self.arch_)-1):
+            error("mlp", "__init__",
+                  "Activations and architecture don't match")
 
         self.net_ = tnn.ModuleList()
 
         # Add layers
-        self.nf_ += add_mlp_layer(self.net_,
-                                  self.inp_dim_,
-                                  self.arch_[0],
-                                  self.acts_[0])
-
-        for k in range(1,len(self.arch_)):
+        for k in range(0,len(self.arch_)-1):
             self.nf_ += add_mlp_layer(self.net_,
-                                      self.arch_[k-1],
                                       self.arch_[k],
+                                      self.arch_[k+1],
                                       self.acts_[k])
 
         # Save model parameters in memory
@@ -79,7 +76,7 @@ class mlp(base):
         print("Input layer, size "+str(self.inp_dim_))
 
         n = 0
-        for k in range(len(self.arch_)):
+        for k in range(0,len(self.arch_)-1):
             spacer()
-            print("Layer "+str(n)+", size "+str(self.arch_[k])+", activation "+str(self.acts_[k]))
+            print("Layer "+str(n)+", size "+str(self.arch_[k+1])+", activation "+str(self.acts_[k]))
             n += 1
