@@ -22,7 +22,7 @@
         }
     },
     "trainer": {
-        "name": "pex_based",
+        "name": "metamodel",
         "render_every": 10000,
         "plot_estimates": false
     }

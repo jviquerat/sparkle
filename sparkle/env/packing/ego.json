@@ -26,7 +26,7 @@
         }
     },
     "trainer": {
-        "name": "pex_based",
+        "name": "metamodel",
         "load_pex": false,
         "render_every": 1
     }
