@@ -12,8 +12,9 @@ from sparkle.src.utils.prints    import spacer
 ###############################################
 ### Kriging model
 class kriging():
-    def __init__(self):
+    def __init__(self, spaces):
 
+        self.spaces = spaces
         self.reset()
 
     # Reset model
@@ -30,12 +31,18 @@ class kriging():
         if (recompute_theta):
             self.theta_ = None
 
+    # Normalize inputs
+    def normalize(self, x):
+
+        xx = (x - self.spaces.xmin)/(self.spaces.xmax - self.spaces.xmin)
+        return xx
+
     # Build model from input
     def build(self, x, y, recompute_theta=True):
 
         self.reset(recompute_theta)
 
-        self.x_   = x
+        self.x_   = self.normalize(x)
         self.y_   = y
         self.ns_  = x.shape[0] # nb of samples
         self.nf_  = x.shape[1] # nb of features
@@ -64,9 +71,10 @@ class kriging():
 
         if theta is None: theta = self.theta_
 
-        Kl  = self.kernel(xt, self.x_, theta)
+        xn  = self.normalize(xt)
+        Kl  = self.kernel(xn, self.x_, theta)
         mu  = matmul(Kl, solve(self.K_, self.y_))
-        Kt  = self.kernel(xt, xt, theta)
+        Kt  = self.kernel(xn, xn, theta)
         std = np.diag(Kt - matmul(Kl, solve(self.K_, Kl.T)))
         std = np.sqrt(np.abs(std))
 

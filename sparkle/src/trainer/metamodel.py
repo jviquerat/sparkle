@@ -147,7 +147,7 @@ class metamodel(base_trainer):
                 x_plot  = np.linspace(xmin[0], xmax[0], num=nx_plot)
                 x_plot  = np.reshape(x_plot, (-1,1))
 
-                x0      = self.agent.normalize(x_plot)
+                x0      = x_plot
                 y       = self.agent.model.evaluate(x0)
                 ei      = self.agent.exp_imp(x0)
                 y_mu    = y[0]
@@ -160,8 +160,7 @@ class metamodel(base_trainer):
                 pms.ei    = ei
                 pms.x_ei  = x_last
 
-                x_den = self.agent.denormalize(self.agent.x_)
-                self.env.render(x_den, c_last, pms=pms)
+                self.env.render(self.agent.x_, c_last, pms=pms)
 
             if (self.env.spaces.dim == 2):
                 nx = 100
@@ -178,7 +177,6 @@ class metamodel(base_trainer):
                     for j in range(ny):
                         xx = np.array((x[i,j],y[i,j]))
                         xx = np.reshape(xx, (-1,2))
-                        xx = self.agent.normalize(xx)
                         yy = self.agent.model.evaluate(xx)
 
                         y_mu[i,j]  = yy[0]
@@ -189,8 +187,7 @@ class metamodel(base_trainer):
                 pms.y_std = y_std
                 pms.x_ei  = x_last
 
-                x_den = self.agent.denormalize(self.agent.x_)
-                self.env.render(x_den, c_last, pms=pms)
+                self.env.render(self.agent.x_, c_last, pms=pms)
 
         else:
             # Regular rendering without metamodel informations
