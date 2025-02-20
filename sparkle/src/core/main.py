@@ -5,6 +5,7 @@ import sys
 from sparkle.src.core.train    import train
 from sparkle.src.core.evaluate import evaluate
 from sparkle.src.core.average  import average
+from sparkle.src.core.sample   import sample
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.utils.json    import json_parser
 from sparkle.src.utils.prints  import new_line, disclaimer, liner_simple, spacer, bold
@@ -77,6 +78,25 @@ def main():
 
         dat_args = args[args.index("--avg")+1:]
         average(dat_args)
+
+    # Pex sampling mode
+    if ("--pex" in args):
+
+        # Read parameters
+        pex_type = args[args.index("--pex")+1]
+        n_points = args[args.index("--pex")+2]
+        n_points = int(n_points)
+
+        # Set parallel framework
+        parallel.set({})
+
+        # Printings
+        disclaimer()
+        new_line()
+        liner_simple()
+        bold('Pex sampling mode')
+
+        sample(pex_type, n_points)
 
 if __name__ == "__main__":
     main()
