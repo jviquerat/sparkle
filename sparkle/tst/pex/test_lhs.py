@@ -26,4 +26,5 @@ def test_lhs():
     pex = lhs(s, pms)
     assert(pex.n_points() == n_points)
     pex.render_2d()
-    os.remove(pex.render_2d_filename)
+    filename = pex.name_+".png"
+    os.remove(filename)
