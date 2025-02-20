@@ -17,21 +17,25 @@ class base_agent():
         self.silent = False
         if hasattr(pms, "silent"): self.silent = pms.silent
 
-    # Accessor
+    @property
     def dim(self):
-        return self.spaces.dim()
+        return self.spaces.dim
 
-    # Accessor
+    @property
+    def natural_dim(self):
+        return self.spaces.natural_dim
+
+    @property
     def x0(self):
-        return self.spaces.x0()
+        return self.spaces.x0
 
-    # Accessor
+    @property
     def xmin(self):
-        return self.spaces.xmin()
+        return self.spaces.xmin
 
-    # Accessor
+    @property
     def xmax(self):
-        return self.spaces.xmax()
+        return self.spaces.xmax
 
     # Reset
     def reset(self, run):
@@ -49,10 +53,10 @@ class base_agent():
         self.hist_c = np.zeros((self.n_steps_total))             # cost
         self.hist_b = np.zeros((self.n_steps_total))             # best cost
         self.hist_s = np.zeros((self.n_steps_total))             # best step
-        self.hist_x = np.zeros((self.n_steps_total, self.dim())) # dofs
+        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
 
         # Best point
-        self.best_x     = np.zeros(self.dim())
+        self.best_x     = np.zeros(self.dim)
         self.best_score = 1.0e8
         self.best_stp   =-1
 
@@ -84,7 +88,7 @@ class base_agent():
         spacer()
         print("Using "+self.name+" algorithm with "+str(self.n_points)+" points")
         spacer()
-        print("Problem dimensionality is "+str(self.dim()))
+        print("Problem dimensionality is "+str(self.dim))
 
     # Return number of degress of freedom
     def ndof(self):
@@ -120,7 +124,7 @@ class base_agent():
                               np.reshape(self.hist_c, (-1,1)),
                               np.reshape(self.hist_b, (-1,1)),
                               np.reshape(self.hist_s, (-1,1)),
-                              np.reshape(self.hist_x, (-1,self.dim()))]),
+                              np.reshape(self.hist_x, (-1,self.dim))]),
                    fmt='%.5e')
 
     # Print

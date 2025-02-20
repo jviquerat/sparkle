@@ -25,10 +25,10 @@ class lhs(base_pex):
 
         self.x_ = np.random.uniform(low=low,
                                     high=high,
-                                    size=[self.dim(),self.n_points_]).T
+                                    size=[self.dim,self.n_points_]).T
 
-        for d in range(1,self.dim()):
+        for d in range(1,self.dim):
             np.random.shuffle(self.x_[:,d])
 
         for i in range(self.n_points_):
-            self.x_[i] = self.xmin() + self.x_[i]*(self.xmax() - self.xmin())
+            self.x_[i] = self.xmin + self.x_[i]*(self.xmax - self.xmin)

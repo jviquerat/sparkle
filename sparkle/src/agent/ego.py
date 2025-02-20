@@ -85,9 +85,9 @@ class ego(base_agent):
         x_den = self.denormalize(self.x_)
 
         for k in range(self.x_.shape[0]):
-            self.update_best(np.reshape(x_den[k], (-1,self.dim())),
+            self.update_best(np.reshape(x_den[k], (-1,self.dim)),
                              np.reshape(self.y_[k], (-1,1)))
-            self.store(np.reshape(x_den[k], (-1,self.dim())),
+            self.store(np.reshape(x_den[k], (-1,self.dim)),
                        np.reshape(self.y_[k], (-1,1)))
 
         self.finalize_initial_model()
@@ -134,12 +134,12 @@ class ego(base_agent):
     # Normalize inputs
     def normalize(self, x):
 
-        return (x - self.xmin())/(self.xmax() - self.xmin())
+        return (x - self.xmin)/(self.xmax - self.xmin)
 
     # Denormalize inputs
     def denormalize(self, x):
 
-        return self.xmin() + (self.xmax() - self.xmin())*x
+        return self.xmin + (self.xmax - self.xmin)*x
 
     # Sample new point based on expected improvement
     def sample(self):
@@ -152,7 +152,8 @@ class ego(base_agent):
         n_points    = 200
         n_steps_max = 10
 
-        s    = environment_spaces([dim, x0, xmin, xmax])
+        loc_space = {"dim": dim, "x0": x0, "xmin": xmin, "xmax": xmax}
+        s    = environment_spaces(loc_space)
         opt  = optimizer(name, s, n_points, n_steps_max, self.exp_imp)
         x, c = opt.optimize()
         x    = np.reshape(x, (-1,dim))
@@ -163,7 +164,7 @@ class ego(base_agent):
     # We actually return -ei so it can be directly minimized
     def exp_imp(self, x):
 
-        x       = np.reshape(x, (-1,self.dim()))
+        x       = np.reshape(x, (-1,self.dim))
         mu, std = self.model.evaluate(x)
         xb, yb  = self.best()
 

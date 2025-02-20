@@ -3,13 +3,16 @@ import pytest
 import numpy as np
 
 # Custom imports
+from sparkle.tst.tst             import set_seeds
 from sparkle.src.agent.optimizer import optimizer
+from sparkle.src.utils.compare   import compare
 from sparkle.src.env.spaces      import environment_spaces
-from sparkle.tst.tst             import *
 
 ###############################################
 ### Test transparent optimizer
 def test_optimizer():
+
+    set_seeds(0)
 
     # Parabola test function
     def parabola(x):
@@ -28,9 +31,13 @@ def test_optimizer():
     n_points    = 10
     n_steps_max = 30
 
-    s    = environment_spaces([dim, x0, xmin, xmax], None)
+    loc_space = {"dim": dim, "x0": x0, "xmin": xmin, "xmax": xmax}
+    s    = environment_spaces(loc_space)
     opt  = optimizer(name, s, n_points, n_steps_max, parabola)
     x, c = opt.optimize()
 
-    assert(np.all(np.abs(x) < 1.0e-3))
-    assert(c < 1.0e-6)
+
+
+    assert(compare(x[0], 0.00023912672430951684, 1.0e-15))
+    assert(compare(x[1], 2.235114201843395e-05, 1.0e-15))
+    assert(compare(c,    5.768116382852788e-08, 1.0e-15))

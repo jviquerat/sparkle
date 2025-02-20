@@ -19,7 +19,8 @@ def test_kriging():
     pms          = types.SimpleNamespace()
     pms.n_points = 10
 
-    s       = environment_spaces([2, None, np.array([0,0]), np.array([1,1])])
+    loc_space = {"dim": 2, "x0": None, "xmin": np.array([0,0]), "xmax": np.array([1,1])}
+    s       = environment_spaces(loc_space)
     lhs_pex = lhs(s, pms)
     y       = np.cos(lhs_pex.x()[:,0]) + np.cos(lhs_pex.x()[:,1])
 

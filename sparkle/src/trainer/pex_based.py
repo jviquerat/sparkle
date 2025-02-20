@@ -68,7 +68,7 @@ class pex_based(base_trainer):
                 i_end   = (step+1)*parallel.size() - 1
                 print("# Computing pex individuals #"+str(i_start)+" to #"+str(i_end), end=end)
 
-                xp = np.zeros((parallel.size(), self.env.spaces.dim()))
+                xp = np.zeros((parallel.size(), self.env.spaces.dim))
                 for k in range(parallel.size()):
                     xp[k,:] = self.agent.pex_point(step*parallel.size() + k)
 
@@ -138,8 +138,8 @@ class pex_based(base_trainer):
                 error("pex_based", "render",
                       "plot_estimates is only available for dim <= 2")
 
-            xmin    = self.env.spaces.xmin()
-            xmax    = self.env.spaces.xmax()
+            xmin    = self.env.spaces.xmin
+            xmax    = self.env.spaces.xmax
             x_last  = np.reshape(x_last, (-1))
 
             if (self.env.spaces.dim() == 1):
