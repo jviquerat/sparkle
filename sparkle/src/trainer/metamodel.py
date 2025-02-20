@@ -134,7 +134,7 @@ class metamodel(base_trainer):
         # Rendering with metamodel informations (can be expensive to compute)
         if (self.plot_estimates):
 
-            if (self.env.spaces.dim() > 2):
+            if (self.env.spaces.dim > 2):
                 error("metamodel", "render",
                       "plot_estimates is only available for dim <= 2")
 
@@ -142,7 +142,7 @@ class metamodel(base_trainer):
             xmax    = self.env.spaces.xmax
             x_last  = np.reshape(x_last, (-1))
 
-            if (self.env.spaces.dim() == 1):
+            if (self.env.spaces.dim == 1):
                 nx_plot = 200
                 x_plot  = np.linspace(xmin[0], xmax[0], num=nx_plot)
                 x_plot  = np.reshape(x_plot, (-1,1))
@@ -163,7 +163,7 @@ class metamodel(base_trainer):
                 x_den = self.agent.denormalize(self.agent.x_)
                 self.env.render(x_den, c_last, pms=pms)
 
-            if (self.env.spaces.dim() == 2):
+            if (self.env.spaces.dim == 2):
                 nx = 100
                 ny = 100
 
