@@ -54,6 +54,23 @@ class base_pex():
         v = self.xmax - self.xmin
         return np.prod(v)
 
+    # Compute distance to nearest neighbour
+    def dist_closest(self):
+
+        closest = np.zeros(self.n_points())
+        for i in range(self.n_points()):
+            dist_min = 1.0e8
+            for j in range(self.n_points()):
+                if (i==j): continue
+
+                dist = np.linalg.norm(self.x()[i] - self.x()[j])
+                if (dist < dist_min):
+                    dist_min = dist
+
+            closest[i] = dist_min
+
+        return closest
+
     # Print informations
     def summary(self):
 
@@ -65,11 +82,25 @@ class base_pex():
 
         if (self.dim != 2): return
 
+        closest = self.dist_closest()
+        closest /= np.max(closest)
+
         plt.clf()
         fig = plt.figure()
-        plt.xlim([self.xmin[0], self.xmax[0]])
-        plt.ylim([self.xmin[1], self.xmax[1]])
-        plt.grid()
-        plt.scatter(self.x_[:,0], self.x_[:,1], c="black", marker="o")
+        ax = fig.add_subplot(111)
+        fig.set_size_inches(5, 5)
+        fig.subplots_adjust(0.01,0.01,0.99,0.99)
+
+        ax.set_title(self.name_)
+        ax.set_xlim([self.xmin[0], self.xmax[0]])
+        ax.set_ylim([self.xmin[1], self.xmax[1]])
+        ax.tick_params(axis="y",direction="in")
+        ax.tick_params(axis="x",direction="in")
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        ax.grid(True, alpha=0.5)
+
+        cmap = matplotlib.cm.RdBu
+        ax.scatter(self.x_[:,0], self.x_[:,1], c=cmap(closest), marker="o", alpha=0.8)
         plt.savefig(self.name_, dpi=100)
         plt.close()
