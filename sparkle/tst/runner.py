@@ -54,8 +54,8 @@ def runner(json_file, agent_type, val_avg, val_bst):
     # Check final average and best costs
     avg = data[-1,1]
     bst = data[-1,4]
-    print("Avg: "+str(avg))
-    print("Bst: "+str(bst))
+    print("Avg: {:.8e}".format(avg))
+    print("Bst: {:.8e}".format(bst))
     assert(compare(avg, val_avg, 1.0e-15))
     assert(compare(bst, val_bst, 1.0e-15))
 

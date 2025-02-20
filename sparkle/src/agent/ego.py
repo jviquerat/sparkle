@@ -19,6 +19,7 @@ class ego(base_agent):
         super().__init__(path, spaces, pms)
 
         self.name             = "EGO"
+        self.spaces           = spaces
         self.n_steps_max      = set_default("n_steps_max", 20, pms)
         self.recompute_theta_ = set_default("recompute_theta", False, pms)
 
@@ -29,7 +30,7 @@ class ego(base_agent):
                       "load_model option requires model_file parameter")
             self.model_file_ = pms.model_file
 
-        self.model = kriging()
+        self.model = kriging(spaces)
         self.pex   = pex_factory.create(pms.pex.name,
                                         spaces = spaces,
                                         pms    = pms.pex)
@@ -61,19 +62,23 @@ class ego(base_agent):
         # Copy pex points and associated costs if this is the first call
         # Otherwise, update the x and y vectors and rebuild model
         if (self.x_ is None):
-            self.x_ = self.normalize(self.pex.x())
+            self.x_ = self.pex.x()
             self.y_ = y
 
             self.model.build(self.x_, self.y_, True)
         else:
-            self.x_ = self.denormalize(self.x_)
             self.x_ = np.vstack((self.x_, x))
             self.y_ = np.hstack((self.y_, y))
-            self.x_ = self.normalize(self.x_)
 
             self.model.build(self.x_, self.y_, self.recompute_theta_)
 
         if (not self.is_built_): self.finalize_initial_model()
+
+    # Denormalize inputs
+    def denormalize(self, x):
+
+        xx = self.spaces.xmin + (self.spaces.xmax - self.spaces.xmin)*x
+        return xx
 
     # Load saved model
     def load_model(self):
@@ -105,7 +110,7 @@ class ego(base_agent):
 
             xb, yb = self.best()
             gs = f"{yb:.5e}"
-            gb = np.array2string(self.denormalize(xb), precision=5,
+            gb = np.array2string(xb, precision=5,
                                  floatmode='fixed', threshold=4, separator=',')
 
             spacer()
@@ -131,34 +136,18 @@ class ego(base_agent):
 
         return self.x_[k], self.y_[k]
 
-    # Normalize inputs
-    def normalize(self, x):
-
-        return (x - self.xmin)/(self.xmax - self.xmin)
-
-    # Denormalize inputs
-    def denormalize(self, x):
-
-        return self.xmin + (self.xmax - self.xmin)*x
-
     # Sample new point based on expected improvement
     def sample(self):
 
         name        = "cmaes"
-        dim         = self.model.nf_
-        x0          = 0.5*np.ones(dim)
-        xmin        = np.zeros(dim)
-        xmax        = np.ones(dim)
         n_points    = 200
         n_steps_max = 10
 
-        loc_space = {"dim": dim, "x0": x0, "xmin": xmin, "xmax": xmax}
-        s    = environment_spaces(loc_space)
-        opt  = optimizer(name, s, n_points, n_steps_max, self.exp_imp)
+        opt  = optimizer(name, self.spaces, n_points, n_steps_max, self.exp_imp)
         x, c = opt.optimize()
-        x    = np.reshape(x, (-1,dim))
+        x    = np.reshape(x, (-1,self.spaces.dim))
 
-        return self.denormalize(x)
+        return x
 
     # Compute expected improvement
     # We actually return -ei so it can be directly minimized
@@ -231,7 +220,7 @@ class ego(base_agent):
         if (self.cnt <= 1):
             xb, yb = self.best()
             gs = f"{yb:.5e}"
-            gb = np.array2string(self.denormalize(xb), precision=5,
+            gb = np.array2string(xb, precision=5,
                                  floatmode='fixed', threshold=4, separator=',')
 
             print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" for x = "+str(gb)+"                                                                                                           ", end=end)
