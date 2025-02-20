@@ -10,8 +10,8 @@ from sparkle.src.env.parallel import parallel
 from sparkle.src.utils.error  import error, warning
 
 ###############################################
-### Class for pex-based trainer
-class pex_based(base_trainer):
+### Class for metamodel-based trainer
+class metamodel(base_trainer):
     def __init__(self, env_pms, agent_pms, path, pms):
 
         # Set parameters
@@ -31,10 +31,10 @@ class pex_based(base_trainer):
                                           pms    = agent_pms)
 
         # Initialize timer
-        self.timer_global = timer("global ")
-        self.timer_opt    = timer("opt    ")
-        self.timer_mod    = timer("model  ")
-        self.timer_pex    = timer("pex    ")
+        self.timer_global  = timer("global  ")
+        self.timer_opt     = timer("opt     ")
+        self.timer_mod     = timer("model   ")
+        self.timer_pex     = timer("pex ")
 
     # Reset
     def reset(self, run):
@@ -54,7 +54,7 @@ class pex_based(base_trainer):
             self.timer_pex.tic()
 
             if (self.agent.n_points_pex()%parallel.size() != 0):
-                error("trainer::pex_based", "optimize",
+                error("trainer::metamodel", "optimize",
                       "nb of pex points should be a multiple of nb of parallel envs")
 
             n_steps   = self.agent.n_points_pex()//parallel.size()
@@ -92,8 +92,8 @@ class pex_based(base_trainer):
 
         # Such agents are only sequential for now
         if (parallel.size() > 1):
-            warning("trainer::pex_based", "optimize",
-                    "only pex generation can be performed in parallel")
+            warning("trainer::metamodel", "optimize",
+                    "only samples generation can be performed in parallel")
             return
 
         # Set counter
@@ -135,7 +135,7 @@ class pex_based(base_trainer):
         if (self.plot_estimates):
 
             if (self.env.spaces.dim() > 2):
-                error("pex_based", "render",
+                error("metamodel", "render",
                       "plot_estimates is only available for dim <= 2")
 
             xmin    = self.env.spaces.xmin
