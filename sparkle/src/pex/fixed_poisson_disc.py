@@ -3,8 +3,9 @@ import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.base    import base_pex
-from sparkle.src.utils.error import error
+from sparkle.src.pex.base      import base_pex
+from sparkle.src.utils.error   import error
+from sparkle.src.utils.default import set_default
 
 ###############################################
 ### Poisson-disc experiment plan
@@ -12,28 +13,27 @@ from sparkle.src.utils.error import error
 ### XXX 2D only for now
 class fixed_poisson_disc(base_pex):
     def __init__(self, spaces, pms):
-
         super().__init__(spaces)
 
         self.name_       = "fixed_poisson_disc"
         self.n_points_   = pms.n_points
-        self.n_attempts_ = pms.n_attempts
+        self.n_attempts_ = set_default("n_attempts", 20, pms)
 
-        # Compute guess of radius
+        # Compute radius guess
         self.radius_ = 0.5*math.sqrt(self.volume()/self.n_points_)
 
         self.reset()
 
     # Reset sampling
-    # We start by generating a fine poisson-disk sampling, then
+    # We start by generating a fine poisson-disc sampling, then
     # apply a furthest point sampling on the resulting set to
     # ensure that we have exactly n_points_
     def reset(self):
 
-        # Poisson-disk sampling
-        p = np.random.uniform(low  = self.xmin(),
-                              high = self.xmax(),
-                              size = self.dim())
+        # Poisson-disc sampling
+        p = np.random.uniform(low  = self.xmin,
+                              high = self.xmax,
+                              size = self.dim)
 
         lst    = [p]
         active = [p]
@@ -53,10 +53,10 @@ class fixed_poisson_disc(base_pex):
                 y  = active[k][1] + radius[i]*math.sin(theta[i])
                 pt = np.array([x,y])
 
-                if ((pt[0] < self.xmin()[0]) or
-                    (pt[0] > self.xmax()[0]) or
-                    (pt[1] < self.xmin()[1]) or
-                    (pt[1] > self.xmax()[1])): continue
+                if ((pt[0] < self.xmin[0]) or
+                    (pt[0] > self.xmax[0]) or
+                    (pt[1] < self.xmin[1]) or
+                    (pt[1] > self.xmax[1])): continue
 
                 ok = True
                 for j in range(len(lst)):
