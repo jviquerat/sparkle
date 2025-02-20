@@ -6,16 +6,17 @@ import numpy as np
 class environment_spaces:
     def __init__(self, spaces, pms=None):
 
-        self.natural_dim_ = spaces[0]
+        self.natural_dim_ = spaces["dim"]
         self.true_dim_    = self.natural_dim_
-        self.x0_          = spaces[1]
-        self.xmin_        = spaces[2]
-        self.xmax_        = spaces[3]
+        self.x0_          = spaces["x0"]
+        self.xmin_        = spaces["xmin"]
+        self.xmax_        = spaces["xmax"]
 
-        if (len(spaces) > 4):
-            self.vmin_   = spaces[4]
-            self.vmax_   = spaces[5]
-            self.levels_ = spaces[6]
+        # These attributes may not be defined
+        # get() defaults to None if the attribute is not present
+        self.vmin_   = spaces.get("vmin")
+        self.vmax_   = spaces.get("vmax")
+        self.levels_ = spaces.get("levels")
 
         self.separable_ = False
         if hasattr(pms, "separable"): self.separable = pms.separable
@@ -23,34 +24,34 @@ class environment_spaces:
         if (self.separable_):
             self.true_dim_ = 1
 
-    # Accessor
+    @property
     def dim(self):
         return self.true_dim_
 
-    # Accessor
+    @property
     def natural_dim(self):
         return self.true_dim_
 
-    # Accessor
+    @property
     def x0(self):
         return self.x0_
 
-    # Accessor
+    @property
     def xmin(self):
         return self.xmin_
 
-    # Accessor
+    @property
     def xmax(self):
         return self.xmax_
 
-    # Accessor
+    @property
     def vmin(self):
         return self.vmin_
 
-    # Accessor
+    @property
     def vmax(self):
         return self.vmax_
 
-    # Accessor
+    @property
     def levels(self):
         return self.levels_

@@ -14,21 +14,25 @@ class base_pex():
         self.spaces = spaces
         self.render_2d_filename = "pex_render_2d.png"
 
-    # Accessor
+    @property
     def dim(self):
-        return self.spaces.dim()
+        return self.spaces.dim
 
-    # Accessor
+    @property
+    def natural_dim(self):
+        return self.spaces.natural_dim
+
+    @property
     def x0(self):
-        return self.spaces.x0()
+        return self.spaces.x0
 
-    # Accessor
+    @property
     def xmin(self):
-        return self.spaces.xmin()
+        return self.spaces.xmin
 
-    # Accessor
+    @property
     def xmax(self):
-        return self.spaces.xmax()
+        return self.spaces.xmax
 
     # Return total nb of points
     def n_points(self):
@@ -48,7 +52,7 @@ class base_pex():
     # Compute volume of domain
     def volume(self):
 
-        v = self.xmax() - self.xmin()
+        v = self.xmax - self.xmin
         return np.prod(v)
 
     # Print informations
@@ -60,12 +64,12 @@ class base_pex():
     # 2D rendering (for debugging purpose)
     def render_2d(self):
 
-        if (self.dim() != 2): return
+        if (self.dim != 2): return
 
         plt.clf()
         fig = plt.figure()
-        plt.xlim([self.xmin()[0], self.xmax()[0]])
-        plt.ylim([self.xmin()[1], self.xmax()[1]])
+        plt.xlim([self.xmin[0], self.xmax[0]])
+        plt.ylim([self.xmin[1], self.xmax[1]])
         plt.grid()
         plt.scatter(self.x_[:,0], self.x_[:,1], c="black", marker="o")
         plt.savefig(self.render_2d_filename, dpi=100)

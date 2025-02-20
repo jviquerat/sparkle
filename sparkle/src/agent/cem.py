@@ -14,7 +14,7 @@ class cem(base_agent):
 
         self.name        = "CEM"
         self.n_steps_max = set_default("n_steps_max", 20, pms)
-        self.n_points    = set_default("n_points", 2*self.dim(), pms)
+        self.n_points    = set_default("n_points", 2*self.dim, pms)
         self.n_elites    = set_default("n_elites", math.floor(self.n_points/2), pms)
         self.alpha       = set_default("alpha", 0.2, pms)
 
@@ -29,13 +29,13 @@ class cem(base_agent):
         super().reset(run)
 
         # Min and max arrays used for cem adaptation
-        self.xmin_cem = self.xmin().copy()
-        self.xmax_cem = self.xmax().copy()
+        self.xmin_cem = self.xmin.copy()
+        self.xmax_cem = self.xmax.copy()
 
     # Sample from distribution
     def sample(self):
 
-        x = np.zeros((self.n_points, self.dim()))
+        x = np.zeros((self.n_points, self.dim))
 
         for i in range(self.n_points):
             x[i,:] = np.random.uniform(low  = self.xmin_cem,

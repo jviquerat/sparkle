@@ -36,14 +36,14 @@ class mpi_environments:
     # Get environment spaces
     def get_spaces(self):
 
-        spaces = [self.worker.env.dim,
-                  self.worker.env.x0,
-                  self.worker.env.xmin,
-                  self.worker.env.xmax]
+        spaces = {"dim": self.worker.env.dim,
+                  "x0": self.worker.env.x0,
+                  "xmin": self.worker.env.xmin,
+                  "xmax": self.worker.env.xmax}
 
-        if hasattr(self.worker.env, "vmin"):   spaces += [self.worker.env.vmin]
-        if hasattr(self.worker.env, "vmax"):   spaces += [self.worker.env.vmax]
-        if hasattr(self.worker.env, "levels"): spaces += [self.worker.env.levels]
+        if hasattr(self.worker.env, "vmin"):   spaces["vmin"]   = self.worker.env.vmin
+        if hasattr(self.worker.env, "vmax"):   spaces["vmax"]   = self.worker.env.vmax
+        if hasattr(self.worker.env, "levels"): spaces["levels"] = self.worker.env.levels
 
         return spaces
 

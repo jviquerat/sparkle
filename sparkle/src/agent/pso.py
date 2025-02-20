@@ -30,7 +30,7 @@ class pso(base_agent):
         super().reset(run)
 
         # Local best point
-        self.p_best  = np.zeros((self.n_points, self.dim()))
+        self.p_best  = np.zeros((self.n_points, self.dim))
         self.p_score = np.ones(self.n_points)*1.0e8
 
     # Sample points
@@ -38,9 +38,9 @@ class pso(base_agent):
     def sample(self):
 
         if (self.stp == 0):
-            self.x = np.random.rand(self.n_points, self.dim())
-            self.x = self.xmin() + self.x*(self.xmax()-self.xmin())
-            self.v = np.random.randn(self.n_points, self.dim())*self.v0
+            self.x = np.random.rand(self.n_points, self.dim)
+            self.x = self.xmin + self.x*(self.xmax-self.xmin)
+            self.v = np.random.randn(self.n_points, self.dim)*self.v0
         else:
             for i in range(self.n_points):
                 r1, r2       = np.random.rand(2)

@@ -21,7 +21,7 @@ class random(base_pex):
     def reset(self):
 
         # Generate x points for pex
-        self.x_ = np.random.uniform(low  = self.xmin(),
-                                    high = self.xmax(),
-                                    size = (self.n_points_,self.dim()))
+        self.x_ = np.random.uniform(low  = self.xmin,
+                                    high = self.xmax,
+                                    size = (self.n_points_,self.dim))
 

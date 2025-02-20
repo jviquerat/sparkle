@@ -21,7 +21,8 @@ def test_lhs():
     pms          = types.SimpleNamespace()
     pms.n_points = n_points
 
-    s = environment_spaces([dim, None, xmin, xmax])
+    loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
+    s = environment_spaces(loc_space)
     pex = lhs(s, pms)
     assert(pex.n_points() == n_points)
     pex.render_2d()

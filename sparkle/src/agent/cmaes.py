@@ -13,9 +13,9 @@ class cmaes(base_agent):
         super().__init__(path, spaces, pms)
 
         self.name        = "CMAES"
-        sg0              = 0.25*(np.min(self.xmax())-np.max(self.xmin()))
+        sg0              = 0.25*(np.min(self.xmax)-np.max(self.xmin))
         self.sigma0      = set_default("sigma0", sg0, pms)
-        npts             = 4 + math.floor(3.0*math.log(self.dim()))
+        npts             = 4 + math.floor(3.0*math.log(self.dim))
         self.n_points    = set_default("n_points", npts, pms)
         self.n_steps_max = set_default("n_steps_max", 20, pms)
         self.clip        = set_default("clip", False, pms)
@@ -35,7 +35,7 @@ class cmaes(base_agent):
         self.mu_eff = (np.sum(self.w))**2/(np.sum(np.square(self.w)))
 
         # Shortcuts for following expressions
-        dim    = float(self.dim())
+        dim    = float(self.dim)
         mu_eff = float(self.mu_eff)
 
         self.cc = (4.0 + mu_eff/dim)/(dim + 4.0 + 2.0*mu_eff/dim) # constant for C evolution path
@@ -58,27 +58,27 @@ class cmaes(base_agent):
         super().reset(run)
 
         # Arrays
-        self.pc    = np.zeros(self.dim())        # C evolution path
-        self.ps    = np.zeros(self.dim())        # sigma evolution path
-        self.B     = np.identity(self.dim())     # coordinate system
-        self.D     = np.identity(self.dim())     # scaling matrix
-        self.BD    = np.matmul(self.B, self.D)   # for efficiency
-        self.C     = np.identity(self.dim())     # covariance matrix
-        self.xm    = self.x0()                   # mean vector
-        self.zm    = np.zeros(self.dim())        # auxiliary mean vector
-        self.sigma = self.sigma0                 # global standard deviation
+        self.pc    = np.zeros(self.dim)        # C evolution path
+        self.ps    = np.zeros(self.dim)        # sigma evolution path
+        self.B     = np.identity(self.dim)     # coordinate system
+        self.D     = np.identity(self.dim)     # scaling matrix
+        self.BD    = np.matmul(self.B, self.D) # for efficiency
+        self.C     = np.identity(self.dim)     # covariance matrix
+        self.xm    = self.x0                   # mean vector
+        self.zm    = np.zeros(self.dim)        # auxiliary mean vector
+        self.sigma = self.sigma0               # global standard deviation
 
     # Sample from distribution
     def sample(self):
 
-        x      = np.zeros((self.n_points, self.dim()))
-        self.z = np.random.randn(self.n_points, self.dim()) # draw from N(0,1)
+        x      = np.zeros((self.n_points, self.dim))
+        self.z = np.random.randn(self.n_points, self.dim) # draw from N(0,1)
         for i in range(self.n_points):
             x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, self.z[i,:])
 
         if (self.clip):
-            for i in range(self.dim()):
-                x[:,i] = np.clip(x[:,i], self.xmin()[i], self.xmax()[i])
+            for i in range(self.dim):
+                x[:,i] = np.clip(x[:,i], self.xmin[i], self.xmax[i])
 
         return x
 
@@ -112,7 +112,7 @@ class cmaes(base_agent):
         self.pc = (1.0-self.cc)*self.pc + hs*coeff*np.matmul(self.BD, self.zm)
 
         # Update C
-        y  = np.zeros((self.mu, self.dim()))
+        y  = np.zeros((self.mu, self.dim))
         for i in range(self.mu):
             y [i,:] = np.matmul(self.BD, self.z[i,:])
 
