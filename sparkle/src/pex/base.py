@@ -12,7 +12,6 @@ class base_pex():
     def __init__(self, spaces):
 
         self.spaces = spaces
-        self.render_2d_filename = "pex_render_2d.png"
 
     @property
     def dim(self):
@@ -72,5 +71,5 @@ class base_pex():
         plt.ylim([self.xmin[1], self.xmax[1]])
         plt.grid()
         plt.scatter(self.x_[:,0], self.x_[:,1], c="black", marker="o")
-        plt.savefig(self.render_2d_filename, dpi=100)
+        plt.savefig(self.name_, dpi=100)
         plt.close()
