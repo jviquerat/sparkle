@@ -90,8 +90,6 @@ class ego(base_agent):
         x_den = self.denormalize(self.x_)
 
         for k in range(self.x_.shape[0]):
-            self.update_best(np.reshape(x_den[k], (-1,self.dim)),
-                             np.reshape(self.y_[k], (-1,1)))
             self.store(np.reshape(x_den[k], (-1,self.dim)),
                        np.reshape(self.y_[k], (-1,1)))
 
@@ -173,7 +171,6 @@ class ego(base_agent):
     # Step
     def step(self, x, c):
 
-        self.update_best(x, c)
         self.store(x, c)
         self.build_model(x, c)
 

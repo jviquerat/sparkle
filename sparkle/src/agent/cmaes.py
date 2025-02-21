@@ -85,14 +85,11 @@ class cmaes(base_agent):
     # Step
     def step(self, x, c):
 
-        # Update best value
-        self.update_best(x, c)
+        # Store
+        self.store(x, c)
 
         # Sort
         self.sort(x, c)
-
-        # Store
-        self.store(x, c)
 
         # Update xmean and zmean
         self.xm[:] = 0.0

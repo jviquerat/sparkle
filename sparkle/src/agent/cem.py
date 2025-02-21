@@ -46,14 +46,11 @@ class cem(base_agent):
     # Step
     def step(self, x, c):
 
-        # Update best value
-        self.update_best(x, c)
+        # Store
+        self.store(x, c)
 
         # Sort
         self.sort(x, c)
-
-        # Store
-        self.store(x, c)
 
         # Update xmin and xmax
         xmin = np.amin(x[:self.n_elites,:], axis=0)

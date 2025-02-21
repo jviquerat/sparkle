@@ -74,7 +74,7 @@ class metamodel(base_trainer):
                 for k in range(parallel.size):
                     pex_costs[step*parallel.size + k] = c[k]
 
-                self.agent.update_best(xp, c)
+                #self.agent.update_best(xp, c)
                 self.agent.store(xp, c)
                 step += 1
 

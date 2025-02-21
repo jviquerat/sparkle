@@ -53,8 +53,8 @@ def runner(json_file, ref_avg_file, val_avg, val_bst):
     # Check final average and best costs
     avg = data[-1,1]
     bst = data[-1,4]
-    print("Avg: {:.8e}".format(avg))
-    print("Bst: {:.8e}".format(bst))
+    print("Avg: {:.15e}".format(avg))
+    print("Bst: {:.15e}".format(bst))
     assert(compare(avg, val_avg, 1.0e-15))
     assert(compare(bst, val_bst, 1.0e-15))
 

@@ -60,12 +60,11 @@ class pso(base_agent):
     # Step
     def step(self, x, c):
 
-        # Update best
-        self.update_best(x, c)
-        self.update_local_best(x, c)
-
         # Store
         self.store(x, c)
+
+        # Update best
+        self.update_local_best(x, c)
 
         self.stp += 1
 
