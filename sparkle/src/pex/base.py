@@ -89,7 +89,7 @@ class base_pex():
         fig = plt.figure()
         ax = fig.add_subplot(111)
         fig.set_size_inches(5, 5)
-        fig.subplots_adjust(0.01,0.01,0.99,0.99)
+        fig.subplots_adjust(0.01,0.01,0.99,0.95)
 
         ax.set_title(self.name_)
         ax.set_xlim([self.xmin[0], self.xmax[0]])
