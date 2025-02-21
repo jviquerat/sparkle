@@ -40,7 +40,7 @@ def train(json_file, pms):
                                      pms       = pms.trainer)
 
     # Intialize averager
-    averager = data_avg(2, trainer.agent.n_steps_total, pms.n_avg)
+    averager = data_avg(2, pms.n_avg)
 
     # Run
     for run in range(pms.n_avg):

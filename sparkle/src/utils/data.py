@@ -7,23 +7,33 @@ from sparkle.src.utils.ema import ema
 ###############################################
 ### Data averager class
 ### Used to compute avg+/-std of drl-related fields
-### n_fields : nb of fields to store/average
-### n_stp    : nb of steps per run
-### n_avg    : nb of runs to average
+### n_avg : nb of runs to average
 class data_avg():
-    def __init__(self, n_fields, n_stp, n_avg):
+    def __init__(self, n_fields, n_avg):
 
-        self.n_stp    = n_stp
+        self.n_avg    = n_avg
         self.n_fields = n_fields
-        self.stp  = np.zeros((       n_stp          ), dtype=int)
-        self.data = np.zeros((n_avg, n_stp, n_fields), dtype=float)
+        self.n_stp    = 0
+        self.stp      = None
+        self.data     = None
 
     def store(self, filename, run):
 
-        f        = np.loadtxt(filename)
-        self.stp = f[:self.n_stp, 0]
+        # Load file
+        f = np.loadtxt(filename)
+
+        # Deduce file size if this is the first one
+        if (self.stp is None and self.data is None):
+            self.n_stp = f.shape[0]
+            self.stp   = np.zeros((self.n_stp), dtype=int)
+            self.data  = np.zeros((self.n_avg, self.n_stp, self.n_fields), dtype=float)
+
+        # Check file size if this is not the first one
+        assert(f.shape[0] == self.n_stp)
+
+        self.stp = f[:, 0]
         for field in range(self.n_fields):
-            self.data[run,:,field] = f[:self.n_stp,field+1]
+            self.data[run,:,field] = f[:,field+1]
 
     def average(self, filename, avg_type="linear"):
 
