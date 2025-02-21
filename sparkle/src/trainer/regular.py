@@ -12,6 +12,7 @@ class regular(base_trainer):
     def __init__(self, path, pms):
 
         # Set parameters
+        self.base_path    = path
         self.render_every = set_default("render_every", 100000, pms)
 
         # Initialize environment
@@ -36,6 +37,7 @@ class regular(base_trainer):
     # Reset
     def reset(self, run):
 
+        super().reset(run)
         self.env.reset(run)
         self.agent.reset(run)
 
@@ -55,17 +57,23 @@ class regular(base_trainer):
             # Compute cost
             c = self.env.cost(x)
 
+            # Store data
+            self.store_data(x, c)
+
             # Render if necessary
             if (self.it%self.render_every == 0):
                 self.env.render(x, c)
 
             # Step and output
             self.agent.step(x, c)
-            self.agent.print()
+
+            # Print
+            self.print()
 
             self.it += 1
 
-        self.agent.dump()
+        # Dump stored data to file
+        self.dump_data()
 
         # Close timer and show
         self.timer_global.toc()

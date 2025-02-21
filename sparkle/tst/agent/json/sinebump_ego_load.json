@@ -14,16 +14,16 @@
         "environment": {
             "name": "sinebump"
         },
+        "pex": {
+            "name": "lhs",
+            "n_points": 25
+        },
         "agent": {
             "name": "ego",
             "n_steps_max": 5,
             "recompute_theta": false,
             "load_model": true,
-            "model_file": "sparkle/tst/agent/data/sinebump_ego_model.dat",
-            "pex": {
-                "name": "lhs",
-                "n_points": 25
-            }
+            "model_file": "sparkle/tst/agent/data/sinebump_ego_model.dat"
         }
     }
 }

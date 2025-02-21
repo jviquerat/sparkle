@@ -14,14 +14,14 @@
         "environment": {
             "name": "rosenbrock"
         },
+        "pex": {
+            "name": "lhs",
+            "n_points": 20
+        },
         "agent": {
             "name": "ego",
-            "n_steps_max": 10,
-            "recompute_theta": false,
-            "pex": {
-                "name": "lhs",
-                "n_points": 10
-            }
+            "n_steps_max": 20,
+            "recompute_theta": false
         }
     }
 }

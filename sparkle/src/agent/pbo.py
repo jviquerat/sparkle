@@ -66,7 +66,6 @@ class pbo(base_agent):
 
         self.obs = 0.0
 
-        self.n_steps_total = self.n_steps_max*self.n_points
         self.n_steps_elite = self.n_steps_max*self.n_elite
 
         self.summary()
@@ -81,6 +80,7 @@ class pbo(base_agent):
 
         # Additional data storage
         self.elite_stp    = 0
+        self.hist_c       = []
         self.hist_x_elite = np.zeros((self.n_steps_elite, self.dim))
         self.hist_a_elite = np.zeros((self.n_steps_elite))
 
@@ -122,8 +122,9 @@ class pbo(base_agent):
     # Step
     def step(self, x, c):
 
-        # Store
-        self.store(x, c)
+        # Store costs
+        for i in range(c.shape[0]):
+            self.hist_c.append(c[i])
 
         # Compute advantages
         # x is modified during this process
@@ -152,8 +153,10 @@ class pbo(base_agent):
         # Start and end indices of last generation
         # Here we retrieve all the sampled points of last
         # generation from the main score buffer
-        start   = max(0,self.total_stp - self.n_points)
-        end     = self.total_stp
+        #start   = max(0,self.total_stp - self.n_points)
+        #end     = self.total_stp
+        start   = max(0,self.n_points*self.stp)
+        end     = self.n_points*(self.stp+1)
 
         # Compute normalized advantage
         avg_rwd   = np.mean(self.hist_c[start:end])
@@ -170,7 +173,7 @@ class pbo(base_agent):
         start = self.elite_stp - self.n_elite
         end   = self.elite_stp
         self.hist_x_elite[start:end] = x_elite[:]
-        self.hist_a_elite[:] *= self.adv_decay
+        self.hist_a_elite[:]        *= self.adv_decay
         self.hist_a_elite[start:end] = self.adv[:]
 
         return torch.tensor(x_elite)

@@ -19,8 +19,6 @@ class pso(base_agent):
         self.c2          = set_default("c2", 0.5, pms)
         self.w           = set_default("w", 0.8, pms)
 
-        self.n_steps_total = self.n_steps_max*self.n_points
-
         self.summary()
 
     # Reset
@@ -59,9 +57,6 @@ class pso(base_agent):
 
     # Step
     def step(self, x, c):
-
-        # Store
-        self.store(x, c)
 
         # Update best
         self.update_local_best(x, c)

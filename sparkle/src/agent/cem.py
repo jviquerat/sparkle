@@ -18,8 +18,6 @@ class cem(base_agent):
         self.n_elites    = set_default("n_elites", math.floor(self.n_points/2), pms)
         self.alpha       = set_default("alpha", 0.2, pms)
 
-        self.n_steps_total = self.n_steps_max*self.n_points
-
         self.summary()
 
     # Reset
@@ -45,9 +43,6 @@ class cem(base_agent):
 
     # Step
     def step(self, x, c):
-
-        # Store
-        self.store(x, c)
 
         # Sort
         self.sort(x, c)
