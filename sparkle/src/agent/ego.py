@@ -36,7 +36,7 @@ class ego(base_agent):
                                         pms    = pms.pex)
 
         self.n_points      = 1
-        self.n_steps_total = self.pex.n_points() + self.n_steps_max
+        self.n_steps_total = self.pex.n_points + self.n_steps_max
 
         if (not self.silent):
             self.summary()
@@ -62,7 +62,7 @@ class ego(base_agent):
         # Copy pex points and associated costs if this is the first call
         # Otherwise, update the x and y vectors and rebuild model
         if (self.x_ is None):
-            self.x_ = self.pex.x()
+            self.x_ = self.pex.x
             self.y_ = y
 
             self.model.build(self.x_, self.y_, True)
@@ -122,7 +122,7 @@ class ego(base_agent):
     # Return nb of points in pex
     def n_points_pex(self):
 
-        return self.pex.n_points()
+        return self.pex.n_points
 
     # Return i-th point of pex
     def pex_point(self, i):
@@ -206,7 +206,7 @@ class ego(base_agent):
     def print(self):
 
         # Total nb of evaluations
-        n_eval = self.pex.n_points() + self.stp + 1
+        n_eval = self.pex.n_points + self.stp + 1
 
         # Handle no-printing after max step
         if (self.stp < self.n_steps_max-1):

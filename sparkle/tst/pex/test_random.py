@@ -24,7 +24,7 @@ def test_random():
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
     s = environment_spaces(loc_space)
     pex = random(s, pms)
-    assert(pex.n_points() == n_points)
+    assert(pex.n_points == n_points)
     pex.render_2d()
     filename = pex.name_+".png"
     os.remove(filename)

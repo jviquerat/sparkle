@@ -33,20 +33,18 @@ class base_pex():
     def xmax(self):
         return self.spaces.xmax
 
-    # Return total nb of points
-    def n_points(self):
+    @property
+    def x(self):
+        return self.x_
 
-        return self.x().shape[0]
+    @property
+    def n_points(self):
+        return self.x.shape[0]
 
     # Return i-th point of pex
     def point(self, i):
 
-        return np.array([self.x_[i]])
-
-    # Return pex points
-    def x(self):
-
-        return self.x_
+        return np.array([self.x[i]])
 
     # Compute volume of domain
     def volume(self):
@@ -57,13 +55,13 @@ class base_pex():
     # Compute distance to nearest neighbour
     def dist_closest(self):
 
-        closest = np.zeros(self.n_points())
-        for i in range(self.n_points()):
+        closest = np.zeros(self.n_points)
+        for i in range(self.n_points):
             dist_min = 1.0e8
-            for j in range(self.n_points()):
+            for j in range(self.n_points):
                 if (i==j): continue
 
-                dist = np.linalg.norm(self.x()[i] - self.x()[j])
+                dist = np.linalg.norm(self.x[i] - self.x[j])
                 if (dist < dist_min):
                     dist_min = dist
 
@@ -75,7 +73,7 @@ class base_pex():
     def summary(self):
 
         spacer()
-        print("Pex type is "+self.name_+" with "+str(self.n_points())+" points")
+        print("Pex type is "+self.name_+" with "+str(self.n_points)+" points")
 
     # 2D rendering (for debugging purpose)
     def render_2d(self):
@@ -101,6 +99,6 @@ class base_pex():
         ax.grid(True, alpha=0.5)
 
         cmap = matplotlib.cm.RdBu
-        ax.scatter(self.x_[:,0], self.x_[:,1], c=cmap(closest), marker="o", alpha=0.8)
+        ax.scatter(self.x[:,0], self.x[:,1], c=cmap(closest), marker="o", alpha=0.8)
         plt.savefig(self.name_, dpi=100)
         plt.close()
