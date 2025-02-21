@@ -7,6 +7,7 @@ import numpy as np
 from sparkle.src.env.parallel   import parallel
 from sparkle.src.env.mpi_worker import mpi_worker
 from sparkle.src.env.spaces     import environment_spaces
+from sparkle.src.utils.default  import set_default
 from sparkle.src.utils.timer    import timer
 
 ###############################################
@@ -16,10 +17,7 @@ class mpi_environments:
 
         # Default parameters
         self.name = pms.name
-        self.args = None
-
-        # Optional parameters
-        if hasattr(pms, "args"): self.args = pms.args
+        self.args = set_default("args", None, pms)
 
         # Generate workers
         self.worker = mpi_worker(self.name, self.args, parallel.rank(), path)
