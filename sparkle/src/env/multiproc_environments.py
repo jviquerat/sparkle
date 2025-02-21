@@ -8,6 +8,7 @@ import multiprocessing as mp
 from sparkle.src.env.parallel         import parallel
 from sparkle.src.env.multiproc_worker import multiproc_worker
 from sparkle.src.env.spaces           import environment_spaces
+from sparkle.src.utils.default        import set_default
 from sparkle.src.utils.timer          import timer
 
 ###############################################
@@ -17,12 +18,9 @@ class multiproc_environments:
 
         # Default parameters
         self.name  = pms.name
-        self.args  = None
+        self.args  = set_default("args", None, pms)
         self.pipes = []
         self.procs = []
-
-        # Optional arguments to pass to environments
-        if hasattr(pms, "args"): self.args = pms.args
 
         # Start environments
         for env in range(parallel.size()):
