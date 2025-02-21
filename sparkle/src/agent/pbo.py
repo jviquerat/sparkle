@@ -122,9 +122,6 @@ class pbo(base_agent):
     # Step
     def step(self, x, c):
 
-        # Update best point
-        self.update_best(x, c)
-
         # Store
         self.store(x, c)
 

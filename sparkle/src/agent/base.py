@@ -57,7 +57,7 @@ class base_agent():
 
         # Best point
         self.best_x     = np.zeros(self.dim)
-        self.best_score = 1.0e8
+        self.best_score = 1.0e15
         self.best_stp   =-1
 
     # Sample
@@ -71,16 +71,6 @@ class base_agent():
     # Render
     def render(self):
         raise NotImplementedError
-
-    # Update best value
-    def update_best(self, x, c):
-
-        for i in range(self.n_points):
-
-            if (c[i] <= self.best_score):
-                self.best_score = c[i]
-                self.best_x[:]  = x[i,:]
-                self.best_stp   = self.total_stp + i
 
     # Print informations
     def summary(self):
@@ -98,15 +88,20 @@ class base_agent():
     # Check if done
     def done(self):
 
-        if (self.stp == self.n_steps_max):
-            return True
-
+        if (self.stp == self.n_steps_max): return True
         return False
 
     # Store data
     def store(self, x, c):
 
+        # The update of best points is quite inefficient, but it allows
+        # to reproduce historical data when loading a pex or a model
         for i in range(c.shape[0]):
+            if (c[i] <= self.best_score):
+                self.best_score = c[i]
+                self.best_x[:]  = x[i,:]
+                self.best_stp   = self.total_stp
+
             self.hist_t[self.total_stp]   = self.total_stp
             self.hist_x[self.total_stp,:] = x[i,:]
             self.hist_c[self.total_stp]   = c[i]
