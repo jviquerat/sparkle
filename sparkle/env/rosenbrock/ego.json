@@ -7,22 +7,21 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "rosenbrock"
-    },
-    "agent": {
-        "name": "ego",
-        "n_steps_max": 10,
-        "recompute_theta": false,
-        "pex": {
-            "name": "lhs",
-            "n_points": 10
-        }
-    },
     "trainer": {
         "name": "metamodel",
-        "load_pex": false,
         "render_every": 1,
-        "plot_estimates": true
+        "plot_estimates": true,
+        "environment": {
+            "name": "rosenbrock"
+        },
+        "agent": {
+            "name": "ego",
+            "n_steps_max": 10,
+            "recompute_theta": false,
+            "pex": {
+                "name": "lhs",
+                "n_points": 10
+            }
+        }
     }
 }

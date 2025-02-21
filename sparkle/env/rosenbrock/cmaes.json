@@ -7,15 +7,15 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "rosenbrock"
-    },
-    "agent": {
-        "name": "cmaes",
-        "n_steps_max": 150
-    },
     "trainer": {
         "name": "regular",
-        "render_every": 1
+        "render_every": 1,
+        "environment": {
+            "name": "rosenbrock"
+        },
+        "agent": {
+            "name": "cmaes",
+            "n_steps_max": 150
+        }
     }
 }

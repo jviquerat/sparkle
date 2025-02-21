@@ -7,23 +7,23 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "sinebump"
-    },
-    "agent": {
-        "name": "ego",
-        "n_steps_max": 5,
-        "recompute_theta": false,
-        "load_model": true,
-        "model_file": "sparkle/tst/agent/model_sinebump.dat",
-        "pex": {
-            "name": "lhs",
-            "n_points": 20
-        }
-    },
     "trainer": {
         "name": "metamodel",
         "render_every": 10000,
-        "plot_estimates": false
+        "plot_estimates": false,
+        "environment": {
+            "name": "sinebump"
+        },
+        "agent": {
+            "name": "ego",
+            "n_steps_max": 5,
+            "recompute_theta": false,
+            "load_model": true,
+            "model_file": "sparkle/tst/agent/model_sinebump.dat",
+            "pex": {
+                "name": "lhs",
+                "n_points": 20
+            }
+        }
     }
 }

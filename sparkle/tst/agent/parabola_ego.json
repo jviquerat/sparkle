@@ -7,22 +7,21 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "parabola"
-    },
-    "agent": {
-        "name": "ego",
-        "n_steps_max": 20,
-        "recompute_theta": false,
-        "pex": {
-            "name": "lhs",
-            "n_points": 20
-        }
-    },
     "trainer": {
         "name": "metamodel",
-        "load_pex": false,
         "render_every": 10000,
-        "plot_estimates": false
+        "plot_estimates": false,
+        "environment": {
+            "name": "parabola"
+        },
+        "agent": {
+            "name": "ego",
+            "n_steps_max": 20,
+            "recompute_theta": false,
+            "pex": {
+                "name": "lhs",
+                "n_points": 20
+            }
+        }
     }
 }

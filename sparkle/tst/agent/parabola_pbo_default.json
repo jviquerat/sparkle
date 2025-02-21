@@ -7,15 +7,15 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "parabola"
-    },
-    "agent": {
-        "name": "pbo",
-        "n_steps_max": 50
-    },
     "trainer": {
         "name": "regular",
-        "render_every": 10000
+        "render_every": 10000,
+        "environment": {
+            "name": "parabola"
+        },
+        "agent": {
+            "name": "pbo",
+            "n_steps_max": 50
+        }
     }
 }

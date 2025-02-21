@@ -7,18 +7,18 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "rosenbrock",
-        "args": {
-            "dim": 2
-        }
-    },
-    "agent": {
-        "name": "pbo",
-        "n_steps_max": 150
-    },
     "trainer": {
         "name": "regular",
-        "render_every": 1
+        "render_every": 1,
+        "environment": {
+            "name": "rosenbrock",
+            "args": {
+                "dim": 2
+            }
+        },
+        "agent": {
+            "name": "pbo",
+            "n_steps_max": 150
+        }
     }
 }

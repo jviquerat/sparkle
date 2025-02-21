@@ -7,20 +7,20 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "parabola"
-    },
-    "agent": {
-        "name": "pso",
-        "n_steps_max": 50,
-        "n_points": 10,
-        "v0": 0.1,
-        "c1": 0.5,
-        "c2": 0.5,
-        "w": 0.8
-    },
     "trainer": {
         "name": "regular",
-        "render_every": 1
+        "render_every": 1,
+        "environment": {
+            "name": "parabola"
+        },
+        "agent": {
+            "name": "pso",
+            "n_steps_max": 50,
+            "n_points": 10,
+            "v0": 0.1,
+            "c1": 0.5,
+            "c2": 0.5,
+            "w": 0.8
+        }
     }
 }

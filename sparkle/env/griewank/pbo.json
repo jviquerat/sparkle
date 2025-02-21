@@ -7,15 +7,15 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "griewank"
-    },
-    "agent": {
-        "name": "pbo",
-        "n_steps_max": 200
-    },
     "trainer": {
         "name": "regular",
-        "render_every": 1
+        "render_every": 1,
+        "environment": {
+            "name": "griewank"
+        },
+        "agent": {
+            "name": "pbo",
+            "n_steps_max": 200
+        }
     }
 }
