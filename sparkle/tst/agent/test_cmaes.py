@@ -13,5 +13,5 @@ def test_cmaes():
     sys.path.append("sparkle/env/rosenbrock")
 
     # Run test
-    runner("sparkle/tst/agent/json/rosenbrock_cmaes.json", "cmaes",
+    runner("sparkle/tst/agent/json/rosenbrock_cmaes.json",
            5.070978784924771e-14, 5.000620456522168e-15)
