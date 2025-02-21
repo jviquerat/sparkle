@@ -46,10 +46,7 @@ class cmaes(base_agent):
         self.dp = 1.0 + 2.0*max(0.0, math.sqrt((mu_eff-1.0)/(dim+1.0)) - 1.0) + self.cs # damping for step-size
         self.cn = math.sqrt(dim)*(1.0 - 1.0/(4.0*dim) + 1.0/(21.0*dim**2))              # expectation of N(0,I)
 
-        self.n_steps_total = self.n_steps_max*self.n_points
-
-        if (not self.silent):
-            self.summary()
+        if (not self.silent): self.summary()
 
     # Reset
     def reset(self, run):
@@ -84,9 +81,6 @@ class cmaes(base_agent):
 
     # Step
     def step(self, x, c):
-
-        # Store
-        self.store(x, c)
 
         # Sort
         self.sort(x, c)

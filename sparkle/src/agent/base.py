@@ -40,25 +40,11 @@ class base_agent():
     # Reset
     def reset(self, run):
 
-        # Step counter       (one step = n_points cost evaluations)
-        # Total step counter (one total step = 1 particle cost evaluation)
-        self.stp       = 0
-        self.total_stp = 0
+        # Step counter (one step = n_points cost evaluations)
+        self.stp = 0
 
         # Path
         self.path = self.base_path+"/"+str(run)
-
-        # Data storage
-        self.hist_t = [] # time
-        self.hist_c = [] # cost
-        self.hist_b = [] # best cost
-        self.hist_s = [] # best step
-        self.hist_x = [] # dofs
-
-        # Best point
-        self.best_x     = np.zeros(self.dim)
-        self.best_score = 1.0e15
-        self.best_stp   =-1
 
     # Sample
     def sample(self):
@@ -90,55 +76,3 @@ class base_agent():
 
         if (self.stp == self.n_steps_max): return True
         return False
-
-    # Store data
-    def store(self, x, c):
-
-        # The update of best points is quite inefficient, but it allows
-        # to reproduce historical data when loading a pex or a model
-        for i in range(c.shape[0]):
-            if (c[i] <= self.best_score):
-                self.best_score = c[i]
-                self.best_x[:]  = x[i,:]
-                self.best_stp   = self.total_stp
-
-            self.hist_t.append(self.total_stp)
-            self.hist_c.append(c[i])
-            self.hist_b.append(self.best_score)
-            self.hist_s.append(self.best_stp)
-            self.hist_x.append(x[i,:])
-
-            self.total_stp += 1
-
-    # Dump data
-    def dump(self):
-
-        filename = self.path+'/raw.dat'
-        np.savetxt(filename,
-                   np.hstack([np.reshape(np.array(self.hist_t), (-1,1)),
-                              np.reshape(np.array(self.hist_c), (-1,1)),
-                              np.reshape(np.array(self.hist_b), (-1,1)),
-                              np.reshape(np.array(self.hist_s), (-1,1)),
-                              np.reshape(np.array(self.hist_x), (-1,self.dim))]),
-                   fmt='%.5e')
-
-    # Print
-    def print(self):
-
-        # Total nb of evaluations
-        n_eval = self.stp*self.n_points
-
-        # Handle no-printing after max step
-        if (self.stp < self.n_steps_max-1):
-            end = "\r"
-            self.cnt = 0
-        else:
-            end  = "\n"
-            self.cnt += 1
-
-        # Actual print
-        if (self.cnt <= 1):
-            gs = f"{self.best_score:.5e}"
-            gb = np.array2string(self.best_x, precision=5, floatmode='fixed',
-                                 threshold=4, separator=',')
-            print("# Step #"+str(self.stp)+", n_eval = "+str(n_eval)+", best score = "+str(gs)+" at individual "+str(self.best_stp)+" for x = "+str(gb)+"                                                                                                           ", end=end)

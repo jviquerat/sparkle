@@ -7,6 +7,7 @@ from sparkle.src.trainer.base  import base_trainer
 from sparkle.src.agent.agent   import agent_factory
 from sparkle.src.utils.timer   import timer
 from sparkle.src.env.parallel  import parallel
+from sparkle.src.pex.pex       import pex_factory
 from sparkle.src.utils.default import set_default
 from sparkle.src.utils.error   import error, warning
 
@@ -16,11 +17,17 @@ class metamodel(base_trainer):
     def __init__(self, path, pms):
 
         # Set parameters
+        self.base_path      = path
         self.render_every   = set_default("render_every", 100000, pms)
         self.plot_estimates = set_default("plot_estimates", False, pms)
 
         # Initialize environment
         self.env = parallel.environments(path, pms.environment)
+
+        # Initialize pex
+        self.pex = pex_factory.create(pms.pex.name,
+                                      spaces = self.env.spaces,
+                                      pms    = pms.pex)
 
         # Initialize agent
         self.agent = agent_factory.create(pms.agent.name,
@@ -37,7 +44,9 @@ class metamodel(base_trainer):
     # Reset
     def reset(self, run):
 
+        super().reset(run)
         self.env.reset(run)
+        self.pex.reset()
         self.agent.reset(run)
 
     # Optimize
@@ -48,15 +57,16 @@ class metamodel(base_trainer):
         # Check if model is loaded from file or if it must be computed
         if (self.agent.load_model_):
             self.agent.load_model()
+            self.store_data(self.agent.x_, self.agent.y_)
         else:
             self.timer_pex.tic()
 
-            if (self.agent.n_points_pex()%parallel.size != 0):
+            if (self.pex.n_points%parallel.size != 0):
                 error("trainer::metamodel", "optimize",
                       "nb of pex points should be a multiple of nb of parallel envs")
 
-            n_steps   = self.agent.n_points_pex()//parallel.size
-            pex_costs = np.zeros(self.agent.n_points_pex())
+            n_steps   = self.pex.n_points//parallel.size
+            pex_costs = np.zeros(self.pex.n_points)
 
             step = 0
             while (step < n_steps):
@@ -68,14 +78,13 @@ class metamodel(base_trainer):
 
                 xp = np.zeros((parallel.size, self.env.spaces.dim))
                 for k in range(parallel.size):
-                    xp[k,:] = self.agent.pex_point(step*parallel.size + k)
+                    xp[k,:] = self.pex.point(step*parallel.size + k)
 
                 c = self.env.cost(xp)
                 for k in range(parallel.size):
                     pex_costs[step*parallel.size + k] = c[k]
 
-                #self.agent.update_best(xp, c)
-                self.agent.store(xp, c)
+                self.store_data(xp, c)
                 step += 1
 
             self.timer_pex.toc()
@@ -83,7 +92,7 @@ class metamodel(base_trainer):
 
             # Build and dump model
             self.timer_mod.tic()
-            self.agent.build_model(y=pex_costs)
+            self.agent.build_initial_model(self.pex.x, pex_costs)
             self.agent.dump_model(self.agent.path+"/model.dat")
             self.timer_mod.toc()
             self.timer_mod.show()
@@ -107,17 +116,21 @@ class metamodel(base_trainer):
             # Compute cost
             c = self.env.cost(x)
 
+            # Store data
+            self.store_data(x, c)
+
             # Render if necessary
             if (self.it%self.render_every == 0):
                 self.render(x, c)
 
             # Step and output
             self.agent.step(x, c)
-            self.agent.print()
+            self.print()
 
             self.it += 1
 
-        self.agent.dump()
+        # Dump stored data to file
+        self.dump_data()
 
         # Close timers
         self.timer_opt.toc()

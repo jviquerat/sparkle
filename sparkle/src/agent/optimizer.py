@@ -49,6 +49,8 @@ class optimizer():
     def optimize(self):
 
         # Loop until done
+        best_x     = None
+        best_score = 1.0e15
         while (not self.agent.done()):
 
             x = self.agent.sample()
@@ -62,6 +64,10 @@ class optimizer():
                 else:
                     c[p] = res
 
+                if (c[p] < best_score):
+                    best_score = c[p]
+                    best_x     = x[p]
+
             self.agent.step(x, c)
 
-        return self.agent.best_x, self.agent.best_score
+        return best_x, best_score

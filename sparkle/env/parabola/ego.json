@@ -1,6 +1,6 @@
 {
     "n_avg": 2,
-    "avg_type": "log",
+    "avg_type": "linear",
     "naming": {
         "env": true,
         "agent": true,
@@ -9,8 +9,8 @@
     },
     "trainer": {
         "name": "metamodel",
-        "render_every": 10000,
-        "plot_estimates": false,
+        "render_every": 1,
+        "plot_estimates": true,
         "environment": {
             "name": "parabola"
         },
@@ -21,7 +21,8 @@
         "agent": {
             "name": "ego",
             "n_steps_max": 20,
-            "recompute_theta": false
+            "recompute_theta": false,
+            "load_model": false
         }
     }
 }
