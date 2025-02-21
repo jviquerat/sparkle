@@ -36,7 +36,7 @@ def runner(json_file, agent_type, val_avg, val_bst):
                                      pms       = reader.pms.trainer)
 
     # Intialize averager
-    averager = data_avg(2, trainer.agent.n_steps_total, reader.pms.n_avg)
+    averager = data_avg(2, reader.pms.n_avg)
 
     # Make two optimization runs and average
     print("Test "+agent_type)
