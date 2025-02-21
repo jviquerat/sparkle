@@ -25,15 +25,15 @@ def test_fixed_poisson_disc():
     # have issues providing the exact number of required points
     pms.n_points = 2
     pex = fixed_poisson_disc(s, pms)
-    assert(pex.n_points() == 2)
+    assert(pex.n_points == 2)
 
     pms.n_points = 10
     pex = fixed_poisson_disc(s, pms)
-    assert(pex.n_points() == 10)
+    assert(pex.n_points == 10)
 
     pms.n_points = 100
     pex = fixed_poisson_disc(s, pms)
-    assert(pex.n_points() == 100)
+    assert(pex.n_points == 100)
 
     pex.render_2d()
     filename = pex.name_+".png"
