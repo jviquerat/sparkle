@@ -30,11 +30,13 @@ class pso(base_agent):
         super().reset(run)
 
         # Local best point
+        # We store the best position of each particle
         self.p_best  = np.zeros((self.n_points, self.dim))
         self.p_score = np.ones(self.n_points)*1.0e8
 
     # Sample points
-    # A local copy of x is required as sample() does not take previous samples as argument
+    # A local copy of x is required as sample() does not take
+    # previous samples as argument
     def sample(self):
 
         if (self.stp == 0):
@@ -42,11 +44,15 @@ class pso(base_agent):
             self.x = self.xmin + self.x*(self.xmax-self.xmin)
             self.v = np.random.randn(self.n_points, self.dim)*self.v0
         else:
+            # Compute global best point
+            xb = self.p_best[np.argmin(self.p_score), :]
+
+            # Update
             for i in range(self.n_points):
                 r1, r2       = np.random.rand(2)
                 self.v[i,:]  = (self.w*self.v[i,:] +
                                 self.c1*r1*(self.p_best[i,:] - self.x[i,:]) +
-                                self.c2*r2*(self.best_x[:]   - self.x[i,:]))
+                                self.c2*r2*(xb[:]            - self.x[i,:]))
                 self.x[i,:] += self.v[i,:]
 
         return self.x
@@ -66,9 +72,8 @@ class pso(base_agent):
     # Update local best
     def update_local_best(self, x, c):
 
+        # Update best score for each particle
         for i in range(self.n_points):
-
-            # Update best local score
             if (c[i] <= self.p_score[i]):
                 self.p_score[i]  = c[i]
                 self.p_best[i,:] = x[i,:]
