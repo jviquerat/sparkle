@@ -84,14 +84,10 @@ class ego(base_agent):
     def load_model(self):
 
         self.model.load(self.model_file_)
-        self.x_ = self.model.x_
+        self.x_ = self.denormalize(self.model.x_)
         self.y_ = self.model.y_
 
-        x_den = self.denormalize(self.x_)
-
-        for k in range(self.x_.shape[0]):
-            self.store(np.reshape(x_den[k], (-1,self.dim)),
-                       np.reshape(self.y_[k], (-1,1)))
+        self.store(self.x_, self.y_)
 
         self.finalize_initial_model()
 
