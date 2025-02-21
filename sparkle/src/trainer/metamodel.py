@@ -13,20 +13,20 @@ from sparkle.src.utils.error   import error, warning
 ###############################################
 ### Class for metamodel-based trainer
 class metamodel(base_trainer):
-    def __init__(self, env_pms, agent_pms, path, pms):
+    def __init__(self, path, pms):
 
         # Set parameters
         self.render_every   = set_default("render_every", 100000, pms)
         self.plot_estimates = set_default("plot_estimates", False, pms)
 
         # Initialize environment
-        self.env = parallel.environments(path, env_pms)
+        self.env = parallel.environments(path, pms.environment)
 
         # Initialize agent
-        self.agent = agent_factory.create(agent_pms.name,
+        self.agent = agent_factory.create(pms.agent.name,
                                           path   = path,
                                           spaces = self.env.spaces,
-                                          pms    = agent_pms)
+                                          pms    = pms.agent)
 
         # Initialize timer
         self.timer_global  = timer("global  ")

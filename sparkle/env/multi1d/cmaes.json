@@ -7,16 +7,16 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "multi1d"
-    },
-    "agent": {
-        "name": "cmaes",
-        "n_steps_max": 20,
-	      "clip": true
-    },
     "trainer": {
         "name": "regular",
-        "render_every": 1
+        "render_every": 1,
+        "environment": {
+            "name": "multi1d"
+        },
+        "agent": {
+            "name": "cmaes",
+            "n_steps_max": 20,
+	          "clip": true
+        }
     }
 }

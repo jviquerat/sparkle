@@ -34,8 +34,6 @@ def train(json_file, pms):
 
     # Initialize trainer
     trainer = trainer_factory.create(pms.trainer.name,
-                                     env_pms   = pms.environment,
-                                     agent_pms = pms.agent,
                                      path      = results_path,
                                      pms       = pms.trainer)
 

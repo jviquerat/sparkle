@@ -7,17 +7,17 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "parabola"
-    },
-    "agent": {
-        "name": "cem",
-        "n_steps_max": 50,
-        "n_points": 10,
-        "alpha": 0.2
-    },
     "trainer": {
         "name": "regular",
-        "render_every": 10000
+        "render_every": 10000,
+        "environment": {
+            "name": "parabola"
+        },
+        "agent": {
+            "name": "cem",
+            "n_steps_max": 50,
+            "n_points": 10,
+            "alpha": 0.2
+        }
     }
 }

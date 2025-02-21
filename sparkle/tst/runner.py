@@ -30,10 +30,8 @@ def runner(json_file, agent_type, val_avg, val_bst):
 
     # Initialize trainer
     trainer = trainer_factory.create(reader.pms.trainer.name,
-                                     env_pms   = reader.pms.environment,
-                                     agent_pms = reader.pms.agent,
-                                     path      = ".",
-                                     pms       = reader.pms.trainer)
+                                     path = ".",
+                                     pms  = reader.pms.trainer)
 
     # Intialize averager
     averager = data_avg(2, reader.pms.n_avg)

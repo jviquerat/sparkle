@@ -7,22 +7,21 @@
         "tag": false,
         "time": false
     },
-    "environment": {
-        "name": "multi1d"
-    },
-    "agent": {
-        "name": "ego",
-        "n_steps_max": 9,
-        "recompute_theta": false,
-        "pex": {
-            "name": "lhs",
-            "n_points": 6
-        }
-    },
     "trainer": {
         "name": "metamodel",
-        "load_pex": false,
         "render_every": 1,
-        "plot_estimates": true
+        "plot_estimates": true,
+        "environment": {
+            "name": "multi1d"
+        },
+        "agent": {
+            "name": "ego",
+            "n_steps_max": 9,
+            "recompute_theta": false,
+            "pex": {
+                "name": "lhs",
+                "n_points": 6
+            }
+        }
     }
 }
