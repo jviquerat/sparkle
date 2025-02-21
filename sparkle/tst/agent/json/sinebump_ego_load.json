@@ -22,7 +22,7 @@
             "model_file": "sparkle/tst/agent/data/sinebump_ego_model.dat",
             "pex": {
                 "name": "lhs",
-                "n_points": 20
+                "n_points": 25
             }
         }
     }

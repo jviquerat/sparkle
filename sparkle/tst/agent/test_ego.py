@@ -27,4 +27,4 @@ def test_ego_load_model():
     # Run test
     runner("sparkle/tst/agent/json/sinebump_ego_load.json",
            "sparkle/tst/agent/data/sinebump_ego_load.dat",
-           9.57818300e+00, -1.46578000e-02)
+           -1.142364466666667e+00, -1.772250666666667e+00)
