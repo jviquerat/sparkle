@@ -25,7 +25,7 @@ class regular(base_trainer):
 
         # Check compatibility between the number of parallel workers
         # and the number of degrees of freedom required by the agent
-        if (self.agent.ndof()%parallel.size() !=0):
+        if (self.agent.ndof()%parallel.size !=0):
             error("trainer::regular", "init", "Number of degress of freedom of the agent must be a multiple of the number of parallel workers", call_exit=False)
             self.env.close()
             parallel.finalize()

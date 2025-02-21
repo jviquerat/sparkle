@@ -51,16 +51,16 @@ class mpi_environments:
         # Initialize stuff
         n_dof   = x.shape[0]
         costs   = np.zeros((n_dof))
-        n_loops = n_dof//parallel.size()
+        n_loops = n_dof//parallel.size
 
         self.timer_env.tic()
 
         for i in range(n_loops):
 
             # Send
-            data = [('step', None)]*parallel.size()
-            for p in range(parallel.size()):
-                data[p] = ('cost', x[i*parallel.size()+p])
+            data = [('step', None)]*parallel.size
+            for p in range(parallel.size):
+                data[p] = ('cost', x[i*parallel.size+p])
             parallel.comm().scatter(data, root=0)
 
             # Main process executing
@@ -69,9 +69,9 @@ class mpi_environments:
             # Receive
             data = parallel.comm().gather((c), root=0)
 
-            for p in range(parallel.size()):
+            for p in range(parallel.size):
                 c        = data[p]
-                costs[i*parallel.size()+p] = c
+                costs[i*parallel.size+p] = c
 
         self.timer_env.toc()
 
@@ -81,7 +81,7 @@ class mpi_environments:
     def reset(self, run):
 
         # Send
-        data = [('reset', run) for i in range(parallel.size())]
+        data = [('reset', run) for i in range(parallel.size)]
         parallel.comm().scatter(data, root=0)
 
         # Main process executing
@@ -101,7 +101,7 @@ class mpi_environments:
     # Close
     def close(self):
 
-        data = [('close',None) for i in range(parallel.size())]
+        data = [('close',None) for i in range(parallel.size)]
         data = parallel.comm().scatter(data, root=0)
 
         # Main process executing

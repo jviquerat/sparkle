@@ -5,24 +5,24 @@ class spk_parallel:
     def __init__(self):
 
         # Default values
-        self._size = 1
-        self._type = None
+        self.size_ = 1
+        self.type_ = None
 
     def set(self, pms):
 
         if (hasattr(pms, "parallel_type")):
-            self._type = pms.parallel_type
+            self.type_ = pms.parallel_type
         else:
-            self._type = "mpi"
+            self.type_ = "mpi"
 
-        if (self._type == "multiprocessing"):
+        if (self.type_ == "multiprocessing"):
             if (not hasattr(pms, "n_env")):
                 print("Error: multiprocessing requires argument n_env")
                 exit(1)
             else:
-                self._size = pms.n_env
+                self.size_ = pms.n_env
 
-        if (self._type == "mpi"):
+        if (self.type_ == "mpi"):
             import mpi4py
             mpi4py.rc.initialize = False
             mpi4py.rc.finalize   = False
@@ -32,64 +32,64 @@ class spk_parallel:
                 MPI.Init()
                 self._comm = MPI.COMM_WORLD
                 self._rank = MPI.COMM_WORLD.Get_rank()
-                self._size = MPI.COMM_WORLD.Get_size()
+                self.size_ = MPI.COMM_WORLD.Get_size()
 
+    @property
     def type(self):
+        return self.type_
 
-        return self._type
+    @property
+    def size(self):
+        return self.size_
 
     def is_root(self):
 
-        if (self._type == "mpi"):
+        if (self.type_ == "mpi"):
             return (self._rank == 0)
 
-        if (self._type == "multiprocessing"):
+        if (self.type_ == "multiprocessing"):
             return True
 
         return True
 
     def comm(self):
 
-        if (self._type == "mpi"):
+        if (self.type_ == "mpi"):
             return self._comm
 
-        if (self._type == "multiprocessing"):
+        if (self.type_ == "multiprocessing"):
             print("Error: comm() is not defined for multiprocessing")
             exit(1)
 
-    def size(self):
-
-        return self._size
-
     def rank(self):
 
-        if (self._type == "mpi"):
+        if (self.type_ == "mpi"):
             return self._rank
 
-        if (self._type == "multiprocessing"):
+        if (self.type_ == "multiprocessing"):
             print("Error: rank() is not defined for multiprocessing")
             exit(1)
 
     def environments(self, path, pms):
 
-        if (self._type == "mpi"):
+        if (self.type_ == "mpi"):
             from sparkle.src.env.mpi_environments import mpi_environments
             return mpi_environments(path, pms)
 
-        if (self._type == "multiprocessing"):
+        if (self.type_ == "multiprocessing"):
             from sparkle.src.env.multiproc_environments import multiproc_environments
             return multiproc_environments(path, pms)
 
     def finalize(self):
 
-        if (self._type == "mpi"):
+        if (self.type_ == "mpi"):
             import mpi4py
             from mpi4py import MPI
 
             MPI.Finalize()
             exit(0)
 
-        if (self._type == "multiprocessing"):
+        if (self.type_ == "multiprocessing"):
             pass
 
 # Single instance

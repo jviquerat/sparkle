@@ -39,9 +39,9 @@ def main():
 
         if (parallel.is_root()):
             spacer()
-            print("Parallelism based on "+parallel.type())
+            print("Parallelism based on "+parallel.type)
             spacer()
-            print("Number of parallel environments: "+str(parallel.size()))
+            print("Number of parallel environments: "+str(parallel.size))
 
         train(json_file, pms)
         return
