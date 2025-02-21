@@ -1,9 +1,10 @@
 # Custom imports
-from sparkle.src.trainer.base import base_trainer
-from sparkle.src.agent.agent  import agent_factory
-from sparkle.src.utils.timer  import timer
-from sparkle.src.env.parallel import parallel
-from sparkle.src.utils.error  import error
+from sparkle.src.trainer.base  import base_trainer
+from sparkle.src.agent.agent   import agent_factory
+from sparkle.src.utils.timer   import timer
+from sparkle.src.env.parallel  import parallel
+from sparkle.src.utils.default import set_default
+from sparkle.src.utils.error   import error
 
 ###############################################
 ### Class for regular trainer
@@ -11,8 +12,7 @@ class regular(base_trainer):
     def __init__(self, env_pms, agent_pms, path, pms):
 
         # Set parameters
-        self.render_every = 100000
-        if hasattr(pms, "render_every"): self.render_every = pms.render_every
+        self.render_every   = set_default("render_every", 100000, pms)
 
         # Initialize environment
         self.env = parallel.environments(path, env_pms)
