@@ -13,7 +13,7 @@ def test_ego():
     sys.path.append("sparkle/env/parabola")
 
     # Run test
-    runner("sparkle/tst/agent/parabola_ego.json", "ego",
+    runner("sparkle/tst/agent/json/parabola_ego.json", "ego",
            2.36295370e+01, 6.37686500e-05)
 
 ###############################################
@@ -24,5 +24,5 @@ def test_ego_load_model():
     sys.path.append("sparkle/env/sinebump")
 
     # Run test
-    runner("sparkle/tst/agent/sinebump_ego_load.json", "ego",
+    runner("sparkle/tst/agent/json/sinebump_ego_load.json", "ego",
            9.57818300e+00, -1.46578000e-02)
