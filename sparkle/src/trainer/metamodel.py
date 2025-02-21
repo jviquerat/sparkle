@@ -3,11 +3,12 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.src.trainer.base import base_trainer
-from sparkle.src.agent.agent  import agent_factory
-from sparkle.src.utils.timer  import timer
-from sparkle.src.env.parallel import parallel
-from sparkle.src.utils.error  import error, warning
+from sparkle.src.trainer.base  import base_trainer
+from sparkle.src.agent.agent   import agent_factory
+from sparkle.src.utils.timer   import timer
+from sparkle.src.env.parallel  import parallel
+from sparkle.src.utils.default import set_default
+from sparkle.src.utils.error   import error, warning
 
 ###############################################
 ### Class for metamodel-based trainer
@@ -15,11 +16,8 @@ class metamodel(base_trainer):
     def __init__(self, env_pms, agent_pms, path, pms):
 
         # Set parameters
-        self.render_every   = 100000
-        self.plot_estimates = False
-
-        if hasattr(pms, "render_every"):   self.render_every   = pms.render_every
-        if hasattr(pms, "plot_estimates"): self.plot_estimates = pms.plot_estimates
+        self.render_every   = set_default("render_every", 100000, pms)
+        self.plot_estimates = set_default("plot_estimates", False, pms)
 
         # Initialize environment
         self.env = parallel.environments(path, env_pms)
