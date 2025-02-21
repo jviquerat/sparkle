@@ -70,12 +70,12 @@ def folder_name(pms):
     name_env = ""
     if hasattr(pms.naming, "env"):
         if (pms.naming.env is True):
-            name_env = pms.environment.name
+            name_env = pms.trainer.environment.name
 
     name_agent = ""
     if hasattr(pms.naming, "agent"):
         if (pms.naming.agent is True):
-            name_agent = pms.agent.name
+            name_agent = pms.trainer.agent.name
 
     name_tag = ""
     if hasattr(pms.naming, "tag"):
