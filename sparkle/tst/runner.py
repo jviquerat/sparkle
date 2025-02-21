@@ -13,8 +13,9 @@ from sparkle.src.env.parallel    import parallel
 
 ###############################################
 ### Generic runner used in agent and trainer tests
-def runner(json_file, agent_type, val_avg, val_bst):
+def runner(json_file, val_avg, val_bst):
 
+    # Set seed for reproducible test
     set_seeds(0)
 
     # Initial space
@@ -37,7 +38,7 @@ def runner(json_file, agent_type, val_avg, val_bst):
     averager = data_avg(2, reader.pms.n_avg)
 
     # Make two optimization runs and average
-    print("Test "+agent_type)
+    print("Test "+reader.pms.trainer.agent.name)
     os.makedirs("0/", exist_ok=True)
     os.makedirs("1/", exist_ok=True)
     trainer.reset(0)
@@ -60,5 +61,5 @@ def runner(json_file, agent_type, val_avg, val_bst):
     # Clean
     shutil.rmtree("0")
     shutil.rmtree("1")
-    os.remove("avg.dat")
+    #os.remove("avg.dat")
     print("")
