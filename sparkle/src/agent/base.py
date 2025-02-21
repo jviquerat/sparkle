@@ -106,7 +106,7 @@ class base_agent():
     # Store data
     def store(self, x, c):
 
-        for i in range(self.n_points):
+        for i in range(c.shape[0]):
             self.hist_t[self.total_stp]   = self.total_stp
             self.hist_x[self.total_stp,:] = x[i,:]
             self.hist_c[self.total_stp]   = c[i]
