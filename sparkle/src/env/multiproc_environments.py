@@ -23,7 +23,7 @@ class multiproc_environments:
         self.procs = []
 
         # Start environments
-        for env in range(parallel.size()):
+        for env in range(parallel.size):
             p_pipe, c_pipe = mp.Pipe()
             process        = mp.Process(target = multiproc_worker,
                                         args   = (self.name, self.args,
@@ -96,20 +96,20 @@ class multiproc_environments:
         # Initialize stuff
         n_dof   = x.shape[0]
         costs   = np.zeros((n_dof))
-        n_loops = n_dof//parallel.size()
+        n_loops = n_dof//parallel.size
 
         self.timer_env.tic()
 
         for i in range(n_loops):
 
             # Send
-            for p in range(parallel.size()):
-                self.pipes[p].send(('cost', x[i*parallel.size()+p]))
+            for p in range(parallel.size):
+                self.pipes[p].send(('cost', x[i*parallel.size+p]))
 
             # Receive
-            for p in range(parallel.size()):
+            for p in range(parallel.size):
                 c = self.pipes[p].recv()
-                costs[i*parallel.size()+p] = c
+                costs[i*parallel.size+p] = c
 
         self.timer_env.toc()
 
