@@ -49,11 +49,11 @@ class base_agent():
         self.path = self.base_path+"/"+str(run)
 
         # Data storage
-        self.hist_t = np.zeros((self.n_steps_total))             # time
-        self.hist_c = np.zeros((self.n_steps_total))             # cost
-        self.hist_b = np.zeros((self.n_steps_total))             # best cost
-        self.hist_s = np.zeros((self.n_steps_total))             # best step
-        self.hist_x = np.zeros((self.n_steps_total, self.dim)) # dofs
+        self.hist_t = [] # time
+        self.hist_c = [] # cost
+        self.hist_b = [] # best cost
+        self.hist_s = [] # best step
+        self.hist_x = [] # dofs
 
         # Best point
         self.best_x     = np.zeros(self.dim)
@@ -102,11 +102,11 @@ class base_agent():
                 self.best_x[:]  = x[i,:]
                 self.best_stp   = self.total_stp
 
-            self.hist_t[self.total_stp]   = self.total_stp
-            self.hist_x[self.total_stp,:] = x[i,:]
-            self.hist_c[self.total_stp]   = c[i]
-            self.hist_b[self.total_stp]   = self.best_score
-            self.hist_s[self.total_stp]   = self.best_stp
+            self.hist_t.append(self.total_stp)
+            self.hist_c.append(c[i])
+            self.hist_b.append(self.best_score)
+            self.hist_s.append(self.best_stp)
+            self.hist_x.append(x[i,:])
 
             self.total_stp += 1
 
@@ -115,11 +115,11 @@ class base_agent():
 
         filename = self.path+'/raw.dat'
         np.savetxt(filename,
-                   np.hstack([np.reshape(self.hist_t, (-1,1)),
-                              np.reshape(self.hist_c, (-1,1)),
-                              np.reshape(self.hist_b, (-1,1)),
-                              np.reshape(self.hist_s, (-1,1)),
-                              np.reshape(self.hist_x, (-1,self.dim))]),
+                   np.hstack([np.reshape(np.array(self.hist_t), (-1,1)),
+                              np.reshape(np.array(self.hist_c), (-1,1)),
+                              np.reshape(np.array(self.hist_b), (-1,1)),
+                              np.reshape(np.array(self.hist_s), (-1,1)),
+                              np.reshape(np.array(self.hist_x), (-1,self.dim))]),
                    fmt='%.5e')
 
     # Print
