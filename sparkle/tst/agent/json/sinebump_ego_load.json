@@ -19,7 +19,7 @@
             "n_steps_max": 5,
             "recompute_theta": false,
             "load_model": true,
-            "model_file": "sparkle/tst/agent/model_sinebump.dat",
+            "model_file": "sparkle/tst/agent/data/model_sinebump.dat",
             "pex": {
                 "name": "lhs",
                 "n_points": 20
