@@ -36,8 +36,6 @@ def test_optimizer():
     opt  = optimizer(name, s, n_points, n_steps_max, parabola)
     x, c = opt.optimize()
 
-
-
     assert(compare(x[0], 0.00023912672430951684, 1.0e-15))
     assert(compare(x[1], 2.235114201843395e-05, 1.0e-15))
     assert(compare(c,    5.768116382852788e-08, 1.0e-15))
