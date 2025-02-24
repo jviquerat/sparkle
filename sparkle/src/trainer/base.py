@@ -111,4 +111,4 @@ class base_trainer():
             for i in range(self.n_plot):
                 for j in range(self.n_plot):
                     x = np.array([[self.x_plot[i,j], self.y_plot[i,j]]])
-                    self.cost_map[i,j] = self.env.cost(x)
+                    self.cost_map[i,j] = self.env.cost(x)[0]
