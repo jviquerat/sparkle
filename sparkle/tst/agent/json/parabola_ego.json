@@ -18,10 +18,13 @@
             "name": "lhs",
             "n_points": 20
         },
+        "model": {
+            "name": "kriging",
+            "recompute_theta": false
+        },
         "agent": {
             "name": "ego",
-            "n_steps_max": 20,
-            "recompute_theta": false
+            "n_steps_max": 20
         }
     }
 }

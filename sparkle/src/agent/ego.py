@@ -14,23 +14,14 @@ from sparkle.src.utils.error     import error
 ###############################################
 ### EGO
 class ego(base_agent):
-    def __init__(self, path, spaces, pms):
+    def __init__(self, path, spaces, model, pms):
         super().__init__(path, spaces, pms)
 
-        self.name             = "EGO"
-        self.spaces           = spaces
-        self.n_steps_max      = set_default("n_steps_max", 20, pms)
-        self.recompute_theta_ = set_default("recompute_theta", False, pms)
-        self.load_model_      = set_default("load_model", False, pms)
-        self.n_points         = 1
-
-        if (self.load_model_):
-            if not hasattr(pms, "model_file"):
-                error("ego", "__init__",
-                      "load_model option requires model_file parameter")
-            self.model_file_ = pms.model_file
-
-        self.model = kriging(spaces)
+        self.name        = "EGO"
+        self.spaces      = spaces
+        self.n_steps_max = set_default("n_steps_max", 20, pms)
+        self.n_points    = 1
+        self.model       = model
 
         self.summary()
 
@@ -38,67 +29,19 @@ class ego(base_agent):
     def reset(self, run):
 
         super().reset(run)
-        self.model.reset()
-
-    # Build initial model
-    def build_initial_model(self, x, y):
-
-        self.x_ = x.copy()
-        self.y_ = y.copy()
-
-        self.model.build(self.x_, self.y_, True)
-
-        spacer()
-        print("Built initial model")
-        self.post_model_print()
-
-    # Update model with new points
-    def update_model(self, x, y):
-
-        self.x_ = np.vstack((self.x_, x))
-        self.y_ = np.hstack((self.y_, y))
-
-        self.model.build(self.x_, self.y_, self.recompute_theta_)
-
-    # Load saved model
-    def load_model(self):
-
-        self.model.load(self.model_file_)
-        self.x_ = self.denormalize(self.model.x_)
-        self.y_ = self.model.y_
-
-        spacer()
-        print("Loaded initial model")
-        self.post_model_print()
-
-    # Print after building or loading model
-    def post_model_print(self):
-
-        xb, yb = self.best_point()
-        gs     = f"{yb:.5e}"
-        gb     = np.array2string(xb, precision=5,
-                                 floatmode='fixed', threshold=4, separator=',')
-
-        spacer()
-        print("Best initial score = "+str(gs)+" for x = "+str(gb))
-
-    # Dump model
-    def dump_model(self, filename):
-
-        self.model.dump(filename)
 
     # Return best point
     def best_point(self):
 
-        k = np.argmin(self.y_)
-        return self.x_[k], self.y_[k]
+        k = np.argmin(self.model.y)
+        return self.model.x[k], self.model.y[k]
 
     # Sample new point based on expected improvement
     def sample(self):
 
         name        = "cmaes"
-        n_points    = 200
-        n_steps_max = 10
+        n_points    = 100
+        n_steps_max = 100
 
         opt  = optimizer(name, self.spaces, n_points, n_steps_max, self.exp_imp)
         x, c = opt.optimize()
@@ -130,7 +73,6 @@ class ego(base_agent):
     # Step
     def step(self, x, c):
 
-        self.update_model(x, c)
         self.stp += 1
 
     # Check if done
@@ -138,9 +80,3 @@ class ego(base_agent):
 
         if (self.stp == self.n_steps_max): return True
         return False
-
-    # Denormalize inputs
-    def denormalize(self, x):
-
-        xx = self.spaces.xmin + (self.spaces.xmax - self.spaces.xmin)*x
-        return xx

@@ -15,7 +15,7 @@ def test_ego():
     # Run test
     runner("sparkle/tst/agent/json/parabola_ego.json",
            "sparkle/tst/agent/data/parabola_ego.dat",
-           5.573511873000001e+00, 3.491620000000000e-02)
+           5.229096616160000e+00, 7.654482999999999e-05)
 
 ###############################################
 ### Test ego with loaded model
@@ -27,4 +27,4 @@ def test_ego_load_model():
     # Run test
     runner("sparkle/tst/agent/json/sinebump_ego_load.json",
            "sparkle/tst/agent/data/sinebump_ego_load.dat",
-           5.397090666666666e-01, -1.772969333333333e+00)
+           2.949909333333333e+00, -1.783417666666667e+00)

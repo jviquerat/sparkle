@@ -24,7 +24,7 @@ def test_kriging():
     lhs_pex = lhs(s, pms)
     y       = np.cos(lhs_pex.x[:,0]) + np.cos(lhs_pex.x[:,1])
 
-    model = kriging(s)
+    model = kriging(s, pms)
     model.build(lhs_pex.x, y)
 
     x_new = np.array([[0.5,0.5]])
