@@ -248,8 +248,10 @@ class metamodel(base_trainer):
                 for i in range(self.n_plot):
                     for j in range(self.n_plot):
                         xx = np.array([[self.x_plot[i,j], self.y_plot[i,j]]])
-                        y_mu[i,j], y_std[i,j] = self.model.evaluate(xx)
-                        exp_imp[i,j]          = self.agent.exp_imp(xx)
+                        mu, std      = self.model.evaluate(xx)
+                        y_mu[i,j]    = mu[0]
+                        y_std[i,j]   = std[0]
+                        exp_imp[i,j] = self.agent.exp_imp(xx)[0]
 
                 ax = fig.add_subplot(131)
                 ax.set_xlim([self.env.spaces.xmin[0], self.env.spaces.xmax[0]])
