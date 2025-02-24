@@ -281,98 +281,18 @@ class metamodel(base_trainer):
 
                 ax = fig.add_subplot(133)
                 ax.axis('off')
-                ax.imshow(y_std,
+                ax.imshow(-exp_imp,
                           extent=[self.env.spaces.xmin[0], self.env.spaces.xmax[0],
                                   self.env.spaces.xmin[1], self.env.spaces.xmax[1]],
                           alpha=0.8, cmap='RdBu_r')
-                ax.set_title("confidence interval")
+                ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.8)
+                ax.set_title("expected improvement")
 
                 filename = self.path+"/png/"+str(self.it_plt)+".png"
                 plt.savefig(filename, dpi=100)
                 plt.close()
 
         self.it_plt += 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # Rendering with metamodel informations (can be expensive to compute)
-        # if (self.plot_estimates):
-
-        #     if (self.env.spaces.dim > 2):
-        #         error("metamodel", "render",
-        #               "plot_estimates is only available for dim <= 2")
-
-        #     xmin    = self.env.spaces.xmin
-        #     xmax    = self.env.spaces.xmax
-        #     x_last  = np.reshape(x_last, (-1))
-
-        #     if (self.env.spaces.dim == 1):
-        #         nx_plot = 200
-        #         x_plot  = np.linspace(xmin[0], xmax[0], num=nx_plot)
-        #         x_plot  = np.reshape(x_plot, (-1,1))
-
-        #         x0      = x_plot
-        #         y       = self.agent.model.evaluate(x0)
-        #         ei      = self.agent.exp_imp(x0)
-        #         y_mu    = y[0]
-        #         y_std   = y[1]
-
-        #         pms       = types.SimpleNamespace()
-        #         pms.x_mu  = x_plot.squeeze()
-        #         pms.y_mu  = y_mu
-        #         pms.y_std = y_std
-        #         pms.ei    = ei
-        #         pms.x_ei  = x_last
-
-        #         self.env.render(self.model.x, c_last, pms=pms)
-
-        #     if (self.env.spaces.dim == 2):
-        #         nx = 100
-        #         ny = 100
-
-        #         x     = np.linspace(xmin[0], xmax[0], num=nx)
-        #         y     = np.linspace(xmax[1], xmin[1], num=ny)
-        #         x, y  = np.array(np.meshgrid(x, y))
-        #         x0    = np.zeros((nx,ny))
-        #         y_mu  = np.zeros((nx,ny))
-        #         y_std = np.zeros((nx,ny))
-
-        #         for i in range(nx):
-        #             for j in range(ny):
-        #                 xx = np.array((x[i,j],y[i,j]))
-        #                 xx = np.reshape(xx, (-1,2))
-        #                 yy = self.agent.model.evaluate(xx)
-
-        #                 y_mu[i,j]  = yy[0]
-        #                 y_std[i,j] = yy[1]
-
-        #         pms       = types.SimpleNamespace()
-        #         pms.y_mu  = y_mu
-        #         pms.y_std = y_std
-        #         pms.x_ei  = x_last
-
-        #         self.env.render(self.model.x, c_last, pms=pms)
-
-        # else:
-        #     Regular rendering without metamodel informations
-        #     self.env.render(x_last, c_last)
 
     # Print after building or loading model
     def initial_print(self):
