@@ -6,30 +6,39 @@ from   numpy.linalg import solve
 # Custom imports
 from sparkle.src.agent.optimizer import optimizer
 from sparkle.src.env.spaces      import environment_spaces
+from sparkle.src.utils.default   import set_default
 from sparkle.src.utils.error     import error
 from sparkle.src.utils.prints    import spacer
 
 ###############################################
 ### Kriging model
 class kriging():
-    def __init__(self, spaces):
+    def __init__(self, spaces, pms):
 
-        self.spaces = spaces
+        self.spaces           = spaces
+        self.recompute_theta_ = set_default("recompute_theta", False, pms)
+        self.load_model_      = set_default("load_model", False, pms)
+
+        if (self.load_model_):
+            if not hasattr(pms, "model_file"):
+                error("ego", "__init__",
+                      "load_model option requires model_file parameter")
+            self.model_file_ = pms.model_file
+
         self.reset()
 
     # Reset model
-    def reset(self, recompute_theta=True):
+    def reset(self):
 
         self.diag_eps_ = 1.0e-8
 
-        self.K_     = None
-        self.x_     = None
-        self.y_     = None
-        self.ns_    = None
-        self.nf_    = None
+        self.K_  = None
+        self.x_  = None
+        self.y_  = None
+        self.ns_ = None
+        self.nf_ = None
 
-        if (recompute_theta):
-            self.theta_ = None
+        if (self.recompute_theta_): self.theta_ = None
 
     # Normalize inputs
     def normalize(self, x):
@@ -37,10 +46,24 @@ class kriging():
         xx = (x - self.spaces.xmin)/(self.spaces.xmax - self.spaces.xmin)
         return xx
 
-    # Build model from input
-    def build(self, x, y, recompute_theta=True):
+    # Denormalize inputs
+    def denormalize(self, x):
 
-        self.reset(recompute_theta)
+        xx = self.spaces.xmin + (self.spaces.xmax - self.spaces.xmin)*x
+        return xx
+
+    @property
+    def x(self):
+        return self.denormalize(self.x_)
+
+    @property
+    def y(self):
+        return self.y_
+
+    # Build model from input
+    def build(self, x, y):
+
+        self.reset()
 
         self.x_   = self.normalize(x)
         self.y_   = y
@@ -48,7 +71,7 @@ class kriging():
         self.nf_  = x.shape[1] # nb of features
         self.dim_ = self.nf_ + 2
 
-        if (recompute_theta):
+        if (self.recompute_theta_ or not hasattr(self, "theta_")):
             name        = "cmaes"
             x0          = np.zeros(self.dim_)
             xmin        =-2.0*np.ones(self.dim_)
@@ -134,9 +157,11 @@ class kriging():
             np.savetxt(f, self.y_)
 
     # Load kriging data
-    def load(self, filename):
+    def load(self, filename=None):
 
         self.reset()
+
+        if filename is None: filename = self.model_file_
 
         with open(filename, "r") as f:
             self.nf_       = int(f.readline().split(" ")[0])

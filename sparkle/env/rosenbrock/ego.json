@@ -18,6 +18,9 @@
             "name": "lhs",
             "n_points": 20
         },
+        "model": {
+            "name": "kriging"
+        },
         "agent": {
             "name": "ego",
             "n_steps_max": 20,

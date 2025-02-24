@@ -18,12 +18,15 @@
             "name": "lhs",
             "n_points": 25
         },
+        "model": {
+            "name": "kriging",
+            "recompute_theta": false,
+            "load_model": false,
+            "model_file": "sparkle/env/sinebump/model.dat"
+        },
         "agent": {
             "name": "ego",
-            "n_steps_max": 25,
-            "recompute_theta": false,
-            "load_model": true,
-            "model_file": "sparkle/env/sinebump/model.dat"
+            "n_steps_max": 25
         }
     }
 }

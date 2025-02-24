@@ -8,8 +8,10 @@ from sparkle.src.agent.agent   import agent_factory
 from sparkle.src.utils.timer   import timer
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.pex.pex       import pex_factory
+from sparkle.src.model.model   import model_factory
 from sparkle.src.utils.default import set_default
 from sparkle.src.utils.error   import error, warning
+from sparkle.src.utils.prints  import spacer
 
 ###############################################
 ### Class for metamodel-based trainer
@@ -29,10 +31,16 @@ class metamodel(base_trainer):
                                       spaces = self.env.spaces,
                                       pms    = pms.pex)
 
+        # Initialize model
+        self.model = model_factory.create(pms.model.name,
+                                          spaces = self.env.spaces,
+                                          pms    = pms.model)
+
         # Initialize agent
         self.agent = agent_factory.create(pms.agent.name,
                                           path   = path,
                                           spaces = self.env.spaces,
+                                          model  = self.model,
                                           pms    = pms.agent)
 
         # Initialize timer
@@ -47,6 +55,7 @@ class metamodel(base_trainer):
         super().reset(run)
         self.env.reset(run)
         self.pex.reset()
+        self.model.reset()
         self.agent.reset(run)
 
     # Optimize
@@ -55,9 +64,17 @@ class metamodel(base_trainer):
         self.timer_global.tic()
 
         # Check if model is loaded from file or if it must be computed
-        if (self.agent.load_model_):
-            self.agent.load_model()
-            self.store_data(self.agent.x_, self.agent.y_)
+        if (self.model.load_model_):
+            self.model.load()
+            self.store_data(self.model.x, self.model.y)
+
+            # Keep local copy
+            self.x = self.model.x
+            self.y = self.model.y
+
+            spacer()
+            print("Loaded initial model")
+            self.post_model_print()
         else:
             self.timer_pex.tic()
 
@@ -92,8 +109,17 @@ class metamodel(base_trainer):
 
             # Build and dump model
             self.timer_mod.tic()
-            self.agent.build_initial_model(self.pex.x, pex_costs)
-            self.agent.dump_model(self.agent.path+"/model.dat")
+            self.model.build(self.pex.x, pex_costs)
+            self.model.dump(self.agent.path+"/model.dat")
+
+            # Keep local copy
+            self.x = self.pex.x
+            self.y = pex_costs
+
+            spacer()
+            print("Built initial model")
+            self.post_model_print()
+
             self.timer_mod.toc()
             self.timer_mod.show()
 
@@ -118,6 +144,13 @@ class metamodel(base_trainer):
 
             # Store data
             self.store_data(x, c)
+
+            # Update local copy
+            self.x = np.vstack((self.x, x))
+            self.y = np.hstack((self.y, c))
+
+            # Update model
+            self.model.build(self.x, self.y)
 
             # Render if necessary
             if (self.it%self.render_every == 0):
@@ -171,7 +204,7 @@ class metamodel(base_trainer):
                 pms.ei    = ei
                 pms.x_ei  = x_last
 
-                self.env.render(self.agent.x_, c_last, pms=pms)
+                self.env.render(self.model.x, c_last, pms=pms)
 
             if (self.env.spaces.dim == 2):
                 nx = 100
@@ -198,9 +231,18 @@ class metamodel(base_trainer):
                 pms.y_std = y_std
                 pms.x_ei  = x_last
 
-                self.env.render(self.agent.x_, c_last, pms=pms)
+                self.env.render(self.model.x, c_last, pms=pms)
 
         else:
             # Regular rendering without metamodel informations
-            x = self.agent.denormalize(x_last)
-            self.env.render(x, c_last)
+            self.env.render(x_last, c_last)
+
+    # Print after building or loading model
+    def post_model_print(self):
+
+        gs     = f"{self.best_score:.5e}"
+        gb     = np.array2string(self.best_x, precision=5,
+                                 floatmode='fixed', threshold=4, separator=',')
+
+        spacer()
+        print("Best initial score = "+str(gs)+" for x = "+str(gb))
