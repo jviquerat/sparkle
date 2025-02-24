@@ -73,8 +73,8 @@ class metamodel(base_trainer):
             self.y = self.model.y
 
             spacer()
-            print("Loaded initial model")
-            self.post_model_print()
+            print("Loaded model")
+            self.initial_print()
         else:
             self.timer_pex.tic()
 
@@ -118,7 +118,7 @@ class metamodel(base_trainer):
 
             spacer()
             print("Built initial model")
-            self.post_model_print()
+            self.initial_print()
 
             self.timer_mod.toc()
             self.timer_mod.show()
@@ -238,7 +238,7 @@ class metamodel(base_trainer):
             self.env.render(x_last, c_last)
 
     # Print after building or loading model
-    def post_model_print(self):
+    def initial_print(self):
 
         gs     = f"{self.best_score:.5e}"
         gb     = np.array2string(self.best_x, precision=5,
