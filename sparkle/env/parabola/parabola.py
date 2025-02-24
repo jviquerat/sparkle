@@ -28,10 +28,6 @@ class parabola(base_env):
         self.vmax      = 20.0
         self.levels    = [0.1, 1.0, 5.0, 10.0, 20.0]
 
-        # Generate map of cost values for rendering
-        if (self.dim == 1): self.generate_cost_map_1d()
-        if (self.dim == 2): self.generate_cost_map_2d()
-
     # Reset environment
     def reset(self, run):
 
@@ -44,17 +40,10 @@ class parabola(base_env):
     def cost(self, x):
 
         v = 0.0
-        for i in range(len(x)):
+        for i in range(self.dim):
             v += (x[i])**2
 
         return v
-
-    # Rendering
-    def render(self, x, c, pms=None):
-
-        if (self.dim == 1): self.render_1d(x, pms=pms)
-        if (self.dim == 2): self.render_2d(x, pms=pms)
-        if (self.dim >  2): return
 
     # Close environment
     def close(self):

@@ -9,6 +9,7 @@
     },
     "trainer": {
         "name": "regular",
+        "renderer": "trainer",
         "render_every": 1,
         "environment": {
             "name": "branin"

@@ -10,7 +10,7 @@
     "trainer": {
         "name": "metamodel",
         "render_every": 1,
-        "plot_estimates": true,
+        "renderer": "trainer",
         "environment": {
             "name": "sinebump"
         },

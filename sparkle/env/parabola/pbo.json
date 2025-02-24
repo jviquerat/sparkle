@@ -10,6 +10,7 @@
     "trainer": {
         "name": "regular",
         "render_every": 1,
+        "renderer": "trainer",
         "environment": {
             "name": "parabola",
             "args": {

@@ -10,6 +10,7 @@
     "trainer": {
         "name": "regular",
         "render_every": 10000,
+        "renderer": "trainer",
         "environment": {
             "name": "rosenbrock"
         },

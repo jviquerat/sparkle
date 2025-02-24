@@ -28,9 +28,6 @@ class multi1d(base_env):
         self.vmin      =-2.0
         self.vmax      = 3.0
 
-        # Generate map of cost values for rendering
-        self.generate_cost_map_1d()
-
     # Reset environment
     def reset(self, run):
 
@@ -45,11 +42,6 @@ class multi1d(base_env):
         v = (3.0*x[0] - 1.4)*sin(18.0*x[0])
 
         return v
-
-    # Rendering
-    def render(self, x, c, pms=None):
-
-        self.render_1d(x, pms)
 
     # Close environment
     def close(self):

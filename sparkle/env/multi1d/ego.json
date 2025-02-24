@@ -10,20 +10,20 @@
     "trainer": {
         "name": "metamodel",
         "render_every": 1,
-        "plot_estimates": true,
+        "renderer": "trainer",
         "environment": {
             "name": "multi1d"
         },
         "pex": {
             "name": "lhs",
-            "n_points": 10
+            "n_points": 5
         },
         "model": {
             "name": "kriging"
         },
         "agent": {
             "name": "ego",
-            "n_steps_max": 10,
+            "n_steps_max": 5,
             "recompute_theta": false
         }
     }

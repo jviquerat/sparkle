@@ -26,9 +26,6 @@ class sinebump(base_env):
         self.vmax      = 16.0
         self.levels    = [0.0, 2.0, 4.0, 6.0, 8.0]
 
-        # Generate map of cost values for rendering
-        self.generate_cost_map_2d()
-
     # Reset environment
     def reset(self, run):
 
@@ -43,11 +40,6 @@ class sinebump(base_env):
         v = (x[0]-3.14)**2 + (x[1]-2.72)**2 + np.sin(3*x[0]+1.41) + np.sin(4*x[1]-1.73)
 
         return v
-
-    # Rendering
-    def render(self, x, c, pms=None):
-
-        self.render_2d(x, pms=pms)
 
     # Close environment
     def close(self):

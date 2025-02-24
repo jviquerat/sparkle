@@ -26,9 +26,6 @@ class griewank(base_env):
         self.vmax      = 2.0
         self.levels    = [1.0]
 
-        # Generate map of cost values for rendering
-        self.generate_cost_map_2d()
-
     # Reset environment
     def reset(self, run):
 
@@ -41,11 +38,6 @@ class griewank(base_env):
     def cost(self, x):
 
         return 1.0 + (x[0]**2+x[1]**2)/4000.0 - math.cos(x[0])*math.cos(x[1]/math.sqrt(2.0))
-
-    # Rendering
-    def render(self, x, c, pms=None):
-
-        self.render_2d(x, pms=pms)
 
     # Close environment
     def close(self):

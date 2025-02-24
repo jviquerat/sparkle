@@ -1,0 +1,18 @@
+{
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "parabola"
+    },
+    "pex": {
+        "name": "lhs",
+        "n_points": 20
+    },
+    "model": {
+    	"name": "kriging"
+    }
+}
