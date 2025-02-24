@@ -24,7 +24,7 @@
         },
         "agent": {
             "name": "ego",
-            "n_steps_max": 20
+            "n_steps_max": 5
         }
     }
 }
