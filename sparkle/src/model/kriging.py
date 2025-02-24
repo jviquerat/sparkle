@@ -21,7 +21,7 @@ class kriging():
 
         if (self.load_model_):
             if not hasattr(pms, "model_file"):
-                error("ego", "__init__",
+                error("kriging", "__init__",
                       "load_model option requires model_file parameter")
             self.model_file_ = pms.model_file
 
