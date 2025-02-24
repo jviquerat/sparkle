@@ -6,16 +6,17 @@ from   numpy.linalg import solve
 # Custom imports
 from sparkle.src.agent.optimizer import optimizer
 from sparkle.src.env.spaces      import environment_spaces
+from sparkle.src.model.base      import base_model
 from sparkle.src.utils.default   import set_default
 from sparkle.src.utils.error     import error
 from sparkle.src.utils.prints    import spacer
 
 ###############################################
 ### Kriging model
-class kriging():
+class kriging(base_model):
     def __init__(self, spaces, pms):
+        super().__init__(spaces)
 
-        self.spaces           = spaces
         self.recompute_theta_ = set_default("recompute_theta", False, pms)
         self.load_model_      = set_default("load_model", False, pms)
 
@@ -39,26 +40,6 @@ class kriging():
         self.nf_ = None
 
         if (self.recompute_theta_): self.theta_ = None
-
-    # Normalize inputs
-    def normalize(self, x):
-
-        xx = (x - self.spaces.xmin)/(self.spaces.xmax - self.spaces.xmin)
-        return xx
-
-    # Denormalize inputs
-    def denormalize(self, x):
-
-        xx = self.spaces.xmin + (self.spaces.xmax - self.spaces.xmin)*x
-        return xx
-
-    @property
-    def x(self):
-        return self.denormalize(self.x_)
-
-    @property
-    def y(self):
-        return self.y_
 
     # Build model from input
     def build(self, x, y):
