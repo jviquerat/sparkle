@@ -26,9 +26,6 @@ class branin(base_env):
         self.vmax      = 100.0
         self.levels    = [0.1, 1.0, 5.0, 10.0, 20.0, 50.0, 100.0]
 
-        # Generate map of cost values for rendering
-        self.generate_cost_map_2d()
-
     # Reset environment
     def reset(self, run):
 
@@ -48,11 +45,6 @@ class branin(base_env):
         t = 1.0/(8.0*math.pi)
 
         return a*(x[1]-b*x[0]**2+c*x[0]-r)**2 + s*(1.0-t)*math.cos(x[0]) + s
-
-    # Rendering
-    def render(self, x, c, pms=None):
-
-        self.render_2d(x, pms=pms)
 
     # Close environment
     def close(self):

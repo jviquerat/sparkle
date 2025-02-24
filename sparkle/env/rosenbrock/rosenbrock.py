@@ -29,9 +29,6 @@ class rosenbrock(base_env):
         self.vmax      = 500.0
         self.levels    = [1.0, 10.0, 50.0, 200.0, 500.0]
 
-        # Generate map of cost values for rendering
-        if (self.dim == 2): self.generate_cost_map_2d()
-
     # Reset environment
     def reset(self, run):
 
@@ -44,16 +41,10 @@ class rosenbrock(base_env):
     def cost(self, x):
 
         v = 0.0
-        for i in range(len(x)-1):
+        for i in range(self.dim-1):
             v += 100.0*(x[i+1]-x[i]**2)**2 + (1.0-x[i])**2
 
         return v
-
-    # Rendering
-    def render(self, x, c, pms=None):
-
-        if (self.dim == 2): self.render_2d(x, pms=pms)
-        else: return
 
     # Close environment
     def close(self):
