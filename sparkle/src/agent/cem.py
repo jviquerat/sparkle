@@ -18,7 +18,7 @@ class cem(base_agent):
         self.n_elites    = set_default("n_elites", math.floor(self.n_points/2), pms)
         self.alpha       = set_default("alpha", 0.2, pms)
 
-        self.summary()
+        if (not self.silent): self.summary()
 
     # Reset
     def reset(self, run):

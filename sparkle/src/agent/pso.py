@@ -19,7 +19,7 @@ class pso(base_agent):
         self.c2          = set_default("c2", 0.5, pms)
         self.w           = set_default("w", 0.8, pms)
 
-        self.summary()
+        if (not self.silent): self.summary()
 
     # Reset
     def reset(self, run):

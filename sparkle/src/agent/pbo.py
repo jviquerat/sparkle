@@ -68,9 +68,9 @@ class pbo(base_agent):
 
         self.n_steps_elite = self.n_steps_max*self.n_elite
 
-        self.summary()
-        self.net_sg.info()
-        self.net_cr.info()
+        if (not self.silent): self.summary()
+        if (not self.silent): self.net_sg.info()
+        if (not self.silent): self.net_cr.info()
 
     # Reset
     def reset(self, run):
