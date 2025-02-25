@@ -53,9 +53,9 @@ class base_pex():
         return np.prod(v)
 
     # Compute distance to nearest neighbour
-    def dist_closest(self):
+    def dist_nearest(self):
 
-        closest = np.zeros(self.n_points)
+        nearest = np.zeros(self.n_points)
         for i in range(self.n_points):
             dist_min = 1.0e8
             for j in range(self.n_points):
@@ -65,9 +65,9 @@ class base_pex():
                 if (dist < dist_min):
                     dist_min = dist
 
-            closest[i] = dist_min
+            nearest[i] = dist_min
 
-        return closest
+        return nearest
 
     # Print informations
     def summary(self):
@@ -80,8 +80,8 @@ class base_pex():
 
         if (self.dim != 2): return
 
-        closest = self.dist_closest()
-        closest /= np.max(closest)
+        nearest = self.dist_nearest()
+        nearest /= np.max(nearest)
 
         plt.clf()
         fig = plt.figure()
@@ -99,6 +99,6 @@ class base_pex():
         ax.grid(True, alpha=0.5)
 
         cmap = matplotlib.cm.RdBu
-        ax.scatter(self.x[:,0], self.x[:,1], c=cmap(closest), marker="o", alpha=0.8)
+        ax.scatter(self.x[:,0], self.x[:,1], c=cmap(nearest), marker="o", alpha=0.8)
         plt.savefig(self.name_, dpi=100)
         plt.close()
