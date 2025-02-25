@@ -1,6 +1,6 @@
 # Custom imports
 from sparkle.src.utils.data import data_avg
-from sparkle.src.plot.plot  import plot
+from sparkle.src.plot.plot  import plot_avg
 
 # Average existing runs
 def average(args):
@@ -26,4 +26,4 @@ def average(args):
 
     # Plot
     filename = 'avg'
-    plot(data, filename, "linear")
+    plot_avg(data, filename, "linear")
