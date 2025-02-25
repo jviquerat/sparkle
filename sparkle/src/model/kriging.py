@@ -1,4 +1,5 @@
 # Generic imports
+import types
 import numpy as np
 from   numpy import matmul
 from   numpy.linalg import solve
@@ -53,17 +54,20 @@ class kriging(base_model):
         self.dim_ = self.nf_ + 2
 
         if (self.recompute_theta_ or not hasattr(self, "theta_")):
-            name        = "cmaes"
             x0          = np.zeros(self.dim_)
             xmin        =-2.0*np.ones(self.dim_)
             xmin[-2:]   =-3.0
             xmax        = np.ones(self.dim_)
-            n_points    = 200
-            n_steps_max = 10
 
-            loc_space = {"dim": self.dim_, "x0": x0, "xmin": xmin, "xmax": xmax}
-            s   = environment_spaces(loc_space)
-            opt = optimizer(name, s, n_points, n_steps_max, self.log_likelihood)
+            dict_space = {"dim": self.dim_, "x0": x0, "xmin": xmin, "xmax": xmax}
+            space      = environment_spaces(dict_space)
+
+            pms             = types.SimpleNamespace()
+            pms.n_points    = 200
+            pms.n_steps_max = 10
+            pms.clip        = True
+            pms.silent      = True
+            opt = optimizer("cmaes", space, pms, self.log_likelihood)
             theta, c = opt.optimize()
 
             self.theta_ = np.exp(theta)

@@ -1,4 +1,5 @@
 # Generic imports
+import types
 import numpy as np
 from math import sqrt, pi, exp, erf
 
@@ -39,11 +40,13 @@ class ego(base_agent):
     # Sample new point based on expected improvement
     def sample(self):
 
-        name        = "cmaes"
-        n_points    = 100
-        n_steps_max = 100
+        pms = types.SimpleNamespace()
+        pms.n_points    = 200
+        pms.n_steps_max = 100
+        pms.clip        = True
+        pms.silent      = True
 
-        opt  = optimizer(name, self.spaces, n_points, n_steps_max, self.exp_imp)
+        opt  = optimizer("cmaes", self.spaces, pms, self.exp_imp)
         x, c = opt.optimize()
         x    = np.reshape(x, (-1,self.spaces.dim))
 

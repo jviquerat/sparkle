@@ -1,5 +1,4 @@
 # Generic imports
-import types
 import numpy as np
 
 # Local factory
@@ -23,16 +22,10 @@ local_factory.register("pbo",   pbo)
 ### It does not comply to the other agents interface
 ### It is assumed to run sequentially
 class optimizer():
-    def __init__(self, name, spaces, n_points, n_steps_max, cost):
-
-        agent_pms             = types.SimpleNamespace()
-        agent_pms.n_points    = n_points
-        agent_pms.n_steps_max = n_steps_max
-        agent_pms.silent      = True
-        agent_pms.clip        = True
+    def __init__(self, name, spaces, pms, cost):
 
         # Initialize agent
-        self.agent = local_factory.create(name, path=".", spaces=spaces, pms=agent_pms)
+        self.agent = local_factory.create(name, path=".", spaces=spaces, pms=pms)
 
         # Cost function
         self.cost = cost
