@@ -1,7 +1,7 @@
 {
     "naming": {
         "env": true,
-        "agent": true,
+        "model": true,
         "tag": false,
         "time": false
     },
@@ -9,7 +9,7 @@
         "name": "parabola"
     },
     "pex": {
-        "name": "lhs",
+        "name": "fixed_poisson_disc",
         "n_points": 20
     },
     "model": {
