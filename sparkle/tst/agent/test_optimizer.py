@@ -1,5 +1,6 @@
 # Generic imports
 import pytest
+import types
 import numpy as np
 
 # Custom imports
@@ -24,19 +25,18 @@ def test_optimizer():
 
         return v
 
-    name        = "cmaes"
-    dim         = 2
-    x0          = 2.5*np.ones(dim)
-    xmin        =-5.0*np.ones(dim)
-    xmax        = 5.0*np.ones(dim)
-    n_points    = 10
-    n_steps_max = 30
+    pms             = types.SimpleNamespace()
+    pms.n_points    = 10
+    pms.n_steps_max = 30
 
-    loc_space = {"dim": dim, "x0": x0, "xmin": xmin, "xmax": xmax}
-    s    = environment_spaces(loc_space)
-    opt  = optimizer(name, s, n_points, n_steps_max, parabola)
-    x, c = opt.optimize()
+    dict_space = {"dim":  2,
+                  "x0":   2.5*np.ones(2),
+                  "xmin":-5.0*np.ones(2),
+                  "xmax": 5.0*np.ones(2)}
+    space      = environment_spaces(dict_space)
+    opt        = optimizer("cmaes", space, pms, parabola)
+    x, c       = opt.optimize()
 
-    assert(compare(x[0],  0.001224214604398248,   1.0e-15))
-    assert(compare(x[1], -0.00024287762152097391, 1.0e-15))
-    assert(compare(c,     5.768116382852788e-08,  1.0e-15))
+    assert(compare(x[0],  0.0005683938259276194,  1.0e-15))
+    assert(compare(x[1], -0.00018952556245307778, 1.0e-15))
+    assert(compare(c,     1.3003505428756697e-09, 1.0e-15))
