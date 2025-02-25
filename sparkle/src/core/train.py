@@ -9,7 +9,7 @@ import numpy as np
 from sparkle.src.env.parallel    import parallel
 from sparkle.src.trainer.trainer import trainer_factory
 from sparkle.src.utils.data      import data_avg
-from sparkle.src.plot.plot       import plot
+from sparkle.src.plot.plot       import plot_avg
 from sparkle.src.utils.prints    import liner
 
 # Average training over multiple runs
@@ -59,7 +59,7 @@ def train(json_file, pms):
 
     # Plot
     filename = results_path+'/'+path
-    plot(data, filename, pms.avg_type)
+    plot_avg(data, filename, pms.avg_type)
 
     # Finalize parallel process
     parallel.finalize()
