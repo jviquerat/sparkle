@@ -5,6 +5,7 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.env.parallel   import parallel
+from sparkle.src.env.base       import base_parallel_environments
 from sparkle.src.env.mpi_worker import mpi_worker
 from sparkle.src.env.spaces     import environment_spaces
 from sparkle.src.utils.default  import set_default
@@ -12,7 +13,7 @@ from sparkle.src.utils.timer    import timer
 
 ###############################################
 ### A wrapper class for mpi parallel environments
-class mpi_environments:
+class mpi_environments(base_parallel_environments):
     def __init__(self, path, pms):
 
         # Default parameters
@@ -106,3 +107,4 @@ class mpi_environments:
 
         # Main process executing
         self.worker.close()
+
