@@ -6,6 +6,7 @@ import numpy as np
 from sparkle.src.pex.base      import base_pex
 from sparkle.src.utils.error   import error
 from sparkle.src.utils.default import set_default
+from sparkle.src.utils.prints  import spacer
 
 ###############################################
 ### Poisson-disc experiment plan
@@ -20,7 +21,7 @@ class fixed_poisson_disc(base_pex):
         self.n_attempts_ = set_default("n_attempts", 20, pms)
 
         # Compute radius guess
-        self.radius_ = 0.5*math.sqrt(self.volume()/self.n_points_)
+        self.radius_ = 0.8*math.sqrt(self.volume()/self.n_points_)
 
         self.reset()
 
@@ -78,6 +79,9 @@ class fixed_poisson_disc(base_pex):
             error("poisson_disk", "reset",
                   "the resulting number of points was lower than n_points_")
 
+        # Save initial number of points
+        self.n_initial_points = len(lst)
+
         # Farthest point sampling
         k = np.random.randint(0, len(lst))
         selected = [lst[k]]
@@ -97,7 +101,19 @@ class fixed_poisson_disc(base_pex):
 
         self.x_ = np.array(selected)
 
+        # Compute minimal distance
+        self.d_min = self.dist_min(self.x)
+
     # Distance
     def distance(self, p1, p2):
 
         return np.linalg.norm(p1 - p2, 2)
+
+    # Print informations
+    def summary(self):
+
+        super().summary()
+        spacer()
+        print("Initial nb of pts: "+str(self.n_initial_points))
+        spacer()
+        print("Final min distance: "+str(self.d_min))
