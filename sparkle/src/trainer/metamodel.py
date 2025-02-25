@@ -178,8 +178,10 @@ class metamodel(base_trainer):
                 y_mu, y_std = self.model.evaluate(xx)
                 exp_imp     = self.agent.exp_imp(xx)
 
-                render_1D_metamodel(x, c, self.env.spaces, self.x_plot,
-                                    self.cost_map, y_mu, y_std, exp_imp, filename)
+                fct_name = "acquisition function"
+                render_1D_metamodel(filename, self.env.spaces, x, c,
+                                    self.x_plot, self.cost_map,
+                                    y_mu, y_std, exp_imp, fct_name)
 
             # Render depending on dimension
             if (self.env.spaces.dim == 2):
@@ -201,8 +203,10 @@ class metamodel(base_trainer):
                         y_std[i,j]   = std[0]
                         exp_imp[i,j] = self.agent.exp_imp(xx)[0]
 
-                render_2D_metamodel(x, c, self.env.spaces, self.x_plot, self.y_plot,
-                                    self.cost_map, y_mu, y_std, exp_imp, filename)
+                fct_name = "acquisition function"
+                render_2D_metamodel(filename, self.env.spaces, x, c,
+                                    self.x_plot, self.y_plot, self.cost_map,
+                                    y_mu, y_std, exp_imp, fct_name)
 
         self.it_plt += 1
 

@@ -47,10 +47,10 @@ def generate(env_pms, pex_pms, model_pms, path):
         y_mu, y_std = model.evaluate(xx)
 
         filename = path+"/model.png"
-        render_1D_metamodel(pex.x, pex_costs, env.spaces,
+        fct_name = "std"
+        render_1D_metamodel(filename, env.spaces, pex.x, pex_costs,
                             x_plot, cost_map,
-                            y_mu, y_std, y_std,
-                            filename)
+                            y_mu, y_std, y_std, fct_name)
 
     if (env.spaces.dim == 2):
         x_plot, y_plot, cost_map = env.generate_cost_map_2D()
@@ -67,10 +67,10 @@ def generate(env_pms, pex_pms, model_pms, path):
                 y_std[i,j] = std[0]
 
         filename = path+"/model.png"
-        render_2D_metamodel(pex.x, pex_costs, env.spaces,
+        fct_name = "std"
+        render_2D_metamodel(filename, env.spaces, pex.x, pex_costs,
                             x_plot, y_plot, cost_map,
-                            y_mu, y_std, y_std,
-                            filename)
+                            y_mu, y_std, y_std, fct_name)
 
     # Close environments
     env.close()

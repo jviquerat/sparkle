@@ -70,7 +70,7 @@ def return_plottables(avg, p, m, avg_type):
     return avg, p, m, ylabel
 
 # 1D rendering for regular trainer
-def render_1D_regular(x, c, spaces, x_plot, cost_map, filename):
+def render_1D_regular(filename, spaces, x, c, x_plot, cost_map):
 
     plt.clf()
     fig = plt.figure()
@@ -92,7 +92,7 @@ def render_1D_regular(x, c, spaces, x_plot, cost_map, filename):
     plt.close()
 
 # 2D rendering for regular trainer
-def render_2D_regular(x, c, spaces, x_plot, y_plot, cost_map, filename):
+def render_2D_regular(filename, spaces, x, c, x_plot, y_plot, cost_map):
 
     plt.clf()
     fig = plt.figure()
@@ -118,8 +118,9 @@ def render_2D_regular(x, c, spaces, x_plot, y_plot, cost_map, filename):
     plt.close()
 
 # 1D rendering for metamodel trainer
-def render_1D_metamodel(x, c, spaces, x_plot, cost_map,
-                        y_mu, y_std, acq_fct, filename):
+def render_1D_metamodel(filename, spaces, x, c,
+                        x_plot, cost_map,
+                        y_mu, y_std, fct, fct_name):
 
     plt.clf()
     fig = plt.figure()
@@ -143,19 +144,20 @@ def render_1D_metamodel(x, c, spaces, x_plot, cost_map,
 
     ax = fig.add_subplot(212)
     ax.set_xlim([spaces.xmin[0], spaces.xmax[0]])
-    ax.plot(x_plot, acq_fct, color='r')
+    ax.plot(x_plot, fct, color='r')
     ax.grid()
     ax.set_yticklabels([])
     ax.set_yticks([])
-    ax.set_ylabel('acquisition function')
+    ax.set_ylabel(fct_name)
 
     fig.tight_layout()
     plt.savefig(filename, dpi=100)
     plt.close()
 
 # 2D rendering for metamodel trainer
-def render_2D_metamodel(x, c, spaces, x_plot, y_plot, cost_map,
-                        y_mu, y_std, acq_fct, filename):
+def render_2D_metamodel(filename, spaces, x, c,
+                        x_plot, y_plot, cost_map,
+                        y_mu, y_std, fct, fct_name):
 
     plt.clf()
     fig = plt.figure()
@@ -194,12 +196,12 @@ def render_2D_metamodel(x, c, spaces, x_plot, y_plot, cost_map,
 
     ax = fig.add_subplot(133)
     ax.axis('off')
-    ax.imshow(acq_fct,
+    ax.imshow(fct,
               extent=[spaces.xmin[0], spaces.xmax[0],
                       spaces.xmin[1], spaces.xmax[1]],
               alpha=0.8, cmap='RdBu_r')
     ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
-    ax.set_title("acquisition_function")
+    ax.set_title(fct_name)
 
     plt.savefig(filename, dpi=100)
     plt.close()

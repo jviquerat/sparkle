@@ -99,8 +99,8 @@ class regular(base_trainer):
                 if not hasattr(self, "cost_map"):
                     self.x_plot, self.cost_map = self.env.generate_cost_map_1D()
 
-                render_1D_regular(x, c, self.env.spaces,
-                                  self.x_plot, self.cost_map, filename)
+                render_1D_regular(filename, self.env.spaces, x, c,
+                                  self.x_plot, self.cost_map)
 
             # Render depending on dimension
             if (self.env.spaces.dim == 2):
@@ -109,7 +109,7 @@ class regular(base_trainer):
                 if not hasattr(self, "cost_map"):
                     self.x_plot, self.y_plot, self.cost_map = self.env.generate_cost_map_2D()
 
-                render_2D_regular(x, c, self.env.spaces,
-                                  self.x_plot, self.y_plot, self.cost_map, filename)
+                render_2D_regular(filename, self.env.spaces, x, c,
+                                  self.x_plot, self.y_plot, self.cost_map)
 
         self.it_plt += 1
