@@ -12,6 +12,7 @@ from sparkle.src.env.parallel  import parallel
 from sparkle.src.pex.pex       import pex_factory
 from sparkle.src.model.model   import model_factory
 from sparkle.src.utils.default import set_default
+from sparkle.src.plot.plot     import render_1D_metamodel, render_2D_metamodel
 from sparkle.src.utils.error   import error, warning
 from sparkle.src.utils.prints  import spacer
 
@@ -80,31 +81,8 @@ class metamodel(base_trainer):
         else:
             self.timer_pex.tic()
 
-            if (self.pex.n_points%parallel.size != 0):
-                error("trainer::metamodel", "optimize",
-                      "nb of pex points should be a multiple of nb of parallel envs")
-
-            n_steps   = self.pex.n_points//parallel.size
-            pex_costs = np.zeros(self.pex.n_points)
-
-            step = 0
-            while (step < n_steps):
-                end = "\r"
-                if (step == n_steps-1): end = "\n"
-                i_start = step*parallel.size
-                i_end   = (step+1)*parallel.size - 1
-                print("# Computing pex individuals #"+str(i_start)+" to #"+str(i_end), end=end)
-
-                xp = np.zeros((parallel.size, self.env.spaces.dim))
-                for k in range(parallel.size):
-                    xp[k,:] = self.pex.point(step*parallel.size + k)
-
-                c = self.env.cost(xp)
-                for k in range(parallel.size):
-                    pex_costs[step*parallel.size + k] = c[k]
-
-                self.store_data(xp, c)
-                step += 1
+            pex_costs = self.env.evaluate(self.pex.x)
+            self.store_data(self.pex.x, pex_costs)
 
             self.timer_pex.toc()
             self.timer_pex.show()
@@ -182,117 +160,49 @@ class metamodel(base_trainer):
 
             # Check dimension
             if (self.env.spaces.dim > 2):
-                error("trainer::regularl", "render",
+                error("trainer::metamodel", "render",
                       "trainer rendering is only available for dim <= 2")
-
-            # Generate cost map once at first call to save computational time
-            if not hasattr(self, "cost_map"): self.generate_cost_map()
 
             # Create output folder
             if (self.it_plt == 0): os.makedirs(self.path+'/png', exist_ok=True)
+            filename = self.path+"/png/"+str(self.it_plt)+".png"
 
             # Render depending on dimension
             if (self.env.spaces.dim == 1):
 
-                plt.clf()
-                fig = plt.figure()
+                # Generate cost map once at first call to save computational time
+                if not hasattr(self, "cost_map"):
+                    self.x_plot, self.cost_map = self.env.generate_cost_map_1D()
 
                 xx          = np.reshape(self.x_plot, (-1,1))
                 y_mu, y_std = self.model.evaluate(xx)
                 exp_imp     = self.agent.exp_imp(xx)
 
-                ax = fig.add_subplot(211)
-                ax.set_xlim([self.env.spaces.xmin[0], self.env.spaces.xmax[0]])
-                ax.set_ylim([self.env.spaces.vmin,    self.env.spaces.vmax])
-                ax.grid()
-                ax.set_yticklabels([])
-                ax.set_yticks([])
-                ax.plot(self.x_plot, self.cost_map, label="f(x)")
-                ax.set_ylabel('y')
-
-                ax.scatter(x[:,0], c[:], c="black", marker='o', alpha=0.8, label="samples")
-                ax.scatter(x[-1,0], c[-1], c='red', marker='o', alpha=0.8)
-                ax.legend(loc='upper left')
-
-                ax.plot(self.x_plot, y_mu, linestyle='dashed', label="model")
-                ax.fill_between(self.x_plot, y_mu-y_std, y_mu+y_std, alpha=0.2,
-                                label="confidence interval")
-
-                ax = fig.add_subplot(212)
-                ax.set_xlim([self.env.spaces.xmin[0], self.env.spaces.xmax[0]])
-                ax.plot(self.x_plot, -exp_imp, color='r')
-                ax.grid()
-                ax.set_yticklabels([])
-                ax.set_yticks([])
-                ax.set_ylabel('expected improvement')
-
-                filename = self.path+"/png/"+str(self.it_plt)+".png"
-                fig.tight_layout()
-                plt.savefig(filename, dpi=100)
-                plt.close()
+                render_1D_metamodel(x, c, self.env.spaces, self.x_plot,
+                                    self.cost_map, y_mu, y_std, exp_imp, filename)
 
             # Render depending on dimension
             if (self.env.spaces.dim == 2):
 
-                plt.clf()
-                fig = plt.figure()
-                fig.set_size_inches(8, 3)
-                fig.tight_layout()
-                plt.subplots_adjust(bottom=0.01, top=0.99, left=0.01, right=0.99)
-                plt.rcParams.update({'axes.titlesize': 'small'})
+                # Generate cost map once at first call to save computational time
+                if not hasattr(self, "cost_map"):
+                    self.x_plot, self.y_plot, self.cost_map = self.env.generate_cost_map_2D()
 
-                y_mu    = np.zeros((self.n_plot, self.n_plot))
-                y_std   = np.zeros((self.n_plot, self.n_plot))
-                exp_imp = np.zeros((self.n_plot, self.n_plot))
+                n_plot  = self.cost_map.shape[0]
+                y_mu    = np.zeros((n_plot, n_plot))
+                y_std   = np.zeros((n_plot, n_plot))
+                exp_imp = np.zeros((n_plot, n_plot))
 
-                for i in range(self.n_plot):
-                    for j in range(self.n_plot):
+                for i in range(n_plot):
+                    for j in range(n_plot):
                         xx = np.array([[self.x_plot[i,j], self.y_plot[i,j]]])
                         mu, std      = self.model.evaluate(xx)
                         y_mu[i,j]    = mu[0]
                         y_std[i,j]   = std[0]
                         exp_imp[i,j] = self.agent.exp_imp(xx)[0]
 
-                ax = fig.add_subplot(131)
-                ax.set_xlim([self.env.spaces.xmin[0], self.env.spaces.xmax[0]])
-                ax.set_ylim([self.env.spaces.xmin[1], self.env.spaces.xmax[1]])
-                ax.axis('off')
-                ax.imshow(self.cost_map,
-                          extent=[self.env.spaces.xmin[0], self.env.spaces.xmax[0],
-                                  self.env.spaces.xmin[1], self.env.spaces.xmax[1]],
-                          vmin=self.env.spaces.vmin, vmax=self.env.spaces.vmax, alpha=0.8, cmap='RdBu_r')
-
-                cnt = ax.contour(self.x_plot, self.y_plot, self.cost_map,
-                                 levels=self.env.spaces.levels, colors='black', alpha=0.5)
-                ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
-                ax.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.8)
-                ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.8)
-                ax.set_title("f(x)")
-
-                ax = fig.add_subplot(132)
-                ax.axis('off')
-                ax.imshow(y_mu,
-                          extent=[self.env.spaces.xmin[0], self.env.spaces.xmax[0],
-                                  self.env.spaces.xmin[1], self.env.spaces.xmax[1]],
-                          vmin=self.env.spaces.vmin, vmax=self.env.spaces.vmax, alpha=0.8, cmap='RdBu_r')
-                cnt = ax.contour(self.x_plot, self.y_plot, y_mu,
-                                 levels=self.env.spaces.levels, colors='black', alpha=0.5)
-                ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
-                ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.8)
-                ax.set_title("model")
-
-                ax = fig.add_subplot(133)
-                ax.axis('off')
-                ax.imshow(-exp_imp,
-                          extent=[self.env.spaces.xmin[0], self.env.spaces.xmax[0],
-                                  self.env.spaces.xmin[1], self.env.spaces.xmax[1]],
-                          alpha=0.8, cmap='RdBu_r')
-                ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.8)
-                ax.set_title("expected improvement")
-
-                filename = self.path+"/png/"+str(self.it_plt)+".png"
-                plt.savefig(filename, dpi=100)
-                plt.close()
+                render_2D_metamodel(x, c, self.env.spaces, self.x_plot, self.y_plot,
+                                    self.cost_map, y_mu, y_std, exp_imp, filename)
 
         self.it_plt += 1
 

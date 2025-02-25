@@ -10,6 +10,7 @@ from sparkle.src.agent.agent   import agent_factory
 from sparkle.src.utils.timer   import timer
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.utils.default import set_default
+from sparkle.src.plot.plot     import render_1D_regular, render_2D_regular
 from sparkle.src.utils.error   import error
 
 ###############################################
@@ -84,62 +85,31 @@ class regular(base_trainer):
 
             # Check dimension
             if (self.env.spaces.dim > 2):
-                error("trainer::regularl", "render",
+                error("trainer::regular", "render",
                       "trainer rendering is only available for dim <= 2")
-
-            # Generate cost map once at first call to save computational time
-            if not hasattr(self, "cost_map"): self.generate_cost_map()
 
             # Create output folder
             if (self.it_plt == 0): os.makedirs(self.path+'/png', exist_ok=True)
+            filename = self.path+"/png/"+str(self.it_plt)+".png"
 
             # Render depending on dimension
             if (self.env.spaces.dim == 1):
 
-                plt.clf()
-                fig = plt.figure()
-                ax  = fig.add_subplot(111)
+                # Generate cost map once at first call to save computational time
+                if not hasattr(self, "cost_map"):
+                    self.x_plot, self.cost_map = self.env.generate_cost_map_1D()
 
-                ax.set_xlim([self.env.spaces.xmin[0], self.env.spaces.xmax[0]])
-                ax.set_ylim([self.env.spaces.vmin,    self.env.spaces.vmax])
-                ax.grid()
-                ax.set_yticklabels([])
-                ax.set_yticks([])
-                ax.plot(self.x_plot, self.cost_map, label="f(x)")
-                ax.set_ylabel('y')
-
-                ax.scatter(x[:,0], c[:], c="black", marker='o', alpha=0.8, label="samples")
-                ax.legend(loc='upper left')
-
-                filename = self.path+"/png/"+str(self.it_plt)+".png"
-                fig.tight_layout()
-                plt.savefig(filename, dpi=100)
-                plt.close()
+                render_1D_regular(x, c, self.env.spaces,
+                                  self.x_plot, self.cost_map, filename)
 
             # Render depending on dimension
             if (self.env.spaces.dim == 2):
 
-                plt.clf()
-                fig = plt.figure()
-                ax  = fig.add_subplot(111)
-                fig.set_size_inches(3, 3)
-                fig.subplots_adjust(0,0,1,1)
+                # Generate cost map once at first call to save computational time
+                if not hasattr(self, "cost_map"):
+                    self.x_plot, self.y_plot, self.cost_map = self.env.generate_cost_map_2D()
 
-                ax.set_xlim([self.env.spaces.xmin[0], self.env.spaces.xmax[0]])
-                ax.set_ylim([self.env.spaces.xmin[1], self.env.spaces.xmax[1]])
-                ax.axis('off')
-                ax.imshow(self.cost_map,
-                          extent=[self.env.spaces.xmin[0], self.env.spaces.xmax[0],
-                                  self.env.spaces.xmin[1], self.env.spaces.xmax[1]],
-                          vmin=self.env.spaces.vmin, vmax=self.env.spaces.vmax, alpha=0.8, cmap='RdBu_r')
-
-                cnt = ax.contour(self.x_plot, self.y_plot, self.cost_map,
-                                 levels=self.env.spaces.levels, colors='black', alpha=0.5)
-                ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
-                ax.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.8)
-
-                filename = self.path+"/png/"+str(self.it_plt)+".png"
-                plt.savefig(filename, dpi=100)
-                plt.close()
+                render_2D_regular(x, c, self.env.spaces,
+                                  self.x_plot, self.y_plot, self.cost_map, filename)
 
         self.it_plt += 1
