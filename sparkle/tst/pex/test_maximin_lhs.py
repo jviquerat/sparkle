@@ -1,0 +1,31 @@
+# Generic imports
+import os
+import pytest
+import types
+import numpy as np
+
+# Custom imports
+from sparkle.tst.tst             import *
+from sparkle.src.pex.maximin_lhs import maximin_lhs
+from sparkle.src.env.spaces      import environment_spaces
+
+###############################################
+### Test maximin lhs pex
+def test_maximin_lhs():
+
+    dim      = 2
+    xmin     = np.array([0.0, 0.0])
+    xmax     = np.array([1.0, 1.0])
+    n_points = 12
+
+    pms          = types.SimpleNamespace()
+    pms.n_points = n_points
+    pms.n_iter   = 1000
+
+    loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
+    s = environment_spaces(loc_space)
+    pex = maximin_lhs(s, pms)
+    assert(pex.n_points == n_points)
+    pex.render_2d()
+    filename = pex.name_+".png"
+    os.remove(filename)
