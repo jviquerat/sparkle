@@ -120,7 +120,8 @@ def render_2D_regular(filename, spaces, x, c, x_plot, y_plot, cost_map):
 # 1D rendering for metamodel trainer
 def render_1D_metamodel(filename, spaces, x, c,
                         x_plot, cost_map,
-                        y_mu, y_std, fct, fct_name):
+                        y_mu, y_std, fct, fct_name,
+                        highlight_last=True):
 
     plt.clf()
     fig = plt.figure()
@@ -135,7 +136,8 @@ def render_1D_metamodel(filename, spaces, x, c,
     ax.set_ylabel('y')
 
     ax.scatter(x[:,0], c[:], c="black", marker='o', alpha=0.5, label="samples")
-    ax.scatter(x[-1,0], c[-1], c='red', marker='o', alpha=0.5)
+    if highlight_last:
+        ax.scatter(x[-1,0], c[-1], c='red', marker='o', alpha=0.5)
     ax.legend(loc='upper left')
 
     ax.plot(x_plot, y_mu, linestyle='dashed', label="model")
@@ -157,7 +159,8 @@ def render_1D_metamodel(filename, spaces, x, c,
 # 2D rendering for metamodel trainer
 def render_2D_metamodel(filename, spaces, x, c,
                         x_plot, y_plot, cost_map,
-                        y_mu, y_std, fct, fct_name):
+                        y_mu, y_std, fct, fct_name,
+                        highlight_last=True):
 
     plt.clf()
     fig = plt.figure()
@@ -179,7 +182,8 @@ def render_2D_metamodel(filename, spaces, x, c,
                      colors='black', alpha=0.5)
     ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
     ax.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.5)
-    ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
+    if highlight_last:
+        ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
     ax.set_title("f(x)")
 
     ax = fig.add_subplot(132)
@@ -191,7 +195,8 @@ def render_2D_metamodel(filename, spaces, x, c,
     cnt = ax.contour(x_plot, y_plot, y_mu, levels=spaces.levels,
                      colors='black', alpha=0.5)
     ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
-    ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
+    if highlight_last:
+        ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
     ax.set_title("model")
 
     ax = fig.add_subplot(133)
@@ -200,7 +205,8 @@ def render_2D_metamodel(filename, spaces, x, c,
               extent=[spaces.xmin[0], spaces.xmax[0],
                       spaces.xmin[1], spaces.xmax[1]],
               alpha=0.8, cmap='RdBu_r')
-    ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
+    if highlight_last:
+        ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
     ax.set_title(fct_name)
 
     plt.savefig(filename, dpi=100)
