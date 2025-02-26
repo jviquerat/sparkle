@@ -14,7 +14,6 @@ def test_pbo():
 
     # Run test
     runner("sparkle/tst/agent/json/parabola_pbo.json",
-           "sparkle/tst/agent/data/parabola_pbo.dat",
            1.296554897777778e-07, 6.301704800000000e-09)
 
 ###############################################
@@ -26,5 +25,4 @@ def test_pbo_default():
 
     # Run test
     runner("sparkle/tst/agent/json/parabola_pbo_default.json",
-           "sparkle/tst/agent/data/parabola_pbo.dat",
            1.296554897777778e-07, 6.301704800000000e-09)
