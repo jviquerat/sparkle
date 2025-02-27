@@ -20,7 +20,10 @@
         },
         "model": {
             "name": "kriging",
-            "optimize_every": 100
+            "optimize_every": 100,
+            "kernel": {
+                "name": "matern52"
+            }
         },
         "agent": {
             "name": "ego",

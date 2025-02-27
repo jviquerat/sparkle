@@ -13,6 +13,9 @@
         "n_points": 20
     },
     "model": {
-    	"name": "kriging"
+    	  "name": "kriging",
+        "kernel": {
+            "name": "matern52"
+        }
     }
 }
