@@ -19,7 +19,8 @@
             "n_points": 20
         },
         "model": {
-            "name": "kriging"
+            "name": "kriging",
+            "optimize_every": 100
         },
         "agent": {
             "name": "ego",

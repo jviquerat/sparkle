@@ -15,16 +15,20 @@ from sparkle.src.env.spaces    import environment_spaces
 ### Test kriging model
 def test_kriging():
 
-    # Create pex
     pms          = types.SimpleNamespace()
     pms.n_points = 10
+    space_dict   = {"dim": 2,
+                    "x0": None,
+                    "xmin": np.array([0,0]),
+                    "xmax": np.array([1,1])}
+    space        = environment_spaces(space_dict)
+    lhs_pex      = lhs(space, pms)
+    y            = np.cos(lhs_pex.x[:,0]) + np.cos(lhs_pex.x[:,1])
 
-    loc_space = {"dim": 2, "x0": None, "xmin": np.array([0,0]), "xmax": np.array([1,1])}
-    s       = environment_spaces(loc_space)
-    lhs_pex = lhs(s, pms)
-    y       = np.cos(lhs_pex.x[:,0]) + np.cos(lhs_pex.x[:,1])
-
-    model = kriging(s, pms)
+    pms             = types.SimpleNamespace()
+    pms.kernel      = types.SimpleNamespace()
+    pms.kernel.name = "matern52"
+    model           = kriging(space, pms)
     model.build(lhs_pex.x, y)
 
     x_new = np.array([[0.5,0.5]])

@@ -20,9 +20,12 @@
         },
         "model": {
             "name": "kriging",
-            "recompute_theta": false,
+            "optimize_every": 100,
             "load_model": true,
-            "model_file": "sparkle/tst/agent/data/sinebump_ego_model.dat"
+            "model_file": "sparkle/tst/agent/data/sinebump_ego_model.dat",
+            "kernel": {
+                "name": "gaussian"
+            }
         },
         "agent": {
             "name": "ego",

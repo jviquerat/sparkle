@@ -8,6 +8,7 @@ from   numpy.linalg import solve
 from sparkle.src.agent.optimizer import optimizer
 from sparkle.src.env.spaces      import environment_spaces
 from sparkle.src.model.base      import base_model
+from sparkle.src.kernel.kernel   import kernel_factory
 from sparkle.src.utils.default   import set_default
 from sparkle.src.utils.error     import error
 from sparkle.src.utils.prints    import spacer
@@ -18,9 +19,17 @@ class kriging(base_model):
     def __init__(self, spaces, pms):
         super().__init__(spaces)
 
-        self.recompute_theta_ = set_default("recompute_theta", False, pms)
+        # Set parameters
+        self.spaces           = spaces
+        self.optimize_every_  = set_default("optimize_every", 1000, pms)
         self.load_model_      = set_default("load_model", False, pms)
 
+        # Initialize kernel
+        self.kernel = kernel_factory.create(pms.kernel.name,
+                                            spaces = spaces,
+                                            pms    = pms.kernel)
+
+        # Check model loading
         if (self.load_model_):
             if not hasattr(pms, "model_file"):
                 error("kriging", "__init__",
@@ -32,111 +41,46 @@ class kriging(base_model):
     # Reset model
     def reset(self):
 
-        self.diag_eps_ = 1.0e-8
-
         self.K_  = None
         self.x_  = None
         self.y_  = None
-        self.ns_ = None
-        self.nf_ = None
+        self.it  = 0
 
-        if (self.recompute_theta_): self.theta_ = None
+        self.kernel.reset()
 
     # Build model from input
     def build(self, x, y):
 
-        self.reset()
+        self.x_ = self.normalize(x)
+        self.y_ = y
 
-        self.x_   = self.normalize(x)
-        self.y_   = y
-        self.ns_  = x.shape[0] # nb of samples
-        self.nf_  = x.shape[1] # nb of features
-        self.dim_ = self.nf_ + 2
+        if (self.it%self.optimize_every_ == 0):
+            self.kernel.optimize(self.x_, self.y_)
 
-        if (self.recompute_theta_ or not hasattr(self, "theta_")):
-            x0          = np.zeros(self.dim_)
-            xmin        =-2.0*np.ones(self.dim_)
-            xmin[-2:]   =-3.0
-            xmax        = np.ones(self.dim_)
-
-            dict_space = {"dim": self.dim_, "x0": x0, "xmin": xmin, "xmax": xmax}
-            space      = environment_spaces(dict_space)
-
-            pms             = types.SimpleNamespace()
-            pms.n_points    = 200
-            pms.n_steps_max = 10
-            pms.clip        = True
-            pms.silent      = True
-            opt = optimizer("cmaes", space, pms, self.log_likelihood)
-            theta, c = opt.optimize()
-
-            self.theta_ = np.exp(theta)
-
-        self.K_ = self.kernel(self.x_, self.x_, self.theta_)
+        self.it += 1
+        self.K_  = self.kernel(self.x_, self.x_)
 
     # Evaluate at test points
-    def evaluate(self, xt, theta=None):
-
-        if theta is None: theta = self.theta_
+    def evaluate(self, xt):
 
         xn  = self.normalize(xt)
-        Kl  = self.kernel(xn, self.x_, theta)
+        Kl  = self.kernel(xn, self.x_)
         mu  = matmul(Kl, solve(self.K_, self.y_))
-        Kt  = self.kernel(xn, xn, theta)
+        Kt  = self.kernel(xn, xn)
         std = np.diag(Kt - matmul(Kl, solve(self.K_, Kl.T)))
         std = np.sqrt(np.abs(std))
 
         return mu, std
 
-    # Compute log-likelihood
-    def log_likelihood(self, log_theta):
-
-        theta = np.exp(log_theta)
-
-        K_   = self.kernel(self.x_, self.x_, theta)
-        ones = np.ones(self.ns_)
-        mu   = matmul(ones.T, solve(K_, self.y_))
-        mu  /= matmul(ones.T, solve(K_, ones))
-
-        res     = self.y_ - mu
-        var     = matmul(res.T, solve(K_, res))/self.ns_
-        if (var < 0.0): return 1.0e10
-        log_lkh =-0.5*(-self.ns_*np.log(var) + np.linalg.slogdet(K_)[1])
-
-        return log_lkh
-
-    def kernel(self, x, y, theta):
-
-        nx  = x.shape[0] # nb of samples in x
-        ny  = y.shape[0] # nx of samples in y
-        corr = np.zeros((nx,ny))
-
-        for i in range(nx):
-            for j in range(ny):
-                corr[i,j] = self.cov_function(theta, abs(x[i] - y[j]))
-                if (i==j): corr[i,j] += self.diag_eps_
-
-        return corr
-
-    # Compute covariance function
-    def cov_function(self, theta, dist):
-
-        val = 1.0
-
-        for i in range(dist.shape[0]):
-            val *= np.exp(-0.5*np.square(dist[i]/theta[i]))
-
-        return theta[-2]*val + theta[-1]
-
     # Dump kriging data
     def dump(self, filename):
 
         with open(filename, "w") as f:
-            f.write(f"{self.nf_} \n")
-            f.write(f"{self.ns_} \n")
-            f.write(f"{self.dim_} \n")
-            f.write(f"{self.diag_eps_} \n")
-            np.savetxt(f, self.theta_)
+            f.write(f"{self.kernel.nf_} \n")
+            f.write(f"{self.kernel.ns_} \n")
+            f.write(f"{self.kernel.dim_} \n")
+            f.write(f"{self.kernel.diag_eps_} \n")
+            np.savetxt(f, self.kernel.theta_)
             np.savetxt(f, self.K_)
             np.savetxt(f, self.x_)
             np.savetxt(f, self.y_)
@@ -145,39 +89,40 @@ class kriging(base_model):
     def load(self, filename=None):
 
         self.reset()
+        self.it += 1
 
         if filename is None: filename = self.model_file_
 
         with open(filename, "r") as f:
-            self.nf_       = int(f.readline().split(" ")[0])
-            self.ns_       = int(f.readline().split(" ")[0])
-            self.dim_      = int(f.readline().split(" ")[0])
-            self.diag_eps_ = float(f.readline().split(" ")[0])
+            self.kernel.nf_       = int(f.readline().split(" ")[0])
+            self.kernel.ns_       = int(f.readline().split(" ")[0])
+            self.kernel.dim_      = int(f.readline().split(" ")[0])
+            self.kernel.diag_eps_ = float(f.readline().split(" ")[0])
 
-            self.theta_ = np.zeros(self.dim_)
-            self.K_     = np.zeros((self.ns_, self.ns_))
-            self.x_     = np.zeros((self.ns_, self.nf_))
-            self.y_     = np.zeros(self.ns_)
+            self.K_     = np.zeros((self.kernel.ns_, self.kernel.ns_))
+            self.x_     = np.zeros((self.kernel.ns_, self.kernel.nf_))
+            self.y_     = np.zeros(self.kernel.ns_)
 
             l = 4
-            self.theta_ = np.loadtxt(filename,
-                                     skiprows=l,
-                                     max_rows=self.dim_)
+            self.kernel.theta_ = np.loadtxt(filename,
+                                            skiprows=l,
+                                            max_rows=self.kernel.dim_,
+                                            ndmin=1)
 
-            l += self.dim_
-            for i in range(self.dim_): f.readline()
+            l += self.kernel.dim_
+            for i in range(self.kernel.dim_): f.readline()
             self.K_ = np.loadtxt(filename,
                                  skiprows=l,
-                                 max_rows=self.ns_)
+                                 max_rows=self.kernel.ns_)
 
-            l += self.ns_
-            for i in range(self.ns_): f.readline()
+            l += self.kernel.ns_
+            for i in range(self.kernel.ns_): f.readline()
             self.x_ = np.loadtxt(filename,
                                  skiprows=l,
-                                 max_rows=self.ns_)
+                                 max_rows=self.kernel.ns_)
 
-            l += self.ns_
-            for i in range(self.ns_): f.readline()
+            l += self.kernel.ns_
+            for i in range(self.kernel.ns_): f.readline()
             self.y_ = np.loadtxt(filename,
                                  skiprows=l,
-                                 max_rows=self.ns_)
+                                 max_rows=self.kernel.ns_)

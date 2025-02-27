@@ -1,0 +1,18 @@
+{
+    "naming": {
+        "env": true,
+        "model": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "multi1d"
+    },
+    "pex": {
+        "name": "lhs",
+        "n_points": 6
+    },
+    "model": {
+    	"name": "kriging"
+    }
+}
