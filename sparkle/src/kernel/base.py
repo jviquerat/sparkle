@@ -6,7 +6,7 @@ from   numpy.linalg import solve
 
 # Custom imports
 from sparkle.src.env.spaces      import environment_spaces
-from sparkle.src.agent.optimizer import optimizer
+from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
 
 ###############################################
 ### Base kernel
@@ -26,21 +26,13 @@ class base_kernel():
         self.ns_ = x.shape[0] # nb of samples
         self.nf_ = x.shape[1] # nb of features
 
-        dict_space = {"dim": self.dim_,
-                      "x0": self.theta_,
-                      "xmin": self.xmin_,
-                      "xmax": self.xmax_}
-        space      = environment_spaces(dict_space)
+        opt  = ms_lbfgsb()
+        x, c = opt.optimize(self.log_likelihood,
+                            self.xmin_,
+                            self.xmax_,
+                            10*self.dim_)
 
-        pms             = types.SimpleNamespace()
-        pms.n_points    = 200
-        pms.n_steps_max = 10
-        pms.clip        = True
-        pms.silent      = True
-        opt             = optimizer("cmaes", space, pms, self.log_likelihood)
-        log_theta, cost = opt.optimize()
-
-        self.theta_ = np.exp(log_theta)
+        self.theta_ = np.exp(x)
 
     # Compute log-likelihood
     def log_likelihood(self, log_theta):

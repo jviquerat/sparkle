@@ -14,7 +14,7 @@ class matern52(base_kernel):
         self.dim_      = 1
         self.x0_       = np.zeros(self.dim_)
         self.xmin_     =-2.0*np.ones(self.dim_)
-        self.xmax_     = np.ones(self.dim_)
+        self.xmax_     = np.zeros(self.dim_)
         self.diag_eps_ = 1.0e-15
 
         self.reset()
