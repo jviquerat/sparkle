@@ -6,7 +6,7 @@ from math import sqrt, pi, exp, erf
 # Custom imports
 from sparkle.src.utils.default   import set_default
 from sparkle.src.agent.base      import base_agent
-from sparkle.src.agent.optimizer import optimizer
+from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
 from sparkle.src.env.spaces      import environment_spaces
 from sparkle.src.model.kriging   import kriging
 from sparkle.src.utils.prints    import spacer
@@ -40,17 +40,14 @@ class ego(base_agent):
     # Sample new point based on expected improvement
     def sample(self):
 
-        pms = types.SimpleNamespace()
-        pms.n_points    = 200
-        pms.n_steps_max = 100
-        pms.clip        = True
-        pms.silent      = True
+        opt  = ms_lbfgsb()
+        x, c = opt.optimize(self.exp_imp,
+                            self.spaces.xmin,
+                            self.spaces.xmax,
+                            20*self.spaces.dim,
+                            tol=1.0e-6, max_iter=50)
 
-        opt  = optimizer("cmaes", self.spaces, pms, self.exp_imp)
-        x, c = opt.optimize()
-        x    = np.reshape(x, (-1,self.spaces.dim))
-
-        return x
+        return np.reshape(x, (-1,self.spaces.dim))
 
     # Compute expected improvement
     # We actually return -ei so it can be directly minimized
@@ -63,13 +60,13 @@ class ego(base_agent):
         n  = x.shape[0]
         ei = np.zeros(n)
         for i in range(n):
-            if std[i] < 1.0e-15:
-                ei[i] = 0.0
-            else:
-                prob      = (yb - mu[i])/std[i]
-                cum_dist  = 0.5*(1.0 + erf(prob/sqrt(2.0)))
-                prob_dist = (1.0/sqrt(2.0*pi))*np.exp(-0.5*prob**2)
-                ei[i]     = std[i]*(prob*cum_dist + prob_dist)
+            # if std[i] < 1.0e-15:
+            #     ei[i] = 0.0
+            # else:
+            prob      = (yb - mu[i])/std[i]
+            cum_dist  = 0.5*(1.0 + erf(prob/sqrt(2.0)))
+            prob_dist = (1.0/sqrt(2.0*pi))*np.exp(-0.5*prob**2)
+            ei[i]     = std[i]*(prob*cum_dist + prob_dist)
 
         return -ei
 
