@@ -1,0 +1,21 @@
+{
+    "naming": {
+        "env": true,
+        "model": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "branin"
+    },
+    "pex": {
+        "name": "maximin_lhs",
+        "n_points": 20
+    },
+    "model": {
+    	  "name": "kriging",
+        "kernel": {
+            "name": "matern52"
+        }
+    }
+}

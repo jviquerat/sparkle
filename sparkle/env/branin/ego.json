@@ -15,13 +15,15 @@
             "name": "branin"
         },
         "pex": {
-            "name": "lhs",
+            "name": "maximin_lhs",
             "n_points": 20
         },
         "model": {
             "name": "kriging",
-            "recompute_theta": false,
-            "load_model": false
+            "optimize_every": 100,
+            "kernel": {
+                "name": "matern52"
+            }
         },
         "agent": {
             "name": "ego",

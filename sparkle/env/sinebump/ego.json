@@ -15,18 +15,18 @@
             "name": "sinebump"
         },
         "pex": {
-            "name": "lhs",
-            "n_points": 25
+            "name": "maximin_lhs",
+            "n_points": 20
         },
         "model": {
             "name": "kriging",
-            "recompute_theta": false,
+            "optimize_every": 100,
             "load_model": false,
             "model_file": "sparkle/env/sinebump/model.dat"
         },
         "agent": {
             "name": "ego",
-            "n_steps_max": 25
+            "n_steps_max": 20
         }
     }
 }
