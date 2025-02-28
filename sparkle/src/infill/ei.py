@@ -2,10 +2,6 @@
 import numpy as np
 from math import sqrt, pi, exp, erf
 
-# Custom imports
-#from sparkle.src.kernel.base   import base_kernel
-#from sparkle.src.utils.default import set_default
-
 ###############################################
 ### Expected improvement infill
 class ei():
