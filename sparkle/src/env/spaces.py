@@ -8,12 +8,12 @@ class environment_spaces:
 
         self.natural_dim_ = spaces["dim"]
         self.true_dim_    = self.natural_dim_
-        self.x0_          = spaces["x0"]
         self.xmin_        = spaces["xmin"]
         self.xmax_        = spaces["xmax"]
 
         # These attributes may not be defined
         # get() defaults to None if the attribute is not present
+        self.x0_     = spaces.get("x0")
         self.vmin_   = spaces.get("vmin")
         self.vmax_   = spaces.get("vmax")
         self.levels_ = spaces.get("levels")
