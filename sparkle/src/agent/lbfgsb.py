@@ -24,8 +24,6 @@ class lbfgsb():
         x = x0.copy()
 
         # Extract lower and upper bounds as NumPy arrays.
-        # l = np.array([b[0] for b in bounds])
-        # u = np.array([b[1] for b in bounds])
         l = xmin
         u = xmax
 
@@ -55,7 +53,7 @@ class lbfgsb():
             d = self.search_direction(x, g, s_list, y_list, l, u)
 
             # Perform line search to determine step length.
-            alpha = self.line_search(f, x, d, l, u, g)
+            alpha = self.strong_wolfe_line_search(f, x, dx, d, l, u)
 
             # Update the iterate (always project back onto the feasible set)
             x_new = self.project(x + alpha * d, l, u)
@@ -163,15 +161,33 @@ class lbfgsb():
                 d_adjusted[i] = 0
         return d_adjusted
 
-    # Backtracking line search that satisfies the Armijo condition:
-    # f(x + alpha*d) <= f(x) + c1 * alpha * g^T * d
-    # The candidate iterate is always projected back onto the feasible set.
-    def line_search(self, f, x, d, l, u, g, c1=1e-4, alpha0=1.0, tau=0.5, max_iter=20):
-        alpha = alpha0
+    # Backtracking line search with strong wolfe
+    def strong_wolfe_line_search(self, f, x, dx, d, l, u, alpha_init=1.0,
+                                 c1=1e-3, c2=0.9, tau=0.5, max_iters=20):
+
+        alpha = alpha_init
         f_x = f(x)
-        for _ in range(max_iter):
+        grad_x = self.grad_f(f, x, dx)
+        grad_dot_d = np.dot(grad_x, d)  # ∇f(x_k) · d_k
+
+        for _ in range(max_iters):
+            # Compute new candidate point with projection onto bounds
             x_new = self.project(x + alpha * d, l, u)
-            if f(x_new) <= f_x + c1 * alpha * np.dot(g, d):
-                return alpha
-            alpha *= tau
-        return alpha
+            f_new = f(x_new)
+            grad_new = self.grad_f(f, x_new, dx)
+            grad_new_dot_d = np.dot(grad_new, d)
+
+            # Armijo Condition (sufficient decrease)
+            if f_new > f_x + c1 * alpha * grad_dot_d:
+                alpha *= tau  # Reduce step size
+                continue
+
+            # Strong Wolfe Curvature Condition
+            if abs(grad_new_dot_d) > c2 * abs(grad_dot_d):
+                alpha *= tau  # Reduce step size
+                continue
+
+            # Both conditions satisfied
+            return alpha
+
+        return alpha  # Return final step size if max iterations reached
