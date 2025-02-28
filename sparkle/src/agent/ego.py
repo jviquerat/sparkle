@@ -1,13 +1,12 @@
 # Generic imports
-import types
 import numpy as np
-from math import sqrt, pi, exp, erf
 
 # Custom imports
 from sparkle.src.utils.default   import set_default
 from sparkle.src.agent.base      import base_agent
 from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
 from sparkle.src.env.spaces      import environment_spaces
+from sparkle.src.infill.infill   import infill_factory
 from sparkle.src.model.kriging   import kriging
 from sparkle.src.utils.prints    import spacer
 from sparkle.src.utils.error     import error
@@ -20,9 +19,14 @@ class ego(base_agent):
 
         self.name        = "EGO"
         self.spaces      = spaces
-        self.n_steps_max = set_default("n_steps_max", 20, pms)
         self.n_points    = 1
+        self.n_steps_max = set_default("n_steps_max", 20, pms)
         self.model       = model
+
+        # Initialize infill
+        self.infill = infill_factory.create(pms.infill,
+                                            spaces = spaces,
+                                            model  = model)
 
         self.summary()
 
@@ -40,8 +44,13 @@ class ego(base_agent):
     # Sample new point based on expected improvement
     def sample(self):
 
+        # Set best point to infill before optimization
+        xb, yb  = self.best_point()
+        self.infill.set_best(xb, yb)
+
+        # Optimize
         opt  = ms_lbfgsb()
-        x, c = opt.optimize(self.exp_imp,
+        x, c = opt.optimize(self.infill,
                             self.spaces.xmin,
                             self.spaces.xmax,
                             20*self.spaces.dim,
@@ -49,26 +58,23 @@ class ego(base_agent):
 
         return np.reshape(x, (-1,self.spaces.dim))
 
-    # Compute expected improvement
-    # We actually return -ei so it can be directly minimized
-    def exp_imp(self, x):
+    # # Compute expected improvement
+    # # We actually return -ei so it can be directly minimized
+    # def exp_imp(self, x):
 
-        x       = np.reshape(x, (-1,self.dim))
-        mu, std = self.model.evaluate(x)
-        xb, yb  = self.best_point()
+    #     x       = np.reshape(x, (-1,self.dim))
+    #     mu, std = self.model.evaluate(x)
 
-        n  = x.shape[0]
-        ei = np.zeros(n)
-        for i in range(n):
-            # if std[i] < 1.0e-15:
-            #     ei[i] = 0.0
-            # else:
-            prob      = (yb - mu[i])/std[i]
-            cum_dist  = 0.5*(1.0 + erf(prob/sqrt(2.0)))
-            prob_dist = (1.0/sqrt(2.0*pi))*np.exp(-0.5*prob**2)
-            ei[i]     = std[i]*(prob*cum_dist + prob_dist)
 
-        return -ei
+    #     n  = x.shape[0]
+    #     ei = np.zeros(n)
+    #     for i in range(n):
+    #         prob      = (yb - mu[i])/std[i]
+    #         cum_dist  = 0.5*(1.0 + erf(prob/sqrt(2.0)))
+    #         prob_dist = (1.0/sqrt(2.0*pi))*np.exp(-0.5*prob**2)
+    #         ei[i]     = std[i]*(prob*cum_dist + prob_dist)
+
+    #     return -ei
 
     # Step
     def step(self, x, c):
