@@ -45,51 +45,23 @@ class multiproc_environments(base_parallel_environments):
     # Get environment spaces
     def get_spaces(self):
 
-        return [self.dim(), self.x0(), self.xmin(), self.xmax()]
+        spaces = {"dim": self.get("dim"),
+                  "x0": self.get("x0"),
+                  "xmin": self.get("xmin"),
+                  "xmax": self.get("xmax"),
+                  "vmin": self.get("vmin"),
+                  "vmax": self.get("vmax"),
+                  "levels": self.get("levels")}
 
-    # Return dimension of environment
-    def dim(self):
+        return spaces
 
-        # Send
-        self.pipes[0].send(('dim', None))
+    # Get quantity based on name
+    def get(self, name):
 
-        # Receive
-        d = self.pipes[0].recv()
+        self.pipes[0].send((name, None))
+        rcv = self.pipes[0].recv()
 
-        return d
-
-    # Return x0 value
-    def x0(self):
-
-        # Send
-        self.pipes[0].send(('x0', None))
-
-        # Receive
-        x0 = self.pipes[0].recv()
-
-        return x0
-
-    # Return xmin value
-    def xmin(self):
-
-        # Send
-        self.pipes[0].send(('xmin', None))
-
-        # Receive
-        xm = self.pipes[0].recv()
-
-        return xm
-
-    # Return xmax value
-    def xmax(self):
-
-        # Send
-        self.pipes[0].send(('xmax', None))
-
-        # Receive
-        xm = self.pipes[0].recv()
-
-        return xm
+        return rcv
 
     # Compute cost in all environments
     def cost(self, x):
