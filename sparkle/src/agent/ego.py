@@ -58,24 +58,6 @@ class ego(base_agent):
 
         return np.reshape(x, (-1,self.spaces.dim))
 
-    # # Compute expected improvement
-    # # We actually return -ei so it can be directly minimized
-    # def exp_imp(self, x):
-
-    #     x       = np.reshape(x, (-1,self.dim))
-    #     mu, std = self.model.evaluate(x)
-
-
-    #     n  = x.shape[0]
-    #     ei = np.zeros(n)
-    #     for i in range(n):
-    #         prob      = (yb - mu[i])/std[i]
-    #         cum_dist  = 0.5*(1.0 + erf(prob/sqrt(2.0)))
-    #         prob_dist = (1.0/sqrt(2.0*pi))*np.exp(-0.5*prob**2)
-    #         ei[i]     = std[i]*(prob*cum_dist + prob_dist)
-
-    #     return -ei
-
     # Step
     def step(self, x, c):
 
