@@ -62,7 +62,7 @@ class base_parallel_environments():
         n_plot   = 100
         x_plot   = np.linspace(self.spaces.xmin[0], self.spaces.xmax[0], num=n_plot)
         y_plot   = np.linspace(self.spaces.xmax[1], self.spaces.xmin[1], num=n_plot)
-        grid          = np.array(np.meshgrid(x_plot, y_plot))
+        grid     = np.array(np.meshgrid(x_plot, y_plot))
         x_plot   = grid[0]
         y_plot   = grid[1]
         cost_map = np.zeros((n_plot,n_plot))
