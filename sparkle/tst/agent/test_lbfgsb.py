@@ -58,4 +58,3 @@ def test_mslbfgsb():
     assert(compare(x[0], 3.1851537547707536, 1.0e-15))
     assert(compare(x[1], 3.1298008003694275, 1.0e-15))
     assert(compare(c,   -1.8083520358717708, 1.0e-15))
-
