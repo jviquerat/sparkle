@@ -25,28 +25,31 @@ def multiproc_worker(env_name, args, cpu, path, pipe):
                 c = env.cost(data)
                 pipe.send(c)
 
-            if command == 'reset':
+            elif command == 'reset':
                 r = env.reset(data)
                 pipe.send(r)
 
-            if (command == 'render'):
+            elif (command == 'render'):
                 rnd = env.render(data[0], data[1])
                 pipe.send(rnd)
 
-            if command == 'close':
+            elif command == 'close':
                 pipe.send(None)
                 break
 
-            if command == 'dim':
+            elif command == 'dim':
                 pipe.send(env.dim)
 
-            if command == 'x0':
+            elif command == 'x0':
                 pipe.send(env.x0)
 
-            if command == 'xmin':
+            elif command == 'xmin':
                 pipe.send(env.xmin)
 
-            if command == 'xmax':
+            elif command == 'xmax':
                 pipe.send(env.xmax)
+
+            else:
+                pipe.send(None)
     finally:
         env.close()
