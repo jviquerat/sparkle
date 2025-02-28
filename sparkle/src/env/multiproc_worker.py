@@ -49,6 +49,15 @@ def multiproc_worker(env_name, args, cpu, path, pipe):
             elif command == 'xmax':
                 pipe.send(env.xmax)
 
+            elif command == 'vmin':
+                pipe.send(env.vmin)
+
+            elif command == 'vmax':
+                pipe.send(env.vmax)
+
+            elif command == 'levels':
+                pipe.send(env.levels)
+
             else:
                 pipe.send(None)
     finally:
