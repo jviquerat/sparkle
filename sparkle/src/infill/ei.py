@@ -19,8 +19,8 @@ class ei():
         self.xb = xb
         self.yb = yb
 
-    # () operator
-    def __call__(self, x):
+    # Actual infill criterion
+    def infill(self, x):
 
         x       = np.reshape(x, (-1,self.spaces.dim))
         mu, std = self.model.evaluate(x)
@@ -33,4 +33,11 @@ class ei():
             prob_dist = (1.0/sqrt(2.0*pi))*np.exp(-0.5*prob**2)
             ei[i]     = std[i]*(prob*cum_dist + prob_dist)
 
-        return -ei
+        return ei
+
+    # () operator used for optimization
+    def __call__(self, x):
+
+        ei = self.infill(x)
+
+        return -ei[0]

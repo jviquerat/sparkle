@@ -176,7 +176,7 @@ class metamodel(base_trainer):
 
                 xx          = np.reshape(self.x_plot, (-1,1))
                 y_mu, y_std = self.model.evaluate(xx)
-                infill      = self.agent.infill(xx)
+                infill      = self.agent.infill.infill(xx)
 
                 fct_name = "infill"
                 render_1D_metamodel(filename, self.env.spaces, x, c,
@@ -201,7 +201,7 @@ class metamodel(base_trainer):
                         mu, std      = self.model.evaluate(xx)
                         y_mu[i,j]    = mu[0]
                         y_std[i,j]   = std[0]
-                        infill[i,j]  = self.agent.infill(xx)[0]
+                        infill[i,j]  = self.agent.infill.infill(xx)[0]
 
                 fct_name = "acquisition function"
                 render_2D_metamodel(filename, self.env.spaces, x, c,
