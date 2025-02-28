@@ -1,10 +1,13 @@
 # Generic imports
+import types
 import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.utils.default import set_default
-from sparkle.src.agent.base    import base_agent
+from sparkle.src.utils.default   import set_default
+from sparkle.src.agent.base      import base_agent
+from sparkle.src.pex.maximin_lhs import maximin_lhs
+from sparkle.src.env.spaces      import environment_spaces
 
 ###############################################
 ### CEM
@@ -32,14 +35,18 @@ class cem(base_agent):
 
     # Sample from distribution
     def sample(self):
+        pms          = types.SimpleNamespace()
+        pms.n_points = self.n_points
+        pms.n_iter   = 1000
 
-        x = np.zeros((self.n_points, self.dim))
+        spaces = {"dim": self.spaces.dim,
+                  "xmin": self.xmin_cem,
+                  "xmax": self.xmax_cem}
 
-        for i in range(self.n_points):
-            x[i,:] = np.random.uniform(low  = self.xmin_cem,
-                                       high = self.xmax_cem)
+        spaces = environment_spaces(spaces)
+        pex    = maximin_lhs(spaces, pms)
 
-        return x
+        return pex.x
 
     # Step
     def step(self, x, c):
