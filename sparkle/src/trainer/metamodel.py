@@ -176,12 +176,12 @@ class metamodel(base_trainer):
 
                 xx          = np.reshape(self.x_plot, (-1,1))
                 y_mu, y_std = self.model.evaluate(xx)
-                exp_imp     = self.agent.exp_imp(xx)
+                infill      = self.agent.infill(xx)
 
-                fct_name = "acquisition function"
+                fct_name = "infill"
                 render_1D_metamodel(filename, self.env.spaces, x, c,
                                     self.x_plot, self.cost_map,
-                                    y_mu, y_std, exp_imp, fct_name)
+                                    y_mu, y_std, infill, fct_name)
 
             # Render depending on dimension
             if (self.env.spaces.dim == 2):
@@ -193,7 +193,7 @@ class metamodel(base_trainer):
                 n_plot  = self.cost_map.shape[0]
                 y_mu    = np.zeros((n_plot, n_plot))
                 y_std   = np.zeros((n_plot, n_plot))
-                exp_imp = np.zeros((n_plot, n_plot))
+                infill  = np.zeros((n_plot, n_plot))
 
                 for i in range(n_plot):
                     for j in range(n_plot):
@@ -201,12 +201,12 @@ class metamodel(base_trainer):
                         mu, std      = self.model.evaluate(xx)
                         y_mu[i,j]    = mu[0]
                         y_std[i,j]   = std[0]
-                        exp_imp[i,j] = self.agent.exp_imp(xx)[0]
+                        infill[i,j]  = self.agent.infill(xx)[0]
 
                 fct_name = "acquisition function"
                 render_2D_metamodel(filename, self.env.spaces, x, c,
                                     self.x_plot, self.y_plot, self.cost_map,
-                                    y_mu, y_std, exp_imp, fct_name)
+                                    y_mu, y_std, infill, fct_name)
 
         self.it_plt += 1
 
