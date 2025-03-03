@@ -27,8 +27,8 @@
         },
         "agent": {
             "name": "ego",
-            "n_steps_max": 5,
-            "infill": "ei"
+            "n_steps_max": 10,
+            "infill": "log_ei"
         }
     }
 }
