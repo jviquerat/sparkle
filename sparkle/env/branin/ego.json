@@ -22,13 +22,13 @@
             "name": "kriging",
             "optimize_every": 100,
             "kernel": {
-                "name": "matern52"
+                "name": "gaussian"
             }
         },
         "agent": {
             "name": "ego",
             "n_steps_max": 20,
-            "infill": "ei"
+            "infill": "log_ei"
         }
     }
 }
