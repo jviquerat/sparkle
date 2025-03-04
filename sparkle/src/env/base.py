@@ -46,7 +46,7 @@ class base_parallel_environments():
     # Generate cost map for rendering 1D envs
     def generate_cost_map_1D(self):
 
-        n_plot   = 100
+        n_plot   = 400
         x_plot   = np.linspace(self.spaces.xmin[0], self.spaces.xmax[0], num=n_plot)
         cost_map = np.zeros(n_plot)
 
