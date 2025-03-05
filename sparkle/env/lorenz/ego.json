@@ -1,0 +1,34 @@
+{
+    "n_avg": 2,
+    "avg_type": "linear",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "trainer": {
+        "name": "metamodel",
+        "render_every": 1,
+        "renderer": "env",
+        "environment": {
+            "name": "lorenz"
+        },
+        "pex": {
+            "name": "maximin_lhs",
+            "n_points": 40
+        },
+        "model": {
+            "name": "kriging",
+            "optimize_every": 100,
+            "kernel": {
+                "name": "gaussian"
+            }
+        },
+        "agent": {
+            "name": "ego",
+            "n_steps_max": 40,
+            "infill": "log_ei"
+        }
+    }
+}
