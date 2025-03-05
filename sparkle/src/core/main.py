@@ -9,7 +9,7 @@ from sparkle.src.core.sample   import sample
 from sparkle.src.core.model    import model
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.utils.json    import json_parser
-from sparkle.src.utils.prints  import new_line, disclaimer, liner_simple, spacer, bold
+from sparkle.src.utils.prints  import disclaimer, liner, spacer, bold
 
 def error():
     new_line()
@@ -34,15 +34,11 @@ def main():
 
         # Printings
         disclaimer()
-        new_line()
-        liner_simple()
-        bold('Training mode')
+        liner(bold('Training mode'))
 
         if (parallel.is_root()):
-            spacer()
-            print("Parallelism based on "+parallel.type)
-            spacer()
-            print("Number of parallel environments: "+str(parallel.size))
+            spacer("Parallelism based on "+parallel.type)
+            spacer("Number of parallel environments: "+str(parallel.size))
 
         train(json_file, pms)
         return
@@ -58,9 +54,7 @@ def main():
 
         # Printings
         disclaimer()
-        new_line()
-        liner_simple()
-        bold('Evaluation mode')
+        liner(bold('Evaluation mode'))
 
         evaluate(dat_file, json_file)
         return
@@ -73,9 +67,7 @@ def main():
 
         # Printings
         disclaimer()
-        new_line()
-        liner_simple()
-        bold('Average mode')
+        liner(bold('Average mode'))
 
         dat_args = args[args.index("--avg")+1:]
         average(dat_args)
@@ -94,15 +86,11 @@ def main():
 
         # Printings
         disclaimer()
-        new_line()
-        liner_simple()
-        bold('Model mode')
+        liner(bold('Model mode'))
 
         if (parallel.is_root()):
-            spacer()
-            print("Parallelism based on "+parallel.type)
-            spacer()
-            print("Number of parallel environments: "+str(parallel.size))
+            spacer("Parallelism based on "+parallel.type)
+            spacer("Number of parallel environments: "+str(parallel.size))
 
         model(json_file, pms)
         return
@@ -120,9 +108,7 @@ def main():
 
         # Printings
         disclaimer()
-        new_line()
-        liner_simple()
-        bold('Pex sampling mode')
+        liner(bold('Pex sampling mode'))
 
         sample(pex_type, n_points)
         return

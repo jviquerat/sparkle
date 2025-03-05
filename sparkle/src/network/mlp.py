@@ -71,14 +71,10 @@ class mlp(base):
     def info(self):
 
         new_line()
-        spacer()
-        print("MLP "+str(self.name_))
-
-        spacer()
-        print("Input layer, size "+str(self.inp_dim_))
+        spacer("MLP "+str(self.name_))
+        spacer("Input layer, size "+str(self.inp_dim_))
 
         n = 0
         for k in range(0,len(self.arch_)-1):
-            spacer()
-            print("Layer "+str(n)+", size "+str(self.arch_[k+1])+", activation "+str(self.acts_[k]))
+            spacer("Layer "+str(n)+", size "+str(self.arch_[k+1])+", activation "+str(self.acts_[k]))
             n += 1

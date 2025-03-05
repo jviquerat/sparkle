@@ -2,8 +2,7 @@
 import numpy as np
 
 # Custom imports
-from sparkle.src.utils.prints import spacer
-from sparkle.src.utils.error  import warning
+from sparkle.src.utils.error import warning
 
 ###############################################
 ### Simplified L-BFGS-B algorithm

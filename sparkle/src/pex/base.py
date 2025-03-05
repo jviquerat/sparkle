@@ -83,8 +83,7 @@ class base_pex():
     # Print informations
     def summary(self):
 
-        spacer()
-        print("Pex type is "+self.name_+" with "+str(self.n_points)+" points")
+        spacer("Pex type is "+self.name_+" with "+str(self.n_points)+" points")
 
     # 2D rendering (for debugging purpose)
     def render_2d(self):

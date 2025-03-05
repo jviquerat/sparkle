@@ -113,7 +113,5 @@ class fixed_poisson_disc(base_pex):
     def summary(self):
 
         super().summary()
-        spacer()
-        print("Initial nb of pts: "+str(self.n_initial_points))
-        spacer()
-        print("Final min distance: "+str(self.d_min))
+        spacer("Initial nb of pts: "+str(self.n_initial_points))
+        spacer("Final min distance: "+str(self.d_min))

@@ -3,9 +3,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
-# Custom imports
-from sparkle.src.utils.prints import spacer
-
 ###############################################
 ### Base model
 class base_model():

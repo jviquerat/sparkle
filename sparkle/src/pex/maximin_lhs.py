@@ -62,9 +62,6 @@ class maximin_lhs(base_pex):
     def summary(self):
 
         super().summary()
-        spacer()
-        print("Initial min distance: "+str(self.d_min_initial))
-        spacer()
-        print("Final min distance: "+str(self.d_min))
-        spacer()
-        print("Number of accepted swaps: "+str(self.n_swaps))
+        spacer("Initial min distance: "+str(self.d_min_initial))
+        spacer("Final min distance: "+str(self.d_min))
+        spacer("Number of accepted swaps: "+str(self.n_swaps))

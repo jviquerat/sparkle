@@ -25,45 +25,43 @@ def header():
         print("#################################")
 
 ### Liner
-def liner():
+def liner(text):
     if (parallel.is_root()):
         new_line()
-        print("###", end=" ")
+        print("### "+text)
 
 ### Liner with no newline
-def liner_simple():
+def liner_simple(text):
     if (parallel.is_root()):
-        print("###", end=" ")
+        print("### "+text)
 
 ### Spacer
-def spacer():
+def spacer(text):
     if (parallel.is_root()):
-        print("#", end=" ")
+        print("# "+text)
 
 ### Sparkle disclaimer
 def disclaimer():
     if (parallel.is_root()):
         header()
-        liner_simple()
-        bold("Sparkle, an optimization library")
-        liner_simple()
-        git_short_hash()
+        liner_simple(bold("Sparkle, an optimization library"))
+        liner_simple(git_short_hash())
         header()
 
 ### Print with warning color
 def warn_print(text):
     if (parallel.is_root()):
-        print(wrn_clr + text + end_clr)
+        return wrn_clr + text + end_clr
 
 ### Print with error color
 def err_print(text):
     if (parallel.is_root()):
-        print(err_clr + text + end_clr)
+        return err_clr + text + end_clr
 
 ### Print with bold text
 def bold(text):
     if (parallel.is_root()):
-        print(bld_clr + text + end_clr)
+        return bld_clr + text + end_clr
 
 ### Print git revision
 def git_short_hash() -> str:
@@ -73,6 +71,6 @@ def git_short_hash() -> str:
                                        shell=False,
                                        stdout=subprocess.PIPE)
             hash = process.communicate()[0].decode('ascii').strip()
-            print("Revision "+str(hash))
+            return "Revision "+str(hash)
         except Exception as e:
             pass
