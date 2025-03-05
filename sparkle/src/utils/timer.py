@@ -28,6 +28,5 @@ class timer():
 
     def show(self):
         str_dt = str(f"{self.dt:.2f}")
-        spacer()
-        print("Timer "+str(self.name)+": "+str_dt+" seconds")
+        spacer("Timer "+str(self.name)+": "+str_dt+" seconds")
         self.reset()

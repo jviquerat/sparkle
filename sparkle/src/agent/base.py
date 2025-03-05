@@ -61,10 +61,8 @@ class base_agent():
     # Print informations
     def summary(self):
 
-        spacer()
-        print("Using "+self.name+" algorithm with "+str(self.n_points)+" points")
-        spacer()
-        print("Problem dimensionality is "+str(self.dim))
+        spacer("Using "+self.name+" algorithm with "+str(self.n_points)+" points")
+        spacer("Problem dimensionality is "+str(self.dim))
 
     # Return number of degress of freedom
     def ndof(self):

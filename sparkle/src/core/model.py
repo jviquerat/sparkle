@@ -9,7 +9,6 @@ import numpy as np
 from sparkle.src.env.parallel    import parallel
 from sparkle.src.model.generator import generate
 from sparkle.src.plot.plot       import plot_avg
-from sparkle.src.utils.prints    import liner
 
 # Compute model
 def model(json_file, pms):

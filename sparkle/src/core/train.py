@@ -42,8 +42,7 @@ def train(json_file, pms):
 
     # Run
     for run in range(pms.n_avg):
-        liner()
-        print('Avg run #'+str(run))
+        liner('Avg run #'+str(run))
         os.makedirs(results_path+'/'+str(run), exist_ok=True)
         trainer.reset(run)
         trainer.optimize()

@@ -11,7 +11,6 @@ from sparkle.src.model.base      import base_model
 from sparkle.src.kernel.kernel   import kernel_factory
 from sparkle.src.utils.default   import set_default
 from sparkle.src.utils.error     import error
-from sparkle.src.utils.prints    import spacer
 
 ###############################################
 ### Kriging model

@@ -6,7 +6,6 @@ import numpy as np
 from sparkle.src.agent.lbfgsb    import lbfgsb
 from sparkle.src.pex.maximin_lhs import maximin_lhs
 from sparkle.src.env.spaces      import environment_spaces
-from sparkle.src.utils.prints    import spacer
 
 ###############################################
 ### Multi-start L-BFGS-B

@@ -75,8 +75,7 @@ class metamodel(base_trainer):
             self.x = self.model.x
             self.y = self.model.y
 
-            spacer()
-            print("Loaded model")
+            spacer("Loaded model")
             self.initial_print()
         else:
             self.timer_pex.tic()
@@ -96,8 +95,7 @@ class metamodel(base_trainer):
             self.x = self.pex.x
             self.y = pex_costs
 
-            spacer()
-            print("Built initial model")
+            spacer("Built initial model")
             self.initial_print()
 
             self.timer_mod.toc()
@@ -217,5 +215,4 @@ class metamodel(base_trainer):
         gb     = np.array2string(self.best_x, precision=5,
                                  floatmode='fixed', threshold=4, separator=',')
 
-        spacer()
-        print("Best initial score = "+str(gs)+" for x = "+str(gb))
+        spacer("Best initial score = "+str(gs)+" for x = "+str(gb))

@@ -104,26 +104,18 @@ class branched_mlp(base):
     def info(self):
 
         new_line()
-        spacer()
-        print("Branched MLP "+str(self.name_))
-
-        spacer()
-        print("Input layer, size "+str(self.inp_dim_))
-
-        spacer()
-        print("Trunk:")
+        spacer("Branched MLP "+str(self.name_))
+        spacer("Input layer, size "+str(self.inp_dim_))
+        spacer("Trunk:")
 
         n = 0
         for k in range(0,len(self.trunk_arch_)-1):
-            spacer()
-            print("Layer "+str(n)+", size "+str(self.trunk_arch_[k+1])+", activation "+str(self.trunk_acts_[k]))
+            spacer("Layer "+str(n)+", size "+str(self.trunk_arch_[k+1])+", activation "+str(self.trunk_acts_[k]))
             n += 1
 
         for h in range(self.n_heads_):
-            spacer()
-            print("Head "+str(h)+":")
+            spacer("Head "+str(h)+":")
 
             for k in range(0,len(self.heads_arch_[h])-1):
-                spacer()
-                print("Layer "+str(n)+", size "+str(self.heads_arch_[h][k+1])+", activation "+str(self.heads_acts_[h][k]))
+                spacer("Layer "+str(n)+", size "+str(self.heads_arch_[h][k+1])+", activation "+str(self.heads_acts_[h][k]))
                 n += 1

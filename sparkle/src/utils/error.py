@@ -7,22 +7,16 @@ from sparkle.src.utils.prints import liner, spacer, new_line, err_print, warn_pr
 
 ### Error
 def error(module, function, text, call_exit=True):
-    liner()
-    err_print("Sparkle error")
-    spacer()
-    print("Module "+str(module)+", function "+str(function))
-    spacer()
-    print(text)
+    liner(err_print("Sparkle error"))
+    spacer("Module "+str(module)+", function "+str(function))
+    spacer(text)
 
     if (call_exit): exit(1)
 
 ### Warning
 def warning(module, function, text):
-    liner()
-    warn_print("Sparkle warning")
-    spacer()
-    print("Module "+str(module)+", function "+str(function))
-    spacer()
-    print(text)
+    liner(warn_print("Sparkle warning"))
+    spacer("Module "+str(module)+", function "+str(function))
+    spacer(text)
     new_line()
 
