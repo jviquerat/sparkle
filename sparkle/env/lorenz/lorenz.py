@@ -109,6 +109,11 @@ class lorenz(base_env):
         if (self.it_plt == 0):
             os.makedirs(self.path+'/png', exist_ok=True)
 
+        # Evaluate best candidate
+        u = x[np.argmin(c)]
+        self.cost(u)
+
+        # Plot
         plt.clf()
         plt.cla()
         fig, ax = plt.subplots(figsize=(8,2))
