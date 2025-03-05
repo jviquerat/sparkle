@@ -15,8 +15,7 @@
         },
         "agent": {
             "name": "cmaes",
-            "n_steps_max": 200,
-            "n_points": 10
+            "n_steps_max": 200
         }
     }
 }
