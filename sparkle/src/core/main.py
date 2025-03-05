@@ -9,12 +9,18 @@ from sparkle.src.core.sample   import sample
 from sparkle.src.core.model    import model
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.utils.json    import json_parser
-from sparkle.src.utils.prints  import disclaimer, liner, spacer, bold
+from sparkle.src.utils.error   import error
+from sparkle.src.utils.prints  import disclaimer, liner, liner_simple, spacer, bold, err_print
 
-def error():
-    new_line()
-    errr("""Command line error. Possible behaviors:
-    spk --train <json_file>""")
+def helper():
+    liner(err_print("Command line error"))
+    spacer("Command line arguments are:")
+    spacer("   spk --train <json_file>")
+    spacer("   spk --evaluate -dat <dat_file> -json <json_file>")
+    spacer("   spk --average <dat_file_0> ... <dat_file_n>")
+    spacer("   spk --model <json_file>")
+    spacer("   spk --pex -type <pex_type> -n_points <n_points>")
+    exit(0)
 
 def main():
 
@@ -46,10 +52,10 @@ def main():
     # Evaluation mode
     if ("--evaluate" in args):
 
-        if ("-dat" not in args): error()
+        if ("-dat" not in args): helper()
         dat_file  = args[args.index("-dat")+1]
 
-        if ("-json" not in args): error()
+        if ("-json" not in args): helper()
         json_file = args[args.index("-json")+1]
 
         # Printings
@@ -99,8 +105,11 @@ def main():
     if ("--pex" in args):
 
         # Read parameters
-        pex_type = args[args.index("--pex")+1]
-        n_points = args[args.index("--pex")+2]
+        if ("-type" not in args): helper()
+        pex_type = args[args.index("-type")+1]
+
+        if ("-n_points" not in args): helper()
+        n_points = args[args.index("-n_points")+1]
         n_points = int(n_points)
 
         # Set parallel framework
