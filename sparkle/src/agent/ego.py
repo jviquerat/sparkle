@@ -8,7 +8,6 @@ from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
 from sparkle.src.env.spaces      import environment_spaces
 from sparkle.src.infill.infill   import infill_factory
 from sparkle.src.model.kriging   import kriging
-from sparkle.src.utils.error     import error
 
 ###############################################
 ### EGO
