@@ -9,7 +9,6 @@ from sparkle.src.core.sample   import sample
 from sparkle.src.core.model    import model
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.utils.json    import json_parser
-from sparkle.src.utils.error   import error
 from sparkle.src.utils.prints  import disclaimer, liner, liner_simple, spacer, bold, err_print
 
 def helper():
