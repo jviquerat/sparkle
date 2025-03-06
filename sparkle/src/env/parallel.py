@@ -17,8 +17,8 @@ class spk_parallel:
 
         if (self.type_ == "multiprocessing"):
             if (not hasattr(pms, "n_env")):
-                print("Error: multiprocessing requires argument n_env")
-                exit(1)
+                print("Parallel: multiprocessing requires argument n_env")
+                exit(0)
             else:
                 self.size_ = pms.n_env
 
@@ -58,8 +58,8 @@ class spk_parallel:
             return self._comm
 
         if (self.type_ == "multiprocessing"):
-            print("Error: comm() is not defined for multiprocessing")
-            exit(1)
+            print("# Parallel: comm() is not defined for multiprocessing")
+            exit(0)
 
     def rank(self):
 
@@ -67,8 +67,8 @@ class spk_parallel:
             return self._rank
 
         if (self.type_ == "multiprocessing"):
-            print("Error: rank() is not defined for multiprocessing")
-            exit(1)
+            print("# Parallel: rank() is not defined for multiprocessing")
+            exit(0)
 
     def environments(self, path, pms):
 
@@ -87,7 +87,6 @@ class spk_parallel:
             from mpi4py import MPI
 
             MPI.Finalize()
-            exit(0)
 
         if (self.type_ == "multiprocessing"):
             pass
