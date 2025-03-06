@@ -122,5 +122,8 @@ def main():
         sample(pex_type, n_points)
         return
 
+    # If no keyword was triggered
+    helper()
+
 if __name__ == "__main__":
     main()
