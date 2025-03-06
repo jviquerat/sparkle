@@ -11,7 +11,9 @@ def error(module, function, text, call_exit=True):
     spacer("Module "+str(module)+", function "+str(function))
     spacer(text)
 
-    if (call_exit): exit(1)
+    if (call_exit):
+        parallel.finalize()
+        exit(0)
 
 ### Warning
 def warning(module, function, text):
