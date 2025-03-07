@@ -22,8 +22,8 @@ class base_env():
         raise NotImplementedError
 
     # Rendering
-    def render(self):
-        raise NotImplementedError
+    def render(self, x, c):
+        pass
 
     # Close environment
     def close(self):
