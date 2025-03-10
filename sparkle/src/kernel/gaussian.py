@@ -8,7 +8,7 @@ from sparkle.src.utils.default import set_default
 ###############################################
 ### Gaussian kernel
 class gaussian(base_kernel):
-    def __init__(self, spaces, pms):
+    def __init__(self, spaces, pms=None):
         super().__init__(spaces)
 
         self.dim_ = 1
