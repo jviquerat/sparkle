@@ -14,11 +14,11 @@ from sparkle.src.env.spaces          import environment_spaces
 ###############################################
 ### Separable network model
 class sepnet():
-    def __init__(self, r_dim, spaces, pms_opt):
+    def __init__(self, spaces, pms):
 
-        self.r_dim   = r_dim
-        self.spaces  = spaces
-        self.pms_opt = pms_opt
+
+        self.spaces   = spaces
+        self.n_epochs = pms.n_epochs
 
         self.reset()
 
@@ -27,7 +27,7 @@ class sepnet():
 
         # Initialize networks
         self.net = []
-        for k in range(self.r_dim):
+        for k in range(self.spaces.dim):
             net = lip_mlp(inp_dim   = 1,
                           out_dim   = 1,
                           arch      = [32,32,32],
@@ -36,68 +36,48 @@ class sepnet():
 
             self.net.append(net)
 
-        self.opt   = toptim.Adam([{"params": self.net[0].params()},
-                                  {"params": self.net[1].params()}], lr=5.0e-4)
+        pms_list = []
+        for k in range(self.spaces.dim):
+            pms_list.append({"params": self.net[k].params()})
 
-    # Normalize input
-    def normalize_input(self, x):
-
-        xx  = x - 0.5*(self.spaces.xmin() + self.spaces.xmax())
-        xx /= 0.5*(self.spaces.xmax() - self.spaces.xmin())
-
-        return xx
-
-    # Normalize output
-    def normalize_output(self, y):
-
-        yy  = y - 0.5*(self.ymin + self.ymax)
-        yy /= 0.5*(self.ymax - self.ymin)
-
-        return yy
-
-    # Denormalize output
-    def denormalize_output(self, yy):
-
-        y = yy*0.5*(self.ymax - self.ymin)
-        y += 0.5*(self.ymin + self.ymax)
-
-        return y
+        self.opt = toptim.Adam(pms_list, lr=1.0e-3)
 
     # Evaluate at test points
     def evaluate(self, x):
 
         xt         = torch.tensor(self.normalize_input(x))
         batch_size = x.shape[0]
-        r          = torch.zeros(batch_size, self.r_dim)
+        r          = torch.zeros(batch_size, self.spaces.dim)
 
-        for k in range(self.r_dim):
+        for k in range(self.spaces.dim):
             xk     = torch.reshape(xt[:,k], (-1,1))
             r[:,k] = torch.reshape(self.net[k].forward(xk), (batch_size,1))[:,0]
 
-        return r
+        rr = self.denormalize_output(torch.sum(r, axis=1).detach())
+
+        return rr, np.zeros(batch_size)
 
     # Build model from input
     def build(self, x, y):
 
         self.reset()
 
+        self.ymax_ = np.max(y)
+        self.ymin_ = np.min(y)
+        self.x_    = self.normalize_input(x)
+        self.y_    = self.normalize_output(y)
+
         n_points     = x.shape[0]
-        n_epochs     = 30000
         batch_size   = math.floor(1.0*n_points)
-        history_loss = np.zeros((n_epochs, 2))
-        xn           = self.normalize_input(x)
+        history_loss = np.zeros((self.n_epochs, 2))
 
-        self.ymax = np.max(y)
-        self.ymin = np.min(y)
-        yn = self.normalize_output(y)
-
-        for epoch in range(n_epochs):
+        for epoch in range(self.n_epochs):
 
             r = np.arange(0, n_points)
             p = np.random.permutation(r)
 
-            xb = torch.from_numpy(xn[p])
-            c  = torch.from_numpy(yn[p])
+            xb = torch.from_numpy(self.x_[p])
+            c  = torch.from_numpy(self.y_[p])
 
             done = False
             btc  = 0
@@ -120,8 +100,8 @@ class sepnet():
             history_loss[epoch,1] /= float(btc)
 
             end = "\r"
-            if (epoch == n_epochs-1): end = "\n"
-            print("# Epoch #"+str(epoch)+"/"+str(n_epochs)+", loss = "+str(history_loss[epoch,1])+"                    ", end=end)
+            if (epoch == self.n_epochs-1): end = "\n"
+            print("# Epoch #"+str(epoch)+"/"+str(self.n_epochs)+", loss = "+str(history_loss[epoch,1])+"                    ", end=end)
 
         self.plot_loss("loss.png", history_loss, ["loss"])
 
@@ -132,9 +112,9 @@ class sepnet():
 
         x.requires_grad = True
         batch_size      = x.shape[0]
-        r               = torch.zeros(batch_size, self.r_dim)
+        r               = torch.zeros(batch_size, self.spaces.dim)
 
-        for k in range(self.r_dim):
+        for k in range(self.spaces.dim):
             xk     = torch.reshape(x[:,k], (-1,1))
             r[:,k] = torch.reshape(self.net[k].forward(xk), (batch_size,1))[:,0]
 
@@ -142,6 +122,34 @@ class sepnet():
         loss  = torch.mean((c - r_sum)**2)
 
         return loss
+
+    # Dump model
+    def dump(self, filename):
+        pass
+
+    # Normalize input
+    def normalize_input(self, x):
+
+        xx  = x - 0.5*(self.spaces.xmin + self.spaces.xmax)
+        xx /= 0.5*(self.spaces.xmax - self.spaces.xmin)
+
+        return xx
+
+    # Normalize output
+    def normalize_output(self, y):
+
+        yy  = y - 0.5*(self.ymin_ + self.ymax_)
+        yy /= 0.5*(self.ymax_ - self.ymin_)
+
+        return yy
+
+    # Denormalize output
+    def denormalize_output(self, yy):
+
+        y  = yy*0.5*(self.ymax_ - self.ymin_)
+        y += 0.5*(self.ymin_ + self.ymax_)
+
+        return y
 
     # Plot losses
     # loss is a np.array of shape (n_samples, n_losses+1)
@@ -168,10 +176,10 @@ class sepnet():
         y      = np.linspace(self.spaces.xmax()[1],
                              self.spaces.xmin()[1], num=n_plot)
         grid   = np.array(np.meshgrid(x, y))
-        X      = grid.reshape(self.r_dim,-1).T
+        X      = grid.reshape(self.spaces.dim,-1).T
         z      = np.zeros((n_plot, n_plot, 3))
 
-        r        = self.evaluate(X)
+        r, _     = self.evaluate(X)
         rr       = torch.sum(r, axis=1).detach()
         rr       = self.denormalize_output(rr)
         #z[:,:,0] = torch.sum(r, axis=1).detach().reshape(n_plot,n_plot)

@@ -1,6 +1,4 @@
 {
-    "n_avg": 3,
-    "avg_type": "log",
     "naming": {
         "env": true,
         "agent": true,
@@ -11,21 +9,12 @@
         "name": "branin",
         "separable": true
     },
-    "agent": {
-        "name": "cmaes",
-        "n_steps_max": 20
+    "pex": {
+        "name": "maximin_lhs",
+        "n_points": 20
     },
-    "trainer": {
-        "name": "separable",
-        "r_dim": 2,
-        "pex": {
-            "name": "lhs",
-            "n_points": 20
-        },
-        "opt": {
-            "type": "adam",
-            "lr": 5.0e-3
-        },
-        "render_every": 1
+    "model": {
+        "name": "sepnet",
+        "n_epochs": 30000
     }
 }
