@@ -42,7 +42,11 @@ def test_kriging(kernel_type):
     # Test normalization
     x_test = np.array([[0.5, 0.5],
                        [0.2, 0.8]])
-    x_transform = model.denormalize(model.normalize(x_test))
+    x_transform = model.denormalize(model.normalize(x_test,
+                                                    space.xmin,
+                                                    space.xmax),
+                                    space.xmin,
+                                    space.xmax)
     assert np.allclose(x_test, x_transform)
 
     # Test evaluate_grad() function
