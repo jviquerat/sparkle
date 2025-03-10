@@ -34,12 +34,23 @@ Environments are expected to be available locally or present in the path. To tra
 spk --train <json_file>
 ```
 
-## Examples
+## Textbook examples
 
-Below are several optimization examples performed with the different methods.
+| Environment   | Description                              | Illustration                                                        |
+|:--------------|:-----------------------------------------|:-------------------------------------------------------------------:|
+| `parabola`    | Multi-dimensional parabola on [-5,5]^n   | <img height="200" alt="gif" src="sparkle/msc/parabola_cem.gif">     |
+| `rosenbrock`  | Multi-dimensional Rosenbrock on [-2,2]^n | <img height="200" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> |
+| `sinebump`    | A 2D separable problem on [0,5]^2        | <img height="200" alt="gif" src="sparkle/msc/sinebump_pso.gif">     |
 
-| **`parabola (cem)`**                                                     | **`rosenbrock (cmaes)`**                                            | **`sinebump (pso)`**                                                       |
-| :----------------------------------------------------------------------: | :-----------------------------------------------------------------: | :------------------------------------------------------------------------: |
-| <img height="200" alt="gif" src="sparkle/msc/parabola_cem.gif">          | <img height="200" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> | <img height="200" alt="gif" src="sparkle/msc/sinebump_pso.gif">            |
-| **`packing (cmaes)`**                                                    | **`lorenz (pbo)`**                                                  | **`packing (cmaes)`**                                                      |
-| <img height="200" alt="gif" src="sparkle/msc/packing_circles_cmaes.gif"> | <img height="200" alt="gif" src="sparkle/msc/lorenz_pbo.gif">       | <img height="200" alt="gif" src="sparkle/msc/packing_triangles_cmaes.gif"> |
+## Physics-based examples
+
+| Environment   | Description                                                               | Illustration                                                        |
+|:--------------|:--------------------------------------------------------------------------|:-------------------------------------------------------------------:|
+| `lorenz`      | Optimization of a parametric control law for the chaotic Lorenz attractor | <img height="200" alt="gif" src="sparkle/msc/lorenz_pbo.gif">       |
+
+## Packing examples
+
+| Environment   | Description                              | Illustration                                                               |
+|:--------------|:-----------------------------------------|:--------------------------------------------------------------------------:|
+| `circles`     | Packing 6 circles in a square            | <img height="200" alt="gif" src="sparkle/msc/packing_circles_cmaes.gif">   |
+| `triangles`   | Packing 5 triangles in a square          | <img height="200" alt="gif" src="sparkle/msc/packing_triangles_cmaes.gif"> |
