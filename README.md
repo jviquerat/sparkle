@@ -41,16 +41,6 @@ spk --train <json_file>
 | `parabola`    | Multi-dimensional parabola on [-5,5]^n, solved with CEM     | <img height="200" alt="gif" src="sparkle/msc/parabola_cem.gif">     |
 | `rosenbrock`  | Multi-dimensional Rosenbrock on [-2,2]^n, solved with CMAES | <img height="200" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> |
 | `sinebump`    | A 2D separable problem on [0,5]^2, solved with PSO          | <img height="200" alt="gif" src="sparkle/msc/sinebump_pso.gif">     |
-
-## Physics-based examples
-
-| Environment   | Description                                                               | Illustration                                                        |
-|:--------------|:--------------------------------------------------------------------------|:-------------------------------------------------------------------:|
 | `lorenz`      | Optimization of a parametric control law for the chaotic Lorenz attractor | <img height="200" alt="gif" src="sparkle/msc/lorenz_pbo.gif">       |
-
-## Packing examples
-
-| Environment   | Description                              | Illustration                                                               |
-|:--------------|:-----------------------------------------|:--------------------------------------------------------------------------:|
-| `circles`     | Packing 6 circles in a square            | <img height="200" alt="gif" src="sparkle/msc/packing_circles_cmaes.gif">   |
-| `triangles`   | Packing 5 triangles in a square          | <img height="200" alt="gif" src="sparkle/msc/packing_triangles_cmaes.gif"> |
+| `circles`     | Packing 6 circles in a square, solved with CMAES            | <img height="200" alt="gif" src="sparkle/msc/packing_circles_cmaes.gif">   |
+| `triangles`   | Packing 5 triangles in a square, solved with CMAES          | <img height="200" alt="gif" src="sparkle/msc/packing_triangles_cmaes.gif"> |
