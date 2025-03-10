@@ -8,7 +8,7 @@ from sparkle.src.kernel.base import base_kernel
 ###############################################
 ### Matern 5/2 kernel
 class matern52(base_kernel):
-    def __init__(self, spaces, pms):
+    def __init__(self, spaces, pms=None):
         super().__init__(spaces)
 
         self.dim_ = 1
