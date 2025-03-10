@@ -70,7 +70,7 @@ class Kriging(BaseModel):
             y: The corresponding target values.
         """
 
-        self.x_ = self.normalize(x)
+        self.x_ = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
         self.y_ = y
 
         if (self.it%self.optimize_every_ == 0):
@@ -117,7 +117,7 @@ class Kriging(BaseModel):
                 - The predicted standard deviations at the test points.
         """
 
-        x = self.normalize(x_test) # shape (nt, d)
+        x = self.normalize(x_test, self.spaces.xmin, self.spaces.xmax) # shape (nt, d)
 
         # Computation of mu
         # C_inv         -> shape (ns, ns)
@@ -166,7 +166,7 @@ class Kriging(BaseModel):
         # x     -> shape (nt, d)
         # c     -> shape (nt, ns)
         # dc_dx -> shape (nt, ns, d)
-        x = self.normalize(x_test)
+        x = self.normalize(x_test, self.spaces.xmin, self.spaces.xmax)
         c = self.kernel.covariance(x, self.x_)
         dc_dx = self.kernel.covariance_dx(x, self.x_)
 

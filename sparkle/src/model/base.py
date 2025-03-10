@@ -28,7 +28,7 @@ class BaseModel():
         """
         Returns the denormalized input data points.
         """
-        return self.denormalize(self.x_)
+        return self.denormalize(self.x_, self.spaces.xmin, self.spaces.xmax)
 
     @property
     def y(self) -> ndarray:
@@ -37,30 +37,30 @@ class BaseModel():
         """
         return self.y_
 
-    def normalize(self, x: ndarray) -> ndarray:
+    def normalize(self, x: ndarray, xmin: ndarray, xmax: ndarray) -> ndarray:
         """
         Normalizes input data points to the range [0, 1].
 
         Args:
             x: The input data points to normalize.
+            xmin: min values for x
+            xmax: max values for x
 
         Returns:
             The normalized data points.
         """
+        return (x - xmin)/(xmax - xmin)
 
-        xx = (x - self.spaces.xmin)/(self.spaces.xmax - self.spaces.xmin)
-        return xx
-
-    def denormalize(self, x: ndarray) -> ndarray:
+    def denormalize(self, x: ndarray, xmin: ndarray, xmax: ndarray) -> ndarray:
         """
         Denormalizes input data points from the range [0, 1] to the original scale.
 
         Args:
             x: The input data points to denormalize.
+            xmin: min values for x
+            xmax: max values for x
 
         Returns:
             The denormalized data points.
         """
-
-        xx = self.spaces.xmin + (self.spaces.xmax - self.spaces.xmin)*x
-        return xx
+        return xmin + (xmax - xmin)*x
