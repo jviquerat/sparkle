@@ -15,13 +15,12 @@ from sparkle.src.utils.error     import error
 ###############################################
 ### Kriging model
 class kriging(base_model):
-    def __init__(self, spaces, pms):
-        super().__init__(spaces)
+    def __init__(self, spaces, path, pms):
+        super().__init__(spaces, path)
 
         # Set parameters
-        self.spaces           = spaces
-        self.optimize_every_  = set_default("optimize_every", 1000, pms)
-        self.load_model_      = set_default("load_model", False, pms)
+        self.optimize_every_ = set_default("optimize_every", 1000, pms)
+        self.load_model_     = set_default("load_model", False, pms)
 
         # Initialize kernel
         self.kernel = kernel_factory.create(pms.kernel.name,
@@ -72,8 +71,9 @@ class kriging(base_model):
         return mu, std
 
     # Dump kriging data
-    def dump(self, filename):
+    def dump(self, filename="kriging.dat"):
 
+        filename = self.path+"/"+filename
         with open(filename, "w") as f:
             f.write(f"{self.kernel.nf_} \n")
             f.write(f"{self.kernel.ns_} \n")

@@ -33,7 +33,7 @@ def test_ei():
     pms             = types.SimpleNamespace()
     pms.kernel      = types.SimpleNamespace()
     pms.kernel.name = "matern52"
-    model           = kriging(space, pms)
+    model           = kriging(space, ".", pms)
     model.build(lhs_pex.x, y)
 
     k  = np.argmin(y)
