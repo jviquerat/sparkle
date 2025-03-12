@@ -18,9 +18,9 @@ def test_maximin_lhs():
     xmax     = np.array([1.0, 1.0])
     n_points = 12
 
-    pms          = types.SimpleNamespace()
-    pms.n_points = n_points
-    pms.n_iter   = 1000
+    pms            = types.SimpleNamespace()
+    pms.n_points   = n_points
+    pms.swap_ratio = 0.5
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
     s = environment_spaces(loc_space)
