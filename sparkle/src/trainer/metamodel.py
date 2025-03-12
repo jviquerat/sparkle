@@ -37,6 +37,7 @@ class metamodel(base_trainer):
         # Initialize model
         self.model = model_factory.create(pms.model.name,
                                           spaces = self.env.spaces,
+                                          path   = path,
                                           pms    = pms.model)
 
         # Initialize agent
@@ -89,7 +90,7 @@ class metamodel(base_trainer):
             # Build and dump model
             self.timer_mod.tic()
             self.model.build(self.pex.x, pex_costs)
-            self.model.dump(self.agent.path+"/model.dat")
+            self.model.dump()
 
             # Keep local copy
             self.x = self.pex.x

@@ -27,6 +27,7 @@ def generate(env_pms, pex_pms, model_pms, path):
     # Initialize model
     model = model_factory.create(model_pms.name,
                                  spaces = env.spaces,
+                                 path   = path,
                                  pms    = model_pms)
 
     # Compute costs
@@ -34,7 +35,7 @@ def generate(env_pms, pex_pms, model_pms, path):
 
     # Initialize model
     model.build(pex.x, pex_costs)
-    model.dump(path+"/model.dat")
+    model.dump()
 
     # Render
     if (env.spaces.dim > 2):

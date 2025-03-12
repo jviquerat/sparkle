@@ -6,9 +6,10 @@ import matplotlib.pyplot as plt
 ###############################################
 ### Base model
 class base_model():
-    def __init__(self, spaces):
+    def __init__(self, spaces, path):
 
         self.spaces = spaces
+        self.path   = path
 
     @property
     def x(self):
