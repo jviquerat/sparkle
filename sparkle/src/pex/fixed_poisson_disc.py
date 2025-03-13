@@ -6,7 +6,7 @@ import numpy as np
 from sparkle.src.pex.base      import base_pex
 from sparkle.src.utils.error   import error
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.prints  import spacer
+from sparkle.src.utils.prints  import spacer, fmt_float
 
 ###############################################
 ### Poisson-disc experiment plan
@@ -114,4 +114,4 @@ class fixed_poisson_disc(base_pex):
 
         super().summary()
         spacer("Initial nb of pts: "+str(self.n_initial_points))
-        spacer("Final min distance: "+str(self.d_min))
+        spacer("Final min distance: "+fmt_float(self.d_min))
