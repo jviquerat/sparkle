@@ -4,7 +4,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # Custom imports
-from sparkle.src.utils.prints import spacer
+from sparkle.src.utils.prints import spacer, fmt_float
 
 ###############################################
 ### Base experiment plan
@@ -84,6 +84,13 @@ class base_pex():
     def summary(self):
 
         spacer("Pex type is "+self.name_+" with "+str(self.n_points)+" points")
+
+        nearest = self.dist_nearest(self.x)
+        d_mean  = np.mean(nearest)
+        d_std   = np.std(nearest)
+
+        spacer("Mean nearest neighbor distance: "+fmt_float(d_mean))
+        spacer("Std  nearest neighbor distance: "+fmt_float(d_std))
 
     # 2D rendering (for debugging purpose)
     def render_2d(self):
