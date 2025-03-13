@@ -63,6 +63,13 @@ def bold(text):
     if (parallel.is_root()):
         return bld_clr + text + end_clr
 
+### Format float for output
+def fmt_float(x):
+    if (x < 1.0e-1) or (x > 1.0e3):
+        return "{:.5e}".format(x)
+    else:
+        return "{:.5f}".format(x)
+
 ### Print git revision
 def git_short_hash() -> str:
     if (parallel.is_root()):
