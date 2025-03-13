@@ -6,7 +6,7 @@ import numpy as np
 from sparkle.src.pex.base      import base_pex
 from sparkle.src.pex.lhs       import lhs
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.prints  import spacer
+from sparkle.src.utils.prints  import spacer, fmt_float
 
 ###############################################
 ### Maximin Latin hypercube sampling
@@ -64,7 +64,7 @@ class maximin_lhs(base_pex):
     def summary(self):
 
         super().summary()
-        spacer("Initial min distance: "+str(self.d_min_initial))
-        spacer("Final min distance: "+str(self.d_min))
+        spacer("Initial min distance: "+fmt_float(self.d_min_initial))
+        spacer("Final min distance: "+fmt_float(self.d_min))
         spacer("Total nb of attempted swaps: "+str(self.n_iter_))
         spacer("Number of accepted swaps: "+str(self.n_swaps))
