@@ -21,7 +21,6 @@ def runner(json_file, val_avg, val_bst):
     # Initial space
     print("")
 
-    #########################
     # Initialize json parser and read test json file
     reader = json_parser()
     reader.read(json_file)
