@@ -6,6 +6,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy             as np
 
+# Custom imports
+from sparkle.src.utils.prints import fmt_float
+
 ###############################################
 ### Base trainer
 class base_trainer():
@@ -82,7 +85,8 @@ class base_trainer():
 
         # Actual print
         if (self.cnt <= 1):
-            gs = f"{self.best_score:.5e}"
+            gs = fmt_float(self.best_score)
             gb = np.array2string(self.best_x, precision=5, floatmode='fixed',
                                  threshold=4, separator=',')
-            print("# Iteration #"+str(self.it)+", n_eval = "+str(self.total_stp)+", best score = "+str(gs)+" at individual "+str(self.best_stp)+" for x = "+str(gb)+"                                                                                                           ", end=end)
+            blank = "                                                 "
+            print("# Iteration #"+str(self.it)+", n_eval = "+str(self.total_stp)+", best score = "+gs+" at individual "+str(self.best_stp)+" for x = "+gb+blank, end=end)
