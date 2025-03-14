@@ -19,7 +19,7 @@ def helper():
     spacer("   spk --evaluate -dat <dat_file> -json <json_file>")
     spacer("   spk --average <dat_file_0> ... <dat_file_n>")
     spacer("   spk --model <json_file>")
-    spacer("   spk --pex -type <pex_type> -n_points <n_points>")
+    spacer("   spk --pex -type <pex_type> -n_points <n_points> -dim <dim>")
     spacer("Optional arguments:")
     spacer("       --set_seeds <seed>")
     exit(0)
@@ -119,6 +119,10 @@ def main():
         n_points = args[args.index("-n_points")+1]
         n_points = int(n_points)
 
+        if ("-dim" not in args): helper()
+        dim = args[args.index("-dim")+1]
+        dim = int(dim)
+
         # Set parallel framework
         parallel.set({})
 
@@ -126,7 +130,7 @@ def main():
         disclaimer()
         liner(bold('Pex sampling mode'))
 
-        sample(pex_type, n_points)
+        sample(pex_type, n_points, dim)
         return
 
     # If no keyword was triggered

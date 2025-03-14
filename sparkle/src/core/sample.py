@@ -7,11 +7,10 @@ from sparkle.src.pex.pex    import pex_factory
 from sparkle.src.env.spaces import env_spaces
 
 # Sample using pex
-def sample(pex_type, n_points):
+def sample(pex_type, n_points, dim):
 
-    dim      = 2
-    xmin     = np.array([0.0, 0.0])
-    xmax     = np.array([1.0, 1.0])
+    xmin     = np.zeros(dim)
+    xmax     = np.ones(dim)
 
     pms          = types.SimpleNamespace()
     pms.n_points = n_points
@@ -24,4 +23,5 @@ def sample(pex_type, n_points):
                              pms    = pms)
 
     pex.summary()
-    pex.render_2d()
+
+    if (dim == 2): pex.render_2d()
