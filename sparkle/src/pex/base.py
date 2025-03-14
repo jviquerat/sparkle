@@ -53,21 +53,26 @@ class base_pex():
         return np.prod(v)
 
     # Compute distance to nearest neighbour for each point
-    def dist_nearest(self, x):
+    def nearest(self, x):
 
-        nearest = np.zeros(self.n_points)
+        d_nearest = np.zeros(self.n_points)
+        p_nearest = np.zeros(self.n_points, dtype=int)
+
         for i in range(self.n_points):
             dist_min = 1.0e8
+            p_min    = -1
             for j in range(self.n_points):
                 if (i==j): continue
 
                 dist = np.linalg.norm(x[i] - x[j])
                 if (dist < dist_min):
                     dist_min = dist
+                    p_min    = j
 
-            nearest[i] = dist_min
+            d_nearest[i] = dist_min
+            p_nearest[j] = p_min
 
-        return nearest
+        return d_nearest, p_nearest
 
     # Compute minimal distance between two points
     def dist_min(self, x):
@@ -85,9 +90,9 @@ class base_pex():
 
         spacer("Pex type is "+self.name_+" with "+str(self.n_points)+" points")
 
-        nearest = self.dist_nearest(self.x)
-        d_mean  = np.mean(nearest)
-        d_std   = np.std(nearest)
+        d_nearest, _ = self.nearest(self.x)
+        d_mean       = np.mean(d_nearest)
+        d_std        = np.std(d_nearest)
 
         spacer("Mean nearest neighbor distance: "+fmt_float(d_mean))
         spacer("Std  nearest neighbor distance: "+fmt_float(d_std))
@@ -97,8 +102,8 @@ class base_pex():
 
         if (self.dim != 2): return
 
-        nearest = self.dist_nearest(self.x)
-        nearest /= np.max(nearest)
+        d_nearest, _ = self.nearest(self.x)
+        d_nearest /= np.max(d_nearest)
 
         plt.clf()
         fig = plt.figure()
@@ -116,6 +121,6 @@ class base_pex():
         ax.grid(True, alpha=0.5)
 
         cmap = matplotlib.cm.RdBu
-        ax.scatter(self.x[:,0], self.x[:,1], c=cmap(nearest), marker="o", alpha=0.8)
+        ax.scatter(self.x[:,0], self.x[:,1], c=cmap(d_nearest), marker="o", alpha=0.8)
         plt.savefig(self.name_, dpi=100)
         plt.close()
