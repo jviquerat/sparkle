@@ -7,7 +7,7 @@ import numpy as np
 from sparkle.src.utils.default   import set_default
 from sparkle.src.agent.base      import base_agent
 from sparkle.src.pex.maximin_lhs import maximin_lhs
-from sparkle.src.env.spaces      import environment_spaces
+from sparkle.src.env.spaces      import env_spaces
 
 ###############################################
 ### CEM
@@ -43,7 +43,7 @@ class cem(base_agent):
                   "xmin": self.xmin_cem,
                   "xmax": self.xmax_cem}
 
-        spaces = environment_spaces(spaces)
+        spaces = env_spaces(spaces)
         pex    = maximin_lhs(spaces, pms)
 
         return pex.x

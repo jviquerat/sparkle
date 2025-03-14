@@ -10,7 +10,7 @@ from sparkle.tst.tst           import set_seeds
 from sparkle.src.model.kriging import kriging
 from sparkle.src.infill.log_ei import log_ei
 from sparkle.src.pex.lhs       import lhs
-from sparkle.src.env.spaces    import environment_spaces
+from sparkle.src.env.spaces    import env_spaces
 from sparkle.src.utils.compare import compare
 
 ###############################################
@@ -26,7 +26,7 @@ def test_ei():
                     "x0": None,
                     "xmin": np.array([0,0]),
                     "xmax": np.array([1,1])}
-    space        = environment_spaces(space_dict)
+    space        = env_spaces(space_dict)
     lhs_pex      = lhs(space, pms)
     y            = np.cos(lhs_pex.x[:,0]) + np.cos(lhs_pex.x[:,1])
 

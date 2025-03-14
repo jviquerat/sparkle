@@ -8,7 +8,7 @@ import multiprocessing as mp
 from sparkle.src.env.parallel         import parallel
 from sparkle.src.env.base             import base_parallel_environments
 from sparkle.src.env.multiproc_worker import multiproc_worker
-from sparkle.src.env.spaces           import environment_spaces
+from sparkle.src.env.spaces           import env_spaces
 from sparkle.src.utils.default        import set_default
 from sparkle.src.utils.timer          import timer
 
@@ -37,7 +37,7 @@ class multiproc_environments(base_parallel_environments):
             process.start()
 
         # Declare spaces object
-        self.spaces = environment_spaces(self.get_spaces(), pms)
+        self.spaces = env_spaces(self.get_spaces(), pms)
 
         # Initialize timer
         self.timer_env = timer("env      ")

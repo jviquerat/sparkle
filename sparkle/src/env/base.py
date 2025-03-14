@@ -3,7 +3,6 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.env.parallel import parallel
-from sparkle.src.env.spaces   import environment_spaces
 from sparkle.src.utils.error  import error
 
 ###############################################
