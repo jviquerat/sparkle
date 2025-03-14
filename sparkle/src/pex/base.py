@@ -76,10 +76,10 @@ class base_pex():
         for j in range(n_points):
             if (i==j): continue
 
-            d = np.linalg.norm(x[i] - x[j])
+            d = self.distance(x[i], x[j])
             if (d < d_min):
-                    d_min = d
-                    p_min = j
+                d_min = d
+                p_min = j
 
         return d_min, p_min
 
@@ -89,10 +89,15 @@ class base_pex():
         dmin = 1.0e8
         for i in range(self.n_points):
             for j in range(i+1, self.n_points):
-                dist = np.linalg.norm(x[i] - x[j])
+                dist = self.distance(x[i], x[j])
                 if (dist < dmin): dmin = dist
 
         return dmin
+
+    # Compute distance between two sets of coordinates
+    def distance(self, xi, xj):
+
+        return np.linalg.norm(xi - xj)
 
     # Print informations
     def summary(self):

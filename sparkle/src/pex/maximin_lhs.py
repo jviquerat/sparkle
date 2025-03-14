@@ -16,7 +16,7 @@ class maximin_lhs(base_pex):
 
         self.name_       = "maximin_lhs"
         self.n_points_   = pms.n_points
-        self.swap_ratio_ = set_default("swap_ratio", 0.2, pms)
+        self.swap_ratio_ = set_default("swap_ratio", 0.5, pms)
         self.n_iter_     = math.floor(self.swap_ratio_*self.dim*self.n_points_**2)
         self.pms         = pms
 
@@ -29,12 +29,19 @@ class maximin_lhs(base_pex):
         base    = lhs(self.spaces, self.pms)
         self.x_ = base.x
 
-        # Save initial min distance
-        self.d_min_initial = self.min_distance(self.x)
-        self.n_swaps       = 0
+        # Compute initial nearest neighbors
+        #self.d_min_initial = self.min_distance(self.x)
+        d_nearest, p_nearest = self.nearest(self.x)
+        p_min                = np.argmin(d_nearest)
+        self.d_min_initial   = d_nearest[p_min]
+        self.d_min           = self.d_min_initial
+        self.n_swaps         = 0
+
+        # Copy nearest arrays
+        dn_copy = d_nearest.copy()
+        pn_copy = p_nearest.copy()
 
         # Space out samples
-        self.d_min = self.d_min_initial
         for k in range(self.n_iter_):
 
             # Draw a random dimension
@@ -51,14 +58,47 @@ class maximin_lhs(base_pex):
             self.x[p1,dim] = x2[dim]
             self.x[p2,dim] = x1[dim]
 
+            # Update nearest for pts that had p1 or p2 as nearest
+            for k in range(self.n_points):
+                if (pn_copy[k] in [p1, p2]):
+                    dn, pn     = self.p_nearest(self.x, k)
+                    dn_copy[k] = dn
+                    pn_copy[k] = pn
+
+            # Update nearest for p1
+            dn, pn      = self.p_nearest(self.x, p1)
+            dn_copy[p1] = dn
+            pn_copy[p1] = pn
+
+            # Update nearest for p2
+            dn, pn      = self.p_nearest(self.x, p2)
+            dn_copy[p2] = dn
+            pn_copy[p2] = pn
+
+            # For all points, check if p1 or p2 is now nearest
+            for k in range(self.n_points):
+                if (k == p1) or (k == p2): continue
+                d1 = self.distance(self.x[k], self.x[p1])
+                d2 = self.distance(self.x[k], self.x[p2])
+                p, d = p1, d1
+                if (d2 < d1): p, d = p2, d2
+                if (d < dn_copy[k]):
+                    dn_copy[k] = d
+                    pn_copy[k] = p
+
             # Compute new min distance and update if improved
-            d = self.min_distance(self.x)
+            p = np.argmin(dn_copy)
+            d = dn_copy[p]
             if (d > self.d_min):
                 self.d_min    = d
                 self.n_swaps += 1
+                d_nearest[:]  = dn_copy[:]
+                p_nearest[:]  = pn_copy[:]
             else:
                 self.x[p1,dim] = x1[dim]
                 self.x[p2,dim] = x2[dim]
+                dn_copy[:]     = d_nearest[:]
+                pn_copy[:]     = p_nearest[:]
 
     # Print informations
     def summary(self):
