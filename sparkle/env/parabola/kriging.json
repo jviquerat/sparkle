@@ -9,7 +9,7 @@
         "name": "parabola"
     },
     "pex": {
-        "name": "fixed_poisson_disc",
+        "name": "fpd",
         "n_points": 20
     },
     "model": {
