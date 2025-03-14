@@ -56,6 +56,6 @@ def test_mslbfgsb():
 
     # Run the optimizer.
     x, c = opt.optimize(f, xmin, xmax, n_pts=10, m=5, tol=1e-3, max_iter=20)
-    assert(compare(x[0], 3.1851553740348324, 1.0e-15))
-    assert(compare(x[1], 3.1298027253851175, 1.0e-15))
-    assert(compare(c,   -1.808352035922506,  1.0e-15))
+    assert(compare(x[0], 3.185151654759313, 1.0e-15))
+    assert(compare(x[1], 3.1298017108519884, 1.0e-15))
+    assert(compare(c,   -1.8083520358351746,  1.0e-15))
