@@ -70,7 +70,7 @@ class base_pex():
                     p_min    = j
 
             d_nearest[i] = dist_min
-            p_nearest[j] = p_min
+            p_nearest[i] = p_min
 
         return d_nearest, p_nearest
 
