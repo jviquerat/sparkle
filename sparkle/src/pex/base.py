@@ -52,27 +52,36 @@ class base_pex():
         v = self.xmax - self.xmin
         return np.prod(v)
 
-    # Compute distance to nearest neighbour for each point
+    # Compute nearest neighbour for all input coordinates
     def nearest(self, x):
 
-        d_nearest = np.zeros(self.n_points)
-        p_nearest = np.zeros(self.n_points, dtype=int)
+        n_points  = x.shape[0]
+        d_nearest = np.zeros(n_points)
+        p_nearest = np.zeros(n_points, dtype=int)
 
-        for i in range(self.n_points):
-            dist_min = 1.0e8
-            p_min    = -1
-            for j in range(self.n_points):
-                if (i==j): continue
-
-                dist = np.linalg.norm(x[i] - x[j])
-                if (dist < dist_min):
-                    dist_min = dist
-                    p_min    = j
-
-            d_nearest[i] = dist_min
+        for i in range(n_points):
+            d_min, p_min = self.p_nearest(x, i)
+            d_nearest[i] = d_min
             p_nearest[i] = p_min
 
         return d_nearest, p_nearest
+
+    # Compute nearest neighbour for one input coordinates
+    def p_nearest(self, x, i):
+
+        n_points = x.shape[0]
+        d_min    = 1.0e8
+        p_min    = -1
+
+        for j in range(n_points):
+            if (i==j): continue
+
+            d = np.linalg.norm(x[i] - x[j])
+            if (d < d_min):
+                    d_min = d
+                    p_min = j
+
+        return d_min, p_min
 
     # Compute minimal distance between two points
     def min_distance(self, x):
