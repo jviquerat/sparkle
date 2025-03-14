@@ -75,7 +75,7 @@ class base_pex():
         return d_nearest, p_nearest
 
     # Compute minimal distance between two points
-    def dist_min(self, x):
+    def min_distance(self, x):
 
         dmin = 1.0e8
         for i in range(self.n_points):
