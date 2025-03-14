@@ -30,7 +30,7 @@ class maximin_lhs(base_pex):
         self.x_ = base.x
 
         # Save initial min distance
-        self.d_min_initial = self.dist_min(self.x)
+        self.d_min_initial = self.min_distance(self.x)
         self.n_swaps       = 0
 
         # Space out samples
@@ -52,7 +52,7 @@ class maximin_lhs(base_pex):
             self.x[p2,dim] = x1[dim]
 
             # Compute new min distance and update if improved
-            d = self.dist_min(self.x)
+            d = self.min_distance(self.x)
             if (d > self.d_min):
                 self.d_min    = d
                 self.n_swaps += 1

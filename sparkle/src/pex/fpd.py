@@ -21,7 +21,7 @@ class fpd(base_pex):
         self.n_attempts_ = set_default("n_attempts", 20, pms)
 
         # Compute radius guess
-        self.radius_ = 0.8*math.sqrt(self.volume()/self.n_points_)
+        self.radius_ = 0.75*math.sqrt(self.volume()/self.n_points_)
 
         self.reset()
 
@@ -102,7 +102,7 @@ class fpd(base_pex):
         self.x_ = np.array(selected)
 
         # Compute minimal distance
-        self.d_min = self.dist_min(self.x)
+        self.d_min = self.min_distance(self.x)
 
     # Distance
     def distance(self, p1, p2):
