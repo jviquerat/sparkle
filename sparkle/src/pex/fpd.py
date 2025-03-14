@@ -9,10 +9,10 @@ from sparkle.src.utils.default import set_default
 from sparkle.src.utils.prints  import spacer, fmt_float
 
 ###############################################
-### Poisson-disc experiment plan
+### Fixed poisson-disc experiment plan
 ### Relies on Robert Bridson algorithm
 ### XXX 2D only for now
-class fixed_poisson_disc(base_pex):
+class fpd(base_pex):
     def __init__(self, spaces, pms):
         super().__init__(spaces)
 
@@ -76,7 +76,7 @@ class fixed_poisson_disc(base_pex):
 
         # Check that we have more than n_points_
         if (len(lst) < self.n_points_):
-            error("poisson_disk", "reset",
+            error("fpd", "reset",
                   "the resulting number of points was lower than n_points_")
 
         # Save initial number of points
