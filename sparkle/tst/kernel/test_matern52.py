@@ -8,7 +8,7 @@ import numpy as np
 # Custom imports
 from sparkle.tst.tst             import set_seeds
 from sparkle.src.kernel.matern52 import matern52
-from sparkle.src.env.spaces      import environment_spaces
+from sparkle.src.env.spaces      import env_spaces
 from sparkle.src.utils.compare   import compare
 
 ###############################################
@@ -22,7 +22,7 @@ def test_gaussian():
                   "x0": None,
                   "xmin": np.array([0,0]),
                   "xmax": np.array([1,1])}
-    space      = environment_spaces(space_dict)
+    space      = env_spaces(space_dict)
 
     kernel = matern52(space)
     x0     = np.array([[0.5,0.5]])

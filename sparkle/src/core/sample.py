@@ -4,7 +4,7 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.pex.pex    import pex_factory
-from sparkle.src.env.spaces import environment_spaces
+from sparkle.src.env.spaces import env_spaces
 
 # Sample using pex
 def sample(pex_type, n_points):
@@ -17,7 +17,7 @@ def sample(pex_type, n_points):
     pms.n_points = n_points
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    space = environment_spaces(loc_space)
+    space = env_spaces(loc_space)
 
     pex = pex_factory.create(pex_type,
                              spaces = space,

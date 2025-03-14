@@ -5,7 +5,6 @@ from   numpy import matmul
 from   numpy.linalg import solve
 
 # Custom imports
-from sparkle.src.env.spaces      import environment_spaces
 from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
 
 ###############################################

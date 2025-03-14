@@ -5,7 +5,6 @@ import numpy as np
 from sparkle.src.utils.default   import set_default
 from sparkle.src.agent.base      import base_agent
 from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
-from sparkle.src.env.spaces      import environment_spaces
 from sparkle.src.infill.infill   import infill_factory
 from sparkle.src.model.kriging   import kriging
 

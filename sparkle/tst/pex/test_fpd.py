@@ -7,7 +7,7 @@ import numpy as np
 # Custom imports
 from sparkle.tst.tst        import *
 from sparkle.src.pex.fpd    import fpd
-from sparkle.src.env.spaces import environment_spaces
+from sparkle.src.env.spaces import env_spaces
 
 ###############################################
 ### Test fixed_poisson_disc pex
@@ -19,7 +19,7 @@ def test_fpd():
     pms      = types.SimpleNamespace()
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    s = environment_spaces(loc_space)
+    s = env_spaces(loc_space)
 
     # We test different number of points as fixed_poisson_disc may
     # have issues providing the exact number of required points

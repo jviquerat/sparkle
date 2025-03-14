@@ -3,7 +3,7 @@ import numpy as np
 
 ###############################################
 ### A class holding informations dimensions
-class environment_spaces:
+class env_spaces:
     def __init__(self, spaces, pms=None):
 
         self.natural_dim_ = spaces["dim"]
