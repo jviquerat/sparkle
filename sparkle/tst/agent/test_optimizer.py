@@ -4,7 +4,7 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.tst.tst             import set_seeds
+from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.agent.optimizer import optimizer
 from sparkle.src.utils.compare   import compare
 from sparkle.src.env.spaces      import env_spaces

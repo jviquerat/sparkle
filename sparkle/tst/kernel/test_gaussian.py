@@ -6,7 +6,7 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.tst.tst             import set_seeds
+from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.kernel.gaussian import gaussian
 from sparkle.src.env.spaces      import env_spaces
 from sparkle.src.utils.compare   import compare
