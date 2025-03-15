@@ -4,7 +4,7 @@ import sys
 import shutil
 
 # Custom imports
-from sparkle.tst.tst             import set_seeds
+from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.utils.json      import json_parser
 from sparkle.src.utils.data      import data_avg
 from sparkle.src.utils.compare   import compare

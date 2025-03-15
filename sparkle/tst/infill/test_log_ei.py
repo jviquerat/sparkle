@@ -6,7 +6,7 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.tst.tst           import set_seeds
+from sparkle.src.utils.seeds   import set_seeds
 from sparkle.src.model.kriging import kriging
 from sparkle.src.infill.log_ei import log_ei
 from sparkle.src.pex.lhs       import lhs
