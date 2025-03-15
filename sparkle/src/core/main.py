@@ -9,22 +9,30 @@ from sparkle.src.core.sample   import sample
 from sparkle.src.core.model    import model
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.utils.json    import json_parser
+from sparkle.src.utils.seeds   import set_seeds
 from sparkle.src.utils.prints  import disclaimer, liner, liner_simple, spacer, bold, err_print
 
 def helper():
     liner(err_print("Command line error"))
-    spacer("Command line arguments are:")
+    spacer("Command line functionalities:")
     spacer("   spk --train <json_file>")
     spacer("   spk --evaluate -dat <dat_file> -json <json_file>")
     spacer("   spk --average <dat_file_0> ... <dat_file_n>")
     spacer("   spk --model <json_file>")
     spacer("   spk --pex -type <pex_type> -n_points <n_points>")
+    spacer("Optional arguments:")
+    spacer("       --set_seeds <seed>")
     exit(0)
 
 def main():
 
     # Check arguments
     args = sys.argv
+
+    # Check for set_seeds option
+    if ("--set_seeds" in args):
+        seed = args[args.index("--set_seeds")+1]
+        set_seeds(int(seed))
 
     # Training mode
     if ("--train" in args):
