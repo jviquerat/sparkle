@@ -1,4 +1,5 @@
 # Generic imports
+import torch
 import numpy as np
 
 # Compute distance between two sets of coordinates
@@ -44,3 +45,8 @@ def min_distance(x):
     dmin = np.min(d)
 
     return dmin
+
+# Distance between two torch tensors
+def tensor_distance(x, y):
+
+    return torch.linalg.vector_norm(x-y)
