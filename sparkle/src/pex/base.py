@@ -6,13 +6,15 @@ import matplotlib.pyplot as plt
 # Custom imports
 from sparkle.src.utils.distances import nearest_all_to_all
 from sparkle.src.utils.prints    import spacer, fmt_float
+from sparkle.src.utils.default   import set_default
 
 ###############################################
 ### Base experiment plan
 class base_pex():
-    def __init__(self, spaces):
+    def __init__(self, spaces, pms):
 
-        self.spaces = spaces
+        self.spaces    = spaces
+        self.n_points_ = set_default("n_points", 10*self.dim, pms)
 
     @property
     def dim(self):

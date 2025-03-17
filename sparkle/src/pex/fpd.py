@@ -15,10 +15,9 @@ from sparkle.src.utils.prints    import spacer, fmt_float
 ### XXX 2D only for now
 class fpd(base_pex):
     def __init__(self, spaces, pms):
-        super().__init__(spaces)
+        super().__init__(spaces, pms)
 
         self.name       = "fixed_poisson_disc"
-        self.n_points_  = pms.n_points
         self.n_attempts = set_default("n_attempts", 20, pms)
 
         # Compute radius guess
