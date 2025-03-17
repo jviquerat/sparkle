@@ -1,4 +1,5 @@
 # Generic imports
+import math
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -55,17 +56,22 @@ class base_pex():
         v = self.xmax - self.xmin
         return np.prod(v)
 
+    # Compute phi-p criterion
+    # Default value suggested by Morris & Mitchell (1995)
+    def phi_p(self, p=50):
+
+        d = 0.0
+        for i in range(self.n_points):
+            dists = np.linalg.norm(self.x[i+1:] - self.x[i], axis=1)
+            d    += np.sum(np.power(dists, -p))
+
+        return math.pow(d, 1.0/p)
+
     # Print informations
     def summary(self):
 
         spacer("Pex type is "+self.name+" with "+str(self.n_points)+" points")
-
-        d_nearest, _ = nearest_all_to_all(self.x)
-        d_mean       = np.mean(d_nearest)
-        d_std        = np.std(d_nearest)
-
-        spacer("Mean nearest neighbor distance: "+fmt_float(d_mean))
-        spacer("Std  nearest neighbor distance: "+fmt_float(d_std))
+        spacer("Phi-p criterion: "+fmt_float(self.phi_p(5)))
 
     # 2D rendering (for debugging purpose)
     def render_2d(self):
@@ -73,7 +79,7 @@ class base_pex():
         if (self.dim != 2): return
 
         d_nearest, _ = nearest_all_to_all(self.x)
-        d_nearest /= np.max(d_nearest)
+        d_nearest   /= np.max(d_nearest)
 
         plt.clf()
         fig = plt.figure()
