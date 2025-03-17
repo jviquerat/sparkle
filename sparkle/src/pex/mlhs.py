@@ -13,10 +13,9 @@ from sparkle.src.utils.prints    import spacer, fmt_float
 ### Maximin Latin hypercube sampling
 class mlhs(base_pex):
     def __init__(self, spaces, pms):
-        super().__init__(spaces)
+        super().__init__(spaces, pms)
 
         self.name       = "maximin_lhs"
-        self.n_points_  = pms.n_points
         self.swap_ratio = set_default("swap_ratio", 0.5, pms)
         self.n_iter     = math.floor(self.swap_ratio*self.dim*self.n_points_**2)
         self.pms        = pms

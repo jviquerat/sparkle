@@ -9,10 +9,9 @@ from sparkle.src.pex.base import base_pex
 ### Random experiment plan
 class random(base_pex):
     def __init__(self, spaces, pms):
-        super().__init__(spaces)
+        super().__init__(spaces, pms)
 
-        self.name      = "random"
-        self.n_points_ = pms.n_points
+        self.name = "random"
 
         self.reset()
 
