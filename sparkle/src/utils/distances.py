@@ -9,17 +9,17 @@ def distance(xi, xj):
 # Compute nearest neighbour of one point within vector
 def nearest_one_to_all(x, i):
 
-    n_points = x.shape[0]
-    d_min    = 1.0e8
-    p_min    =-1
+    # Compute norm of x-x_i
+    d = np.linalg.norm(x - x[i], axis=1)
 
-    for j in range(n_points):
-        if (i==j): continue
+    # Create mask for ith point
+    mask    = np.zeros(x.shape[0])
+    mask[i] = 1
 
-        d = distance(x[i], x[j])
-        if (d < d_min):
-            d_min = d
-            p_min = j
+    # Create masked array and find min distance
+    dm    = np.ma.masked_array(d, mask)
+    p_min = dm.argmin()
+    d_min = d[p_min]
 
     return d_min, p_min
 
