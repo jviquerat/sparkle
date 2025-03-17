@@ -40,12 +40,7 @@ def nearest_all_to_all(x):
 # Compute minimal distance between two points within vector
 def min_distance(x):
 
-    n_points = x.shape[0]
-    dmin     = 1.0e8
-
-    for i in range(n_points):
-        for j in range(i+1, n_points):
-            dist = distance(x[i], x[j])
-            if (dist < dmin): dmin = dist
+    d, p = nearest_all_to_all(x)
+    dmin = np.min(d)
 
     return dmin
