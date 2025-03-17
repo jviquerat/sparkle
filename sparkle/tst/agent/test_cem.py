@@ -1,9 +1,9 @@
 # Generic imports
+import sys
 import pytest
 
 # Custom imports
-from sparkle.tst.tst    import *
-from sparkle.tst.runner import *
+from sparkle.tst.runner import runner
 
 ###############################################
 ### Test cem

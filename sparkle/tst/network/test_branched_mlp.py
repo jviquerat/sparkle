@@ -4,7 +4,6 @@ import torch
 import numpy as np
 
 # Custom imports
-from sparkle.tst.tst                  import *
 from sparkle.src.network.branched_mlp import branched_mlp
 
 ###############################################

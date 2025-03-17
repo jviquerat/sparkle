@@ -5,7 +5,6 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.tst.tst        import *
 from sparkle.src.pex.random import random
 from sparkle.src.env.spaces import env_spaces
 

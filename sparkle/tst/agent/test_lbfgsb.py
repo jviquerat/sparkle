@@ -3,7 +3,6 @@ import pytest
 import numpy as np
 
 # Custom imports
-from sparkle.tst.tst             import *
 from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.agent.lbfgsb    import lbfgsb
 from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
