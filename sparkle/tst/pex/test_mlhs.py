@@ -26,5 +26,5 @@ def test_maximin_lhs():
     pex = mlhs(s, pms)
     assert(pex.n_points == n_points)
     pex.render_2d()
-    filename = pex.name_+".png"
+    filename = pex.name+".png"
     os.remove(filename)

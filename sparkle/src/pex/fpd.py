@@ -16,12 +16,12 @@ class fpd(base_pex):
     def __init__(self, spaces, pms):
         super().__init__(spaces)
 
-        self.name_       = "fixed_poisson_disc"
-        self.n_points_   = pms.n_points
-        self.n_attempts_ = set_default("n_attempts", 20, pms)
+        self.name       = "fixed_poisson_disc"
+        self.n_points_  = pms.n_points
+        self.n_attempts = set_default("n_attempts", 20, pms)
 
         # Compute radius guess
-        self.radius_ = 0.75*math.sqrt(self.volume()/self.n_points_)
+        self.radius = 0.75*math.sqrt(self.volume()/self.n_points_)
 
         self.reset()
 
@@ -44,12 +44,12 @@ class fpd(base_pex):
             k      = np.random.randint(0, len(active))
             theta  = np.random.uniform(low  = 0.0,
                                        high = 2.0*math.pi,
-                                       size = self.n_attempts_)
-            radius = np.random.uniform(low  = self.radius_,
-                                       high = 2.0*self.radius_,
-                                       size = self.n_attempts_)
+                                       size = self.n_attempts)
+            radius = np.random.uniform(low  = self.radius,
+                                       high = 2.0*self.radius,
+                                       size = self.n_attempts)
 
-            for i in range(self.n_attempts_):
+            for i in range(self.n_attempts):
                 x  = active[k][0] + radius[i]*math.cos(theta[i])
                 y  = active[k][1] + radius[i]*math.sin(theta[i])
                 pt = np.array([x,y])
@@ -62,7 +62,7 @@ class fpd(base_pex):
                 ok = True
                 for j in range(len(lst)):
                     dist = self.distance(pt, lst[j])
-                    if (dist < self.radius_):
+                    if (dist < self.radius):
                         ok = False
                         break
 

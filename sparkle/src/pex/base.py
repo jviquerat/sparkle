@@ -71,7 +71,7 @@ class base_pex():
 
         n_points = x.shape[0]
         d_min    = 1.0e8
-        p_min    = -1
+        p_min    =-1
 
         for j in range(n_points):
             if (i==j): continue
@@ -86,9 +86,11 @@ class base_pex():
     # Compute minimal distance between two points
     def min_distance(self, x):
 
-        dmin = 1.0e8
-        for i in range(self.n_points):
-            for j in range(i+1, self.n_points):
+        n_points = x.shape[0]
+        dmin     = 1.0e8
+
+        for i in range(n_points):
+            for j in range(i+1, n_points):
                 dist = self.distance(x[i], x[j])
                 if (dist < dmin): dmin = dist
 
@@ -102,7 +104,7 @@ class base_pex():
     # Print informations
     def summary(self):
 
-        spacer("Pex type is "+self.name_+" with "+str(self.n_points)+" points")
+        spacer("Pex type is "+self.name+" with "+str(self.n_points)+" points")
 
         d_nearest, _ = self.nearest(self.x)
         d_mean       = np.mean(d_nearest)
@@ -125,7 +127,7 @@ class base_pex():
         fig.set_size_inches(5, 5)
         fig.subplots_adjust(0.01,0.01,0.99,0.95)
 
-        ax.set_title(self.name_)
+        ax.set_title(self.name)
         ax.set_xlim([self.xmin[0], self.xmax[0]])
         ax.set_ylim([self.xmin[1], self.xmax[1]])
         ax.tick_params(axis="y",direction="in")
@@ -136,5 +138,5 @@ class base_pex():
 
         cmap = matplotlib.cm.RdBu
         ax.scatter(self.x[:,0], self.x[:,1], c=cmap(d_nearest), marker="o", alpha=0.8)
-        plt.savefig(self.name_, dpi=100)
+        plt.savefig(self.name, dpi=100)
         plt.close()

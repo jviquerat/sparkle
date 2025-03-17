@@ -11,7 +11,7 @@ class random(base_pex):
     def __init__(self, spaces, pms):
         super().__init__(spaces)
 
-        self.name_     = "random"
+        self.name      = "random"
         self.n_points_ = pms.n_points
 
         self.reset()

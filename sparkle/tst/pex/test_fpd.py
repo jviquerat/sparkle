@@ -35,5 +35,5 @@ def test_fpd():
     assert(pex.n_points == 100)
 
     pex.render_2d()
-    filename = pex.name_+".png"
+    filename = pex.name+".png"
     os.remove(filename)
