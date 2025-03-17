@@ -14,11 +14,11 @@ class mlhs(base_pex):
     def __init__(self, spaces, pms):
         super().__init__(spaces)
 
-        self.name_       = "maximin_lhs"
-        self.n_points_   = pms.n_points
-        self.swap_ratio_ = set_default("swap_ratio", 0.5, pms)
-        self.n_iter_     = math.floor(self.swap_ratio_*self.dim*self.n_points_**2)
-        self.pms         = pms
+        self.name       = "maximin_lhs"
+        self.n_points_  = pms.n_points
+        self.swap_ratio = set_default("swap_ratio", 0.5, pms)
+        self.n_iter     = math.floor(self.swap_ratio*self.dim*self.n_points_**2)
+        self.pms        = pms
 
         self.reset()
 
@@ -42,7 +42,7 @@ class mlhs(base_pex):
         pn_copy = p_nearest.copy()
 
         # Space out samples
-        for k in range(self.n_iter_):
+        for k in range(self.n_iter):
 
             # Draw a random dimension
             dim = np.random.randint(self.dim)
@@ -106,5 +106,5 @@ class mlhs(base_pex):
         super().summary()
         spacer("Initial min distance: "+fmt_float(self.d_min_initial))
         spacer("Final min distance: "+fmt_float(self.d_min))
-        spacer("Total nb of attempted swaps: "+str(self.n_iter_))
+        spacer("Total nb of attempted swaps: "+str(self.n_iter))
         spacer("Number of accepted swaps: "+str(self.n_swaps))
