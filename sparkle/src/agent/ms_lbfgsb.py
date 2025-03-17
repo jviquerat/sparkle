@@ -3,9 +3,9 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.src.agent.lbfgsb    import lbfgsb
-from sparkle.src.pex.maximin_lhs import maximin_lhs
-from sparkle.src.env.spaces      import env_spaces
+from sparkle.src.agent.lbfgsb import lbfgsb
+from sparkle.src.pex.mlhs     import mlhs
+from sparkle.src.env.spaces   import env_spaces
 
 ###############################################
 ### Multi-start L-BFGS-B
@@ -23,7 +23,7 @@ class ms_lbfgsb():
         dim        = xmin.shape[0]
         space_dict = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
         spaces     = env_spaces(space_dict)
-        pex        = maximin_lhs(spaces, pms)
+        pex        = mlhs(spaces, pms)
 
         x_star = np.zeros((n_pts, dim))
         c_star = np.zeros(n_pts)

@@ -15,7 +15,7 @@
             "name": "lorenz"
         },
         "pex": {
-            "name": "maximin_lhs",
+            "name": "mlhs",
             "n_points": 40
         },
         "model": {

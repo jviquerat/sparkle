@@ -9,7 +9,7 @@
         "name": "branin"
     },
     "pex": {
-        "name": "maximin_lhs",
+        "name": "mlhs",
         "n_points": 20
     },
     "model": {

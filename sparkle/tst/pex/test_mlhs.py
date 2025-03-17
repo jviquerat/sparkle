@@ -5,8 +5,8 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.maximin_lhs import maximin_lhs
-from sparkle.src.env.spaces      import env_spaces
+from sparkle.src.pex.mlhs   import mlhs
+from sparkle.src.env.spaces import env_spaces
 
 ###############################################
 ### Test maximin lhs pex
@@ -23,7 +23,7 @@ def test_maximin_lhs():
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
     s = env_spaces(loc_space)
-    pex = maximin_lhs(s, pms)
+    pex = mlhs(s, pms)
     assert(pex.n_points == n_points)
     pex.render_2d()
     filename = pex.name_+".png"

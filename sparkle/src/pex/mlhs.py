@@ -10,7 +10,7 @@ from sparkle.src.utils.prints  import spacer, fmt_float
 
 ###############################################
 ### Maximin Latin hypercube sampling
-class maximin_lhs(base_pex):
+class mlhs(base_pex):
     def __init__(self, spaces, pms):
         super().__init__(spaces)
 
