@@ -4,7 +4,7 @@ import torch
 import numpy as np
 
 # Custom imports
-from sparkle.tst.tst             import tensor_distance
+from sparkle.src.utils.distances import tensor_distance
 from sparkle.src.network.lip_mlp import lip_mlp
 
 ###############################################
