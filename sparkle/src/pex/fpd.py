@@ -3,10 +3,11 @@ import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.base      import base_pex
-from sparkle.src.utils.error   import error
-from sparkle.src.utils.default import set_default
-from sparkle.src.utils.prints  import spacer, fmt_float
+from sparkle.src.pex.base        import base_pex
+from sparkle.src.utils.distances import distance, min_distance
+from sparkle.src.utils.error     import error
+from sparkle.src.utils.default   import set_default
+from sparkle.src.utils.prints    import spacer, fmt_float
 
 ###############################################
 ### Fixed poisson-disc experiment plan
@@ -61,7 +62,7 @@ class fpd(base_pex):
 
                 ok = True
                 for j in range(len(lst)):
-                    dist = self.distance(pt, lst[j])
+                    dist = distance(pt, lst[j])
                     if (dist < self.radius):
                         ok = False
                         break
@@ -91,7 +92,7 @@ class fpd(base_pex):
             distances = np.zeros((len(lst), len(selected)))
             for i in range(len(lst)):
                 for j in range(len(selected)):
-                    distances[i,j] = self.distance(lst[i], selected[j])
+                    distances[i,j] = distance(lst[i], selected[j])
 
             min_dists = np.min(distances, axis=1)
             k         = np.argmax(min_dists)
@@ -102,7 +103,7 @@ class fpd(base_pex):
         self.x_ = np.array(selected)
 
         # Compute minimal distance
-        self.d_min = self.min_distance(self.x)
+        self.d_min = min_distance(self.x)
 
     # Distance
     def distance(self, p1, p2):

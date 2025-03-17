@@ -3,10 +3,11 @@ import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.base      import base_pex
-from sparkle.src.pex.lhs       import lhs
-from sparkle.src.utils.default import set_default
-from sparkle.src.utils.prints  import spacer, fmt_float
+from sparkle.src.pex.base        import base_pex
+from sparkle.src.pex.lhs         import lhs
+from sparkle.src.utils.distances import distance, nearest_one_to_all, nearest_all_to_all
+from sparkle.src.utils.default   import set_default
+from sparkle.src.utils.prints    import spacer, fmt_float
 
 ###############################################
 ### Maximin Latin hypercube sampling
@@ -30,8 +31,7 @@ class mlhs(base_pex):
         self.x_ = base.x
 
         # Compute initial nearest neighbors
-        #self.d_min_initial = self.min_distance(self.x)
-        d_nearest, p_nearest = self.nearest(self.x)
+        d_nearest, p_nearest = nearest_all_to_all(self.x)
         p_min                = np.argmin(d_nearest)
         self.d_min_initial   = d_nearest[p_min]
         self.d_min           = self.d_min_initial
@@ -61,25 +61,25 @@ class mlhs(base_pex):
             # Update nearest for pts that had p1 or p2 as nearest
             for k in range(self.n_points):
                 if (pn_copy[k] in [p1, p2]):
-                    dn, pn     = self.p_nearest(self.x, k)
+                    dn, pn     = nearest_one_to_all(self.x, k)
                     dn_copy[k] = dn
                     pn_copy[k] = pn
 
             # Update nearest for p1
-            dn, pn      = self.p_nearest(self.x, p1)
+            dn, pn      = nearest_one_to_all(self.x, p1)
             dn_copy[p1] = dn
             pn_copy[p1] = pn
 
             # Update nearest for p2
-            dn, pn      = self.p_nearest(self.x, p2)
+            dn, pn      = nearest_one_to_all(self.x, p2)
             dn_copy[p2] = dn
             pn_copy[p2] = pn
 
             # For all points, check if p1 or p2 is now nearest
             for k in range(self.n_points):
                 if (k == p1) or (k == p2): continue
-                d1 = self.distance(self.x[k], self.x[p1])
-                d2 = self.distance(self.x[k], self.x[p2])
+                d1 = distance(self.x[k], self.x[p1])
+                d2 = distance(self.x[k], self.x[p2])
                 p, d = p1, d1
                 if (d2 < d1): p, d = p2, d2
                 if (d < dn_copy[k]):
