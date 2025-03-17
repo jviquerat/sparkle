@@ -4,10 +4,10 @@ import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.utils.default   import set_default
-from sparkle.src.agent.base      import base_agent
-from sparkle.src.pex.maximin_lhs import maximin_lhs
-from sparkle.src.env.spaces      import env_spaces
+from sparkle.src.utils.default import set_default
+from sparkle.src.agent.base    import base_agent
+from sparkle.src.pex.mlhs      import mlhs
+from sparkle.src.env.spaces    import env_spaces
 
 ###############################################
 ### CEM
@@ -44,7 +44,7 @@ class cem(base_agent):
                   "xmax": self.xmax_cem}
 
         spaces = env_spaces(spaces)
-        pex    = maximin_lhs(spaces, pms)
+        pex    = mlhs(spaces, pms)
 
         return pex.x
 
