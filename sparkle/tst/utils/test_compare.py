@@ -1,10 +1,10 @@
 # Generic imports
+import sys
 import math
 import pytest
 
 # Custom imports
-from sparkle.tst.tst           import *
-from sparkle.src.utils.compare import *
+from sparkle.src.utils.compare import compare
 
 ###############################################
 ### Test comparison

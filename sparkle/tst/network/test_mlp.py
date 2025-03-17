@@ -4,8 +4,7 @@ import torch
 import numpy as np
 
 # Custom imports
-from sparkle.tst.tst                  import *
-from sparkle.src.network.mlp          import mlp
+from sparkle.src.network.mlp import mlp
 
 ###############################################
 ### Test mlp
