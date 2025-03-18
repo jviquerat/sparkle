@@ -4,6 +4,7 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.pex.base        import base_pex
+from sparkle.src.pex.fps         import fps
 from sparkle.src.utils.distances import distance, min_distance
 from sparkle.src.utils.error     import error
 from sparkle.src.utils.default   import set_default
@@ -83,23 +84,7 @@ class fpd(base_pex):
         self.n_initial_points = len(lst)
 
         # Farthest point sampling
-        k = np.random.randint(0, len(lst))
-        selected = [lst[k]]
-        lst.pop(k)
-
-        while (len(selected) < self.n_points_):
-            distances = np.zeros((len(lst), len(selected)))
-            for i in range(len(lst)):
-                for j in range(len(selected)):
-                    distances[i,j] = distance(lst[i], selected[j])
-
-            min_dists = np.min(distances, axis=1)
-            k         = np.argmax(min_dists)
-
-            selected.append(lst[k])
-            lst.pop(k)
-
-        self.x_ = np.array(selected)
+        self.x_ = fps(lst, self.n_points_)
 
         # Compute minimal distance
         self.d_min = min_distance(self.x)
