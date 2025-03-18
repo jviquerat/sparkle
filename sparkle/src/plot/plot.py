@@ -211,3 +211,18 @@ def render_2D_metamodel(filename, spaces, x, c,
 
     plt.savefig(filename, dpi=100)
     plt.close()
+
+# Violin plot array
+def violins_array(filename, x_labels, x):
+
+    plt.clf()
+    fig = plt.figure()
+    ax  = fig.add_subplot(111)
+
+    violin = ax.violinplot(x, showmeans=True)
+    ax.set_xticklabels(x_labels)
+    ax.set_xticks(np.arange(len(x_labels))+1)
+    ax.set_ylabel('phi_p')
+
+    plt.savefig(filename, dpi=100)
+    plt.close()
