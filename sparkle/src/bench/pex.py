@@ -110,8 +110,14 @@ def main():
             f.write(np.array2string(v))
             f.write("\n")
 
-    labels = ["mlhs", "fpd"]
-    x = [results["mlhs", 2], results["fpd", 2]]
+    # Violin plot for first set of parameters
+    labels = []
+    x      = []
+    for m in methods:
+        labels += [m]
+        for d in dimensions:
+            x +=[results[m, d]]
+
     violins_array("test.png", labels, x)
 
 if __name__ == "__main__":
