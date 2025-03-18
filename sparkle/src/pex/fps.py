@@ -24,9 +24,8 @@ def fps(x, n_points):
 
     while (len(selected) < n_points):
         distances = np.zeros((len(x), len(selected)))
-        for i in range(len(x)):
-            for j in range(len(selected)):
-                distances[i,j] = distance(x[i], selected[j])
+        for j in range(len(selected)):
+            distances[:,j] = np.linalg.norm(x - selected[j], axis=1)
 
         min_dists = np.min(distances, axis=1)
         k         = np.argmax(min_dists)
