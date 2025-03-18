@@ -104,11 +104,6 @@ class fpd(base_pex):
         # Compute minimal distance
         self.d_min = min_distance(self.x)
 
-    # Distance
-    def distance(self, p1, p2):
-
-        return np.linalg.norm(p1 - p2, 2)
-
     # Print informations
     def summary(self):
 
