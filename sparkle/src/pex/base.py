@@ -71,7 +71,7 @@ class base_pex():
     def summary(self):
 
         spacer("Pex type is "+self.name+" with "+str(self.n_points)+" points")
-        spacer("Phi-p criterion: "+fmt_float(self.phi_p(5)))
+        spacer("Phi-p criterion: "+fmt_float(self.phi_p()))
 
     # 2D rendering (for debugging purpose)
     def render_2d(self):
