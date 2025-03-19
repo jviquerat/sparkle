@@ -1,6 +1,6 @@
 # Custom imports
 from sparkle.src.core.factory import factory
-from sparkle.src.pex.random   import random
+from sparkle.src.pex.random   import random, random_fps
 from sparkle.src.pex.lhs      import lhs
 from sparkle.src.pex.mlhs     import mlhs
 from sparkle.src.pex.fpd      import fpd
@@ -9,8 +9,8 @@ from sparkle.src.pex.fpd      import fpd
 pex_factory = factory()
 
 # Register pex
-pex_factory.register("random", random)
-pex_factory.register("lhs",    lhs)
-pex_factory.register("mlhs",   mlhs)
-pex_factory.register("fpd",    fpd)
-
+pex_factory.register("random",     random)
+pex_factory.register("lhs",        lhs)
+pex_factory.register("mlhs",       mlhs)
+pex_factory.register("fpd",        fpd)
+pex_factory.register("random_fps", random_fps)
