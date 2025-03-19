@@ -13,7 +13,6 @@ from sparkle.src.utils.prints    import spacer, fmt_float
 ###############################################
 ### Fixed poisson-disc experiment plan
 ### Relies on Robert Bridson algorithm
-### XXX 2D only for now
 class fpd(base_pex):
     def __init__(self, spaces, pms):
         super().__init__(spaces, pms)
@@ -21,8 +20,22 @@ class fpd(base_pex):
         self.name       = "fixed_poisson_disc"
         self.n_attempts = set_default("n_attempts", 20, pms)
 
-        # Compute radius guess
-        self.radius = 0.75*math.sqrt(self.volume()/self.n_points_)
+        # Radius estimate based on volume
+        #self.radius = 0.8*math.pow(self.volume()/self.n_points_, 1.0/self.dim)
+
+        # Radius estimate from:
+        # Sample elimination for generating poisson disk sample sets, C. Yuksel (2015)
+        if (self.dim == 2): self.radius = math.pow(self.volume()/(2.0*math.sqrt(3.0)*self.n_points_), 1.0/2.0)
+        if (self.dim == 3): self.radius = math.pow(self.volume()/(4.0*math.sqrt(2.0)*self.n_points_), 1.0/3.0)
+        if (self.dim >  3):
+            if (self.dim%2 == 0):
+                d_start = 4
+                C       = math.pi
+            else:
+                d_start = 3
+                C       = 1.0
+            for d in range(d_start, self.dim, 2): C *= 2.0*math.pi/float(d)
+            self.radius = math.pow(self.volume()/(C*self.n_points_), 1.0/float(self.dim))
 
         self.reset()
 
@@ -41,24 +54,17 @@ class fpd(base_pex):
         active = [p]
 
         while (len(active) > 0):
-            found  = False
-            k      = np.random.randint(0, len(active))
-            theta  = np.random.uniform(low  = 0.0,
-                                       high = 2.0*math.pi,
-                                       size = self.n_attempts)
-            radius = np.random.uniform(low  = self.radius,
-                                       high = 2.0*self.radius,
-                                       size = self.n_attempts)
+            found      = False
+            k          = np.random.randint(0, len(active))
+            radius     = np.random.uniform(low  = self.radius,
+                                           high = 2.0*self.radius,
+                                           size = self.n_attempts)
+            direction  = np.random.normal(size=(self.n_attempts,self.dim))
+            direction /= np.linalg.norm(direction, axis=1)[:, np.newaxis]
 
             for i in range(self.n_attempts):
-                x  = active[k][0] + radius[i]*math.cos(theta[i])
-                y  = active[k][1] + radius[i]*math.sin(theta[i])
-                pt = np.array([x,y])
-
-                if ((pt[0] < self.xmin[0]) or
-                    (pt[0] > self.xmax[0]) or
-                    (pt[1] < self.xmin[1]) or
-                    (pt[1] > self.xmax[1])): continue
+                pt = active[k] + radius[i]*direction[i]
+                if not (np.all(self.xmin <= pt) and np.all(pt <= self.xmax)): continue
 
                 ok = True
                 for j in range(len(lst)):
