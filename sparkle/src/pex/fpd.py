@@ -84,7 +84,7 @@ class fpd(base_pex):
         self.n_initial_points = len(lst)
 
         # Farthest point sampling
-        self.x_ = fps(lst, self.n_points_)
+        self.x_ = fps(np.array(lst), self.n_points_)
 
         # Compute minimal distance
         self.d_min = min_distance(self.x)

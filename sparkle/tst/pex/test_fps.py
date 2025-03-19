@@ -11,12 +11,12 @@ def test_fps():
 
     set_seeds(0)
 
-    x = [np.array([0.0, 0.0]),
-         np.array([0.1, 0.7]),
-         np.array([0.4, 0.2]),
-         np.array([0.4, 0.9]),
-         np.array([0.8, 0.1]),
-         np.array([0.2, 0.2])]
+    x = np.array([[0.0, 0.0],
+                  [0.1, 0.7],
+                  [0.4, 0.2],
+                  [0.4, 0.9],
+                  [0.8, 0.1],
+                  [0.2, 0.2]])
 
     x_fps = fps(x, 4)
     ref = np.array([[0.8, 0.1],
