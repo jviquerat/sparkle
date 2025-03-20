@@ -30,4 +30,20 @@ def test_gaussian():
     theta  = np.array([0.1])
 
     val = kernel.covariance(x0, x1, theta)
-    assert(compare(val, 0.3678794411714425, 1.0e-15))
+    val_ref = 0.3678794411714425
+    assert(compare(val, val_ref, 1.0e-15))
+
+    K = kernel(x0, x1, theta)
+    K_ref = np.array([[0.3678794411714425]])
+    assert(np.allclose(K, K_ref))
+
+    x0     = np.array([[0.5,0.5],
+                       [0.4,0.4]])
+    x1     = np.array([[0.6,0.6],
+                       [0.1,0.1]])
+    theta  = np.array([0.1])
+
+    K = kernel(x0, x1, theta)
+    K_ref = np.array([[3.67879441e-01, 1.12535175e-07],
+                      [1.83156389e-02, 1.23409804e-04]])
+    assert(np.allclose(K, K_ref))
