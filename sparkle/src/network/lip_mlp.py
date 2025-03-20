@@ -103,6 +103,16 @@ class LipMLP(BaseNetwork):
 
         self.net_.load_state_dict(self.net_weights)
 
+    # Return lipschitz constants vector
+    def lip_consts(self):
+
+        consts = []
+        for k in self.net_.named_parameters():
+            if ("lip_constant" in k[0]):
+                consts.append(k[1].item())
+
+        return consts
+
     def info(self) -> None:
         """
         Prints information about the network architecture.
