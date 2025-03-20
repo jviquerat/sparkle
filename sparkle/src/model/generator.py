@@ -23,6 +23,7 @@ def generate(env_pms, pex_pms, model_pms, path):
     pex = pex_factory.create(pex_pms.name,
                              spaces = env.spaces,
                              pms    = pex_pms)
+    pex.summary()
 
     # Initialize model
     model = model_factory.create(model_pms.name,
@@ -57,17 +58,12 @@ def generate(env_pms, pex_pms, model_pms, path):
 
     if (env.spaces.dim == 2):
         x_plot, y_plot, cost_map = env.generate_cost_map_2D()
+        xx = np.column_stack([x_plot.ravel(), y_plot.ravel()])
 
         n_plot  = cost_map.shape[0]
-        y_mu    = np.zeros((n_plot, n_plot))
-        y_std   = np.zeros((n_plot, n_plot))
-
-        for i in range(n_plot):
-            for j in range(n_plot):
-                xx         = np.array([[x_plot[i,j], y_plot[i,j]]])
-                mu, std    = model.evaluate(xx)
-                y_mu[i,j]  = mu[0]
-                y_std[i,j] = std[0]
+        mu, std = model.evaluate(xx)
+        y_mu    = np.reshape(mu, (n_plot, n_plot))
+        y_std   = np.reshape(std, (n_plot, n_plot))
 
         filename = path+"/model.png"
         fct_name = "std"
@@ -76,5 +72,4 @@ def generate(env_pms, pex_pms, model_pms, path):
                             y_mu, y_std, y_std, fct_name,
                             highlight_last=False)
 
-    # Close environments
     env.close()
