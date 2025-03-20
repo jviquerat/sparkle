@@ -213,16 +213,60 @@ def render_2D_metamodel(filename, spaces, x, c,
     plt.close()
 
 # Violin plot array
-def violins_array(filename, x_labels, x):
+def violins_array(filename, x, x_labels, y_label=None, title=None):
 
     plt.clf()
     fig = plt.figure()
     ax  = fig.add_subplot(111)
 
     violin = ax.violinplot(x, showmeans=True)
-    ax.set_xticklabels(x_labels)
     ax.set_xticks(np.arange(len(x_labels))+1)
-    ax.set_ylabel('phi_p')
+    ax.set_xticklabels(x_labels)
+    if (y_label is not None): ax.set_ylabel(y_label)
+    ax.set_yscale('log')
+    if (title is not None): ax.set_title(title)
 
+    plt.savefig(filename, dpi=100)
+    plt.close()
+
+# Multi-bar plot
+def multi_bar(filename, x, x_labels, bar_labels, y_label=None, title=None):
+
+    dx = np.arange(len(x_labels))  # the label locations
+    width = 0.15  # the width of the bars
+
+    fig, ax = plt.subplots()
+
+    k = 0
+    for m in bar_labels:
+        ax.bar(dx + k*width, x[m], width, label=bar_labels[k])
+        k += 1
+
+    if (y_label is not None): ax.set_ylabel(y_label)
+    if (title is not None): ax.set_title(title)
+    ax.set_yscale('log')
+    ax.set_xticks(dx)
+    ax.set_xticklabels(x_labels)
+    ax.legend()
+
+    plt.savefig(filename, dpi=100)
+    plt.close()
+
+# Scatter plot with names
+def scatter_names(filename, x, y, names, x_label=None, y_label=None, title=None):
+
+    plt.clf()
+    fig = plt.figure()
+    ax  = fig.add_subplot(111)
+
+    for m in names:
+        ax.scatter(x[m], y[m], marker='o', color='red')
+        ax.text(x[m], y[m], m, fontsize=9, color="red")
+
+    if (x_label is not None): ax.set_xlabel(x_label)
+    if (y_label is not None): ax.set_ylabel(y_label)
+    if (title is not None): ax.set_title(title)
+    ax.set_yscale('log')
+    ax.grid(True)
     plt.savefig(filename, dpi=100)
     plt.close()
