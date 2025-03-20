@@ -31,7 +31,7 @@ class random_fps(base_pex):
         super().__init__(spaces, pms)
 
         self.name     = "random_fps"
-        self.factor   = set_default("factor", 10, pms)
+        self.factor   = set_default("factor", 5, pms)
         self.n_target = self.factor*self.n_points_
 
         self.reset()
