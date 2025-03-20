@@ -1,0 +1,20 @@
+{
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "environment": {
+        "name": "branin",
+        "separable": true
+    },
+    "pex": {
+        "name": "maximin_lhs",
+        "n_points": 20
+    },
+    "model": {
+        "name": "lipnet",
+        "n_epochs": 10000
+    }
+}
