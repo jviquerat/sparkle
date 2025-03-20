@@ -12,8 +12,8 @@ from sparkle.src.env.spaces      import env_spaces
 from sparkle.src.utils.compare   import compare
 
 ###############################################
-### Test gaussian kernel
-def test_gaussian():
+### Test matern52 kernel
+def test_matern52():
 
     # Set seed for reproducible test
     set_seeds(0)
