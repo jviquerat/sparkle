@@ -310,10 +310,10 @@ def render_2D_metamodel(filename: str,
     ax.set_xlim([spaces.xmin[0], spaces.xmax[0]])
     ax.set_ylim([spaces.xmin[1], spaces.xmax[1]])
     ax.axis('off')
-    ax.imshow(cost_map,
-              extent=[spaces.xmin[0], spaces.xmax[0],
-                      spaces.xmin[1], spaces.xmax[1]],
-              vmin=spaces.vmin, vmax=spaces.vmax, alpha=0.8, cmap='RdBu_r')
+    im1 = ax.imshow(cost_map,
+                    extent=[spaces.xmin[0], spaces.xmax[0],
+                            spaces.xmin[1], spaces.xmax[1]],
+                    vmin=spaces.vmin, vmax=spaces.vmax, alpha=0.8, cmap='RdBu_r')
 
     cnt = ax.contour(x_plot, y_plot, cost_map, levels=spaces.levels,
                      colors='black', alpha=0.5)
@@ -322,29 +322,32 @@ def render_2D_metamodel(filename: str,
     if highlight_last:
         ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
     ax.set_title("f(x)")
+    fig.colorbar(im1, ax=ax, location="bottom", shrink=0.8, pad=0.05)
 
     ax = fig.add_subplot(132)
     ax.axis('off')
-    ax.imshow(y_mu,
-              extent=[spaces.xmin[0], spaces.xmax[0],
-                      spaces.xmin[1], spaces.xmax[1]],
-              vmin=spaces.vmin, vmax=spaces.vmax, alpha=0.8, cmap='RdBu_r')
+    im2 = ax.imshow(y_mu,
+                    extent=[spaces.xmin[0], spaces.xmax[0],
+                            spaces.xmin[1], spaces.xmax[1]],
+                    vmin=spaces.vmin, vmax=spaces.vmax, alpha=0.8, cmap='RdBu_r')
     cnt = ax.contour(x_plot, y_plot, y_mu, levels=spaces.levels,
                      colors='black', alpha=0.5)
     ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
     if highlight_last:
         ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
     ax.set_title("model")
+    fig.colorbar(im2, ax=ax, location="bottom", shrink=0.8, pad=0.05)
 
     ax = fig.add_subplot(133)
     ax.axis('off')
-    ax.imshow(fct,
-              extent=[spaces.xmin[0], spaces.xmax[0],
-                      spaces.xmin[1], spaces.xmax[1]],
-              alpha=0.8, cmap='RdBu_r')
+    im3 = ax.imshow(fct,
+                    extent=[spaces.xmin[0], spaces.xmax[0],
+                            spaces.xmin[1], spaces.xmax[1]],
+                    alpha=0.8, cmap='RdBu_r')
     if highlight_last:
         ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
     ax.set_title(fct_name)
+    fig.colorbar(im3, ax=ax, location="bottom", shrink=0.8, pad=0.05)
 
     plt.savefig(filename, dpi=100)
     plt.close()
