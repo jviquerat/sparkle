@@ -21,7 +21,7 @@ class LipschitzLinear(tnn.Module):
         super().__init__()
 
         # Lipschitz constant
-        self.lip_constant = lip_constant
+        self.lip_constant = tnn.Parameter(torch.tensor(lip_constant))
 
         # Normalize weights to 1
         self.linear = tnn.Linear(dim_in, dim_out)
