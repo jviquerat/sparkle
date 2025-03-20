@@ -21,21 +21,21 @@ class fpd(base_pex):
         self.n_attempts = set_default("n_attempts", 20, pms)
 
         # Radius estimate based on volume
-        #self.radius = 0.8*math.pow(self.volume()/self.n_points_, 1.0/self.dim)
+        self.radius = 0.75*math.pow(self.volume()/self.n_points_, 1.0/self.dim)
 
         # Radius estimate from:
         # Sample elimination for generating poisson disk sample sets, C. Yuksel (2015)
-        if (self.dim == 2): self.radius = math.pow(self.volume()/(2.0*math.sqrt(3.0)*self.n_points_), 1.0/2.0)
-        if (self.dim == 3): self.radius = math.pow(self.volume()/(4.0*math.sqrt(2.0)*self.n_points_), 1.0/3.0)
-        if (self.dim >  3):
-            if (self.dim%2 == 0):
-                d_start = 4
-                C       = math.pi
-            else:
-                d_start = 3
-                C       = 1.0
-            for d in range(d_start, self.dim, 2): C *= 2.0*math.pi/float(d)
-            self.radius = math.pow(self.volume()/(C*self.n_points_), 1.0/float(self.dim))
+        # if (self.dim == 2): self.radius = math.pow(self.volume()/(2.0*math.sqrt(3.0)*self.n_points_), 1.0/2.0)
+        # if (self.dim == 3): self.radius = math.pow(self.volume()/(4.0*math.sqrt(2.0)*self.n_points_), 1.0/3.0)
+        # if (self.dim >  3):
+        #     if (self.dim%2 == 0):
+        #         d_start = 4
+        #         C       = math.pi
+        #     else:
+        #         d_start = 3
+        #         C       = 1.0
+        #     for d in range(d_start, self.dim, 2): C *= 2.0*math.pi/float(d)
+        #     self.radius = math.pow(self.volume()/(C*self.n_points_), 1.0/float(self.dim))
 
         self.reset()
 

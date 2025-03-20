@@ -16,7 +16,7 @@ class mlhs(base_pex):
         super().__init__(spaces, pms)
 
         self.name       = "maximin_lhs"
-        self.swap_ratio = set_default("swap_ratio", 0.5, pms)
+        self.swap_ratio = set_default("swap_ratio", max(0.1, 1.0/float(self.dim)), pms)
         self.n_iter     = math.floor(self.swap_ratio*self.dim*self.n_points_**2)
         self.pms        = pms
 
