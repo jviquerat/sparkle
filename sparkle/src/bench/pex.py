@@ -15,7 +15,7 @@ from sparkle.src.utils.timer     import timer
 from sparkle.src.utils.json      import json_parser
 from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.utils.prints    import disclaimer, liner, spacer, bold
-from sparkle.src.plot.plot       import violins_array
+from sparkle.src.plot.plot       import violins_array, scatter_names
 
 def avg_pex(n_avg, combination):
 
@@ -97,10 +97,12 @@ def main():
     # Run benchmark with combinations of parameters
     # Store results in a dict mapping tuple of parameter values to numpy array
     results = dict()
+    time    = dict()
     for cmb in combinations:
         spacer(str(cmb))
-        time, phi_p = avg_pex(n_avg, cmb)
+        t, phi_p = avg_pex(n_avg, cmb)
         results[tuple(cmb.values())] = phi_p
+        time[tuple(cmb.values())]    = t
 
     # Output in data file
     with open(filename, "w") as f:
@@ -110,15 +112,29 @@ def main():
             f.write(np.array2string(v))
             f.write("\n")
 
-    # Violin plot for first set of parameters
-    labels = []
-    x      = []
-    for m in methods:
-        labels += [m]
-        for d in dimensions:
+    # Violin plot for phi-p
+    for d in dimensions:
+        labels = []
+        x      = []
+        for m in methods:
+            labels += [m]
             x +=[results[m, d]]
 
-    violins_array("test.png", labels, x)
+            f = "test_"+str(d)+".png"
+            t = "dimension "+str(d)
+            violins_array(f, x, labels, y_label="phi_p(50)", title=t)
+
+    # Scatter plots for given dimension
+    phi_p = {}
+    t     = {}
+    d     = 10
+    for m in methods:
+        phi_p[m] = np.mean(results[m,d])
+        t[m]     = time[m,d]
+
+    f = "scatter.png"
+    scatter_names(f, phi_p, t, methods, x_label="phi_p", y_label="t", title="scatter")
+
 
 if __name__ == "__main__":
     main()
