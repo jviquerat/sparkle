@@ -175,7 +175,7 @@ class metamodel(base_trainer):
 
                 xx          = np.reshape(self.x_plot, (-1,1))
                 y_mu, y_std = self.model.evaluate(xx)
-                infill      = self.agent.infill.infill(xx)
+                infill      = self.agent.infill(xx)
 
                 fct_name = "infill"
                 render_1D_metamodel(filename, self.env.spaces, x, c,
@@ -188,19 +188,14 @@ class metamodel(base_trainer):
                 # Generate cost map once at first call to save computational time
                 if not hasattr(self, "cost_map"):
                     self.x_plot, self.y_plot, self.cost_map = self.env.generate_cost_map_2D()
+                    self.xx = np.column_stack([self.x_plot.ravel(), self.y_plot.ravel()])
 
                 n_plot  = self.cost_map.shape[0]
-                y_mu    = np.zeros((n_plot, n_plot))
-                y_std   = np.zeros((n_plot, n_plot))
-                infill  = np.zeros((n_plot, n_plot))
-
-                for i in range(n_plot):
-                    for j in range(n_plot):
-                        xx = np.array([[self.x_plot[i,j], self.y_plot[i,j]]])
-                        mu, std      = self.model.evaluate(xx)
-                        y_mu[i,j]    = mu[0]
-                        y_std[i,j]   = std[0]
-                        infill[i,j]  = self.agent.infill.infill(xx)[0]
+                mu, std = self.model.evaluate(self.xx)
+                infill = self.agent.infill(self.xx)
+                y_mu    = np.reshape(mu, (n_plot, n_plot))
+                y_std   = np.reshape(std, (n_plot, n_plot))
+                infill  = np.reshape(infill, (n_plot, n_plot))
 
                 fct_name = "acquisition function"
                 render_2D_metamodel(filename, self.env.spaces, x, c,
