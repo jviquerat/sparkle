@@ -31,14 +31,10 @@ def nearest_one_to_all(x, i):
 # Compute nearest neighbour for all input coordinates
 def nearest_all_to_all(x):
 
-    n_points  = x.shape[0]
-    d_nearest = np.zeros(n_points)
-    p_nearest = np.zeros(n_points, dtype=int)
-
-    for i in range(n_points):
-        d_min, p_min = nearest_one_to_all(x, i)
-        d_nearest[i] = d_min
-        p_nearest[i] = p_min
+    d = distance_all_to_all(x, x)
+    np.fill_diagonal(d, np.inf)
+    p_nearest = d.argmin(axis=1)
+    d_nearest = d[np.arange(len(x)), p_nearest]
 
     return d_nearest, p_nearest
 
