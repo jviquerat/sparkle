@@ -44,5 +44,12 @@ def test_ei():
     inf.set_best(xb, yb)
     x = np.array([[0.5,0.5]])
     vei = inf(x)
+    ref = np.array([0.29848959])
 
-    assert(compare(vei, -0.2984895866155994, 1.0e-15))
+    assert(np.allclose(vei, ref))
+
+    x = np.array([[0.5,0.5],
+                  [0.2,0.2]])
+    vei = inf(x)
+    ref = np.array([0.29848959, 1.31487147])
+    assert(np.allclose(vei, ref))

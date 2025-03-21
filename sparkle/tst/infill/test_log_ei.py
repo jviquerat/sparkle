@@ -14,8 +14,8 @@ from sparkle.src.env.spaces    import env_spaces
 from sparkle.src.utils.compare import compare
 
 ###############################################
-### Test ei infill
-def test_ei():
+### Test log_ei infill
+def test_log_ei():
 
     # Set seed for reproducible test
     set_seeds(0)
@@ -42,7 +42,14 @@ def test_ei():
 
     inf = log_ei(space, model)
     inf.set_best(xb, yb)
+
     x = np.array([[0.5,0.5]])
     vei = inf(x)
+    ref = np.array([-1.20902023])
+    assert(np.allclose(vei, ref))
 
-    assert(compare(vei, 1.2090202324678856, 1.0e-15))
+    x = np.array([[0.5,0.5],
+                  [0.2,0.2]])
+    vei = inf(x)
+    ref = np.array([-1.20902023,  0.27373892])
+    assert(np.allclose(vei, ref))

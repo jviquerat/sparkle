@@ -32,14 +32,7 @@ class ei():
 
         return ei
 
-    # Actual infill criterion
-    def infill(self, x):
-
-        return self._ei(x)
-
     # () operator used for optimization
     def __call__(self, x):
 
-        ei = self._ei(x)
-
-        return -ei[0]
+        return self._ei(x)

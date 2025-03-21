@@ -43,20 +43,10 @@ class log_ei():
 
         return lgei
 
-    # Actual infill criterion
-    # We return exp(log_ei) for plotting
-    def infill(self, x):
-
-        lgei = self._log_ei(x)
-
-        return np.exp(lgei)
-
     # () operator used for optimization
     def __call__(self, x):
 
-        lgei = self._log_ei(x)
-
-        return -lgei[0]
+        return self._log_ei(x)
 
 # Numerically stable version of log(1 - exp(x))
 def log1mexp(x):
