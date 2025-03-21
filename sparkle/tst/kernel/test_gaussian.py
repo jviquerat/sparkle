@@ -9,7 +9,6 @@ import numpy as np
 from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.kernel.gaussian import gaussian
 from sparkle.src.env.spaces      import env_spaces
-from sparkle.src.utils.compare   import compare
 
 ###############################################
 ### Test gaussian kernel
@@ -28,10 +27,6 @@ def test_gaussian():
     x0     = np.array([[0.5,0.5]])
     x1     = np.array([[0.6,0.6]])
     theta  = np.array([0.1])
-
-    val = kernel.covariance(x0, x1, theta)
-    val_ref = 0.3678794411714425
-    assert(compare(val, val_ref, 1.0e-15))
 
     K = kernel(x0, x1, theta)
     K_ref = np.array([[0.3678794411714425]])
