@@ -6,6 +6,7 @@ from   numpy.linalg import solve
 
 # Custom imports
 from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
+from sparkle.src.utils.distances import min_max_distance
 
 ###############################################
 ### Base kernel
@@ -36,18 +37,18 @@ class base_kernel():
         self.nf_ = x.shape[1] # nb of features
 
         # Update bounds
-        dmin, dmax = self.distances(self.x_)
+        dmin, dmax = min_max_distance(self.x_)
         self.xmin_ = np.log(np.array([max(dmin,0.1)]))
         self.xmax_ = np.log(np.array([dmax]))
 
         # Optimize
-        opt  = ms_lbfgsb()
-        x, c = opt.optimize(self.log_likelihood,
-                            self.xmin_,
-                            self.xmax_,
-                            n_pts=10*self.dim_)
+        opt      = ms_lbfgsb()
+        x_opt, c = opt.optimize(self.log_likelihood,
+                                self.xmin_,
+                                self.xmax_,
+                                n_pts=10*self.dim_)
 
-        self.theta_ = np.exp(x)
+        self.theta_ = np.exp(x_opt)
 
     # Compute log-likelihood
     def log_likelihood(self, log_theta):
@@ -75,16 +76,3 @@ class base_kernel():
         K = self.covariance(xi, xj, theta)
 
         return K
-
-    # Compute dmin and dmax on sample set
-    def distances(self, x):
-
-        dmin = 1.0e8
-        dmax = 0.0
-        for k in range(x.shape[0]):
-            for l in range(k+1, x.shape[0]):
-                d = np.linalg.norm(x[k] - x[l])
-                if (d < dmin): dmin = d
-                if (d > dmax): dmax = d
-
-        return dmin, dmax
