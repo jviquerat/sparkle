@@ -45,7 +45,7 @@ class base_kernel():
         x, c = opt.optimize(self.log_likelihood,
                             self.xmin_,
                             self.xmax_,
-                            10*self.dim_)
+                            n_pts=10*self.dim_)
 
         self.theta_ = np.exp(x)
 

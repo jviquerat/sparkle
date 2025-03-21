@@ -14,7 +14,7 @@ class ms_lbfgsb():
     def __init__(self):
         pass
 
-    def optimize(self, f, xmin, xmax, n_pts=10, m=5, tol=1e-3, max_iter=20):
+    def optimize(self, f, xmin, xmax, df=None, n_pts=10, m=5, tol=1e-3, max_iter=20):
 
         pms          = types.SimpleNamespace()
         pms.n_points = n_pts
@@ -30,7 +30,8 @@ class ms_lbfgsb():
         opt    = lbfgsb()
 
         for k in range(n_pts):
-            x, c      = opt.optimize(f, pex.x[k], xmin, xmax, m, tol, max_iter)
+            x, c      = opt.optimize(f, pex.x[k], xmin, xmax,
+                                     df=df, m=m, tol=tol, max_iter=max_iter)
             x_star[k] = x
             c_star[k] = c
 
