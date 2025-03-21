@@ -52,6 +52,21 @@ def min_distance(x):
 
     return dmin
 
+# Compute minimal and maximal distances between two points within vector
+def min_max_distance(x):
+
+    n = x.shape[0]
+    d = distance_all_to_all(x,x)
+
+    mask = np.zeros((n,n))
+    np.fill_diagonal(mask, 1)
+
+    dm   = np.ma.masked_array(d, mask)
+    dmin = dm.min()
+    dmax = dm.max()
+
+    return dmin, dmax
+
 # Distance between two torch tensors
 def tensor_distance(x, y):
 
