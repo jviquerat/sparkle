@@ -38,6 +38,11 @@ class ego(base_agent):
         k = np.argmin(self.model.y)
         return self.model.x[k], self.model.y[k]
 
+    # Local function for optimization of infill
+    def opt_infill(self, x):
+
+        return -self.infill(x)
+
     # Sample new point based on expected improvement
     def sample(self):
 
@@ -47,7 +52,7 @@ class ego(base_agent):
 
         # Optimize
         opt  = ms_lbfgsb()
-        x, c = opt.optimize(self.infill,
+        x, c = opt.optimize(self.opt_infill,
                             self.spaces.xmin,
                             self.spaces.xmax,
                             20*self.spaces.dim,
