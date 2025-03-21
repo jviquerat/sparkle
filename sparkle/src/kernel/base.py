@@ -67,18 +67,12 @@ class base_kernel():
         return log_lkh
 
     # () operator
-    def __call__(self, x, y, theta=None):
+    # x and y have shapes (n_batch, dim)
+    def __call__(self, xi, xj, theta=None):
 
         if theta is None: theta = self.theta_
 
-        nx = x.shape[0]
-        ny = y.shape[0]
-        K  = np.zeros((nx,ny))
-
-        for i in range(nx):
-            for j in range(ny):
-                K[i,j] = self.covariance(x[i], y[j], theta)
-                if (i==j): K[i,j] += self.diag_eps_
+        K = self.covariance(xi, xj, theta)
 
         return K
 

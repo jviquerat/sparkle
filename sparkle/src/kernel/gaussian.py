@@ -2,11 +2,11 @@
 import numpy as np
 
 # Custom imports
-from sparkle.src.kernel.base   import base_kernel
-from sparkle.src.utils.default import set_default
+from sparkle.src.kernel.base     import base_kernel
+from sparkle.src.utils.distances import distance_all_to_all
 
 ###############################################
-### Gaussian kernel
+### Isotropic gaussian kernel
 class gaussian(base_kernel):
     def __init__(self, spaces, pms=None):
         super().__init__(spaces)
@@ -14,9 +14,10 @@ class gaussian(base_kernel):
         self.dim_ = 1
 
     # Compute isotropic covariance function
+    # xi and xj have shapes (n_batch, dim)
     def covariance(self, xi, xj, theta):
 
-        dist = np.linalg.norm(xi-xj)
+        dist = distance_all_to_all(xi, xj)
         v    = np.exp(-0.5*(dist/theta[0])**2)
 
         return v

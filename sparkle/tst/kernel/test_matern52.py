@@ -9,7 +9,6 @@ import numpy as np
 from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.kernel.matern52 import matern52
 from sparkle.src.env.spaces      import env_spaces
-from sparkle.src.utils.compare   import compare
 
 ###############################################
 ### Test matern52 kernel
@@ -29,5 +28,17 @@ def test_matern52():
     x1     = np.array([[0.6,0.6]])
     theta  = np.array([0.1])
 
-    val = kernel.covariance(x0, x1, theta)
-    assert(compare(val, 0.1902957050844289, 1.0e-15))
+    K = kernel(x0, x1, theta)
+    K_ref = np.array([[0.1902957050844289]])
+    assert(np.allclose(K, K_ref))
+
+    x0     = np.array([[0.5,0.5],
+                       [0.4,0.4]])
+    x1     = np.array([[0.6,0.6],
+                       [0.1,0.1]])
+    theta  = np.array([0.1])
+
+    K = kernel(x0, x1, theta)
+    K_ref = np.array([[1.90295705e-01, 6.09415049e-05],
+                      [1.55128831e-02, 1.02289432e-03]])
+    assert(np.allclose(K, K_ref))
