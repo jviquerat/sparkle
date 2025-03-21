@@ -19,13 +19,11 @@ def nearest_one_to_all(x, i):
     # Compute norm of x-x_i
     d = np.linalg.norm(x - x[i], axis=1)
 
-    # Create mask for ith point
-    mask    = np.zeros(x.shape[0])
-    mask[i] = 1
+    # Set ith component to infinity
+    d[i] = np.inf
 
     # Create masked array and find min distance
-    dm    = np.ma.masked_array(d, mask)
-    p_min = dm.argmin()
+    p_min = d.argmin()
     d_min = d[p_min]
 
     return d_min, p_min
