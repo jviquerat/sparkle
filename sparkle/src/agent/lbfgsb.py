@@ -27,9 +27,7 @@ class lbfgsb():
         u = xmax
 
         # Define dx vectors for differenciation
-        dx_val = 0.0001*(np.max(u) - np.min(l))
-        dx     = np.zeros((x.shape[0], x.shape[0]))
-        for k in range(x.shape[0]): dx[k,k] = dx_val
+        dx  = 0.0001*(np.max(u) - np.min(l))
 
         # Lists for recent steps and gradient differences
         s_list = [] # (s = x_k+1 - x_k)
@@ -83,11 +81,21 @@ class lbfgsb():
     # Naive gradient computation
     def grad_f(self, f, x, dx):
 
-        df = np.zeros((x.shape[0]))
-        for k in range(x.shape[0]):
-            df[k] = (f(x+dx[k]) - f(x-dx[k]))/(2.0*dx[k,k])
+        n = x.shape[0]
+        m = f(x).size
+        J = np.zeros((m,n))
 
-        return df
+        x_f = x.copy()
+        x_b = x.copy()
+
+        for j in range(n):
+            x_f[j] += dx
+            x_b[j] -= dx
+            J[:,j]  = 0.5*(f(x_f)-f(x_b))/dx
+            x_f[j] -= dx
+            x_b[j] += dx
+
+        return np.reshape(J, (n))
 
     # Project x in bounds
     def project(self, x, l, u):
