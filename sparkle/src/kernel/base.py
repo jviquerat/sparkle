@@ -74,5 +74,6 @@ class base_kernel():
         if theta is None: theta = self.theta_
 
         K = self.covariance(xi, xj, theta)
+        np.fill_diagonal(K, K.diagonal() + self.diag_eps_)
 
         return K
