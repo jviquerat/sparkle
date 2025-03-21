@@ -7,6 +7,12 @@ def distance(xi, xj):
 
     return np.linalg.norm(xi - xj)
 
+# Compute distances from all points of xi to all points of xj
+# xi and xj have shapes (n_batch, dim)
+def distance_all_to_all(xi, xj):
+
+    return np.linalg.norm(xi[:,np.newaxis,:] - xj[np.newaxis,:,:], axis=-1)
+
 # Compute nearest neighbour of one point within vector
 def nearest_one_to_all(x, i):
 
