@@ -14,10 +14,11 @@ class lbfgsb():
     # x0        : initial guess
     # xmin      : minimal bounds
     # xmax      : maximal bounds
+    # df        : gradient of f0
     # max_pairs : max nb of correction pairs
     # tol       : tolerance for the norm of the projected gradient
     # max_iter  : max nb of iteration
-    def optimize(self, f0, x0, xmin, xmax, m=10, tol=1e-6, max_iter=100):
+    def optimize(self, f0, x0, xmin, xmax, df=None, m=10, tol=1e-6, max_iter=100):
 
         # Copy input
         x = x0.copy()
@@ -33,6 +34,10 @@ class lbfgsb():
         is_fx_array = isinstance(f0(x0), (list, tuple, np.ndarray))
         if (is_fx_array): f = lambda x: f0(x)[0]
         else:             f = f0
+
+        # Select gradient function
+        if df is not None: self.grad_f = lambda f, x, dx: df(x)
+        else:              self.grad_f = lambda f, x, dx: self.grad_fd(f, x, dx)
 
         # Lists for recent steps and gradient differences
         s_list = [] # (s = x_k+1 - x_k)
@@ -83,8 +88,8 @@ class lbfgsb():
 
         return x, f(x)
 
-    # Naive gradient computation
-    def grad_f(self, f, x, dx):
+    # Naive gradient computation using finite differences
+    def grad_fd(self, f, x, dx):
 
         n = x.shape[0]
         m = f(x).size

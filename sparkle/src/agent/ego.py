@@ -55,7 +55,7 @@ class ego(base_agent):
         x, c = opt.optimize(self.opt_infill,
                             self.spaces.xmin,
                             self.spaces.xmax,
-                            20*self.spaces.dim,
+                            n_pts=20*self.spaces.dim,
                             tol=1.0e-6, max_iter=50)
 
         return np.reshape(x, (-1,self.spaces.dim))
