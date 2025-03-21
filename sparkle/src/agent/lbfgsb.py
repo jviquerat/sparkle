@@ -10,14 +10,14 @@ class lbfgsb():
     def __init__(self):
         pass
 
-    # f         : function to minimize
+    # f0        : function to minimize
     # x0        : initial guess
     # xmin      : minimal bounds
     # xmax      : maximal bounds
     # max_pairs : max nb of correction pairs
     # tol       : tolerance for the norm of the projected gradient
     # max_iter  : max nb of iteration
-    def optimize(self, f, x0, xmin, xmax, m=10, tol=1e-6, max_iter=100):
+    def optimize(self, f0, x0, xmin, xmax, m=10, tol=1e-6, max_iter=100):
 
         # Copy input
         x = x0.copy()
@@ -28,6 +28,11 @@ class lbfgsb():
 
         # Define dx vectors for differenciation
         dx  = 0.0001*(np.max(u) - np.min(l))
+
+        # Wrap f for array outputs if necessary
+        is_fx_array = isinstance(f0(x0), (list, tuple, np.ndarray))
+        if (is_fx_array): f = lambda x: f0(x)[0]
+        else:             f = f0
 
         # Lists for recent steps and gradient differences
         s_list = [] # (s = x_k+1 - x_k)
