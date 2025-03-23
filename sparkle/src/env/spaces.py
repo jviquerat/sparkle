@@ -1,5 +1,4 @@
 # Generic imports
-import numpy as np
 
 ###############################################
 ### A class holding informations dimensions

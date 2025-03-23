@@ -1,9 +1,4 @@
 # Generic imports
-import os
-import math
-import shutil
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy             as np
 
 # Custom imports

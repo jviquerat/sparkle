@@ -1,6 +1,5 @@
 # Generic imports
 import sys
-import pytest
 
 # Custom imports
 from sparkle.tst.runner import runner

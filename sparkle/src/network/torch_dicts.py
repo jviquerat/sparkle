@@ -1,8 +1,6 @@
 # Generic imports
 import math
-import torch
 import torch.nn as tnn
-import numpy    as np
 
 # Custom imports
 from sparkle.src.network.torch_layers import lipschitz_linear

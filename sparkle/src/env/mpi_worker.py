@@ -1,5 +1,4 @@
 # Generic imports
-import sys
 
 # Custom imports
 from sparkle.src.env.parallel import parallel

@@ -1,5 +1,4 @@
 # Generic imports
-import os
 import sys
 import types
 import itertools
@@ -10,10 +9,8 @@ from collections import defaultdict
 from sparkle.src.env.parallel    import parallel
 from sparkle.src.pex.pex         import pex_factory
 from sparkle.src.env.spaces      import env_spaces
-from sparkle.src.utils.distances import nearest_all_to_all
 from sparkle.src.utils.timer     import timer
 from sparkle.src.utils.json      import json_parser
-from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.utils.prints    import disclaimer, liner, spacer, bold
 from sparkle.src.plot.plot       import violins_array, scatter_names
 

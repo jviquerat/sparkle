@@ -1,8 +1,4 @@
 # Generic imports
-import os
-import sys
-import time
-import shutil
 import numpy as np
 
 # Custom imports
@@ -10,7 +6,6 @@ from sparkle.src.env.parallel    import parallel
 from sparkle.src.pex.pex         import pex_factory
 from sparkle.src.model.model     import model_factory
 from sparkle.src.plot.plot       import render_1D_metamodel, render_2D_metamodel
-from sparkle.src.utils.prints    import liner
 from sparkle.src.utils.error     import error
 
 # Create pex, compute costs and generate model

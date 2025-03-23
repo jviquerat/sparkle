@@ -1,6 +1,4 @@
 # Generic imports
-import math
-import numpy as np
 import torch
 import torch.nn as tnn
 torch.set_default_dtype(torch.double)

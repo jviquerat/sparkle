@@ -1,5 +1,4 @@
 # Generic imports
-import torch
 import torch.nn as tnn
 
 ###############################################

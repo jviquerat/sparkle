@@ -1,7 +1,5 @@
 # Generic imports
 import os
-import math
-import pytest
 import types
 import numpy as np
 
