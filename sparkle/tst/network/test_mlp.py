@@ -19,12 +19,12 @@ def test_mlp():
     # input with size 3 and batch_size 1
     x = torch.zeros(1,3)
     y = net.forward(x)
-    assert(y.shape == (1,1))
+    assert y.shape == (1,1)
 
     # input with size 3 and batch_size 4
     x = torch.zeros(4,3)
     y = net.forward(x)
-    assert(y.shape == (4,1))
+    assert y.shape == (4,1)
 
     # mlp with input of size 3, output of size 2
     net = mlp(inp_dim = 3,
@@ -35,7 +35,7 @@ def test_mlp():
     # input with size 3 and batch_size 4
     x = torch.zeros(4,3)
     y = net.forward(x)
-    assert(y.shape == (4,2))
+    assert y.shape == (4,2)
 
     # mlp with specified activations for each layer
     net = mlp(inp_dim = 3,
@@ -46,4 +46,4 @@ def test_mlp():
     # input with size 3 and batch_size 4
     x = torch.zeros(4,3)
     y = net.forward(x)
-    assert(y.shape == (4,2))
+    assert y.shape == (4,2)

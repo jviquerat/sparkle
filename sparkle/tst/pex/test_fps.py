@@ -38,4 +38,4 @@ def test_fps():
                     [0.97861834, 0.79915856],
                     [0.46631077, 0.24442559]])
 
-    assert(np.allclose(x, ref))
+    assert np.allclose(x, ref)

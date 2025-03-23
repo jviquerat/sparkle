@@ -25,7 +25,7 @@ def test_lip_mlp():
     y1 = net.forward(x1)
     dx = tensor_distance(x0, x1)
     dy = tensor_distance(y0, y1)
-    assert(dy <= dx)
+    assert dy <= dx
 
     # lip mlp with input of size 3, output of size 1, lip_constant of 0.1
     net = lip_mlp(inp_dim      = 3,
@@ -41,7 +41,7 @@ def test_lip_mlp():
     y1 = net.forward(x1)
     dx = tensor_distance(x0, x1)
     dy = tensor_distance(y0, y1)
-    assert(dy <= 0.01*dx)
+    assert dy <= 0.01*dx
 
     # lip mlp with all specified activations
     net = lip_mlp(inp_dim      = 3,
@@ -57,4 +57,4 @@ def test_lip_mlp():
     y1 = net.forward(x1)
     dx = tensor_distance(x0, x1)
     dy = tensor_distance(y0, y1)
-    assert(dy <= 0.01*dx)
+    assert dy <= 0.01*dx

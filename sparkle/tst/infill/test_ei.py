@@ -46,10 +46,10 @@ def test_ei():
     vei = inf(x)
     ref = np.array([0.29848959])
 
-    assert(np.allclose(vei, ref))
+    assert np.allclose(vei, ref)
 
     x = np.array([[0.5,0.5],
                   [0.2,0.2]])
     vei = inf(x)
     ref = np.array([0.29848959, 1.31487147])
-    assert(np.allclose(vei, ref))
+    assert np.allclose(vei, ref)

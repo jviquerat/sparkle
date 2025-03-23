@@ -30,7 +30,7 @@ def test_gaussian():
 
     K = kernel(x0, x1, theta)
     K_ref = np.array([[0.3678794411714425]])
-    assert(np.allclose(K, K_ref))
+    assert np.allclose(K, K_ref)
 
     x0     = np.array([[0.5,0.5],
                        [0.4,0.4]])
@@ -41,4 +41,4 @@ def test_gaussian():
     K = kernel(x0, x1, theta)
     K_ref = np.array([[3.67879441e-01, 1.12535175e-07],
                       [1.83156389e-02, 1.23409804e-04]])
-    assert(np.allclose(K, K_ref))
+    assert np.allclose(K, K_ref)

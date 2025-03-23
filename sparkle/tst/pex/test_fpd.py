@@ -27,7 +27,7 @@ def test_fpd():
     # have issues providing the exact number of required points
     pms.n_points = 2
     pex = fpd(s, pms)
-    assert(pex.n_points == 2)
+    assert pex.n_points == 2
 
     pms.n_points = 10
     pex = fpd(s, pms)
@@ -43,9 +43,9 @@ def test_fpd():
                     [0.97949503, 0.42973387],
                     [0.99545743, 0.98057752]])
 
-    assert(pex.n_points == 10)
-    assert(np.allclose(ref, pex.x))
+    assert pex.n_points == 10
+    assert np.allclose(ref, pex.x)
 
     pms.n_points = 100
     pex = fpd(s, pms)
-    assert(pex.n_points == 100)
+    assert pex.n_points == 100

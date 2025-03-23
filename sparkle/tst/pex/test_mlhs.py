@@ -41,5 +41,5 @@ def test_maximin_lhs():
                     [0.5364656 , 0.04733705],
                     [0.04573446, 0.65583435]])
 
-    assert(pex.n_points == n_points)
-    assert(np.allclose(ref, pex.x))
+    assert pex.n_points == n_points
+    assert np.allclose(ref, pex.x)
