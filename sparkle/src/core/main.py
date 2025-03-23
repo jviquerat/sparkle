@@ -10,7 +10,7 @@ from sparkle.src.core.model    import model
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.utils.json    import json_parser
 from sparkle.src.utils.seeds   import set_seeds
-from sparkle.src.utils.prints  import disclaimer, liner, liner_simple, spacer, bold, err_print
+from sparkle.src.utils.prints  import disclaimer, liner, spacer, bold, err_print
 
 def helper():
     liner(err_print("Command line error"))

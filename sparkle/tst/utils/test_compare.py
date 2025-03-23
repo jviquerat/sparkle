@@ -1,7 +1,5 @@
 # Generic imports
 import sys
-import math
-import pytest
 
 # Custom imports
 from sparkle.src.utils.compare import compare

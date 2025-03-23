@@ -1,6 +1,6 @@
 # Generic imports
 import numpy as np
-from math import sqrt, pi, exp, erf, erfc, log, expm1, log1p
+from math import sqrt, pi, exp, erf, log, expm1, log1p
 
 ###############################################
 ### Log expected improvement infill

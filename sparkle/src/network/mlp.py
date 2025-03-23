@@ -2,7 +2,6 @@
 import copy
 import torch
 import torch.nn as tnn
-import torch.optim as toptim
 
 # Custom imports
 from sparkle.src.network.base        import base

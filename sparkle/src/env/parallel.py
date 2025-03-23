@@ -83,7 +83,6 @@ class spk_parallel:
     def finalize(self):
 
         if (self.type_ == "mpi"):
-            import mpi4py
             from mpi4py import MPI
 
             MPI.Finalize()

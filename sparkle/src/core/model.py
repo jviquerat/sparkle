@@ -3,12 +3,10 @@ import os
 import sys
 import time
 import shutil
-import numpy as np
 
 # Custom imports
 from sparkle.src.env.parallel    import parallel
 from sparkle.src.model.generator import generate
-from sparkle.src.plot.plot       import plot_avg
 
 # Compute model
 def model(json_file, pms):

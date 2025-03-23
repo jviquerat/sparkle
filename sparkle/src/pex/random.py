@@ -1,5 +1,4 @@
 # Generic imports
-import math
 import numpy as np
 
 # Custom imports

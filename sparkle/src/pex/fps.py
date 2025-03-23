@@ -2,7 +2,6 @@
 import numpy as np
 
 # Custom imports
-from sparkle.src.utils.distances import distance, min_distance
 from sparkle.src.utils.error     import error
 
 ###############################################

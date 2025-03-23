@@ -1,5 +1,4 @@
 # Generic imports
-import os
 import subprocess
 
 # Custom imports

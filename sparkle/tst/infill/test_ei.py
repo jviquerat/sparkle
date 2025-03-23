@@ -1,7 +1,4 @@
 # Generic imports
-import os
-import math
-import pytest
 import types
 import numpy as np
 
@@ -11,7 +8,6 @@ from sparkle.src.model.kriging import kriging
 from sparkle.src.infill.ei     import ei
 from sparkle.src.pex.lhs       import lhs
 from sparkle.src.env.spaces    import env_spaces
-from sparkle.src.utils.compare import compare
 
 ###############################################
 ### Test ei infill

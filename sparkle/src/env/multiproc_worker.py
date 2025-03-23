@@ -1,8 +1,6 @@
 # Generic imports
-import sys
 
 # Custom imports
-from sparkle.src.env.parallel import parallel
 
 ###############################################
 # Worker function for slave processes

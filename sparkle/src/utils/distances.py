@@ -54,7 +54,7 @@ def min_max_distance(x):
     dmin = np.min(d)
     np.fill_diagonal(d, -np.inf)
     dmax = np.max(d)
-    
+
     return dmin, dmax
 
 # Distance between two torch tensors

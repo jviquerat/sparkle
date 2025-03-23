@@ -1,11 +1,9 @@
 # Generic imports
-import types
 import numpy as np
 from   numpy import matmul
 from   numpy.linalg import solve
 
 # Custom imports
-from sparkle.src.agent.optimizer import optimizer
 from sparkle.src.model.base      import base_model
 from sparkle.src.kernel.kernel   import kernel_factory
 from sparkle.src.utils.default   import set_default

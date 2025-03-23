@@ -1,7 +1,4 @@
 # Generic imports
-import numpy as np
-import matplotlib
-import matplotlib.pyplot as plt
 
 ###############################################
 ### Base model

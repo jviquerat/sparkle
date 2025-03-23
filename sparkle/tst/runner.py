@@ -1,6 +1,5 @@
 # Generic imports
 import os
-import sys
 import shutil
 
 # Custom imports

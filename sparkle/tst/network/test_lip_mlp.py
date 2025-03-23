@@ -1,7 +1,5 @@
 # Generic imports
-import pytest
 import torch
-import numpy as np
 
 # Custom imports
 from sparkle.src.utils.distances import tensor_distance

@@ -1,5 +1,4 @@
 # Generic imports
-import types
 import numpy as np
 from   numpy import matmul
 from   numpy.linalg import solve

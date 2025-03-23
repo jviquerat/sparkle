@@ -2,11 +2,10 @@
 import copy
 import torch
 import torch.nn as tnn
-import torch.optim as toptim
 
 # Custom imports
 from sparkle.src.network.base        import base
-from sparkle.src.network.torch_dicts import add_mlp_layer, add_lip_layer
+from sparkle.src.network.torch_dicts import add_lip_layer
 from sparkle.src.utils.prints        import spacer, new_line
 from sparkle.src.utils.error         import error
 

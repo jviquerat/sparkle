@@ -3,7 +3,6 @@ import os
 import sys
 import time
 import shutil
-import numpy as np
 
 # Custom imports
 from sparkle.src.env.parallel    import parallel
