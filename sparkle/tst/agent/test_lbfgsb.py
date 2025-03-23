@@ -38,24 +38,24 @@ def test_lbfgsb():
     x, c  = opt.optimize(f, x0, xmin, xmax, m=5, tol=1e-3, max_iter=20)
     x_ref = np.array([3.18515304089873, 3.129799326779645])
     c_ref = -1.8083520357842864
-    assert(np.allclose(x, x_ref))
-    assert(compare(c, c_ref, 1.0e-15))
+    assert np.allclose(x, x_ref)
+    assert compare(c, c_ref, 1.0e-15)
 
     # Test with function returning a 0D array
     def g(x):
         return np.array([f(x)])
 
     x, c  = opt.optimize(g, x0, xmin, xmax, m=5, tol=1e-3, max_iter=20)
-    assert(np.allclose(x, x_ref))
-    assert(compare(c, c_ref, 1.0e-15))
+    assert np.allclose(x, x_ref)
+    assert compare(c, c_ref, 1.0e-15)
 
     # Test by providing the gradient
     x, c  = opt.optimize(f, x0, xmin, xmax, df=df, m=5, tol=1e-3, max_iter=20)
     x_ref = np.array([3.17860673, 3.16116911])
     c_ref = -1.7993714113084178
     print(x,c)
-    assert(np.allclose(x, x_ref))
-    assert(compare(c, c_ref, 1.0e-15))
+    assert np.allclose(x, x_ref)
+    assert compare(c, c_ref, 1.0e-15)
 
 ###############################################
 ### Test multi-start L-BFGS-B
@@ -85,12 +85,12 @@ def test_mslbfgsb():
     x, c  = opt.optimize(f, xmin, xmax, n_pts=10, m=5, tol=1e-3, max_iter=20)
     x_ref = np.array([3.18515304089873, 3.129799326779645])
     c_ref = -1.8083520358351746
-    assert(np.allclose(x, x_ref))
-    assert(compare(c, c_ref, 1.0e-15))
+    assert np.allclose(x, x_ref)
+    assert compare(c, c_ref, 1.0e-15)
 
     # Test with gradient
     x, c  = opt.optimize(f, xmin, xmax, df=df, n_pts=10, m=5, tol=1e-3, max_iter=20)
     x_ref = np.array([3.16608712, 3.14339285])
     c_ref = -1.8047183915703982
-    assert(np.allclose(x, x_ref))
-    assert(compare(c, c_ref, 1.0e-15))
+    assert np.allclose(x, x_ref)
+    assert compare(c, c_ref, 1.0e-15)

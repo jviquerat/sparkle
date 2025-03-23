@@ -46,10 +46,10 @@ def test_log_ei():
     x = np.array([[0.5,0.5]])
     vei = inf(x)
     ref = np.array([-1.20902023])
-    assert(np.allclose(vei, ref))
+    assert np.allclose(vei, ref)
 
     x = np.array([[0.5,0.5],
                   [0.2,0.2]])
     vei = inf(x)
     ref = np.array([-1.20902023,  0.27373892])
-    assert(np.allclose(vei, ref))
+    assert np.allclose(vei, ref)

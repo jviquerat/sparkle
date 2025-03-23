@@ -37,6 +37,6 @@ def test_optimizer():
     opt        = optimizer("cmaes", space, pms, parabola)
     x, c       = opt.optimize()
 
-    assert(compare(x[0],  0.0005683938259276194,  1.0e-15))
-    assert(compare(x[1], -0.00018952556245307778, 1.0e-15))
-    assert(compare(c,     1.3003505428756697e-09, 1.0e-15))
+    assert compare(x[0],  0.0005683938259276194,  1.0e-15)
+    assert compare(x[1], -0.00018952556245307778, 1.0e-15)
+    assert compare(c,     1.3003505428756697e-09, 1.0e-15)

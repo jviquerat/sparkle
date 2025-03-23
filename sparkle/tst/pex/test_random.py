@@ -38,5 +38,5 @@ def test_random():
                     [0.0202184,  0.83261985],
                     [0.77815675, 0.87001215]])
 
-    assert(pex.n_points == n_points)
-    assert(np.allclose(ref, pex.x))
+    assert pex.n_points == n_points
+    assert np.allclose(ref, pex.x)

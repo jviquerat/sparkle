@@ -20,12 +20,12 @@ def test_branched_mlp():
     # input with size 3 and batch_size 1
     x = torch.zeros(1,3)
     y = net.forward(x)
-    assert(y.shape == (2,1,1))
+    assert y.shape == (2,1,1)
 
     # input with size 3 and batch_size 4
     x = torch.zeros(4,3)
     y = net.forward(x)
-    assert(y.shape == (2,4,1))
+    assert y.shape == (2,4,1)
 
     # branched mlp with input of size 3, output of size 2,
     # 2 layers of trunk, and 2 output branches with 2 layers in each
@@ -37,12 +37,12 @@ def test_branched_mlp():
     # input with size 3 and batch_size 1
     x = torch.zeros(1,3)
     y = net.forward(x)
-    assert(y.shape == (2,1,2))
+    assert y.shape == (2,1,2)
 
     # input with size 3 and batch_size 4
     x = torch.zeros(4,3)
     y = net.forward(x)
-    assert(y.shape == (2,4,2))
+    assert y.shape == (2,4,2)
 
     # branched mlp with input of size 3, output of size 2,
     # 2 layers of trunk, and 1 output branche with 1 layer
@@ -54,12 +54,12 @@ def test_branched_mlp():
     # input with size 3 and batch_size 1
     x = torch.zeros(1,3)
     y = net.forward(x)
-    assert(y.shape == (1,1,2))
+    assert y.shape == (1,1,2)
 
     # input with size 3 and batch_size 4
     x = torch.zeros(4,3)
     y = net.forward(x)
-    assert(y.shape == (1,4,2))
+    assert y.shape == (1,4,2)
 
     # branched mlp with specified activations for each layer of trunk
     net = branched_mlp(inp_dim = 3,
@@ -70,9 +70,9 @@ def test_branched_mlp():
     # input with size 3 and batch_size 1
     x = torch.zeros(1,3)
     y = net.forward(x)
-    assert(y.shape == (2,1,2))
+    assert y.shape == (2,1,2)
 
     # input with size 3 and batch_size 4
     x = torch.zeros(4,3)
     y = net.forward(x)
-    assert(y.shape == (2,4,2))
+    assert y.shape == (2,4,2)

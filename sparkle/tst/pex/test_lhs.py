@@ -40,5 +40,5 @@ def test_lhs():
                     [0.89931042, 0.04733705],
                     [0.96074124, 0.65583435]])
 
-    assert(pex.n_points == n_points)
-    assert(np.allclose(ref, pex.x))
+    assert pex.n_points == n_points
+    assert np.allclose(ref, pex.x)
