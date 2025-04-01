@@ -1,5 +1,3 @@
-# Generic imports
-
 ###############################################
 ### Base environment
 class base_env():

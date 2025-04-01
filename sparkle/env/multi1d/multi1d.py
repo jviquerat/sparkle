@@ -1,8 +1,9 @@
 # Generic imports
+import numpy as np
 from math import sin
 
 # Custom imports
-from sparkle.env.base_env import *
+from sparkle.env.base_env import base_env
 
 ###############################################
 ### Environment for 1D multimodal function
