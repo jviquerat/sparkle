@@ -5,7 +5,7 @@ torch.set_default_dtype(torch.double)
 
 ###############################################
 ### Base network class
-class base(tnn.Module):
+class BaseNetwork(tnn.Module):
     def __init__(self):
         super().__init__()
 

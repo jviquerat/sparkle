@@ -3,8 +3,8 @@ import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.base        import base_pex
-from sparkle.src.pex.fps         import fps
+from sparkle.src.pex.base        import BasePex
+from sparkle.src.pex.fps         import FPS
 from sparkle.src.utils.distances import distance, min_distance
 from sparkle.src.utils.error     import error
 from sparkle.src.utils.default   import set_default
@@ -13,7 +13,7 @@ from sparkle.src.utils.prints    import spacer, fmt_float
 ###############################################
 ### Fixed poisson-disc experiment plan
 ### Relies on Robert Bridson algorithm
-class fpd(base_pex):
+class FPD(BasePex):
     def __init__(self, spaces, pms):
         super().__init__(spaces, pms)
 
@@ -90,7 +90,7 @@ class fpd(base_pex):
         self.n_initial_points = len(lst)
 
         # Farthest point sampling
-        self.x_ = fps(np.array(lst), self.n_points_)
+        self.x_ = FPS(np.array(lst), self.n_points_)
 
         # Compute minimal distance
         self.d_min = min_distance(self.x)

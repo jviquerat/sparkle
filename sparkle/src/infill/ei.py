@@ -4,7 +4,7 @@ from math import sqrt, pi, exp, erf
 
 ###############################################
 ### Expected improvement infill
-class ei():
+class EI():
     def __init__(self, spaces, model):
 
         self.spaces = spaces

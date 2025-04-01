@@ -6,7 +6,7 @@ from sparkle.src.utils.error import warning
 
 ###############################################
 ### Simplified L-BFGS-B algorithm
-class lbfgsb():
+class LBFGSB():
     def __init__(self):
         pass
 

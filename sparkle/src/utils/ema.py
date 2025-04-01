@@ -3,7 +3,7 @@ import numpy as np
 
 ###############################################
 ### Exponential moving average class
-class ema:
+class EMA:
     def __init__(self, alpha, n):
         self.alpha = alpha
         self.n     = n
@@ -26,7 +26,7 @@ class ema:
 ### Report buffer, used to store learning metrics
 # frequency : writing frequency (in number of calls to write() )
 # names     : dict names for report
-class report:
+class Report:
     def __init__(self, frequency, names):
 
         self.frequency = frequency

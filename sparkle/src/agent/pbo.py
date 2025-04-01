@@ -7,13 +7,13 @@ import torch.distributions as td
 
 # Custom imports
 from sparkle.src.utils.default       import set_default
-from sparkle.src.network.mlp         import mlp
+from sparkle.src.network.mlp         import MLP
 from sparkle.src.optimizer.optimizer import opt_factory
-from sparkle.src.agent.base          import base_agent
+from sparkle.src.agent.base          import BaseAgent
 
 ###############################################
 ### PBO
-class pbo(base_agent):
+class PBO(BaseAgent):
     def __init__(self, path, spaces, pms):
         super().__init__(path, spaces, pms)
 
@@ -36,7 +36,7 @@ class pbo(base_agent):
         self.sg_epochs = set_default("epochs", 8, pms.sg)
         self.sg_gen    = set_default("gen", 8, pms.sg)
         self.sg_batch  = set_default("batch", 0.5, pms.sg)
-        self.net_sg = mlp(inp_dim = self.obs_dim,
+        self.net_sg = MLP(inp_dim = self.obs_dim,
                           out_dim = self.dim,
                           arch    = self.sg_arch,
                           acts    = self.sg_acts,
@@ -48,7 +48,7 @@ class pbo(base_agent):
         self.cr_epochs = set_default("epochs", 8, pms.cr)
         self.cr_gen    = set_default("gen", 16, pms.cr)
         self.cr_batch  = set_default("batch", 1.0, pms.cr)
-        self.net_cr = mlp(inp_dim = self.obs_dim,
+        self.net_cr = MLP(inp_dim = self.obs_dim,
                           out_dim = self.cov_dim,
                           arch    = self.cr_arch,
                           acts    = self.cr_acts,

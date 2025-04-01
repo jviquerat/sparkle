@@ -3,7 +3,7 @@ import torch.optim as toptim
 
 ###############################################
 ### LBFGS optimizer class
-class lbfgs():
+class LBFGS():
     def __init__(self, model, pms):
 
         self.history_size = 20

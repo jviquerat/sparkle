@@ -8,24 +8,24 @@ from collections import defaultdict
 # Custom imports
 from sparkle.src.env.parallel    import parallel
 from sparkle.src.pex.pex         import pex_factory
-from sparkle.src.env.spaces      import env_spaces
-from sparkle.src.utils.timer     import timer
-from sparkle.src.utils.json      import json_parser
+from sparkle.src.env.spaces      import EnvSpaces
+from sparkle.src.utils.timer     import Timer
+from sparkle.src.utils.json      import JsonParser
 from sparkle.src.utils.prints    import disclaimer, liner, spacer, bold
 from sparkle.src.plot.plot       import violins_array, scatter_names
 
-def avg_pex(n_avg, combination):
+def AvgPex(n_avg, combination):
 
     dim  = combination["dimension"]
     xmin = np.zeros(dim)
     xmax = np.ones(dim)
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    space = env_spaces(loc_space)
+    space = EnvSpaces(loc_space)
 
     pms = types.SimpleNamespace(**combination)
 
-    timer_pex = timer("pex")
+    timer_pex = Timer("pex")
     pex = pex_factory.create(combination["method"],
                              spaces = space,
                              pms    = pms)
@@ -48,7 +48,7 @@ def main():
 
     # Initialize json parser and read parameters
     json_file = args[args.index("-json")+1]
-    parser    = json_parser()
+    parser    = JsonParser()
     pms       = parser.read(json_file)
 
     # Set parallel framework
@@ -97,7 +97,7 @@ def main():
     time    = dict()
     for cmb in combinations:
         spacer(str(cmb))
-        t, phi_p = avg_pex(n_avg, cmb)
+        t, phi_p = AvgPex(n_avg, cmb)
         results[tuple(cmb.values())] = phi_p
         time[tuple(cmb.values())]    = t
 

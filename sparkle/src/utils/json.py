@@ -5,7 +5,7 @@ import types
 ###############################################
 ### json parser class
 ### Used to parse input json files
-class json_parser():
+class JsonParser():
     def __init__(self):
         self.pms = None
 

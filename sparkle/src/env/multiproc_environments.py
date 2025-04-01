@@ -4,15 +4,15 @@ import multiprocessing as mp
 
 # Custom imports
 from sparkle.src.env.parallel         import parallel
-from sparkle.src.env.base             import base_parallel_environments
-from sparkle.src.env.multiproc_worker import multiproc_worker
-from sparkle.src.env.spaces           import env_spaces
+from sparkle.src.env.base             import BaseParallelEnvironments
+from sparkle.src.env.multiproc_worker import MultiprocWorker
+from sparkle.src.env.spaces           import EnvSpaces
 from sparkle.src.utils.default        import set_default
-from sparkle.src.utils.timer          import timer
+from sparkle.src.utils.timer          import Timer
 
 ###############################################
 ### A wrapper class for multiprocessing parallel environments
-class multiproc_environments(base_parallel_environments):
+class MultiprocEnvironments(BaseParallelEnvironments):
     def __init__(self, path, pms):
 
         # Default parameters
@@ -24,7 +24,7 @@ class multiproc_environments(base_parallel_environments):
         # Start environments
         for env in range(parallel.size):
             p_pipe, c_pipe = mp.Pipe()
-            process        = mp.Process(target = multiproc_worker,
+            process        = mp.Process(target = MultiprocWorker,
                                         args   = (self.name, self.args,
                                                   env, path, c_pipe))
 
@@ -35,10 +35,10 @@ class multiproc_environments(base_parallel_environments):
             process.start()
 
         # Declare spaces object
-        self.spaces = env_spaces(self.get_spaces(), pms)
+        self.spaces = EnvSpaces(self.get_spaces(), pms)
 
         # Initialize timer
-        self.timer_env = timer("env      ")
+        self.timer_env = Timer("env      ")
 
     # Get environment spaces
     def get_spaces(self):

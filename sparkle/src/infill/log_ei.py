@@ -4,7 +4,7 @@ from math import sqrt, pi, exp, erf, log, expm1, log1p
 
 ###############################################
 ### Log expected improvement infill
-class log_ei():
+class LogEI():
     def __init__(self, spaces, model):
 
         self.spaces = spaces

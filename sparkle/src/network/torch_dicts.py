@@ -3,7 +3,7 @@ import math
 import torch.nn as tnn
 
 # Custom imports
-from sparkle.src.network.torch_layers import lipschitz_linear
+from sparkle.src.network.torch_layers import LipschitzLinear
 
 torch_activations = {
     'relu': tnn.ReLU(),
@@ -42,7 +42,7 @@ def add_mlp_layer(net, dim_in, dim_out, activation):
 def add_lip_layer(net, dim_in, dim_out, activation, lip_constant):
 
     n = 0
-    net.append(lipschitz_linear(dim_in, dim_out, lip_constant=lip_constant))
+    net.append(LipschitzLinear(dim_in, dim_out, lip_constant=lip_constant))
 
     n += 1
 

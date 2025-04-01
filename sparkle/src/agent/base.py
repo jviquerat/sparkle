@@ -5,7 +5,7 @@ from sparkle.src.utils.prints import spacer
 
 ###############################################
 ### Base agent
-class base_agent():
+class BaseAgent():
     def __init__(self, path, spaces, pms):
 
         self.spaces    = spaces

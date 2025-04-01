@@ -2,13 +2,13 @@
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.base      import base_pex
-from sparkle.src.pex.fps       import fps
+from sparkle.src.pex.base      import BasePex
+from sparkle.src.pex.fps       import FPS
 from sparkle.src.utils.default import set_default
 
 ###############################################
 ### Random experiment plan
-class random(base_pex):
+class Random(BasePex):
     def __init__(self, spaces, pms):
         super().__init__(spaces, pms)
 
@@ -25,7 +25,7 @@ class random(base_pex):
 
 ###############################################
 ### Random experiment plan with fps step
-class random_fps(base_pex):
+class RandomFPS(BasePex):
     def __init__(self, spaces, pms):
         super().__init__(spaces, pms)
 
@@ -42,4 +42,4 @@ class random_fps(base_pex):
                               high = self.xmax,
                               size = (self.n_target, self.dim))
 
-        self.x_ = fps(x, self.n_points_)
+        self.x_ = FPS(x, self.n_points_)

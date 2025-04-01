@@ -8,7 +8,7 @@ from sparkle.src.core.average  import average
 from sparkle.src.core.sample   import sample
 from sparkle.src.core.model    import model
 from sparkle.src.env.parallel  import parallel
-from sparkle.src.utils.json    import json_parser
+from sparkle.src.utils.json    import JsonParser
 from sparkle.src.utils.seeds   import set_seeds
 from sparkle.src.utils.prints  import disclaimer, liner, spacer, bold, err_print
 
@@ -39,7 +39,7 @@ def main():
 
         # Initialize json parser and read parameters
         json_file = args[args.index("--train")+1]
-        parser    = json_parser()
+        parser    = JsonParser()
         pms       = parser.read(json_file)
 
         # Set parallel framework
@@ -91,7 +91,7 @@ def main():
 
         # Initialize json parser and read parameters
         json_file = args[args.index("--model")+1]
-        parser    = json_parser()
+        parser    = JsonParser()
         pms       = parser.read(json_file)
 
         # Set parallel framework

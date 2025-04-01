@@ -4,9 +4,9 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.utils.seeds     import set_seeds
-from sparkle.src.agent.optimizer import optimizer
+from sparkle.src.agent.optimizer import Optimizer
 from sparkle.src.utils.compare   import compare
-from sparkle.src.env.spaces      import env_spaces
+from sparkle.src.env.spaces      import EnvSpaces
 
 ###############################################
 ### Test transparent optimizer
@@ -32,8 +32,8 @@ def test_optimizer():
                   "x0":   2.5*np.ones(2),
                   "xmin":-5.0*np.ones(2),
                   "xmax": 5.0*np.ones(2)}
-    space      = env_spaces(dict_space)
-    opt        = optimizer("cmaes", space, pms, parabola)
+    space      = EnvSpaces(dict_space)
+    opt        = Optimizer("cmaes", space, pms, parabola)
     x, c       = opt.optimize()
 
     assert compare(x[0],  0.0005683938259276194,  1.0e-15)

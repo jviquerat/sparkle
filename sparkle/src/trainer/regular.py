@@ -2,9 +2,9 @@
 import os
 
 # Custom imports
-from sparkle.src.trainer.base  import base_trainer
+from sparkle.src.trainer.base  import BaseTrainer
 from sparkle.src.agent.agent   import agent_factory
-from sparkle.src.utils.timer   import timer
+from sparkle.src.utils.timer   import Timer
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.utils.default import set_default
 from sparkle.src.plot.plot     import render_1D_regular, render_2D_regular
@@ -12,7 +12,7 @@ from sparkle.src.utils.error   import error
 
 ###############################################
 ### Class for regular trainer
-class regular(base_trainer):
+class Regular(BaseTrainer):
     def __init__(self, path, pms):
 
         # Set parameters
@@ -39,7 +39,7 @@ class regular(base_trainer):
             parallel.finalize()
 
         # Initialize timer
-        self.timer_global = timer("global   ")
+        self.timer_global = Timer("global   ")
 
     # Reset
     def reset(self, run):

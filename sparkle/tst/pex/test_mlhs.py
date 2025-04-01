@@ -3,8 +3,8 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.mlhs    import mlhs
-from sparkle.src.env.spaces  import env_spaces
+from sparkle.src.pex.mlhs    import MLHS
+from sparkle.src.env.spaces  import EnvSpaces
 from sparkle.src.utils.seeds import set_seeds
 
 ###############################################
@@ -23,8 +23,8 @@ def test_maximin_lhs():
     pms.swap_ratio = 0.5
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    s = env_spaces(loc_space)
-    pex = mlhs(s, pms)
+    s = EnvSpaces(loc_space)
+    pex = MLHS(s, pms)
 
     ref = np.array([[0.47049118, 0.81659655],
                     [0.21689695, 0.87178995],

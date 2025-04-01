@@ -3,14 +3,14 @@ import torch
 
 # Custom imports
 from sparkle.src.utils.distances import tensor_distance
-from sparkle.src.network.lip_mlp import lip_mlp
+from sparkle.src.network.lip_mlp import LipMLP
 
 ###############################################
 ### Test lipschitz mlp
 def test_lip_mlp():
 
     # lip mlp with input of size 3, output of size 1, lip_constant of 1
-    net = lip_mlp(inp_dim      = 3,
+    net = LipMLP(inp_dim      = 3,
                   out_dim      = 1,
                   arch         = [8,8,8],
                   acts         = ["relu"],
@@ -26,7 +26,7 @@ def test_lip_mlp():
     assert dy <= dx
 
     # lip mlp with input of size 3, output of size 1, lip_constant of 0.1
-    net = lip_mlp(inp_dim      = 3,
+    net = LipMLP(inp_dim      = 3,
                   out_dim      = 1,
                   arch         = [8,8,8],
                   acts         = ["relu"],
@@ -42,7 +42,7 @@ def test_lip_mlp():
     assert dy <= 0.01*dx
 
     # lip mlp with all specified activations
-    net = lip_mlp(inp_dim      = 3,
+    net = LipMLP(inp_dim      = 3,
                   out_dim      = 1,
                   arch         = [8,8,8],
                   acts         = ["relu","relu","relu","linear"],

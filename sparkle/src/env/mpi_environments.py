@@ -3,15 +3,15 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.env.parallel   import parallel
-from sparkle.src.env.base       import base_parallel_environments
-from sparkle.src.env.mpi_worker import mpi_worker
-from sparkle.src.env.spaces     import env_spaces
+from sparkle.src.env.base       import BaseParallelEnvironments
+from sparkle.src.env.mpi_worker import MpiWorker
+from sparkle.src.env.spaces     import EnvSpaces
 from sparkle.src.utils.default  import set_default
-from sparkle.src.utils.timer    import timer
+from sparkle.src.utils.timer    import Timer
 
 ###############################################
 ### A wrapper class for mpi parallel environments
-class mpi_environments(base_parallel_environments):
+class MpiEnvironments(BaseParallelEnvironments):
     def __init__(self, path, pms):
 
         # Default parameters
@@ -19,16 +19,16 @@ class mpi_environments(base_parallel_environments):
         self.args = set_default("args", None, pms)
 
         # Generate workers
-        self.worker = mpi_worker(self.name, self.args, parallel.rank(), path)
+        self.worker = MpiWorker(self.name, self.args, parallel.rank(), path)
 
         # Set all slaves to wait for instructions
         if (not parallel.is_root()): self.worker.work()
 
         # Declare spaces object
-        self.spaces = env_spaces(self.get_spaces(), pms)
+        self.spaces = EnvSpaces(self.get_spaces(), pms)
 
         # Initialize timer
-        self.timer_env = timer("env      ")
+        self.timer_env = Timer("env      ")
 
     # Get environment spaces
     def get_spaces(self):

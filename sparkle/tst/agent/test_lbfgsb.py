@@ -3,8 +3,8 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.utils.seeds     import set_seeds
-from sparkle.src.agent.lbfgsb    import lbfgsb
-from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
+from sparkle.src.agent.lbfgsb    import LBFGSB
+from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
 from sparkle.src.utils.compare   import compare
 
 ###############################################
@@ -28,7 +28,7 @@ def test_lbfgsb():
         return np.array([v0,v1])
 
     # Starting point and bounds for each variable.
-    opt    = lbfgsb()
+    opt    = LBFGSB()
     x0     = np.array([2.5, 2.5])
     xmin   = np.array([0.0, 0.0])
     xmax   = np.array([5.0, 5.0])
@@ -76,7 +76,7 @@ def test_mslbfgsb():
         return np.array([v0,v1])
 
     # Starting point and bounds for each variable.
-    opt    = ms_lbfgsb()
+    opt    = MSLBFGSB()
     xmin   = np.array([0.0, 0.0])
     xmax   = np.array([5.0, 5.0])
 

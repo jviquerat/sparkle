@@ -3,8 +3,8 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.utils.seeds     import set_seeds
-from sparkle.src.kernel.matern52 import matern52
-from sparkle.src.env.spaces      import env_spaces
+from sparkle.src.kernel.matern52 import Matern52
+from sparkle.src.env.spaces      import EnvSpaces
 
 ###############################################
 ### Test matern52 kernel
@@ -17,9 +17,9 @@ def test_matern52():
                   "x0": None,
                   "xmin": np.array([0,0]),
                   "xmax": np.array([1,1])}
-    space      = env_spaces(space_dict)
+    space      = EnvSpaces(space_dict)
 
-    kernel = matern52(space)
+    kernel = Matern52(space)
     x0     = np.array([[0.5,0.5]])
     x1     = np.array([[0.6,0.6]])
     theta  = np.array([0.1])

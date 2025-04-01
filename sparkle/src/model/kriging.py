@@ -4,14 +4,14 @@ from   numpy import matmul
 from   numpy.linalg import solve
 
 # Custom imports
-from sparkle.src.model.base      import base_model
+from sparkle.src.model.base      import BaseModel
 from sparkle.src.kernel.kernel   import kernel_factory
 from sparkle.src.utils.default   import set_default
 from sparkle.src.utils.error     import error
 
 ###############################################
 ### Kriging model
-class kriging(base_model):
+class Kriging(BaseModel):
     def __init__(self, spaces, path, pms):
         super().__init__(spaces, path)
 

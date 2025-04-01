@@ -3,8 +3,8 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.fpd     import fpd
-from sparkle.src.env.spaces  import env_spaces
+from sparkle.src.pex.fpd     import FPD
+from sparkle.src.env.spaces  import EnvSpaces
 from sparkle.src.utils.seeds import set_seeds
 
 ###############################################
@@ -19,16 +19,16 @@ def test_fpd():
     pms  = types.SimpleNamespace()
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    s = env_spaces(loc_space)
+    s = EnvSpaces(loc_space)
 
     # We test different number of points as fixed_poisson_disc may
     # have issues providing the exact number of required points
     pms.n_points = 2
-    pex = fpd(s, pms)
+    pex = FPD(s, pms)
     assert pex.n_points == 2
 
     pms.n_points = 10
-    pex = fpd(s, pms)
+    pex = FPD(s, pms)
 
     ref = np.array([[0.54067565, 0.99920111],
                     [0.98837535, 0.03974221],
@@ -45,5 +45,5 @@ def test_fpd():
     assert np.allclose(ref, pex.x)
 
     pms.n_points = 100
-    pex = fpd(s, pms)
+    pex = FPD(s, pms)
     assert pex.n_points == 100

@@ -1,5 +1,5 @@
 # Custom imports
-from sparkle.src.utils.data import data_avg
+from sparkle.src.utils.data import DataAvg
 from sparkle.src.plot.plot  import plot_avg
 
 # Average existing runs
@@ -13,7 +13,7 @@ def average(args):
         n_lines = sum(1 for line in f)
 
     # Intialize averager
-    averager = data_avg(2, n_lines, n_args)
+    averager = DataAvg(2, n_lines, n_args)
 
     # Run
     for run in range(n_args):

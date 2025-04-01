@@ -3,7 +3,7 @@ import torch.optim as toptim
 
 ###############################################
 ### AdamW optimizer class
-class adamw():
+class AdamW():
     def __init__(self, model, pms):
 
         self.model_ = model

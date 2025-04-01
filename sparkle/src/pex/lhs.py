@@ -2,11 +2,11 @@
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.base import base_pex
+from sparkle.src.pex.base import BasePex
 
 ###############################################
 ### Latin hypercube sampling
-class lhs(base_pex):
+class LHS(BasePex):
     def __init__(self, spaces, pms):
         super().__init__(spaces, pms)
 

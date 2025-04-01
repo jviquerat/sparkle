@@ -3,9 +3,9 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.fps     import fps
-from sparkle.src.pex.random  import random
-from sparkle.src.env.spaces  import env_spaces
+from sparkle.src.pex.fps     import FPS
+from sparkle.src.pex.random  import Random
+from sparkle.src.env.spaces  import EnvSpaces
 from sparkle.src.utils.seeds import set_seeds
 
 ###############################################
@@ -23,10 +23,10 @@ def test_fps():
     pms.n_points = n_points
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    s = env_spaces(loc_space)
-    pex = random(s, pms)
+    s = EnvSpaces(loc_space)
+    pex = Random(s, pms)
 
-    x   = fps(pex.x, 10)
+    x   = FPS(pex.x, 10)
     ref = np.array([[0.8965466 , 0.36756187],
                     [0.0202184 , 0.83261985],
                     [0.19999652, 0.01852179],

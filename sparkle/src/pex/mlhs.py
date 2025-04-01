@@ -3,15 +3,15 @@ import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.base        import base_pex
-from sparkle.src.pex.lhs         import lhs
+from sparkle.src.pex.base        import BasePex
+from sparkle.src.pex.lhs         import LHS
 from sparkle.src.utils.distances import distance, nearest_one_to_all, nearest_all_to_all
 from sparkle.src.utils.default   import set_default
 from sparkle.src.utils.prints    import spacer, fmt_float
 
 ###############################################
 ### Maximin Latin hypercube sampling
-class mlhs(base_pex):
+class MLHS(BasePex):
     def __init__(self, spaces, pms):
         super().__init__(spaces, pms)
 
@@ -26,7 +26,7 @@ class mlhs(base_pex):
     def reset(self):
 
         # Generate default lhs
-        base    = lhs(self.spaces, self.pms)
+        base    = LHS(self.spaces, self.pms)
         self.x_ = base.x
 
         # Compute initial nearest neighbors

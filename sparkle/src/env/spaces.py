@@ -2,7 +2,7 @@
 
 ###############################################
 ### A class holding informations dimensions
-class env_spaces:
+class EnvSpaces:
     def __init__(self, spaces, pms=None):
 
         self.natural_dim_ = spaces["dim"]

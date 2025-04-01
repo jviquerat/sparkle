@@ -2,7 +2,7 @@
 import torch
 
 # Custom imports
-from sparkle.src.network.branched_mlp import branched_mlp
+from sparkle.src.network.branched_mlp import BranchedMLP
 
 ###############################################
 ### Test branched_mlp
@@ -10,7 +10,7 @@ def test_branched_mlp():
 
     # branched mlp with input of size 3, output of size 1,
     # 2 layers of trunk, and 2 output branches with 2 layers in each
-    net = branched_mlp(inp_dim = 3,
+    net = BranchedMLP(inp_dim = 3,
                        out_dim = 1,
                        arch    = [[8,8],[[4],[2]]],
                        acts    = [["relu"],[["relu","linear"],["relu","linear"]]])
@@ -27,7 +27,7 @@ def test_branched_mlp():
 
     # branched mlp with input of size 3, output of size 2,
     # 2 layers of trunk, and 2 output branches with 2 layers in each
-    net = branched_mlp(inp_dim = 3,
+    net = BranchedMLP(inp_dim = 3,
                        out_dim = 2,
                        arch    = [[8,8],[[4],[2]]],
                        acts    = [["relu"],[["relu","linear"],["relu","linear"]]])
@@ -44,7 +44,7 @@ def test_branched_mlp():
 
     # branched mlp with input of size 3, output of size 2,
     # 2 layers of trunk, and 1 output branche with 1 layer
-    net = branched_mlp(inp_dim = 3,
+    net = BranchedMLP(inp_dim = 3,
                        out_dim = 2,
                        arch    = [[8,8],[[2]]],
                        acts    = [["relu"],[["relu","linear"]]])
@@ -60,7 +60,7 @@ def test_branched_mlp():
     assert y.shape == (1,4,2)
 
     # branched mlp with specified activations for each layer of trunk
-    net = branched_mlp(inp_dim = 3,
+    net = BranchedMLP(inp_dim = 3,
                        out_dim = 2,
                        arch    = [[8,8],[[4],[2]]],
                        acts    = [["relu","tanh"],[["relu","linear"],["relu","linear"]]])

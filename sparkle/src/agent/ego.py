@@ -3,13 +3,13 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.utils.default   import set_default
-from sparkle.src.agent.base      import base_agent
-from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
+from sparkle.src.agent.base      import BaseAgent
+from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
 from sparkle.src.infill.infill   import infill_factory
 
 ###############################################
 ### EGO
-class ego(base_agent):
+class EGO(BaseAgent):
     def __init__(self, path, spaces, model, pms):
         super().__init__(path, spaces, pms)
 
@@ -50,7 +50,7 @@ class ego(base_agent):
         self.infill.set_best(xb, yb)
 
         # Optimize
-        opt  = ms_lbfgsb()
+        opt  = MSLBFGSB()
         x, c = opt.optimize(self.opt_infill,
                             self.spaces.xmin,
                             self.spaces.xmax,

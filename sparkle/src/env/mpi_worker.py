@@ -5,7 +5,7 @@ from sparkle.src.env.parallel import parallel
 
 ###############################################
 # Worker class for slave processes
-class mpi_worker():
+class MpiWorker():
     def __init__(self, env_name, args, cpu, path):
 
         # Build environment

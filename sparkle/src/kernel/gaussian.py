@@ -2,12 +2,12 @@
 import numpy as np
 
 # Custom imports
-from sparkle.src.kernel.base     import base_kernel
+from sparkle.src.kernel.base     import BaseKernel
 from sparkle.src.utils.distances import distance_all_to_all
 
 ###############################################
 ### Isotropic gaussian kernel
-class gaussian(base_kernel):
+class Gaussian(BaseKernel):
     def __init__(self, spaces, pms=None):
         super().__init__(spaces)
 
