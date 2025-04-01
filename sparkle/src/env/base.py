@@ -7,7 +7,7 @@ from sparkle.src.utils.error  import error
 
 ###############################################
 ### A base class for parallel environments
-class base_parallel_environments():
+class BaseParallelEnvironments():
     def __init__(self):
         pass
 

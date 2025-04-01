@@ -3,9 +3,9 @@ import os
 import numpy as np
 
 # Custom imports
-from sparkle.src.trainer.base  import base_trainer
+from sparkle.src.trainer.base  import BaseTrainer
 from sparkle.src.agent.agent   import agent_factory
-from sparkle.src.utils.timer   import timer
+from sparkle.src.utils.timer   import Timer
 from sparkle.src.env.parallel  import parallel
 from sparkle.src.pex.pex       import pex_factory
 from sparkle.src.model.model   import model_factory
@@ -16,7 +16,7 @@ from sparkle.src.utils.prints  import spacer
 
 ###############################################
 ### Class for metamodel-based trainer
-class metamodel(base_trainer):
+class Metamodel(BaseTrainer):
     def __init__(self, path, pms):
 
         # Set parameters
@@ -46,10 +46,10 @@ class metamodel(base_trainer):
                                           pms    = pms.agent)
 
         # Initialize timer
-        self.timer_global  = timer("global  ")
-        self.timer_opt     = timer("opt     ")
-        self.timer_mod     = timer("model   ")
-        self.timer_pex     = timer("pex ")
+        self.timer_global  = Timer("global  ")
+        self.timer_opt     = Timer("opt     ")
+        self.timer_mod     = Timer("model   ")
+        self.timer_pex     = Timer("pex ")
 
     # Reset
     def reset(self, run):

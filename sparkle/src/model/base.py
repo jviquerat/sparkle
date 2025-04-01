@@ -2,7 +2,7 @@
 
 ###############################################
 ### Base model
-class base_model():
+class BaseModel():
     def __init__(self, spaces, path):
 
         self.spaces = spaces

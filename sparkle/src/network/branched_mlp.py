@@ -4,14 +4,14 @@ import torch
 import torch.nn as tnn
 
 # Custom imports
-from sparkle.src.network.base        import base
+from sparkle.src.network.base        import BaseNetwork
 from sparkle.src.network.torch_dicts import add_mlp_layer
 from sparkle.src.utils.prints        import spacer, new_line
 from sparkle.src.utils.error         import error
 
 ###############################################
 ### Branched MLP class
-class branched_mlp(base):
+class BranchedMLP(BaseNetwork):
     def __init__(self, inp_dim, out_dim, arch, acts, name="default"):
         super().__init__()
 

@@ -8,7 +8,7 @@ from sparkle.src.utils.error     import error
 ### Furthest point sampling
 ### x: array of point coordinates of shape (n_points, dim)
 ### n_points: target number of points
-def fps(x, n_points):
+def FPS(x, n_points):
 
     if (x.shape[0] < n_points):
         error("fps", "fps",

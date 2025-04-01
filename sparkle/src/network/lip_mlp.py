@@ -4,14 +4,14 @@ import torch
 import torch.nn as tnn
 
 # Custom imports
-from sparkle.src.network.base        import base
+from sparkle.src.network.base        import BaseNetwork
 from sparkle.src.network.torch_dicts import add_lip_layer
 from sparkle.src.utils.prints        import spacer, new_line
 from sparkle.src.utils.error         import error
 
 ###############################################
 ### Lipschitz network
-class lip_mlp(base):
+class LipMLP(BaseNetwork):
     def __init__(self, inp_dim, out_dim, arch, acts, lip_constant=1.0, name="default"):
         super().__init__()
 

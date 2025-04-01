@@ -1,6 +1,6 @@
 ###############################################
 ### A wrapper class for parallelism
-class spk_parallel:
+class SpkParallel:
 
     def __init__(self):
 
@@ -73,12 +73,12 @@ class spk_parallel:
     def environments(self, path, pms):
 
         if (self.type_ == "mpi"):
-            from sparkle.src.env.mpi_environments import mpi_environments
-            return mpi_environments(path, pms)
+            from sparkle.src.env.mpi_environments import MpiEnvironments
+            return MpiEnvironments(path, pms)
 
         if (self.type_ == "multiprocessing"):
-            from sparkle.src.env.multiproc_environments import multiproc_environments
-            return multiproc_environments(path, pms)
+            from sparkle.src.env.multiproc_environments import MultiprocEnvironments
+            return MultiprocEnvironments(path, pms)
 
     def finalize(self):
 
@@ -91,4 +91,4 @@ class spk_parallel:
             pass
 
 # Single instance
-parallel = spk_parallel()
+parallel = SpkParallel()

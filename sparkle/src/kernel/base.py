@@ -4,12 +4,12 @@ from   numpy import matmul
 from   numpy.linalg import solve
 
 # Custom imports
-from sparkle.src.agent.ms_lbfgsb import ms_lbfgsb
+from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
 from sparkle.src.utils.distances import min_max_distance
 
 ###############################################
 ### Base kernel
-class base_kernel():
+class BaseKernel():
     def __init__(self, spaces):
 
         self.spaces = spaces
@@ -41,7 +41,7 @@ class base_kernel():
         self.xmax_ = np.log(np.array([dmax]))
 
         # Optimize
-        opt      = ms_lbfgsb()
+        opt      = MSLBFGSB()
         x_opt, c = opt.optimize(self.log_likelihood,
                                 self.xmin_,
                                 self.xmax_,

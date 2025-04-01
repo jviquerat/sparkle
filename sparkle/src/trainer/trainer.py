@@ -1,11 +1,11 @@
 # Custom imports
-from sparkle.src.core.factory      import factory
-from sparkle.src.trainer.regular   import regular
-from sparkle.src.trainer.metamodel import metamodel
+from sparkle.src.core.factory      import Factory
+from sparkle.src.trainer.regular   import Regular
+from sparkle.src.trainer.metamodel import Metamodel
 
 # Declare factory
-trainer_factory = factory()
+trainer_factory = Factory()
 
 # Register trainers
-trainer_factory.register("regular",   regular)
-trainer_factory.register("metamodel", metamodel)
+trainer_factory.register("regular",   Regular)
+trainer_factory.register("metamodel", Metamodel)

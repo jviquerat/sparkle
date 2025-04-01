@@ -3,8 +3,8 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.random  import random
-from sparkle.src.env.spaces  import env_spaces
+from sparkle.src.pex.random  import Random
+from sparkle.src.env.spaces  import EnvSpaces
 from sparkle.src.utils.seeds import set_seeds
 
 ###############################################
@@ -22,8 +22,8 @@ def test_random():
     pms.n_points = n_points
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    s = env_spaces(loc_space)
-    pex = random(s, pms)
+    s = EnvSpaces(loc_space)
+    pex = Random(s, pms)
 
     ref = np.array([[0.5488135,  0.71518937],
                     [0.60276338, 0.54488318],

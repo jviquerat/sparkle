@@ -3,7 +3,7 @@ import torch.nn as tnn
 
 ###############################################
 # A linear lipschitz layer
-class lipschitz_linear(tnn.Module):
+class LipschitzLinear(tnn.Module):
     def __init__(self, dim_in, dim_out, lip_constant=1.0):
         super().__init__()
 

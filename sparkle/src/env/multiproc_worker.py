@@ -4,7 +4,7 @@
 
 ###############################################
 # Worker function for slave processes
-def multiproc_worker(env_name, args, cpu, path, pipe):
+def MultiprocWorker(env_name, args, cpu, path, pipe):
 
     # Build environment
     module    = __import__(env_name)

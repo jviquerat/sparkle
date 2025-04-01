@@ -2,13 +2,13 @@
 import numpy as np
 
 # Custom imports
-from sparkle.src.utils.ema import ema
+from sparkle.src.utils.ema import EMA
 
 ###############################################
 ### Data averager class
 ### Used to compute avg+/-std of drl-related fields
 ### n_avg : nb of runs to average
-class data_avg():
+class DataAvg():
     def __init__(self, n_fields, n_avg):
 
         self.n_avg    = n_avg
@@ -38,7 +38,7 @@ class data_avg():
     def average(self, filename, avg_type="linear"):
 
         array = np.vstack(self.stp)
-        smoother = ema(0.2, int(self.n_stp/10))
+        smoother = EMA(0.2, int(self.n_stp/10))
 
         for field in range(self.n_fields):
             avg   = np.mean(self.data[:,:,field], axis=0)

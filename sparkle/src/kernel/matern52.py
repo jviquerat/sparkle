@@ -3,12 +3,12 @@ import math
 import numpy as np
 
 # Custom imports
-from sparkle.src.kernel.base     import base_kernel
+from sparkle.src.kernel.base     import BaseKernel
 from sparkle.src.utils.distances import distance_all_to_all
 
 ###############################################
 ### Isotropic Matern 5/2 kernel
-class matern52(base_kernel):
+class Matern52(BaseKernel):
     def __init__(self, spaces, pms=None):
         super().__init__(spaces)
 

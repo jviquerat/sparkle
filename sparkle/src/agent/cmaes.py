@@ -4,11 +4,11 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.utils.default import set_default
-from sparkle.src.agent.base    import base_agent
+from sparkle.src.agent.base    import BaseAgent
 
 ###############################################
 ### CMAES
-class cmaes(base_agent):
+class CMAES(BaseAgent):
     def __init__(self, path, spaces, pms):
         super().__init__(path, spaces, pms)
 

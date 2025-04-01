@@ -4,8 +4,8 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.pex.pex     import pex_factory
-from sparkle.src.env.spaces  import env_spaces
-from sparkle.src.utils.timer import timer
+from sparkle.src.env.spaces  import EnvSpaces
+from sparkle.src.utils.timer import Timer
 
 # Sample using pex
 def sample(pex_type, n_points, dim):
@@ -17,9 +17,9 @@ def sample(pex_type, n_points, dim):
     pms.n_points = n_points
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    space = env_spaces(loc_space)
+    space = EnvSpaces(loc_space)
 
-    pex_timer = timer("pex_timer")
+    pex_timer = Timer("pex_timer")
     pex_timer.tic()
 
     pex = pex_factory.create(pex_type,

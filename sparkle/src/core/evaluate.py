@@ -5,7 +5,7 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.env.parallel import parallel
-from sparkle.src.utils.json   import json_parser
+from sparkle.src.utils.json   import JsonParser
 
 # Evaluate best sample
 def evaluate(dat_file, json_file):
@@ -19,7 +19,7 @@ def evaluate(dat_file, json_file):
     sys.path.append(json_path)
 
     # Initialize environment
-    parser = json_parser()
+    parser = JsonParser()
     pms    = parser.read(json_file)
     parallel.set(pms)
     env    = parallel.environments(".", pms.environment)

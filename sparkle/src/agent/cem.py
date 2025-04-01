@@ -5,13 +5,13 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.utils.default import set_default
-from sparkle.src.agent.base    import base_agent
-from sparkle.src.pex.mlhs      import mlhs
-from sparkle.src.env.spaces    import env_spaces
+from sparkle.src.agent.base    import BaseAgent
+from sparkle.src.pex.mlhs      import MLHS
+from sparkle.src.env.spaces    import EnvSpaces
 
 ###############################################
 ### CEM
-class cem(base_agent):
+class CEM(BaseAgent):
     def __init__(self, path, spaces, pms):
         super().__init__(path, spaces, pms)
 
@@ -43,8 +43,8 @@ class cem(base_agent):
                   "xmin": self.xmin_cem,
                   "xmax": self.xmax_cem}
 
-        spaces = env_spaces(spaces)
-        pex    = mlhs(spaces, pms)
+        spaces = EnvSpaces(spaces)
+        pex    = MLHS(spaces, pms)
 
         return pex.x
 

@@ -11,7 +11,7 @@ from sparkle.src.utils.default   import set_default
 
 ###############################################
 ### Base experiment plan
-class base_pex():
+class BasePex():
     def __init__(self, spaces, pms):
 
         self.spaces    = spaces

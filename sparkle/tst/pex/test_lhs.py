@@ -3,8 +3,8 @@ import types
 import numpy as np
 
 # Custom imports
-from sparkle.src.pex.lhs     import lhs
-from sparkle.src.env.spaces  import env_spaces
+from sparkle.src.pex.lhs     import LHS
+from sparkle.src.env.spaces  import EnvSpaces
 from sparkle.src.utils.seeds import set_seeds
 
 ###############################################
@@ -22,8 +22,8 @@ def test_lhs():
     pms.n_points = n_points
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    s = env_spaces(loc_space)
-    pex = lhs(s, pms)
+    s = EnvSpaces(loc_space)
+    pex = LHS(s, pms)
 
     ref = np.array([[0.04573446, 0.7482182 ],
                     [0.14293245, 0.81659655],

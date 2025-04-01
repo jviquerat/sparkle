@@ -7,7 +7,7 @@ from sparkle.src.utils.prints import spacer, fmt_float
 ###############################################
 ### timer class
 ### Used to measure time spent on different operations
-class timer():
+class Timer():
     def __init__(self, name):
         self.name = name
         self.reset()

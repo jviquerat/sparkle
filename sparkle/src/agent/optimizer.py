@@ -2,18 +2,18 @@
 import numpy as np
 
 # Local factory
-from sparkle.src.core.factory import factory
-from sparkle.src.agent.pso    import pso
-from sparkle.src.agent.cmaes  import cmaes
-from sparkle.src.agent.cem    import cem
-from sparkle.src.agent.pbo    import pbo
+from sparkle.src.core.factory import Factory
+from sparkle.src.agent.pso    import PSO
+from sparkle.src.agent.cmaes  import CMAES
+from sparkle.src.agent.cem    import CEM
+from sparkle.src.agent.pbo    import PBO
 
-local_factory = factory()
+local_factory = Factory()
 
-local_factory.register("pso",   pso)
-local_factory.register("cmaes", cmaes)
-local_factory.register("cem",   cem)
-local_factory.register("pbo",   pbo)
+local_factory.register("pso",   PSO)
+local_factory.register("cmaes", CMAES)
+local_factory.register("cem",   CEM)
+local_factory.register("pbo",   PBO)
 
 ###############################################
 ### The optimizer class is a transparent class for calling
@@ -21,7 +21,7 @@ local_factory.register("pbo",   pbo)
 ### to write a full environment
 ### It does not comply to the other agents interface
 ### It is assumed to run sequentially
-class optimizer():
+class Optimizer():
     def __init__(self, name, spaces, pms, cost):
 
         # Initialize agent

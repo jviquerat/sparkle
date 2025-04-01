@@ -6,7 +6,7 @@ from sparkle.src.utils.prints import fmt_float
 
 ###############################################
 ### Base trainer
-class base_trainer():
+class BaseTrainer():
     def __init__(self):
         pass
 

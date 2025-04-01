@@ -4,8 +4,8 @@ import shutil
 
 # Custom imports
 from sparkle.src.utils.seeds     import set_seeds
-from sparkle.src.utils.json      import json_parser
-from sparkle.src.utils.data      import data_avg
+from sparkle.src.utils.json      import JsonParser
+from sparkle.src.utils.data      import DataAvg
 from sparkle.src.utils.compare   import compare
 from sparkle.src.trainer.trainer import trainer_factory
 from sparkle.src.env.parallel    import parallel
@@ -21,7 +21,7 @@ def runner(json_file, val_avg, val_bst):
     print("")
 
     # Initialize json parser and read test json file
-    reader = json_parser()
+    reader = JsonParser()
     reader.read(json_file)
 
     # Initialize parallel framework
@@ -33,7 +33,7 @@ def runner(json_file, val_avg, val_bst):
                                      pms  = reader.pms.trainer)
 
     # Intialize averager
-    averager = data_avg(2, reader.pms.n_avg)
+    averager = DataAvg(2, reader.pms.n_avg)
 
     # Make two optimization runs and average
     print("Test "+reader.pms.trainer.agent.name)

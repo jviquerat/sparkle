@@ -2,14 +2,14 @@
 import torch
 
 # Custom imports
-from sparkle.src.network.mlp import mlp
+from sparkle.src.network.mlp import MLP
 
 ###############################################
 ### Test mlp
 def test_mlp():
 
     # mlp with input of size 3, output of size 1
-    net = mlp(inp_dim = 3,
+    net = MLP(inp_dim = 3,
               out_dim = 1,
               arch    = [8,8,8],
               acts    = ["relu"])
@@ -25,7 +25,7 @@ def test_mlp():
     assert y.shape == (4,1)
 
     # mlp with input of size 3, output of size 2
-    net = mlp(inp_dim = 3,
+    net = MLP(inp_dim = 3,
               out_dim = 2,
               arch    = [8,8,8],
               acts    = ["relu"])
@@ -36,7 +36,7 @@ def test_mlp():
     assert y.shape == (4,2)
 
     # mlp with specified activations for each layer
-    net = mlp(inp_dim = 3,
+    net = MLP(inp_dim = 3,
               out_dim = 2,
               arch    = [8,8,8],
               acts    = ["relu","relu","relu","linear"])

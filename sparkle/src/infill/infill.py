@@ -1,12 +1,12 @@
 # Custom imports
-from sparkle.src.core.factory  import factory
-from sparkle.src.infill.ei     import ei
-from sparkle.src.infill.log_ei import log_ei
+from sparkle.src.core.factory  import Factory
+from sparkle.src.infill.ei     import EI
+from sparkle.src.infill.log_ei import LogEI
 
 # Declare factory
-infill_factory = factory()
+infill_factory = Factory()
 
 # Register kernels
-infill_factory.register("ei",     ei)
-infill_factory.register("log_ei", log_ei)
+infill_factory.register("ei",     EI)
+infill_factory.register("log_ei", LogEI)
 

@@ -7,7 +7,7 @@ import shutil
 # Custom imports
 from sparkle.src.env.parallel    import parallel
 from sparkle.src.trainer.trainer import trainer_factory
-from sparkle.src.utils.data      import data_avg
+from sparkle.src.utils.data      import DataAvg
 from sparkle.src.plot.plot       import plot_avg
 from sparkle.src.utils.prints    import liner
 
@@ -37,7 +37,7 @@ def train(json_file, pms):
                                      pms       = pms.trainer)
 
     # Intialize averager
-    averager = data_avg(2, pms.n_avg)
+    averager = DataAvg(2, pms.n_avg)
 
     # Run
     for run in range(pms.n_avg):
