@@ -1,9 +1,10 @@
 # Generic imports
 import sys
 import math
+from numpy import float64
 
 # Relative comparison of two floats with given accuracy
-def compare(x, y, eps=1.0e-8):
+def compare(x: float, y: float, eps: float=1.0e-8) -> bool:
 
     d = math.fabs(x-y);
     m = min(math.fabs(x), math.fabs(y));

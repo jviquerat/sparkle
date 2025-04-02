@@ -1,20 +1,22 @@
 # Generic imports
 import torch
 import numpy as np
+from numpy import ndarray
+from typing import Tuple, Union
 
 # Compute distance between two sets of coordinates
-def distance(xi, xj):
+def distance(xi: ndarray, xj: ndarray) -> float:
 
     return np.linalg.norm(xi - xj)
 
 # Compute distances from all points of xi to all points of xj
 # xi and xj have shapes (n_batch, dim)
-def distance_all_to_all(xi, xj):
+def distance_all_to_all(xi: ndarray, xj: ndarray) -> ndarray:
 
     return np.linalg.norm(xi[:,np.newaxis,:] - xj[np.newaxis,:,:], axis=-1)
 
 # Compute nearest neighbour of one point within vector
-def nearest_one_to_all(x, i):
+def nearest_one_to_all(x: ndarray, i: int) -> Tuple[float, int]:
 
     # Compute norm of x-x_i
     d = np.linalg.norm(x - x[i], axis=1)
@@ -29,7 +31,7 @@ def nearest_one_to_all(x, i):
     return d_min, p_min
 
 # Compute nearest neighbour for all input coordinates
-def nearest_all_to_all(x):
+def nearest_all_to_all(x: ndarray) -> Tuple[ndarray, ndarray]:
 
     d = distance_all_to_all(x, x)
     np.fill_diagonal(d, np.inf)
@@ -39,7 +41,7 @@ def nearest_all_to_all(x):
     return d_nearest, p_nearest
 
 # Compute minimal distance between two points within vector
-def min_distance(x):
+def min_distance(x: ndarray) -> float:
 
     d, p = nearest_all_to_all(x)
     dmin = np.min(d)
@@ -47,7 +49,7 @@ def min_distance(x):
     return dmin
 
 # Compute minimal and maximal distances between two points within vector
-def min_max_distance(x):
+def min_max_distance(x: ndarray) -> Tuple[float, float]:
 
     d = distance_all_to_all(x, x)
     np.fill_diagonal(d, np.inf)
@@ -58,6 +60,6 @@ def min_max_distance(x):
     return dmin, dmax
 
 # Distance between two torch tensors
-def tensor_distance(x, y):
+def tensor_distance(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
 
     return torch.linalg.vector_norm(x-y)
