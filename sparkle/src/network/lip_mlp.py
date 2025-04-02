@@ -10,9 +10,13 @@ from sparkle.src.utils.error import error
 from sparkle.src.utils.prints import new_line, spacer
 
 
-###############################################
-### Lipschitz network
 class LipMLP(BaseNetwork):
+    """
+    Lipschitz Multi-Layer Perceptron (LipMLP) neural network.
+
+    This class implements a Multi-Layer Perceptron with Lipschitz constraints
+    on the linear layers, ensuring a bounded Lipschitz constant for the network.
+    """
     def __init__(self,
                  inp_dim: int,
                  out_dim: int,
@@ -20,6 +24,17 @@ class LipMLP(BaseNetwork):
                  acts: List[str],
                  lip_constant: float=1.0,
                  name: str="default") -> None:
+        """
+        Initializes the LipMLP.
+
+        Args:
+            inp_dim: The input dimension.
+            out_dim: The output dimension.
+            arch: A list of integers representing the number of units in each hidden layer.
+            acts: A list of strings representing the activation function for each layer.
+            lip_constant: The Lipschitz constant for the linear layers.
+            name: An optional name for the network.
+        """
         super().__init__()
 
         # I/O dimensions
@@ -56,8 +71,16 @@ class LipMLP(BaseNetwork):
         # Save model parameters in memory
         self.net_weights = copy.deepcopy(self.net_.state_dict())
 
-    # Forward pass
     def forward(self, x_in: torch.Tensor) -> torch.Tensor:
+        """
+        Performs a forward pass through the network.
+
+        Args:
+            x_in: The input tensor.
+
+        Returns:
+            The output tensor.
+        """
 
         # Initialize
         x = torch.clone(x_in)
@@ -70,13 +93,17 @@ class LipMLP(BaseNetwork):
 
         return x
 
-    # Reset
     def reset(self) -> None:
+        """
+        Resets the network to its initial state.
+        """
 
         self.net_.load_state_dict(self.net_weights)
 
-    # Infos on network
     def info(self) -> None:
+        """
+        Prints information about the network architecture.
+        """
 
         new_line()
         spacer("Lipschitz MLP "+str(self.name_))
