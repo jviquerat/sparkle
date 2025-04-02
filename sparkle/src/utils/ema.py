@@ -2,8 +2,6 @@ import numpy as np
 from numpy import ndarray
 
 
-###############################################
-### Exponential moving average class
 class EMA:
     """
     Exponential Moving Average (EMA) class.
@@ -22,7 +20,6 @@ class EMA:
         self.alpha = alpha
         self.n     = n
 
-    ### Smooth entire array
     def smooth(self, array: ndarray) -> ndarray:
         """
         Applies exponential moving average smoothing to an array.
@@ -45,10 +42,6 @@ class EMA:
 
         return s
 
-###############################################
-### Report buffer, used to store learning metrics
-# frequency : writing frequency (in number of calls to write() )
-# names     : dict names for report
 class Report:
     """
     Report buffer class.
@@ -68,7 +61,6 @@ class Report:
         self.names     = names
         self.reset()
 
-    # Reset
     def reset(self):
         """
         Resets the Report buffer.
@@ -79,7 +71,6 @@ class Report:
         for name in self.names:
             self.data[name] = []
 
-    # Append data to the report
     def append(self, name, value):
         """
         Appends a value to the report for a given metric.
@@ -91,7 +82,6 @@ class Report:
 
         self.data[name].append(value)
 
-    # Get data from the report
     def get(self, name):
         """
         Retrieves the data for a given metric.
@@ -105,7 +95,6 @@ class Report:
 
         return self.data[name]
 
-    # Return an average of n last values of given field
     def avg(self, name, n):
         """
         Computes the average of the last n values for a given metric.
@@ -120,7 +109,6 @@ class Report:
 
         return np.mean(self.data[name][-n:])
 
-    # Write report
     def write(self, filename, force=False):
         """
         Writes the report to a file.

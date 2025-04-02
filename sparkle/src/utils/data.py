@@ -5,9 +5,6 @@ from sparkle.src.utils.ema import EMA
 
 
 ###############################################
-### Data averager class
-### Used to compute avg+/-std of drl-related fields
-### n_avg : nb of runs to average
 class DataAvg():
     """
     Data averaging class.

@@ -5,7 +5,6 @@ import torch
 from numpy import ndarray
 
 
-# Compute distance between two sets of coordinates
 def distance(xi: ndarray, xj: ndarray) -> float:
     """
     Computes the Euclidean distance between two points.
@@ -20,8 +19,6 @@ def distance(xi: ndarray, xj: ndarray) -> float:
 
     return np.linalg.norm(xi - xj)
 
-# Compute distances from all points of xi to all points of xj
-# xi and xj have shapes (n_batch, dim)
 def distance_all_to_all(xi: ndarray, xj: ndarray) -> ndarray:
     """
     Computes the Euclidean distances between all pairs of points from two sets.
@@ -37,7 +34,6 @@ def distance_all_to_all(xi: ndarray, xj: ndarray) -> ndarray:
 
     return np.linalg.norm(xi[:,np.newaxis,:] - xj[np.newaxis,:,:], axis=-1)
 
-# Compute nearest neighbour of one point within vector
 def nearest_one_to_all(x: ndarray, i: int) -> Tuple[float, int]:
     """
     Computes the nearest neighbor of a point within a set of points.
@@ -64,7 +60,6 @@ def nearest_one_to_all(x: ndarray, i: int) -> Tuple[float, int]:
 
     return d_min, p_min
 
-# Compute nearest neighbour for all input coordinates
 def nearest_all_to_all(x: ndarray) -> Tuple[ndarray, ndarray]:
     """
     Computes the nearest neighbor for each point in a set of points.
@@ -87,7 +82,6 @@ def nearest_all_to_all(x: ndarray) -> Tuple[ndarray, ndarray]:
 
     return d_nearest, p_nearest
 
-# Compute minimal distance between two points within vector
 def min_distance(x: ndarray) -> float:
     """
     Computes the minimum distance between any two points in a set.
@@ -104,7 +98,6 @@ def min_distance(x: ndarray) -> float:
 
     return dmin
 
-# Compute minimal and maximal distances between two points within vector
 def min_max_distance(x: ndarray) -> Tuple[float, float]:
     """
     Computes the minimum and maximum distances between any two points in a set.
@@ -126,7 +119,6 @@ def min_max_distance(x: ndarray) -> Tuple[float, float]:
 
     return dmin, dmax
 
-# Distance between two torch tensors
 def tensor_distance(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
     """
     Computes the Euclidean distance between two PyTorch tensors.

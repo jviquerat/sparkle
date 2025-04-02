@@ -3,9 +3,6 @@ import time
 from sparkle.src.utils.prints import fmt_float, spacer
 
 
-###############################################
-### timer class
-### Used to measure time spent on different operations
 class Timer():
     """
     Timer class.

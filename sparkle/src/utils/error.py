@@ -3,10 +3,7 @@ import sys
 from sparkle.src.env.parallel import parallel
 from sparkle.src.utils.prints import err_print, liner, new_line, spacer, warn_print
 
-###############################################
-### A set of functions to print errors and warnings
 
-### Error
 def error(module, function, text, call_exit=True):
     """
     Prints an error message and optionally exits the program.
@@ -25,7 +22,6 @@ def error(module, function, text, call_exit=True):
         parallel.finalize()
         sys.exit(1)
 
-### Warning
 def warning(module, function, text):
     """
     Prints a warning message.
