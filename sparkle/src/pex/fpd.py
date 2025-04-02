@@ -1,6 +1,7 @@
 # Generic imports
 import math
 import numpy as np
+from types import SimpleNamespace
 
 # Custom imports
 from sparkle.src.pex.base        import BasePex
@@ -9,12 +10,13 @@ from sparkle.src.utils.distances import distance, min_distance
 from sparkle.src.utils.error     import error
 from sparkle.src.utils.default   import set_default
 from sparkle.src.utils.prints    import spacer, fmt_float
+from sparkle.src.env.spaces import EnvSpaces
 
 ###############################################
 ### Fixed poisson-disc experiment plan
 ### Relies on Robert Bridson algorithm
 class FPD(BasePex):
-    def __init__(self, spaces, pms):
+    def __init__(self, spaces: EnvSpaces, pms: SimpleNamespace) -> None:
         super().__init__(spaces, pms)
 
         self.name       = "fixed_poisson_disc"
@@ -43,7 +45,7 @@ class FPD(BasePex):
     # We start by generating a fine poisson-disc sampling, then
     # apply a furthest point sampling on the resulting set to
     # ensure that we have exactly n_points_
-    def reset(self):
+    def reset(self) -> None:
 
         # Poisson-disc sampling
         p = np.random.uniform(low  = self.xmin,
