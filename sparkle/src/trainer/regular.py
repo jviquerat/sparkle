@@ -13,7 +13,6 @@ from sparkle.src.utils.timer import Timer
 
 
 ###############################################
-### Class for regular trainer
 class Regular(BaseTrainer):
     """
     Regular trainer class.
@@ -57,7 +56,6 @@ class Regular(BaseTrainer):
         # Initialize timer
         self.timer_global = Timer("global   ")
 
-    # Reset
     def reset(self, run: int) -> None:
         """
         Resets the Regular trainer for a new run.
@@ -70,7 +68,6 @@ class Regular(BaseTrainer):
         self.env.reset(run)
         self.agent.reset(run)
 
-    # Optimize
     def optimize(self) -> None:
         """
         Performs the optimization process.
@@ -101,7 +98,6 @@ class Regular(BaseTrainer):
         self.timer_global.toc()
         self.timer_global.show()
 
-    # Handle rendering
     def render(self, x: ndarray, c: ndarray) -> None:
         """
         Renders the current state of the optimization process.

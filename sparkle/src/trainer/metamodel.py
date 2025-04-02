@@ -17,7 +17,6 @@ from sparkle.src.utils.timer import Timer
 
 
 ###############################################
-### Class for metamodel-based trainer
 class Metamodel(BaseTrainer):
     """
     Metamodel-based trainer class.
@@ -68,7 +67,6 @@ class Metamodel(BaseTrainer):
         self.timer_mod     = Timer("model   ")
         self.timer_pex     = Timer("pex ")
 
-    # Reset
     def reset(self, run: int) -> None:
         """
         Resets the Metamodel trainer for a new run.
@@ -83,7 +81,6 @@ class Metamodel(BaseTrainer):
         self.model.reset()
         self.agent.reset(run)
 
-    # Optimize
     def optimize(self) -> None:
         """
         Performs the optimization process using the metamodel.
@@ -178,7 +175,6 @@ class Metamodel(BaseTrainer):
         self.timer_opt.show()
         self.timer_global.show()
 
-    # Handle rendering
     def render(self, x: ndarray, c: ndarray) -> None:
         """
         Renders the current state of the optimization process.
@@ -244,7 +240,6 @@ class Metamodel(BaseTrainer):
 
         self.it_plt += 1
 
-    # Print after building or loading model
     def initial_print(self) -> None:
         """
         Prints information about the initial model.
