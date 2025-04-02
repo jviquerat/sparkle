@@ -2,8 +2,17 @@ from sparkle.src.plot.plot import plot_avg
 from sparkle.src.utils.data import DataAvg
 
 
-# Average existing runs
 def average(args):
+    """
+    Averages data from multiple runs and generates a plot.
+
+    This function takes a list of data files, averages the data across them,
+    writes the averaged data to a new file, and generates a plot of the
+    averaged data.
+
+    Args:
+        args: A list of file paths to data files to be averaged.
+    """
 
     # Count arguments
     n_args = len(args)

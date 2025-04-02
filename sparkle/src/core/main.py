@@ -12,6 +12,9 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 def helper():
+    """
+    Displays the command-line usage instructions.
+    """
     liner(err_print("Command line error"))
     spacer("Command line functionalities:")
     spacer("   spk --train <json_file>")
@@ -24,6 +27,13 @@ def helper():
     sys.exit(0)
 
 def main():
+    """
+    Main entry point for the Sparkle framework.
+
+    This function parses command-line arguments and dispatches to the
+    appropriate functionality (training, evaluation, averaging, model
+    generation, or Pex sampling).
+    """
 
     # Check arguments
     args = sys.argv

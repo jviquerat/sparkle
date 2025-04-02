@@ -3,43 +3,47 @@ from typing import Any, Callable
 from sparkle.src.utils.error import error
 
 
-###############################################
 class Factory:
     """
-    A factory class
+    A factory class for creating objects based on a key.
 
-    This class is used to generate objects of given type based on a type string
+    This class provides a mechanism to register object creators (e.g., class
+    constructors) with string keys and then instantiate objects of the
+    corresponding type using those keys.
 
     Attributes:
-        keys (dict): dict containing registered key/creator pairs
+        keys (dict): A dictionary mapping keys to object creators.
     """
 
     def __init__(self):
         """
-        Initializes the factory
+        Initializes the factory.
         """
         self.keys = {}
 
     def register(self, key: str, creator: Callable[[str], Any]):
         """
-        Register a key/creator pair
+        Registers a key/creator pair.
 
         Args:
-            key: key to register
-            creator: class constructor associated to key
+            key: The key to register.
+            creator: The class constructor or callable associated with the key.
         """
         self.keys[key] = creator
 
     def create(self, key: str, **kwargs) -> Any:
         """
-        Instantiate and return an object of the type associated to key
+        Instantiates and returns an object of the type associated with the key.
 
         Args:
-            key: key to look up in self.keys
-            **kwargs: arbitrary keyword arguments for the constructor
+            key: The key to look up in self.keys.
+            **kwargs: Arbitrary keyword arguments for the constructor.
 
         Returns:
-            creator(**kwargs): instance of type defined by key
+            An instance of the type defined by the key.
+
+        Raises:
+            error: If an unknown key is provided.
         """
         creator = self.keys.get(key)
         if not creator:
