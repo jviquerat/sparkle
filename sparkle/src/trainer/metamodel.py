@@ -1,6 +1,8 @@
 # Generic imports
 import os
 import numpy as np
+from numpy import ndarray
+from types import SimpleNamespace
 
 # Custom imports
 from sparkle.src.trainer.base  import BaseTrainer
@@ -17,7 +19,7 @@ from sparkle.src.utils.prints  import spacer
 ###############################################
 ### Class for metamodel-based trainer
 class Metamodel(BaseTrainer):
-    def __init__(self, path, pms):
+    def __init__(self, path: str, pms: SimpleNamespace) -> None:
 
         # Set parameters
         self.base_path    = path
@@ -52,7 +54,7 @@ class Metamodel(BaseTrainer):
         self.timer_pex     = Timer("pex ")
 
     # Reset
-    def reset(self, run):
+    def reset(self, run: int) -> None:
 
         super().reset(run)
         self.env.reset(run)
@@ -61,7 +63,7 @@ class Metamodel(BaseTrainer):
         self.agent.reset(run)
 
     # Optimize
-    def optimize(self):
+    def optimize(self) -> None:
 
         self.timer_global.tic()
 
@@ -148,7 +150,7 @@ class Metamodel(BaseTrainer):
         self.timer_global.show()
 
     # Handle rendering
-    def render(self, x, c):
+    def render(self, x: ndarray, c: ndarray) -> None:
 
         if (self.it%self.render_every != 0): return
 
@@ -203,7 +205,7 @@ class Metamodel(BaseTrainer):
         self.it_plt += 1
 
     # Print after building or loading model
-    def initial_print(self):
+    def initial_print(self) -> None:
 
         gs     = f"{self.best_score:.5e}"
         gb     = np.array2string(self.best_x, precision=5,

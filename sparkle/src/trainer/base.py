@@ -1,5 +1,6 @@
 # Generic imports
-import numpy             as np
+import numpy as np
+from numpy import ndarray
 
 # Custom imports
 from sparkle.src.utils.prints import fmt_float
@@ -15,7 +16,7 @@ class BaseTrainer():
         raise NotImplementedError
 
     # Reset
-    def reset(self, run):
+    def reset(self, run: int) -> None:
 
         # Step counters
         self.total_stp = 0
@@ -37,7 +38,7 @@ class BaseTrainer():
         self.path = self.base_path+"/"+str(run)
 
     # Store data
-    def store_data(self, x, c):
+    def store_data(self, x: ndarray, c: ndarray) -> None:
 
         # The update of best points is quite inefficient, but it allows
         # to reproduce historical data when loading a pex or a model
@@ -56,7 +57,7 @@ class BaseTrainer():
             self.total_stp += 1
 
     # Dump data
-    def dump_data(self):
+    def dump_data(self) -> None:
 
         filename = self.path+'/raw.dat'
         np.savetxt(filename,
@@ -68,7 +69,7 @@ class BaseTrainer():
                    fmt='%.5e')
 
     # Print
-    def print(self):
+    def print(self) -> None:
 
         # Handle no-printing after max step
         if (self.it < self.agent.n_steps_max-1):

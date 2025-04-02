@@ -1,5 +1,7 @@
 # Generic imports
 import os
+from numpy import ndarray
+from types import SimpleNamespace
 
 # Custom imports
 from sparkle.src.trainer.base  import BaseTrainer
@@ -13,7 +15,7 @@ from sparkle.src.utils.error   import error
 ###############################################
 ### Class for regular trainer
 class Regular(BaseTrainer):
-    def __init__(self, path, pms):
+    def __init__(self, path: str, pms: SimpleNamespace) -> None:
 
         # Set parameters
         self.base_path    = path
@@ -42,14 +44,14 @@ class Regular(BaseTrainer):
         self.timer_global = Timer("global   ")
 
     # Reset
-    def reset(self, run):
+    def reset(self, run: int) -> None:
 
         super().reset(run)
         self.env.reset(run)
         self.agent.reset(run)
 
     # Optimize
-    def optimize(self):
+    def optimize(self) -> None:
 
         self.timer_global.tic()
         self.it = 0
@@ -73,7 +75,7 @@ class Regular(BaseTrainer):
         self.timer_global.show()
 
     # Handle rendering
-    def render(self, x, c):
+    def render(self, x: ndarray, c: ndarray) -> None:
 
         if (self.it%self.render_every != 0): return
 
