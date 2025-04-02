@@ -3,9 +3,6 @@ import types
 from typing import Any, Dict
 
 
-###############################################
-### json parser class
-### Used to parse input json files
 class JsonParser():
     """
     JSON parser class.

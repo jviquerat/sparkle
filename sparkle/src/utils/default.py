@@ -1,6 +1,3 @@
-###############################################
-### Helper function to set default value if
-### user-specified value is not present
 from types import SimpleNamespace
 from typing import Any, Optional
 

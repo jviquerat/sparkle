@@ -14,7 +14,6 @@ err_clr = '\033[91m'
 end_clr = '\033[0m'
 bld_clr = '\033[1m'
 
-### New line
 def new_line():
     """
     Prints a new line if the current process is the root process.
@@ -22,7 +21,6 @@ def new_line():
     if (parallel.is_root()):
         print("")
 
-### Header
 def header():
     """
     Prints a header line if the current process is the root process.
@@ -30,7 +28,6 @@ def header():
     if (parallel.is_root()):
         print("#################################")
 
-### Liner
 def liner(text):
     """
     Prints a line with a header format if the current process is the root process.
@@ -42,7 +39,6 @@ def liner(text):
         new_line()
         print("### "+text)
 
-### Liner with no newline
 def liner_simple(text: str):
     """
     Prints a line with a header format without a preceding newline if the current process is the root process.
@@ -53,7 +49,6 @@ def liner_simple(text: str):
     if (parallel.is_root()):
         print("### "+text)
 
-### Spacer
 def spacer(text: str) -> None:
     """
     Prints a line with a spacer format if the current process is the root process.
@@ -64,7 +59,6 @@ def spacer(text: str) -> None:
     if (parallel.is_root()):
         print("# "+text)
 
-### Sparkle disclaimer
 def disclaimer():
     """
     Prints the Sparkle disclaimer, including the library name and Git revision, if the current process is the root process.
@@ -75,7 +69,6 @@ def disclaimer():
         liner_simple(git_short_hash())
         header()
 
-### Print with warning color
 def warn_print(text):
     """
     Prints text with a warning color if the current process is the root process.
@@ -89,7 +82,6 @@ def warn_print(text):
     if (parallel.is_root()):
         return wrn_clr + text + end_clr
 
-### Print with error color
 def err_print(text):
     """
     Prints text with an error color if the current process is the root process.
@@ -103,7 +95,6 @@ def err_print(text):
     if (parallel.is_root()):
         return err_clr + text + end_clr
 
-### Print with bold text
 def bold(text):
     """
     Prints text in bold if the current process is the root process.
@@ -117,7 +108,6 @@ def bold(text):
     if (parallel.is_root()):
         return bld_clr + text + end_clr
 
-### Format float for output
 def fmt_float(x: Union[float, float64]) -> str:
     """
     Formats a float for output, using either scientific notation or fixed-point notation.
@@ -133,7 +123,6 @@ def fmt_float(x: Union[float, float64]) -> str:
     else:
         return "{:.5f}".format(x)
 
-### Print git revision
 def git_short_hash() -> str:
     """
     Retrieves and returns the short Git hash of the current revision if the current process is the root process.
