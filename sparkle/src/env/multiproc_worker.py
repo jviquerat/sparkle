@@ -27,7 +27,7 @@ def MultiprocWorker(env_name, args, cpu, path, pipe):
                 r = env.reset(data)
                 pipe.send(r)
 
-            elif (command == 'render'):
+            elif command == 'render':
                 rnd = env.render(data[0], data[1])
                 pipe.send(rnd)
 
