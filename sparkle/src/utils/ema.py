@@ -5,12 +5,34 @@ from numpy import ndarray
 ###############################################
 ### Exponential moving average class
 class EMA:
+    """
+    Exponential Moving Average (EMA) class.
+
+    This class provides methods for calculating the exponential moving average
+    of a data array.
+    """
     def __init__(self, alpha: float, n: int) -> None:
+        """
+        Initializes the EMA calculator.
+
+        Args:
+            alpha: The smoothing factor (between 0 and 1).
+            n: The number of previous values to consider for averaging.
+        """
         self.alpha = alpha
         self.n     = n
 
     ### Smooth entire array
     def smooth(self, array: ndarray) -> ndarray:
+        """
+        Applies exponential moving average smoothing to an array.
+
+        Args:
+            array: The input array to smooth.
+
+        Returns:
+            A new array containing the smoothed values.
+        """
 
         s    = np.zeros_like(array)
         y    = array[0]
@@ -28,7 +50,19 @@ class EMA:
 # frequency : writing frequency (in number of calls to write() )
 # names     : dict names for report
 class Report:
+    """
+    Report buffer class.
+
+    This class provides methods for storing and writing learning metrics.
+    """
     def __init__(self, frequency, names):
+        """
+        Initializes the Report buffer.
+
+        Args:
+            frequency: The writing frequency (in number of calls to write()).
+            names: A list of names for the metrics to report.
+        """
 
         self.frequency = frequency
         self.names     = names
@@ -36,6 +70,9 @@ class Report:
 
     # Reset
     def reset(self):
+        """
+        Resets the Report buffer.
+        """
 
         self.count = 0
         self.data  = {}
@@ -44,21 +81,54 @@ class Report:
 
     # Append data to the report
     def append(self, name, value):
+        """
+        Appends a value to the report for a given metric.
+
+        Args:
+            name: The name of the metric.
+            value: The value to append.
+        """
 
         self.data[name].append(value)
 
     # Get data from the report
     def get(self, name):
+        """
+        Retrieves the data for a given metric.
+
+        Args:
+            name: The name of the metric.
+
+        Returns:
+            A list of values for the metric.
+        """
 
         return self.data[name]
 
     # Return an average of n last values of given field
     def avg(self, name, n):
+        """
+        Computes the average of the last n values for a given metric.
+
+        Args:
+            name: The name of the metric.
+            n: The number of last values to average.
+
+        Returns:
+            The average of the last n values.
+        """
 
         return np.mean(self.data[name][-n:])
 
     # Write report
     def write(self, filename, force=False):
+        """
+        Writes the report to a file.
+
+        Args:
+            filename: The name of the file to write to.
+            force: If True, forces writing regardless of the frequency.
+        """
 
         self.count += 1
         if ((self.count%self.frequency == 0) or (force == True)):

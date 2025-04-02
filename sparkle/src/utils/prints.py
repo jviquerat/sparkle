@@ -16,32 +16,59 @@ bld_clr = '\033[1m'
 
 ### New line
 def new_line():
+    """
+    Prints a new line if the current process is the root process.
+    """
     if (parallel.is_root()):
         print("")
 
 ### Header
 def header():
+    """
+    Prints a header line if the current process is the root process.
+    """
     if (parallel.is_root()):
         print("#################################")
 
 ### Liner
 def liner(text):
+    """
+    Prints a line with a header format if the current process is the root process.
+
+    Args:
+        text: The text to print.
+    """
     if (parallel.is_root()):
         new_line()
         print("### "+text)
 
 ### Liner with no newline
 def liner_simple(text: str):
+    """
+    Prints a line with a header format without a preceding newline if the current process is the root process.
+
+    Args:
+        text: The text to print.
+    """
     if (parallel.is_root()):
         print("### "+text)
 
 ### Spacer
 def spacer(text: str) -> None:
+    """
+    Prints a line with a spacer format if the current process is the root process.
+
+    Args:
+        text: The text to print.
+    """
     if (parallel.is_root()):
         print("# "+text)
 
 ### Sparkle disclaimer
 def disclaimer():
+    """
+    Prints the Sparkle disclaimer, including the library name and Git revision, if the current process is the root process.
+    """
     if (parallel.is_root()):
         header()
         liner_simple(bold("Sparkle, an optimization library"))
@@ -50,21 +77,57 @@ def disclaimer():
 
 ### Print with warning color
 def warn_print(text):
+    """
+    Prints text with a warning color if the current process is the root process.
+
+    Args:
+        text: The text to print.
+
+    Returns:
+        The text with the warning color codes.
+    """
     if (parallel.is_root()):
         return wrn_clr + text + end_clr
 
 ### Print with error color
 def err_print(text):
+    """
+    Prints text with an error color if the current process is the root process.
+
+    Args:
+        text: The text to print.
+
+    Returns:
+        The text with the error color codes.
+    """
     if (parallel.is_root()):
         return err_clr + text + end_clr
 
 ### Print with bold text
 def bold(text):
+    """
+    Prints text in bold if the current process is the root process.
+
+    Args:
+        text: The text to print.
+
+    Returns:
+        The text with the bold formatting codes.
+    """
     if (parallel.is_root()):
         return bld_clr + text + end_clr
 
 ### Format float for output
 def fmt_float(x: Union[float, float64]) -> str:
+    """
+    Formats a float for output, using either scientific notation or fixed-point notation.
+
+    Args:
+        x: The float to format.
+
+    Returns:
+        The formatted float as a string.
+    """
     if (x < 1.0e-1) or (x > 1.0e3):
         return "{:.5e}".format(x)
     else:
@@ -72,6 +135,12 @@ def fmt_float(x: Union[float, float64]) -> str:
 
 ### Print git revision
 def git_short_hash() -> str:
+    """
+    Retrieves and returns the short Git hash of the current revision if the current process is the root process.
+
+    Returns:
+        The short Git hash as a string, or an empty string if an error occurs.
+    """
     if (parallel.is_root()):
         try:
             process = subprocess.Popen(['git', 'rev-parse', '--short', 'HEAD'],
