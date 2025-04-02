@@ -1,4 +1,3 @@
-# Generic imports
 import numpy as np
 
 # Local factory

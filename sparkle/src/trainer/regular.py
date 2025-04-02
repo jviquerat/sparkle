@@ -1,9 +1,7 @@
-# Generic imports
 import os
 from numpy import ndarray
 from types import SimpleNamespace
 
-# Custom imports
 from sparkle.src.trainer.base  import BaseTrainer
 from sparkle.src.agent.agent   import agent_factory
 from sparkle.src.utils.timer   import Timer

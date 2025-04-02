@@ -1,9 +1,7 @@
-# Generic imports
 import os
 import types
 import numpy as np
 
-# Custom imports
 from sparkle.src.model.kriging import Kriging
 from sparkle.src.pex.lhs       import LHS
 from sparkle.src.env.spaces    import EnvSpaces

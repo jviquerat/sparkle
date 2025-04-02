@@ -1,8 +1,6 @@
-# Generic imports
 import types
 import numpy as np
 
-# Custom imports
 from sparkle.src.pex.fps     import FPS
 from sparkle.src.pex.random  import Random
 from sparkle.src.env.spaces  import EnvSpaces

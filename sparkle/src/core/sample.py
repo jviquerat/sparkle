@@ -1,8 +1,6 @@
-# Generic imports
 import types
 import numpy as np
 
-# Custom imports
 from sparkle.src.pex.pex     import pex_factory
 from sparkle.src.env.spaces  import EnvSpaces
 from sparkle.src.utils.timer import Timer

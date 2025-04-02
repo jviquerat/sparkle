@@ -1,7 +1,5 @@
-# Generic imports
 import sys
 
-# Custom imports
 from sparkle.src.utils.compare import compare
 
 ###############################################

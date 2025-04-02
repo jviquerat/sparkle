@@ -1,7 +1,5 @@
-# Generic imports
 import numpy as np
 
-# Custom imports
 from sparkle.src.utils.ema import EMA
 from numpy import ndarray
 

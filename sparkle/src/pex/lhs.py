@@ -1,8 +1,6 @@
-# Generic imports
 import numpy as np
 from types import SimpleNamespace
 
-# Custom imports
 from sparkle.src.pex.base import BasePex
 from sparkle.src.env.spaces import EnvSpaces
 

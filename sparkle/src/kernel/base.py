@@ -1,10 +1,8 @@
-# Generic imports
 import numpy as np
 from   numpy import ndarray, matmul
 from   numpy.linalg import solve
 from typing import Optional
 
-# Custom imports
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
 from sparkle.src.utils.distances import min_max_distance
 from sparkle.src.env.spaces import EnvSpaces

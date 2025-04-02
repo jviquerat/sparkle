@@ -1,4 +1,3 @@
-# Generic imports
 import sys
 import math
 from numpy import float64

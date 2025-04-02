@@ -1,4 +1,3 @@
-# Custom imports
 from sparkle.src.utils.data import DataAvg
 from sparkle.src.plot.plot  import plot_avg
 

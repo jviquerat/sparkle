@@ -1,11 +1,9 @@
-# Generic imports
 import numpy as np
 from   numpy import ndarray, matmul
 from   numpy.linalg import solve
 from types import SimpleNamespace
 from typing import Optional, Tuple
 
-# Custom imports
 from sparkle.src.model.base      import BaseModel
 from sparkle.src.kernel.kernel   import kernel_factory
 from sparkle.src.utils.default   import set_default

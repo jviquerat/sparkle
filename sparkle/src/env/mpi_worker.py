@@ -1,6 +1,4 @@
-# Generic imports
 
-# Custom imports
 from sparkle.src.env.parallel import parallel
 from numpy import float64, ndarray
 

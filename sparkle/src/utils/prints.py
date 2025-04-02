@@ -1,7 +1,5 @@
-# Generic imports
 import subprocess
 
-# Custom imports
 from sparkle.src.env.parallel import parallel
 from numpy import float64
 from typing import Union

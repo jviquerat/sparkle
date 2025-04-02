@@ -1,10 +1,8 @@
-# Generic imports
 import math
 import numpy as np
 from numpy import ndarray
 from types import SimpleNamespace
 
-# Custom imports
 from sparkle.src.utils.default import set_default
 from sparkle.src.agent.base    import BaseAgent
 from sparkle.src.env.spaces import EnvSpaces

@@ -1,4 +1,3 @@
-# Generic imports
 import math
 import types
 import numpy as np
@@ -8,7 +7,6 @@ from numpy import ndarray
 from typing import Tuple
 from torch.distributions.multivariate_normal import MultivariateNormal
 
-# Custom imports
 from sparkle.src.utils.default       import set_default
 from sparkle.src.network.mlp         import MLP
 from sparkle.src.optimizer.optimizer import opt_factory

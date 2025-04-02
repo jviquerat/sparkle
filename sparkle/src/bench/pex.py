@@ -1,11 +1,9 @@
-# Generic imports
 import sys
 import types
 import itertools
 import numpy as np
 from collections import defaultdict
 
-# Custom imports
 from sparkle.src.env.parallel    import parallel
 from sparkle.src.pex.pex         import pex_factory
 from sparkle.src.env.spaces      import EnvSpaces

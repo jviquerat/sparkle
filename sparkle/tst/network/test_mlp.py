@@ -1,7 +1,5 @@
-# Generic imports
 import torch
 
-# Custom imports
 from sparkle.src.network.mlp import MLP
 
 ###############################################

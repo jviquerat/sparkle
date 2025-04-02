@@ -1,4 +1,3 @@
-# Custom imports
 from sparkle.src.core.factory import Factory
 from sparkle.src.pex.random   import Random, RandomFPS
 from sparkle.src.pex.lhs      import LHS

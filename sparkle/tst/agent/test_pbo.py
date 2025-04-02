@@ -1,7 +1,5 @@
-# Generic imports
 import sys
 
-# Custom imports
 from sparkle.tst.runner import runner
 
 ###############################################

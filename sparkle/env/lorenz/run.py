@@ -1,4 +1,3 @@
-# Custom imports
 from lorenz import lorenz
 
 l = lorenz(0, '.')

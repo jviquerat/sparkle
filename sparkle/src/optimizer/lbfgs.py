@@ -1,4 +1,3 @@
-# Generic imports
 import torch.optim as toptim
 
 ###############################################

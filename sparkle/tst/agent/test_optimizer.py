@@ -1,8 +1,6 @@
-# Generic imports
 import types
 import numpy as np
 
-# Custom imports
 from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.agent.optimizer import Optimizer
 from sparkle.src.utils.compare   import compare

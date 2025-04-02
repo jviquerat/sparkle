@@ -1,8 +1,6 @@
-# Generic imports
 from numpy import ndarray
 from types import SimpleNamespace
 
-# Custom imports
 from sparkle.src.utils.prints import spacer
 from sparkle.src.env.spaces import EnvSpaces
 

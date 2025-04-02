@@ -1,7 +1,5 @@
-# Generic imports
 import sys
 
-# Custom imports
 from sparkle.src.core.train    import train
 from sparkle.src.core.evaluate import evaluate
 from sparkle.src.core.average  import average

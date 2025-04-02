@@ -1,7 +1,5 @@
-# Generic imports
 import numpy as np
 
-# Custom imports
 from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.agent.lbfgsb    import LBFGSB
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB

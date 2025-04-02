@@ -1,4 +1,3 @@
-# Custom imports
 from sparkle.src.core.factory    import Factory
 from sparkle.src.optimizer.adam  import Adam
 from sparkle.src.optimizer.adamw import AdamW

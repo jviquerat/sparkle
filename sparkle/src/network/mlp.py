@@ -1,10 +1,8 @@
-# Generic imports
 import copy
 import torch
 import torch.nn as tnn
 from typing import List
 
-# Custom imports
 from sparkle.src.network.base        import BaseNetwork
 from sparkle.src.network.torch_dicts import add_mlp_layer
 from sparkle.src.utils.prints        import spacer, new_line
