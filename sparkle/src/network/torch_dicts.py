@@ -1,6 +1,7 @@
 # Generic imports
 import math
 import torch.nn as tnn
+from torch.nn.modules.container import ModuleList
 
 # Custom imports
 from sparkle.src.network.torch_layers import LipschitzLinear
@@ -22,7 +23,10 @@ torch_activations = {
 }
 
 # Helper function to append a layer to a ModuleList
-def add_mlp_layer(net, dim_in, dim_out, activation):
+def add_mlp_layer(net: ModuleList,
+                  dim_in: int,
+                  dim_out: int,
+                  activation: str) -> int:
 
     n = 0
     net.append(tnn.Linear(dim_in, dim_out))
@@ -39,7 +43,11 @@ def add_mlp_layer(net, dim_in, dim_out, activation):
     return n
 
 # Helper function to append a layer to a ModuleList
-def add_lip_layer(net, dim_in, dim_out, activation, lip_constant):
+def add_lip_layer(net: ModuleList,
+                  dim_in: int,
+                  dim_out: int,
+                  activation: str,
+                  lip_constant: float) -> int:
 
     n = 0
     net.append(LipschitzLinear(dim_in, dim_out, lip_constant=lip_constant))

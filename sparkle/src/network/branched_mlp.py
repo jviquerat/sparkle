@@ -2,6 +2,7 @@
 import copy
 import torch
 import torch.nn as tnn
+from typing import List, Union
 
 # Custom imports
 from sparkle.src.network.base        import BaseNetwork
@@ -12,7 +13,12 @@ from sparkle.src.utils.error         import error
 ###############################################
 ### Branched MLP class
 class BranchedMLP(BaseNetwork):
-    def __init__(self, inp_dim, out_dim, arch, acts, name="default"):
+    def __init__(self,
+                 inp_dim: int,
+                 out_dim: int,
+                 arch: List[List[Union[int, List[int]]]],
+                 acts: List[List[Union[str, List[str]]]],
+                 name: str="default") -> None:
         super().__init__()
 
         # I/O dimensions
@@ -70,7 +76,7 @@ class BranchedMLP(BaseNetwork):
         self.net_weights = copy.deepcopy(self.net_.state_dict())
 
     # Forward pass
-    def forward(self, x_in):
+    def forward(self, x_in: torch.Tensor) -> torch.Tensor:
 
         # Initialize
         x          = torch.clone(x_in)
@@ -95,12 +101,12 @@ class BranchedMLP(BaseNetwork):
         return out
 
     # Reset
-    def reset(self):
+    def reset(self) -> None:
 
         self.net_.load_state_dict(self.net_weights)
 
     # Infos on network
-    def info(self):
+    def info(self) -> None:
 
         new_line()
         spacer("Branched MLP "+str(self.name_))
