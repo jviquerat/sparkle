@@ -2,6 +2,7 @@
 import copy
 import torch
 import torch.nn as tnn
+from typing import List
 
 # Custom imports
 from sparkle.src.network.base        import BaseNetwork
@@ -12,7 +13,13 @@ from sparkle.src.utils.error         import error
 ###############################################
 ### Lipschitz network
 class LipMLP(BaseNetwork):
-    def __init__(self, inp_dim, out_dim, arch, acts, lip_constant=1.0, name="default"):
+    def __init__(self,
+                 inp_dim: int,
+                 out_dim: int,
+                 arch: List[int],
+                 acts: List[str],
+                 lip_constant: float=1.0,
+                 name: str="default") -> None:
         super().__init__()
 
         # I/O dimensions
@@ -50,7 +57,7 @@ class LipMLP(BaseNetwork):
         self.net_weights = copy.deepcopy(self.net_.state_dict())
 
     # Forward pass
-    def forward(self, x_in):
+    def forward(self, x_in: torch.Tensor) -> torch.Tensor:
 
         # Initialize
         x = torch.clone(x_in)
@@ -64,12 +71,12 @@ class LipMLP(BaseNetwork):
         return x
 
     # Reset
-    def reset(self):
+    def reset(self) -> None:
 
         self.net_.load_state_dict(self.net_weights)
 
     # Infos on network
-    def info(self):
+    def info(self) -> None:
 
         new_line()
         spacer("Lipschitz MLP "+str(self.name_))
