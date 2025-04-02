@@ -1,5 +1,7 @@
 # Generic imports
 import numpy as np
+from numpy import ndarray
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 # Custom imports
 from sparkle.src.utils.error import warning
@@ -7,7 +9,7 @@ from sparkle.src.utils.error import warning
 ###############################################
 ### Simplified L-BFGS-B algorithm
 class LBFGSB():
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     # f0        : function to minimize
@@ -18,7 +20,15 @@ class LBFGSB():
     # max_pairs : max nb of correction pairs
     # tol       : tolerance for the norm of the projected gradient
     # max_iter  : max nb of iteration
-    def optimize(self, f0, x0, xmin, xmax, df=None, m=10, tol=1e-6, max_iter=100):
+    def optimize(self,
+                 f0: Callable,
+                 x0: ndarray,
+                 xmin: ndarray,
+                 xmax: ndarray,
+                 df: Optional[Callable]=None,
+                 m: int=10,
+                 tol: float=1e-6,
+                 max_iter: int=100) -> Tuple[ndarray, float]:
 
         # Copy input
         x = x0.copy()
@@ -89,7 +99,10 @@ class LBFGSB():
         return x, f(x)
 
     # Naive gradient computation using finite differences
-    def grad_fd(self, f, x, dx):
+    def grad_fd(self,
+                f: Callable,
+                x: ndarray,
+                dx: float) -> ndarray:
 
         n = x.shape[0]
         m = f(x).size
@@ -108,19 +121,30 @@ class LBFGSB():
         return np.reshape(J, (n))
 
     # Project x in bounds
-    def project(self, x, l, u):
+    def project(self,
+                x: ndarray,
+                l: ndarray,
+                u: ndarray) -> ndarray:
         return np.clip(x, l, u)
 
     # Compute the projected gradient
     # pg = x - project(x - g)
-    def projected_gradient(self, x, g, l, u):
+    def projected_gradient(self,
+                           x: ndarray,
+                           g: ndarray,
+                           l: ndarray,
+                           u: ndarray) -> ndarray:
         return x - self.project(x - g, l, u)
 
     # Compute genereralized cauchy point
     # This is a simplified version:
     # For each coordinate, we find the step length required to hit a bound
     # when moving along -g, then choose the smallest positive step
-    def generalized_cauchy_point(self, x, g, l, u):
+    def generalized_cauchy_point(self,
+                                 x: ndarray,
+                                 g: ndarray,
+                                 l: ndarray,
+                                 u: ndarray) -> ndarray:
         alpha_candidates = []
         for i in range(len(x)):
             if g[i] > 0:
@@ -137,7 +161,10 @@ class LBFGSB():
 
     # Two-loop recursion to compute the approximate Hessian-vector product:
     # Given stored correction pairs (s,y), compute H*g
-    def two_loop_recursion(self, g, s_list, y_list):
+    def two_loop_recursion(self,
+                           g: ndarray,
+                           s_list: List[ndarray],
+                           y_list: List[ndarray]) -> ndarray:
         q = g.copy()
         alpha_list = []
         rho_list = []
@@ -162,7 +189,13 @@ class LBFGSB():
 
     # Compute the search direction using the L-BFGS two-loop recursion
     # Then adjust the direction for variables that are at their bounds
-    def search_direction(self, x, g, s_list, y_list, l, u):
+    def search_direction(self,
+                         x: ndarray,
+                         g: ndarray,
+                         s_list: List[Union[ndarray, Any]],
+                         y_list: List[Union[ndarray, Any]],
+                         l: ndarray,
+                         u: ndarray) -> ndarray:
         if len(s_list) > 0:
             H_g = self.two_loop_recursion(g, s_list, y_list)
         else:
@@ -179,8 +212,18 @@ class LBFGSB():
         return d_adjusted
 
     # Backtracking line search with strong wolfe
-    def strong_wolfe_line_search(self, f, x, dx, d, l, u, alpha_init=1.0,
-                                 c1=1e-3, c2=0.9, tau=0.5, max_iters=20):
+    def strong_wolfe_line_search(self,
+                                 f: Callable,
+                                 x: ndarray,
+                                 dx: float,
+                                 d: ndarray,
+                                 l: ndarray,
+                                 u: ndarray,
+                                 alpha_init: float=1.0,
+                                 c1: float=1e-3,
+                                 c2: float=0.9,
+                                 tau: float=0.5,
+                                 max_iters: int=20) -> float:
 
         alpha = alpha_init
         f_x = f(x)

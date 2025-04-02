@@ -4,17 +4,26 @@ import types
 import numpy as np
 import torch
 import torch.distributions as td
+from numpy import ndarray
+from typing import Tuple
+from torch.distributions.multivariate_normal import MultivariateNormal
 
 # Custom imports
 from sparkle.src.utils.default       import set_default
 from sparkle.src.network.mlp         import MLP
 from sparkle.src.optimizer.optimizer import opt_factory
 from sparkle.src.agent.base          import BaseAgent
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.optimizer.adam import Adam
+
 
 ###############################################
 ### PBO
 class PBO(BaseAgent):
-    def __init__(self, path, spaces, pms):
+    def __init__(self,
+                 path: str,
+                 spaces: EnvSpaces,
+                 pms: types.SimpleNamespace) -> None:
         super().__init__(path, spaces, pms)
 
         self.name        = "PBO"
@@ -73,7 +82,7 @@ class PBO(BaseAgent):
         if (not self.silent): self.net_cr.info()
 
     # Reset
-    def reset(self, run):
+    def reset(self, run: int) -> None:
 
         # Mother class reset
         super().reset(run)
@@ -98,7 +107,7 @@ class PBO(BaseAgent):
                                          pms=self.pms_opt_cr)
 
     # Sample from distribution
-    def sample(self):
+    def sample(self) -> ndarray:
 
         obs = torch.ones(1,self.dim)*self.obs
 
@@ -111,7 +120,10 @@ class PBO(BaseAgent):
         return x
 
     # Compute full cov pdf
-    def get_pdf(self, mu, sg, cr):
+    def get_pdf(self,
+                mu: torch.Tensor,
+                sg: torch.Tensor,
+                cr: torch.Tensor) -> MultivariateNormal:
 
         cov = self.get_cov(sg, cr)
         scl = torch.linalg.cholesky(cov)
@@ -120,7 +132,7 @@ class PBO(BaseAgent):
         return pdf
 
     # Step
-    def step(self, x, c):
+    def step(self, x: ndarray, c: ndarray) -> None:
 
         # Store costs
         for i in range(c.shape[0]):
@@ -145,7 +157,7 @@ class PBO(BaseAgent):
         self.stp += 1
 
     # Compute advantages
-    def compute_advantages(self, x):
+    def compute_advantages(self, x: ndarray) -> torch.Tensor:
 
         # Update elite_step
         self.elite_stp += self.n_elite
@@ -179,7 +191,7 @@ class PBO(BaseAgent):
         return torch.tensor(x_elite)
 
     # Get data history
-    def get_history(self, n_gen):
+    def get_history(self, n_gen: int) -> Tuple[torch.Tensor, torch.Tensor]:
 
         # Starting and ending indices based on the required nb of generations
         start     = max(0,self.elite_stp - n_gen*self.n_elite)
@@ -199,7 +211,12 @@ class PBO(BaseAgent):
         return buff_x, buff_a
 
     # Train loop
-    def train_loop(self, n_epochs, n_gens, batch_frac, net, opt):
+    def train_loop(self,
+                   n_epochs: int,
+                   n_gens: int,
+                   batch_frac: float,
+                   net: MLP,
+                   opt: Adam) -> None:
 
         # Loop on epochs
         for epoch in range(n_epochs):
@@ -228,7 +245,10 @@ class PBO(BaseAgent):
                 opt.step()
 
     # Compute loss
-    def get_loss(self, obs, adv, act):
+    def get_loss(self,
+                 obs: torch.Tensor,
+                 adv: torch.Tensor,
+                 act: torch.Tensor) -> torch.Tensor:
 
         # Compute pdf
         sg  = self.net_sg(obs)*self.sigma0
@@ -244,7 +264,9 @@ class PBO(BaseAgent):
         return loss_pg
 
     # Compute covariance matrix
-    def get_cov(self, sg, cr):
+    def get_cov(self,
+                sg: torch.Tensor,
+                cr: torch.Tensor) -> torch.Tensor:
 
         # Extract sigmas and thetas
         sigmas = sg

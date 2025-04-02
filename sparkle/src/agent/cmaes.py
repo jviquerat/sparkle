@@ -1,15 +1,22 @@
 # Generic imports
 import math
 import numpy as np
+from numpy import ndarray
+from types import SimpleNamespace
 
 # Custom imports
 from sparkle.src.utils.default import set_default
 from sparkle.src.agent.base    import BaseAgent
+from sparkle.src.env.spaces import EnvSpaces
+
 
 ###############################################
 ### CMAES
 class CMAES(BaseAgent):
-    def __init__(self, path, spaces, pms):
+    def __init__(self,
+                 path: str,
+                 spaces: EnvSpaces,
+                 pms: SimpleNamespace) -> None:
         super().__init__(path, spaces, pms)
 
         self.name        = "CMAES"
@@ -49,7 +56,7 @@ class CMAES(BaseAgent):
         if (not self.silent): self.summary()
 
     # Reset
-    def reset(self, run):
+    def reset(self, run: int) -> None:
 
         # Mother class reset
         super().reset(run)
@@ -66,7 +73,7 @@ class CMAES(BaseAgent):
         self.sigma = self.sigma0               # global standard deviation
 
     # Sample from distribution
-    def sample(self):
+    def sample(self) -> ndarray:
 
         x      = np.zeros((self.n_points, self.dim))
         self.z = np.random.randn(self.n_points, self.dim) # draw from N(0,1)
@@ -80,7 +87,7 @@ class CMAES(BaseAgent):
         return x
 
     # Step
-    def step(self, x, c):
+    def step(self, x: ndarray, c: ndarray) -> None:
 
         # Sort
         self.sort(x, c)
@@ -129,7 +136,7 @@ class CMAES(BaseAgent):
 
     # Sort offsprings based on cost
     # x and c arrays are actually modified here
-    def sort(self, x, c):
+    def sort(self, x: ndarray, c: ndarray) -> None:
 
         sc        = np.argsort(c)
         x[:]      = x[sc[:]]
