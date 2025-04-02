@@ -15,7 +15,21 @@ from sparkle.src.utils.timer import Timer
 ###############################################
 ### Class for regular trainer
 class Regular(BaseTrainer):
+    """
+    Regular trainer class.
+
+    This class implements a basic trainer that uses an agent to directly
+    interact with the environment and optimize a cost function. It does not
+    use a metamodel.
+    """
     def __init__(self, path: str, pms: SimpleNamespace) -> None:
+        """
+        Initializes the Regular trainer.
+
+        Args:
+            path: The base path for storing results.
+            pms: A SimpleNamespace object containing parameters for the trainer.
+        """
 
         # Set parameters
         self.base_path    = path
@@ -45,6 +59,12 @@ class Regular(BaseTrainer):
 
     # Reset
     def reset(self, run: int) -> None:
+        """
+        Resets the Regular trainer for a new run.
+
+        Args:
+            run: The run number.
+        """
 
         super().reset(run)
         self.env.reset(run)
@@ -52,6 +72,13 @@ class Regular(BaseTrainer):
 
     # Optimize
     def optimize(self) -> None:
+        """
+        Performs the optimization process.
+
+        This method iteratively samples new points, evaluates their costs,
+        stores the data, renders the current state, and steps the agent
+        until the termination condition is met.
+        """
 
         self.timer_global.tic()
         self.it = 0
@@ -76,6 +103,17 @@ class Regular(BaseTrainer):
 
     # Handle rendering
     def render(self, x: ndarray, c: ndarray) -> None:
+        """
+        Renders the current state of the optimization process.
+
+        This method generates plots to visualize the optimization progress,
+        either using the environment's rendering capabilities or the trainer's
+        own rendering functions.
+
+        Args:
+            x: The evaluated points.
+            c: The cost values at the evaluated points.
+        """
 
         if (self.it%self.render_every != 0): return
 
