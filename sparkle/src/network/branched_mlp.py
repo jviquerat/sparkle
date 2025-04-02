@@ -10,15 +10,33 @@ from sparkle.src.utils.error import error
 from sparkle.src.utils.prints import new_line, spacer
 
 
-###############################################
-### Branched MLP class
 class BranchedMLP(BaseNetwork):
+    """
+    Branched Multi-Layer Perceptron (BranchedMLP) neural network.
+
+    This class implements a branched Multi-Layer Perceptron, a network with a
+    shared trunk and multiple output heads.
+    """
     def __init__(self,
                  inp_dim: int,
                  out_dim: int,
                  arch: List[List[Union[int, List[int]]]],
                  acts: List[List[Union[str, List[str]]]],
                  name: str="default") -> None:
+        """
+        Initializes the BranchedMLP.
+
+        Args:
+            inp_dim: The input dimension.
+            out_dim: The output dimension.
+            arch: A list containing two lists:
+                - The architecture of the trunk.
+                - A list of architectures for each head.
+            acts: A list containing two lists:
+                - The activation functions for the trunk.
+                - A list of activation functions for each head.
+            name: An optional name for the network.
+        """
         super().__init__()
 
         # I/O dimensions
@@ -75,8 +93,16 @@ class BranchedMLP(BaseNetwork):
         # Save model parameters in memory
         self.net_weights = copy.deepcopy(self.net_.state_dict())
 
-    # Forward pass
     def forward(self, x_in: torch.Tensor) -> torch.Tensor:
+        """
+        Performs a forward pass through the network.
+
+        Args:
+            x_in: The input tensor.
+
+        Returns:
+            The output tensor.
+        """
 
         # Initialize
         x          = torch.clone(x_in)
@@ -100,13 +126,17 @@ class BranchedMLP(BaseNetwork):
         # Handle output shape
         return out
 
-    # Reset
     def reset(self) -> None:
+        """
+        Resets the network to its initial state.
+        """
 
         self.net_.load_state_dict(self.net_weights)
 
-    # Infos on network
     def info(self) -> None:
+        """
+        Prints information about the network architecture.
+        """
 
         new_line()
         spacer("Branched MLP "+str(self.name_))
