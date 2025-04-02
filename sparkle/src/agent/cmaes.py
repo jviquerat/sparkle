@@ -10,12 +10,27 @@ from sparkle.src.utils.default import set_default
 
 
 ###############################################
-### CMAES
 class CMAES(BaseAgent):
+    """
+    Covariance Matrix Adaptation Evolution Strategy (CMA-ES) agent.
+
+    This agent implements the CMA-ES algorithm, a powerful evolutionary
+    strategy for numerical optimization. It adapts the covariance matrix of
+    a multivariate normal distribution to efficiently explore the search space
+    and find the global optimum of a function.
+    """
     def __init__(self,
                  path: str,
                  spaces: EnvSpaces,
                  pms: SimpleNamespace) -> None:
+        """
+        Initializes the CMA-ES agent.
+
+        Args:
+            path: The base path for storing results.
+            spaces: The environment's search space definition.
+            pms: A SimpleNamespace object containing parameters for the agent.
+        """
         super().__init__(path, spaces, pms)
 
         self.name        = "CMAES"
@@ -54,8 +69,13 @@ class CMAES(BaseAgent):
 
         if (not self.silent): self.summary()
 
-    # Reset
     def reset(self, run: int) -> None:
+        """
+        Resets the CMA-ES agent for a new run.
+
+        Args:
+            run: The run number.
+        """
 
         # Mother class reset
         super().reset(run)
@@ -71,8 +91,16 @@ class CMAES(BaseAgent):
         self.zm    = np.zeros(self.dim)        # auxiliary mean vector
         self.sigma = self.sigma0               # global standard deviation
 
-    # Sample from distribution
     def sample(self) -> ndarray:
+        """
+        Samples new points from the CMA-ES distribution.
+
+        This method generates new points based on the current mean, covariance
+        matrix, and step size.
+
+        Returns:
+            A NumPy array of shape (n_points, dim) representing the new points.
+        """
 
         x      = np.zeros((self.n_points, self.dim))
         self.z = np.random.randn(self.n_points, self.dim) # draw from N(0,1)
@@ -85,8 +113,17 @@ class CMAES(BaseAgent):
 
         return x
 
-    # Step
     def step(self, x: ndarray, c: ndarray) -> None:
+        """
+        Performs one step of the CMA-ES algorithm.
+
+        This method updates the mean, covariance matrix, and step size based on
+        the performance of the sampled points.
+
+        Args:
+            x: The points that were evaluated.
+            c: The cost values at the evaluated points.
+        """
 
         # Sort
         self.sort(x, c)
@@ -133,9 +170,14 @@ class CMAES(BaseAgent):
 
         self.stp += 1
 
-    # Sort offsprings based on cost
-    # x and c arrays are actually modified here
     def sort(self, x: ndarray, c: ndarray) -> None:
+        """
+        Sorts the offsprings based on their cost values.
+
+        Args:
+            x: The points that were evaluated.
+            c: The cost values at the evaluated points.
+        """
 
         sc        = np.argsort(c)
         x[:]      = x[sc[:]]

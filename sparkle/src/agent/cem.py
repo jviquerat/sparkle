@@ -11,12 +11,26 @@ from sparkle.src.utils.default import set_default
 
 
 ###############################################
-### CEM
 class CEM(BaseAgent):
+    """
+    Cross-Entropy Method (CEM) agent.
+
+    This agent implements the Cross-Entropy Method, a stochastic optimization
+    technique that iteratively refines a sampling distribution to find the
+    optimum of a function.
+    """
     def __init__(self,
                  path: str,
                  spaces: EnvSpaces,
                  pms: types.SimpleNamespace) -> None:
+        """
+        Initializes the CEM agent.
+
+        Args:
+            path: The base path for storing results.
+            spaces: The environment's search space definition.
+            pms: A SimpleNamespace object containing parameters for the agent.
+        """
         super().__init__(path, spaces, pms)
 
         self.name        = "CEM"
@@ -27,8 +41,13 @@ class CEM(BaseAgent):
 
         if (not self.silent): self.summary()
 
-    # Reset
     def reset(self, run: int) -> None:
+        """
+        Resets the CEM agent for a new run.
+
+        Args:
+            run: The run number.
+        """
 
         # Mother class reset
         super().reset(run)
@@ -37,8 +56,17 @@ class CEM(BaseAgent):
         self.xmin_cem = self.xmin.copy()
         self.xmax_cem = self.xmax.copy()
 
-    # Sample from distribution
     def sample(self) -> ndarray:
+        """
+        Samples new points from the CEM distribution.
+
+        This method generates new points based on the current elite set,
+        adapting the sampling distribution towards the region of better
+        performing points.
+
+        Returns:
+            A NumPy array of shape (n_points, dim) representing the new points.
+        """
         pms          = types.SimpleNamespace()
         pms.n_points = self.n_points
         pms.n_iter   = 1000
@@ -52,8 +80,17 @@ class CEM(BaseAgent):
 
         return pex.x
 
-    # Step
     def step(self, x: ndarray, c: ndarray) -> None:
+        """
+        Performs one step of the CEM algorithm.
+
+        This method updates the sampling distribution based on the elite set
+        and increments the step counter.
+
+        Args:
+            x: The points that were evaluated.
+            c: The cost values at the evaluated points.
+        """
 
         # Sort
         self.sort(x, c)
@@ -66,9 +103,14 @@ class CEM(BaseAgent):
 
         self.stp += 1
 
-    # Sort offsprings based on cost
-    # x and c arrays are actually modified here
     def sort(self, x: ndarray, c: ndarray) -> None:
+        """
+        Sorts the offsprings based on their cost values.
+
+        Args:
+            x: The points that were evaluated.
+            c: The cost values at the evaluated points.
+        """
 
         sc   = np.argsort(c)
         x[:] = x[sc[:]]
