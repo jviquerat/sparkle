@@ -1,16 +1,24 @@
 # Generic imports
 import numpy as np
+from numpy import ndarray
+from types import SimpleNamespace
+from typing import Tuple, Any
 
 # Custom imports
 from sparkle.src.utils.default   import set_default
 from sparkle.src.agent.base      import BaseAgent
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
 from sparkle.src.infill.infill   import infill_factory
+from sparkle.src.env.spaces import EnvSpaces
 
 ###############################################
 ### EGO
 class EGO(BaseAgent):
-    def __init__(self, path, spaces, model, pms):
+    def __init__(self,
+                 path: str,
+                 spaces: EnvSpaces,
+                 model: Any,
+                 pms: SimpleNamespace) -> None:
         super().__init__(path, spaces, pms)
 
         self.name        = "EGO"
@@ -27,23 +35,23 @@ class EGO(BaseAgent):
         self.summary()
 
     # Reset
-    def reset(self, run):
+    def reset(self, run: int) -> None:
 
         super().reset(run)
 
     # Return best point
-    def best_point(self):
+    def best_point(self) -> Tuple[ndarray, float]:
 
         k = np.argmin(self.model.y)
         return self.model.x[k], self.model.y[k]
 
     # Local function for optimization of infill
-    def opt_infill(self, x):
+    def opt_infill(self, x: ndarray) -> ndarray:
 
         return -self.infill(x)
 
     # Sample new point based on expected improvement
-    def sample(self):
+    def sample(self) -> ndarray:
 
         # Set best point to infill before optimization
         xb, yb  = self.best_point()
@@ -60,12 +68,12 @@ class EGO(BaseAgent):
         return np.reshape(x, (-1,self.spaces.dim))
 
     # Step
-    def step(self, x, c):
+    def step(self, x: ndarray, c: ndarray) -> None:
 
         self.stp += 1
 
     # Check if done
-    def done(self):
+    def done(self) -> bool:
 
         if (self.stp == self.n_steps_max): return True
         return False

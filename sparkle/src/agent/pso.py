@@ -1,14 +1,20 @@
 # Generic imports
 import numpy as np
+from numpy import ndarray
+from types import SimpleNamespace
 
 # Custom imports
 from sparkle.src.utils.default import set_default
 from sparkle.src.agent.base    import BaseAgent
+from sparkle.src.env.spaces import EnvSpaces
 
 ###############################################
 ### Particle swarm optimization
 class PSO(BaseAgent):
-    def __init__(self, path, spaces, pms):
+    def __init__(self,
+                 path: str,
+                 spaces: EnvSpaces,
+                 pms: SimpleNamespace) -> None:
         super().__init__(path, spaces, pms)
 
         self.name        = "PSO"
@@ -22,7 +28,7 @@ class PSO(BaseAgent):
         if (not self.silent): self.summary()
 
     # Reset
-    def reset(self, run):
+    def reset(self, run: int) -> None:
 
         # Mother class reset
         super().reset(run)
@@ -35,7 +41,7 @@ class PSO(BaseAgent):
     # Sample points
     # A local copy of x is required as sample() does not take
     # previous samples as argument
-    def sample(self):
+    def sample(self) -> ndarray:
 
         if (self.stp == 0):
             self.x = np.random.rand(self.n_points, self.dim)
@@ -56,7 +62,7 @@ class PSO(BaseAgent):
         return self.x
 
     # Step
-    def step(self, x, c):
+    def step(self, x: ndarray, c: ndarray) -> None:
 
         # Update best
         self.update_local_best(x, c)
@@ -64,7 +70,7 @@ class PSO(BaseAgent):
         self.stp += 1
 
     # Update local best
-    def update_local_best(self, x, c):
+    def update_local_best(self, x: ndarray, c: ndarray) -> None:
 
         # Update best score for each particle
         for i in range(self.n_points):

@@ -1,6 +1,8 @@
 # Generic imports
 import types
 import numpy as np
+from numpy import ndarray
+from typing import Callable, Optional, Tuple
 
 # Custom imports
 from sparkle.src.agent.lbfgsb import LBFGSB
@@ -11,10 +13,18 @@ from sparkle.src.env.spaces   import EnvSpaces
 ### Multi-start L-BFGS-B
 class MSLBFGSB():
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def optimize(self, f, xmin, xmax, df=None, n_pts=10, m=5, tol=1e-3, max_iter=20):
+    def optimize(self,
+                 f: Callable,
+                 xmin: ndarray,
+                 xmax: ndarray,
+                 df: Optional[Callable]=None,
+                 n_pts: int=10,
+                 m: int=5,
+                 tol: float=1e-3,
+                 max_iter: int=20) -> Tuple[ndarray, float]:
 
         pms          = types.SimpleNamespace()
         pms.n_points = n_pts

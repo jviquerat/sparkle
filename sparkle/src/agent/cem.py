@@ -2,6 +2,7 @@
 import types
 import math
 import numpy as np
+from numpy import ndarray
 
 # Custom imports
 from sparkle.src.utils.default import set_default
@@ -12,7 +13,10 @@ from sparkle.src.env.spaces    import EnvSpaces
 ###############################################
 ### CEM
 class CEM(BaseAgent):
-    def __init__(self, path, spaces, pms):
+    def __init__(self,
+                 path: str,
+                 spaces: EnvSpaces,
+                 pms: types.SimpleNamespace) -> None:
         super().__init__(path, spaces, pms)
 
         self.name        = "CEM"
@@ -24,7 +28,7 @@ class CEM(BaseAgent):
         if (not self.silent): self.summary()
 
     # Reset
-    def reset(self, run):
+    def reset(self, run: int) -> None:
 
         # Mother class reset
         super().reset(run)
@@ -34,7 +38,7 @@ class CEM(BaseAgent):
         self.xmax_cem = self.xmax.copy()
 
     # Sample from distribution
-    def sample(self):
+    def sample(self) -> ndarray:
         pms          = types.SimpleNamespace()
         pms.n_points = self.n_points
         pms.n_iter   = 1000
@@ -49,7 +53,7 @@ class CEM(BaseAgent):
         return pex.x
 
     # Step
-    def step(self, x, c):
+    def step(self, x: ndarray, c: ndarray) -> None:
 
         # Sort
         self.sort(x, c)
@@ -64,7 +68,7 @@ class CEM(BaseAgent):
 
     # Sort offsprings based on cost
     # x and c arrays are actually modified here
-    def sort(self, x, c):
+    def sort(self, x: ndarray, c: ndarray) -> None:
 
         sc   = np.argsort(c)
         x[:] = x[sc[:]]
