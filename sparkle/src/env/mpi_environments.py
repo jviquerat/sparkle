@@ -22,7 +22,7 @@ class MpiEnvironments(BaseParallelEnvironments):
         self.worker = MpiWorker(self.name, self.args, parallel.rank(), path)
 
         # Set all slaves to wait for instructions
-        if (not parallel.is_root()): self.worker.work()
+        if not parallel.is_root(): self.worker.work()
 
         # Declare spaces object
         self.spaces = EnvSpaces(self.get_spaces(), pms)
@@ -94,7 +94,7 @@ class MpiEnvironments(BaseParallelEnvironments):
     # Render environment
     def render(self, x, c, **kwargs):
 
-        if (parallel.is_root()):
+        if parallel.is_root():
             return self.worker.render(x, c, **kwargs)
 
     # Close
