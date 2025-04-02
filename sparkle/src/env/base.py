@@ -1,5 +1,7 @@
 # Generic imports
 import numpy as np
+from numpy import ndarray
+from typing import Tuple
 
 # Custom imports
 from sparkle.src.env.parallel import parallel
@@ -12,7 +14,7 @@ class BaseParallelEnvironments():
         pass
 
     # Evaluate cost on a list of points in parallel
-    def evaluate(self, x):
+    def evaluate(self, x: ndarray) -> ndarray:
 
         n_points = x.shape[0]
 
@@ -44,7 +46,7 @@ class BaseParallelEnvironments():
         return costs
 
     # Generate cost map for rendering 1D envs
-    def generate_cost_map_1D(self):
+    def generate_cost_map_1D(self) -> Tuple[ndarray, ndarray]:
 
         n_plot   = 400
         x_plot   = np.linspace(self.spaces.xmin[0], self.spaces.xmax[0], num=n_plot)
@@ -57,7 +59,7 @@ class BaseParallelEnvironments():
         return x_plot, cost_map
 
     # Generate cost map for rendering 2D envs
-    def generate_cost_map_2D(self):
+    def generate_cost_map_2D(self) -> Tuple[ndarray, ndarray, ndarray]:
 
         n_plot   = 100
         x_plot   = np.linspace(self.spaces.xmin[0], self.spaces.xmax[0], num=n_plot)
