@@ -14,7 +14,22 @@ plt.rcParams['figure.titlesize'] = 12
 plt.rcParams['figure.titleweight'] = 'bold'
 
 # Plot averaged fields
-def plot_avg(data, filename, avg_type):
+def plot_avg(data: ndarray, filename: str, avg_type: str) -> None:
+    """
+    Plots the average and best cost over optimization steps.
+
+    This function generates a plot showing the average and best cost
+    values over the course of optimization steps, along with their
+    respective standard deviations.
+
+    Args:
+        data: A NumPy array containing the data to plot. The array should
+            have columns for step, average cost, average cost plus std,
+            average cost minus std, best cost, best cost plus std, and
+            best cost minus std.
+        filename: The base filename for saving the plot.
+        avg_type: The type of scaling to use for the y-axis ('linear' or 'log').
+    """
 
     stp   = data[:,0]
 
@@ -50,7 +65,30 @@ def plot_avg(data, filename, avg_type):
     fig.savefig(filename+'.png')
 
 # Return avg, p and m fields depending on avg type
-def return_plottables(avg, p, m, avg_type):
+def return_plottables(avg: ndarray, p: ndarray, m: ndarray, avg_type: str) -> tuple[ndarray, ndarray, ndarray, str]:
+    """
+    Returns the plottable data based on the specified average type.
+
+    This function prepares the data for plotting by applying the
+    appropriate scaling (linear or logarithmic) to the average,
+    plus standard deviation, and minus standard deviation values.
+
+    Args:
+        avg: A NumPy array of average values.
+        p: A NumPy array of average plus standard deviation values.
+        m: A NumPy array of average minus standard deviation values.
+        avg_type: The type of scaling to use ('linear' or 'log').
+
+    Returns:
+        A tuple containing:
+            - The (potentially transformed) average values.
+            - The (potentially transformed) plus standard deviation values.
+            - The (potentially transformed) minus standard deviation values.
+            - The label for the y-axis.
+
+    Raises:
+        ValueError: If the avg_type is not 'linear' or 'log'.
+    """
 
     if (avg_type not in ["linear", "log"]):
         error("plot", "return_plottable", "avg_type should be either linear or log")
@@ -70,7 +108,21 @@ def return_plottables(avg, p, m, avg_type):
     return avg, p, m, ylabel
 
 # 1D rendering for regular trainer
-def render_1D_regular(filename, spaces, x, c, x_plot, cost_map):
+def render_1D_regular(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray, x_plot: ndarray, cost_map: ndarray) -> None:
+    """
+    Renders a 1D plot for the regular trainer.
+
+    This function generates a 1D plot showing the cost function and the
+    sampled points.
+
+    Args:
+        filename: The filename for saving the plot.
+        spaces: The environment's search space definition.
+        x: A NumPy array of sampled points.
+        c: A NumPy array of cost values for the sampled points.
+        x_plot: A NumPy array of x-coordinates for plotting the cost function.
+        cost_map: A NumPy array of cost values for plotting the cost function.
+    """
 
     plt.clf()
     fig = plt.figure()
@@ -93,6 +145,21 @@ def render_1D_regular(filename, spaces, x, c, x_plot, cost_map):
 
 # 2D rendering for regular trainer
 def render_2D_regular(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray, x_plot: ndarray, y_plot: ndarray, cost_map: ndarray) -> None:
+    """
+    Renders a 2D plot for the regular trainer.
+
+    This function generates a 2D plot showing the cost function as a
+    contour plot and the sampled points as scatter points.
+
+    Args:
+        filename: The filename for saving the plot.
+        spaces: The environment's search space definition.
+        x: A NumPy array of sampled points.
+        c: A NumPy array of cost values for the sampled points.
+        x_plot: A NumPy array of x-coordinates for plotting the cost function.
+        y_plot: A NumPy array of y-coordinates for plotting the cost function.
+        cost_map: A NumPy array of cost values for plotting the cost function.
+    """
 
     plt.clf()
     fig = plt.figure()
@@ -122,6 +189,26 @@ def render_1D_metamodel(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray
                         x_plot: ndarray, cost_map: ndarray,
                         y_mu: ndarray, y_std: ndarray, fct: ndarray, fct_name: str,
                         highlight_last: bool=True) -> None:
+    """
+    Renders a 1D plot for the metamodel trainer.
+
+    This function generates a 1D plot showing the cost function, the
+    sampled points, the metamodel's prediction, and the confidence
+    interval.
+
+    Args:
+        filename: The filename for saving the plot.
+        spaces: The environment's search space definition.
+        x: A NumPy array of sampled points.
+        c: A NumPy array of cost values for the sampled points.
+        x_plot: A NumPy array of x-coordinates for plotting.
+        cost_map: A NumPy array of cost values for plotting the cost function.
+        y_mu: A NumPy array of the metamodel's mean predictions.
+        y_std: A NumPy array of the metamodel's standard deviation predictions.
+        fct: A NumPy array of values for an additional function to plot.
+        fct_name: The name of the additional function.
+        highlight_last: Whether to highlight the last sampled point.
+    """
 
     plt.clf()
     fig = plt.figure()
@@ -161,6 +248,27 @@ def render_2D_metamodel(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray
                         x_plot: ndarray, y_plot: ndarray, cost_map: ndarray,
                         y_mu: ndarray, y_std: ndarray, fct: ndarray, fct_name: str,
                         highlight_last: bool=True) -> None:
+    """
+    Renders a 2D plot for the metamodel trainer.
+
+    This function generates a 2D plot showing the cost function, the
+    metamodel's prediction, and an additional function, along with the
+    sampled points.
+
+    Args:
+        filename: The filename for saving the plot.
+        spaces: The environment's search space definition.
+        x: A NumPy array of sampled points.
+        c: A NumPy array of cost values for the sampled points.
+        x_plot: A NumPy array of x-coordinates for plotting.
+        y_plot: A NumPy array of y-coordinates for plotting.
+        cost_map: A NumPy array of cost values for plotting the cost function.
+        y_mu: A NumPy array of the metamodel's mean predictions.
+        y_std: A NumPy array of the metamodel's standard deviation predictions.
+        fct: A NumPy array of values for an additional function to plot.
+        fct_name: The name of the additional function.
+        highlight_last: Whether to highlight the last sampled point.
+    """
 
     plt.clf()
     fig = plt.figure()
@@ -213,7 +321,20 @@ def render_2D_metamodel(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray
     plt.close()
 
 # Violin plot array
-def violins_array(filename, x, x_labels, y_label=None, title=None):
+def violins_array(filename: str, x: list[ndarray], x_labels: list[str], y_label: str | None=None, title: str | None=None) -> None:
+    """
+    Generates a violin plot for an array of data.
+
+    This function creates a violin plot to visualize the distribution of
+    multiple datasets.
+
+    Args:
+        filename: The filename for saving the plot.
+        x: A list of NumPy arrays, where each array represents a dataset.
+        x_labels: A list of labels for the datasets.
+        y_label: The label for the y-axis.
+        title: The title of the plot.
+    """
 
     plt.clf()
     fig = plt.figure()
@@ -230,7 +351,21 @@ def violins_array(filename, x, x_labels, y_label=None, title=None):
     plt.close()
 
 # Multi-bar plot
-def multi_bar(filename, x, x_labels, bar_labels, y_label=None, title=None):
+def multi_bar(filename: str, x: dict[str, list[float]], x_labels: list[str], bar_labels: list[str], y_label: str | None=None, title: str | None=None) -> None:
+    """
+    Generates a multi-bar plot.
+
+    This function creates a bar plot to compare multiple datasets across
+    different categories.
+
+    Args:
+        filename: The filename for saving the plot.
+        x: A dictionary where keys are bar labels and values are lists of data.
+        x_labels: A list of labels for the x-axis categories.
+        bar_labels: A list of labels for the bars.
+        y_label: The label for the y-axis.
+        title: The title of the plot.
+    """
 
     dx = np.arange(len(x_labels))  # the label locations
     width = 0.15  # the width of the bars
@@ -253,7 +388,22 @@ def multi_bar(filename, x, x_labels, bar_labels, y_label=None, title=None):
     plt.close()
 
 # Scatter plot with names
-def scatter_names(filename, x, y, names, x_label=None, y_label=None, title=None):
+def scatter_names(filename: str, x: dict[str, float], y: dict[str, float], names: list[str], x_label: str | None=None, y_label: str | None=None, title: str | None=None) -> None:
+    """
+    Generates a scatter plot with names.
+
+    This function creates a scatter plot where each point is labeled with a
+    name.
+
+    Args:
+        filename: The filename for saving the plot.
+        x: A dictionary where keys are names and values are x-coordinates.
+        y: A dictionary where keys are names and values are y-coordinates.
+        names: A list of names to plot.
+        x_label: The label for the x-axis.
+        y_label: The label for the y-axis.
+        title: The title of the plot.
+    """
 
     plt.clf()
     fig = plt.figure()
