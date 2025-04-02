@@ -3,13 +3,14 @@ import numpy as np
 
 # Custom imports
 from sparkle.src.utils.ema import EMA
+from numpy import ndarray
 
 ###############################################
 ### Data averager class
 ### Used to compute avg+/-std of drl-related fields
 ### n_avg : nb of runs to average
 class DataAvg():
-    def __init__(self, n_fields, n_avg):
+    def __init__(self, n_fields: int, n_avg: int) -> None:
 
         self.n_avg    = n_avg
         self.n_fields = n_fields
@@ -17,7 +18,7 @@ class DataAvg():
         self.stp      = None
         self.data     = None
 
-    def store(self, filename, run):
+    def store(self, filename: str, run: int) -> None:
 
         # Load file
         f = np.loadtxt(filename)
@@ -35,7 +36,7 @@ class DataAvg():
         for field in range(self.n_fields):
             self.data[run,:,field] = f[:,field+1]
 
-    def average(self, filename, avg_type="linear"):
+    def average(self, filename: str, avg_type: str="linear") -> ndarray:
 
         array = np.vstack(self.stp)
         smoother = EMA(0.2, int(self.n_stp/10))
@@ -63,4 +64,5 @@ class DataAvg():
             array = np.hstack((array,np.vstack(smooth_m)))
 
         np.savetxt(filename, array, fmt='%.5e')
+        
         return array

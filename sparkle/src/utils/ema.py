@@ -1,15 +1,16 @@
 # Generic imports
 import numpy as np
+from numpy import ndarray
 
 ###############################################
 ### Exponential moving average class
 class EMA:
-    def __init__(self, alpha, n):
+    def __init__(self, alpha: float, n: int) -> None:
         self.alpha = alpha
         self.n     = n
 
     ### Smooth entire array
-    def smooth(self, array):
+    def smooth(self, array: ndarray) -> ndarray:
 
         s    = np.zeros_like(array)
         y    = array[0]

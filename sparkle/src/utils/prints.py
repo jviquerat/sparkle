@@ -3,6 +3,8 @@ import subprocess
 
 # Custom imports
 from sparkle.src.env.parallel import parallel
+from numpy import float64
+from typing import Union
 
 ###############################################
 ### A set of functions to format printings
@@ -30,12 +32,12 @@ def liner(text):
         print("### "+text)
 
 ### Liner with no newline
-def liner_simple(text):
+def liner_simple(text: str):
     if (parallel.is_root()):
         print("### "+text)
 
 ### Spacer
-def spacer(text):
+def spacer(text: str) -> None:
     if (parallel.is_root()):
         print("# "+text)
 
@@ -63,7 +65,7 @@ def bold(text):
         return bld_clr + text + end_clr
 
 ### Format float for output
-def fmt_float(x):
+def fmt_float(x: Union[float, float64]) -> str:
     if (x < 1.0e-1) or (x > 1.0e3):
         return "{:.5e}".format(x)
     else:
