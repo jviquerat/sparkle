@@ -9,6 +9,25 @@ from sparkle.src.utils.error import error
 ### x: array of point coordinates of shape (n_points, dim)
 ### n_points: target number of points
 def FPS(x: ndarray, n_points: int) -> ndarray:
+    """
+    Furthest Point Sampling (FPS) algorithm.
+
+    This function implements the Furthest Point Sampling algorithm, which
+    selects a subset of points from a given set such that the points are
+    as far apart from each other as possible.
+
+    Args:
+        x: A NumPy array of shape (n_points, dim) representing the coordinates
+            of the input points.
+        n_points: The target number of points to select.
+
+    Returns:
+        A NumPy array of shape (n_points, dim) representing the coordinates
+        of the selected points.
+
+    Raises:
+        ValueError: If the input list has fewer points than the required number.
+    """
 
     if (x.shape[0] < n_points):
         error("fps", "fps",

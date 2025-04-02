@@ -14,7 +14,22 @@ from sparkle.src.utils.prints import fmt_float, spacer
 ###############################################
 ### Maximin Latin hypercube sampling
 class MLHS(BasePex):
+    """
+    Maximin Latin Hypercube Sampling (MLHS) experiment plan.
+
+    This class implements the Maximin Latin Hypercube Sampling method, which
+    combines the stratification of LHS with a maximin criterion to improve
+    the space-filling properties of the experiment plan.
+    """
     def __init__(self, spaces: EnvSpaces, pms: SimpleNamespace) -> None:
+        """
+        Initializes the MLHS experiment plan.
+
+        Args:
+            spaces: The environment's search space definition.
+            pms: A SimpleNamespace object containing parameters for the experiment plan,
+                including the swap ratio (swap_ratio).
+        """
         super().__init__(spaces, pms)
 
         self.name       = "maximin_lhs"
@@ -26,6 +41,13 @@ class MLHS(BasePex):
 
     # Reset sampling
     def reset(self) -> None:
+        """
+        Resets the MLHS experiment plan by generating new sample points.
+
+        This method generates an initial LHS design, then iteratively
+        improves it by swapping points to maximize the minimum distance
+        between points.
+        """
 
         # Generate default lhs
         base    = LHS(self.spaces, self.pms)
@@ -103,6 +125,9 @@ class MLHS(BasePex):
 
     # Print informations
     def summary(self):
+        """
+        Prints a summary of the MLHS experiment plan's configuration.
+        """
 
         super().summary()
         spacer("Initial min distance: "+fmt_float(self.d_min_initial))
