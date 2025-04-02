@@ -16,7 +16,22 @@ from sparkle.src.utils.prints import fmt_float, spacer
 ### Fixed poisson-disc experiment plan
 ### Relies on Robert Bridson algorithm
 class FPD(BasePex):
+    """
+    Fixed Poisson-Disc (FPD) experiment plan.
+
+    This class implements the Fixed Poisson-Disc sampling method for generating
+    experiment plans. FPD ensures that points are well-spaced and avoid
+    clustering, providing good coverage of the search space.
+    """
     def __init__(self, spaces: EnvSpaces, pms: SimpleNamespace) -> None:
+        """
+        Initializes the FPD experiment plan.
+
+        Args:
+            spaces: The environment's search space definition.
+            pms: A SimpleNamespace object containing parameters for the experiment plan,
+                including the number of attempts (n_attempts).
+        """
         super().__init__(spaces, pms)
 
         self.name       = "fixed_poisson_disc"
@@ -46,6 +61,13 @@ class FPD(BasePex):
     # apply a furthest point sampling on the resulting set to
     # ensure that we have exactly n_points_
     def reset(self) -> None:
+        """
+        Resets the FPD experiment plan by generating new sample points.
+
+        This method generates a new set of points using the Poisson-Disc
+        sampling algorithm, followed by a Furthest Point Sampling (FPS) step
+        to ensure the correct number of points.
+        """
 
         # Poisson-disc sampling
         p = np.random.uniform(low  = self.xmin,
@@ -99,6 +121,9 @@ class FPD(BasePex):
 
     # Print informations
     def summary(self):
+        """
+        Prints a summary of the FPD experiment plan's configuration.
+        """
 
         super().summary()
         spacer("Initial nb of pts: "+str(self.n_initial_points))
