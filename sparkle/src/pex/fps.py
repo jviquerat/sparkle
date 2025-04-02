@@ -1,14 +1,15 @@
 # Generic imports
 import numpy as np
+from numpy import ndarray
 
 # Custom imports
-from sparkle.src.utils.error     import error
+from sparkle.src.utils.error import error
 
 ###############################################
 ### Furthest point sampling
 ### x: array of point coordinates of shape (n_points, dim)
 ### n_points: target number of points
-def FPS(x, n_points):
+def FPS(x: ndarray, n_points: int) -> ndarray:
 
     if (x.shape[0] < n_points):
         error("fps", "fps",

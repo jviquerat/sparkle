@@ -3,62 +3,65 @@ import math
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+from numpy import float64, ndarray
+from types import SimpleNamespace
 
 # Custom imports
 from sparkle.src.utils.distances import nearest_all_to_all
 from sparkle.src.utils.prints    import spacer, fmt_float
 from sparkle.src.utils.default   import set_default
+from sparkle.src.env.spaces import EnvSpaces
 
 ###############################################
 ### Base experiment plan
 class BasePex():
-    def __init__(self, spaces, pms):
+    def __init__(self, spaces: EnvSpaces, pms: SimpleNamespace) -> None:
 
         self.spaces    = spaces
         self.n_points_ = set_default("n_points", 10*self.dim, pms)
 
     @property
-    def dim(self):
+    def dim(self) -> int:
         return self.spaces.dim
 
     @property
-    def natural_dim(self):
+    def natural_dim(self) -> int:
         return self.spaces.natural_dim
 
     @property
-    def x0(self):
+    def x0(self) -> ndarray:
         return self.spaces.x0
 
     @property
-    def xmin(self):
+    def xmin(self) -> ndarray:
         return self.spaces.xmin
 
     @property
-    def xmax(self):
+    def xmax(self) -> ndarray:
         return self.spaces.xmax
 
     @property
-    def x(self):
+    def x(self) -> ndarray:
         return self.x_
 
     @property
-    def n_points(self):
+    def n_points(self) -> int:
         return self.x.shape[0]
 
     # Return i-th point of pex
-    def point(self, i):
+    def point(self, i: int) -> ndarray:
 
         return np.array([self.x[i]])
 
     # Compute volume of domain
-    def volume(self):
+    def volume(self) -> float64:
 
         v = self.xmax - self.xmin
         return np.prod(v)
 
     # Compute phi-p criterion
     # Default value suggested by Morris & Mitchell (1995)
-    def phi_p(self, p=50):
+    def phi_p(self, p: int=50) -> float:
 
         d = 0.0
         for i in range(self.n_points):

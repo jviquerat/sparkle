@@ -1,13 +1,15 @@
 # Generic imports
 import numpy as np
+from types import SimpleNamespace
 
 # Custom imports
 from sparkle.src.pex.base import BasePex
+from sparkle.src.env.spaces import EnvSpaces
 
 ###############################################
 ### Latin hypercube sampling
 class LHS(BasePex):
-    def __init__(self, spaces, pms):
+    def __init__(self, spaces: EnvSpaces, pms: SimpleNamespace) -> None:
         super().__init__(spaces, pms)
 
         self.name = "lhs"
@@ -15,7 +17,7 @@ class LHS(BasePex):
         self.reset()
 
     # Reset sampling
-    def reset(self):
+    def reset(self) -> None:
 
         # Generate x points for pex
         low  = np.arange(0,self.n_points_)/self.n_points_

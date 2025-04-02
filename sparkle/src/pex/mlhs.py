@@ -1,6 +1,7 @@
 # Generic imports
 import math
 import numpy as np
+from types import SimpleNamespace
 
 # Custom imports
 from sparkle.src.pex.base        import BasePex
@@ -8,11 +9,12 @@ from sparkle.src.pex.lhs         import LHS
 from sparkle.src.utils.distances import distance, nearest_one_to_all, nearest_all_to_all
 from sparkle.src.utils.default   import set_default
 from sparkle.src.utils.prints    import spacer, fmt_float
+from sparkle.src.env.spaces import EnvSpaces
 
 ###############################################
 ### Maximin Latin hypercube sampling
 class MLHS(BasePex):
-    def __init__(self, spaces, pms):
+    def __init__(self, spaces: EnvSpaces, pms: SimpleNamespace) -> None:
         super().__init__(spaces, pms)
 
         self.name       = "maximin_lhs"
@@ -23,7 +25,7 @@ class MLHS(BasePex):
         self.reset()
 
     # Reset sampling
-    def reset(self):
+    def reset(self) -> None:
 
         # Generate default lhs
         base    = LHS(self.spaces, self.pms)
