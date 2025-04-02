@@ -7,7 +7,6 @@ from sparkle.src.pex.base import BasePex
 
 
 ###############################################
-### Latin hypercube sampling
 class LHS(BasePex):
     """
     Latin Hypercube Sampling (LHS) experiment plan.
@@ -30,7 +29,6 @@ class LHS(BasePex):
 
         self.reset()
 
-    # Reset sampling
     def reset(self) -> None:
         """
         Resets the LHS experiment plan by generating new sample points.
