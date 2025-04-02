@@ -1,12 +1,14 @@
 import math
-import numpy as np
-from numpy import ndarray
 from types import SimpleNamespace
 from typing import Optional
 
-from sparkle.src.kernel.base     import BaseKernel
-from sparkle.src.utils.distances import distance_all_to_all
+import numpy as np
+from numpy import ndarray
+
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.kernel.base import BaseKernel
+from sparkle.src.utils.distances import distance_all_to_all
+
 
 ###############################################
 ### Isotropic Matern 5/2 kernel

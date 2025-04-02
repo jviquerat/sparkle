@@ -1,8 +1,17 @@
 import math
+
 import numpy as np
 
-from sparkle.src.utils.compare   import compare
-from sparkle.src.utils.distances import distance, min_distance, min_max_distance, nearest_one_to_all, nearest_all_to_all, distance_all_to_all
+from sparkle.src.utils.compare import compare
+from sparkle.src.utils.distances import (
+    distance,
+    distance_all_to_all,
+    min_distance,
+    min_max_distance,
+    nearest_all_to_all,
+    nearest_one_to_all,
+)
+
 
 ###############################################
 ### Test distance

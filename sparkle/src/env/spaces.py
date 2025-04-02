@@ -1,6 +1,8 @@
-from numpy import ndarray
 from types import SimpleNamespace
-from typing import Optional, List, Any
+from typing import Any, List, Optional
+
+from numpy import ndarray
+
 
 ###############################################
 ### A class holding informations dimensions

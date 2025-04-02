@@ -1,10 +1,11 @@
 import os
+import shutil
 import sys
 import time
-import shutil
 
-from sparkle.src.env.parallel    import parallel
+from sparkle.src.env.parallel import parallel
 from sparkle.src.model.generator import generate
+
 
 # Compute model
 def model(json_file, pms):

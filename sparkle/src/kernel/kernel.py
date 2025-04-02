@@ -1,4 +1,4 @@
-from sparkle.src.core.factory    import Factory
+from sparkle.src.core.factory import Factory
 from sparkle.src.kernel.gaussian import Gaussian
 from sparkle.src.kernel.matern52 import Matern52
 

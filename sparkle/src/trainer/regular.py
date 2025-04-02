@@ -1,14 +1,16 @@
 import os
-from numpy import ndarray
 from types import SimpleNamespace
 
-from sparkle.src.trainer.base  import BaseTrainer
-from sparkle.src.agent.agent   import agent_factory
-from sparkle.src.utils.timer   import Timer
-from sparkle.src.env.parallel  import parallel
+from numpy import ndarray
+
+from sparkle.src.agent.agent import agent_factory
+from sparkle.src.env.parallel import parallel
+from sparkle.src.plot.plot import render_1D_regular, render_2D_regular
+from sparkle.src.trainer.base import BaseTrainer
 from sparkle.src.utils.default import set_default
-from sparkle.src.plot.plot     import render_1D_regular, render_2D_regular
-from sparkle.src.utils.error   import error
+from sparkle.src.utils.error import error
+from sparkle.src.utils.timer import Timer
+
 
 ###############################################
 ### Class for regular trainer

@@ -1,10 +1,12 @@
+from math import erf, exp, expm1, log, log1p, pi, sqrt
+from typing import Any
+
 import numpy as np
 from numpy import ndarray
-from math import sqrt, pi, exp, erf, log, expm1, log1p
-from typing import Any
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.model.kriging import Kriging
+
 
 ###############################################
 ### Log expected improvement infill

@@ -1,10 +1,12 @@
-import numpy as np
 from types import SimpleNamespace
 
-from sparkle.src.pex.base      import BasePex
-from sparkle.src.pex.fps       import FPS
-from sparkle.src.utils.default import set_default
+import numpy as np
+
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.pex.base import BasePex
+from sparkle.src.pex.fps import FPS
+from sparkle.src.utils.default import set_default
+
 
 ###############################################
 ### Random experiment plan

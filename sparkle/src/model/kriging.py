@@ -1,14 +1,16 @@
-import numpy as np
-from   numpy import ndarray, matmul
-from   numpy.linalg import solve
 from types import SimpleNamespace
 from typing import Optional, Tuple
 
-from sparkle.src.model.base      import BaseModel
-from sparkle.src.kernel.kernel   import kernel_factory
-from sparkle.src.utils.default   import set_default
-from sparkle.src.utils.error     import error
+import numpy as np
+from numpy import matmul, ndarray
+from numpy.linalg import solve
+
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.kernel.kernel import kernel_factory
+from sparkle.src.model.base import BaseModel
+from sparkle.src.utils.default import set_default
+from sparkle.src.utils.error import error
+
 
 ###############################################
 ### Kriging model

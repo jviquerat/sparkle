@@ -2,6 +2,7 @@ import torch
 
 from sparkle.src.network.mlp import MLP
 
+
 ###############################################
 ### Test mlp
 def test_mlp():

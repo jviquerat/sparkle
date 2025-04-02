@@ -1,11 +1,13 @@
-import numpy as np
-from   numpy import ndarray, matmul
-from   numpy.linalg import solve
 from typing import Optional
 
+import numpy as np
+from numpy import matmul, ndarray
+from numpy.linalg import solve
+
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
-from sparkle.src.utils.distances import min_max_distance
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.utils.distances import min_max_distance
+
 
 ###############################################
 ### Base kernel

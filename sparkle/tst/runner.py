@@ -1,12 +1,13 @@
 import os
 import shutil
 
-from sparkle.src.utils.seeds     import set_seeds
-from sparkle.src.utils.json      import JsonParser
-from sparkle.src.utils.data      import DataAvg
-from sparkle.src.utils.compare   import compare
+from sparkle.src.env.parallel import parallel
 from sparkle.src.trainer.trainer import trainer_factory
-from sparkle.src.env.parallel    import parallel
+from sparkle.src.utils.compare import compare
+from sparkle.src.utils.data import DataAvg
+from sparkle.src.utils.json import JsonParser
+from sparkle.src.utils.seeds import set_seeds
+
 
 ###############################################
 ### Generic runner used in agent and trainer tests

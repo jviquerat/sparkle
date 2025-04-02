@@ -2,6 +2,7 @@ from typing import Any, Callable
 
 from sparkle.src.utils.error import error
 
+
 ###############################################
 class Factory:
     """

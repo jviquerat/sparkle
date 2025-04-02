@@ -1,13 +1,14 @@
 import os
+import shutil
 import sys
 import time
-import shutil
 
-from sparkle.src.env.parallel    import parallel
+from sparkle.src.env.parallel import parallel
+from sparkle.src.plot.plot import plot_avg
 from sparkle.src.trainer.trainer import trainer_factory
-from sparkle.src.utils.data      import DataAvg
-from sparkle.src.plot.plot       import plot_avg
-from sparkle.src.utils.prints    import liner
+from sparkle.src.utils.data import DataAvg
+from sparkle.src.utils.prints import liner
+
 
 # Average training over multiple runs
 def train(json_file, pms):

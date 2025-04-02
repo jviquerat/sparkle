@@ -1,5 +1,6 @@
-import torch
 import numpy as np
+import torch
+
 
 # Set numpy and torch seeds
 def set_seeds(seed: int) -> None:

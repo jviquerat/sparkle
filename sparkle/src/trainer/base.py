@@ -3,6 +3,7 @@ from numpy import ndarray
 
 from sparkle.src.utils.prints import fmt_float
 
+
 ###############################################
 ### Base trainer
 class BaseTrainer():

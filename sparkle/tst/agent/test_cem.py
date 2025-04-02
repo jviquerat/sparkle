@@ -2,6 +2,7 @@ import sys
 
 from sparkle.tst.runner import runner
 
+
 ###############################################
 ### Test cem
 def test_cem():

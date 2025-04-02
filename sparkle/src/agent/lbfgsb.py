@@ -1,8 +1,10 @@
-import numpy as np
-from numpy import ndarray
 from typing import Any, Callable, List, Optional, Tuple, Union
 
+import numpy as np
+from numpy import ndarray
+
 from sparkle.src.utils.error import warning
+
 
 ###############################################
 ### Simplified L-BFGS-B algorithm

@@ -1,8 +1,8 @@
 from sparkle.src.core.factory import Factory
-from sparkle.src.pex.random   import Random, RandomFPS
-from sparkle.src.pex.lhs      import LHS
-from sparkle.src.pex.mlhs     import MLHS
-from sparkle.src.pex.fpd      import FPD
+from sparkle.src.pex.fpd import FPD
+from sparkle.src.pex.lhs import LHS
+from sparkle.src.pex.mlhs import MLHS
+from sparkle.src.pex.random import Random, RandomFPS
 
 # Declare factory
 pex_factory = Factory()

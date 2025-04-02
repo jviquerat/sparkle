@@ -2,6 +2,7 @@ import numpy as np
 
 from sparkle.env.base_env import base_env
 
+
 ###############################################
 ### Environment for 2D sinebump
 class sinebump(base_env):

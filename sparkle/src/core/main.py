@@ -1,14 +1,15 @@
 import sys
 
-from sparkle.src.core.train    import train
+from sparkle.src.core.average import average
 from sparkle.src.core.evaluate import evaluate
-from sparkle.src.core.average  import average
-from sparkle.src.core.sample   import sample
-from sparkle.src.core.model    import model
-from sparkle.src.env.parallel  import parallel
-from sparkle.src.utils.json    import JsonParser
-from sparkle.src.utils.seeds   import set_seeds
-from sparkle.src.utils.prints  import disclaimer, liner, spacer, bold, err_print
+from sparkle.src.core.model import model
+from sparkle.src.core.sample import sample
+from sparkle.src.core.train import train
+from sparkle.src.env.parallel import parallel
+from sparkle.src.utils.json import JsonParser
+from sparkle.src.utils.prints import bold, disclaimer, err_print, liner, spacer
+from sparkle.src.utils.seeds import set_seeds
+
 
 def helper():
     liner(err_print("Command line error"))

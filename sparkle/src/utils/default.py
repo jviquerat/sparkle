@@ -4,6 +4,7 @@
 from types import SimpleNamespace
 from typing import Any, Optional
 
+
 def set_default(name: str, default_value: Any, pms: SimpleNamespace) -> Any:
 
     if (hasattr(pms, name)): return getattr(pms, name)

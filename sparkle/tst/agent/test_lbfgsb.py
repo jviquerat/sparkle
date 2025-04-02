@@ -1,9 +1,10 @@
 import numpy as np
 
-from sparkle.src.utils.seeds     import set_seeds
-from sparkle.src.agent.lbfgsb    import LBFGSB
+from sparkle.src.agent.lbfgsb import LBFGSB
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
-from sparkle.src.utils.compare   import compare
+from sparkle.src.utils.compare import compare
+from sparkle.src.utils.seeds import set_seeds
+
 
 ###############################################
 ### Test L-BFGS-B

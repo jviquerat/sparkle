@@ -2,6 +2,7 @@ import torch
 
 from sparkle.src.network.branched_mlp import BranchedMLP
 
+
 ###############################################
 ### Test branched_mlp
 def test_branched_mlp():

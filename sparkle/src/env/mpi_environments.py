@@ -1,14 +1,16 @@
+from types import SimpleNamespace
+from typing import Any, Dict, List, Union
+
 import numpy as np
 from numpy import ndarray
-from types import SimpleNamespace
-from typing import Dict, List, Union, Any
 
-from sparkle.src.env.parallel   import parallel
-from sparkle.src.env.base       import BaseParallelEnvironments
+from sparkle.src.env.base import BaseParallelEnvironments
 from sparkle.src.env.mpi_worker import MpiWorker
-from sparkle.src.env.spaces     import EnvSpaces
-from sparkle.src.utils.default  import set_default
-from sparkle.src.utils.timer    import Timer
+from sparkle.src.env.parallel import parallel
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.utils.default import set_default
+from sparkle.src.utils.timer import Timer
+
 
 ###############################################
 ### A wrapper class for mpi parallel environments

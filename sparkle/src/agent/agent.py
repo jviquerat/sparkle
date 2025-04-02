@@ -1,9 +1,9 @@
+from sparkle.src.agent.cem import CEM
+from sparkle.src.agent.cmaes import CMAES
+from sparkle.src.agent.ego import EGO
+from sparkle.src.agent.pbo import PBO
+from sparkle.src.agent.pso import PSO
 from sparkle.src.core.factory import Factory
-from sparkle.src.agent.pso    import PSO
-from sparkle.src.agent.cmaes  import CMAES
-from sparkle.src.agent.cem    import CEM
-from sparkle.src.agent.pbo    import PBO
-from sparkle.src.agent.ego    import EGO
 
 # Declare factory
 agent_factory = Factory()

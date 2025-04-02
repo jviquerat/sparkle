@@ -1,6 +1,7 @@
+from typing import Any, Iterator
+
 import torch
 import torch.nn as tnn
-from typing import Any, Iterator
 
 torch.set_default_dtype(torch.double)
 

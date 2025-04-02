@@ -1,18 +1,20 @@
 import os
-import numpy as np
-from numpy import ndarray
 from types import SimpleNamespace
 
-from sparkle.src.trainer.base  import BaseTrainer
-from sparkle.src.agent.agent   import agent_factory
-from sparkle.src.utils.timer   import Timer
-from sparkle.src.env.parallel  import parallel
-from sparkle.src.pex.pex       import pex_factory
-from sparkle.src.model.model   import model_factory
+import numpy as np
+from numpy import ndarray
+
+from sparkle.src.agent.agent import agent_factory
+from sparkle.src.env.parallel import parallel
+from sparkle.src.model.model import model_factory
+from sparkle.src.pex.pex import pex_factory
+from sparkle.src.plot.plot import render_1D_metamodel, render_2D_metamodel
+from sparkle.src.trainer.base import BaseTrainer
 from sparkle.src.utils.default import set_default
-from sparkle.src.plot.plot     import render_1D_metamodel, render_2D_metamodel
-from sparkle.src.utils.error   import error, warning
-from sparkle.src.utils.prints  import spacer
+from sparkle.src.utils.error import error, warning
+from sparkle.src.utils.prints import spacer
+from sparkle.src.utils.timer import Timer
+
 
 ###############################################
 ### Class for metamodel-based trainer

@@ -1,7 +1,9 @@
 import math
+
 import numpy as np
 
 from sparkle.env.base_env import base_env
+
 
 ###############################################
 ### Environment for lorenz control

@@ -1,7 +1,7 @@
-
 from numpy import ndarray
 
 from sparkle.src.env.spaces import EnvSpaces
+
 
 ###############################################
 ### Base model

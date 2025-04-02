@@ -2,6 +2,7 @@ import sys
 from types import SimpleNamespace
 from typing import Any
 
+
 ###############################################
 ### A wrapper class for parallelism
 class SpkParallel:

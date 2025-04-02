@@ -1,7 +1,9 @@
-import torch
-import numpy as np
-from numpy import ndarray
 from typing import Tuple, Union
+
+import numpy as np
+import torch
+from numpy import ndarray
+
 
 # Compute distance between two sets of coordinates
 def distance(xi: ndarray, xj: ndarray) -> float:

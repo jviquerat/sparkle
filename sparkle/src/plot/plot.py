@@ -1,9 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from numpy import ndarray
 
-from sparkle.src.utils.error import error
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.utils.error import error
 
 plt.rcParams['font.size'] = 10
 plt.rcParams['axes.labelsize'] = 10
