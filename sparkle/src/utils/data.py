@@ -1,7 +1,8 @@
 import numpy as np
+from numpy import ndarray
 
 from sparkle.src.utils.ema import EMA
-from numpy import ndarray
+
 
 ###############################################
 ### Data averager class

@@ -1,8 +1,9 @@
 import subprocess
+from typing import Union
+
+from numpy import float64
 
 from sparkle.src.env.parallel import parallel
-from numpy import float64
-from typing import Union
 
 ###############################################
 ### A set of functions to format printings

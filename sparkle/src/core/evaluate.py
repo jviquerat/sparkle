@@ -1,9 +1,11 @@
 import os
 import sys
+
 import numpy as np
 
 from sparkle.src.env.parallel import parallel
-from sparkle.src.utils.json   import JsonParser
+from sparkle.src.utils.json import JsonParser
+
 
 # Evaluate best sample
 def evaluate(dat_file, json_file):

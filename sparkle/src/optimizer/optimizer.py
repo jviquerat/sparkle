@@ -1,5 +1,5 @@
-from sparkle.src.core.factory    import Factory
-from sparkle.src.optimizer.adam  import Adam
+from sparkle.src.core.factory import Factory
+from sparkle.src.optimizer.adam import Adam
 from sparkle.src.optimizer.adamw import AdamW
 from sparkle.src.optimizer.lbfgs import LBFGS
 

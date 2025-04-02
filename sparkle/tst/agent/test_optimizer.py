@@ -1,10 +1,12 @@
 import types
+
 import numpy as np
 
-from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.agent.optimizer import Optimizer
-from sparkle.src.utils.compare   import compare
-from sparkle.src.env.spaces      import EnvSpaces
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.utils.compare import compare
+from sparkle.src.utils.seeds import set_seeds
+
 
 ###############################################
 ### Test transparent optimizer

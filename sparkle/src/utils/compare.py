@@ -1,6 +1,8 @@
-import sys
 import math
+import sys
+
 from numpy import float64
+
 
 # Relative comparison of two floats with given accuracy
 def compare(x: float, y: float, eps: float=1.0e-8) -> bool:

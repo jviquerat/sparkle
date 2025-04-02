@@ -1,9 +1,11 @@
-import numpy as np
-from numpy import ndarray
 from typing import Tuple
 
+import numpy as np
+from numpy import ndarray
+
 from sparkle.src.env.parallel import parallel
-from sparkle.src.utils.error  import error
+from sparkle.src.utils.error import error
+
 
 ###############################################
 ### A base class for parallel environments

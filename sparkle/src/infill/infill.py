@@ -1,5 +1,5 @@
-from sparkle.src.core.factory  import Factory
-from sparkle.src.infill.ei     import EI
+from sparkle.src.core.factory import Factory
+from sparkle.src.infill.ei import EI
 from sparkle.src.infill.log_ei import LogEI
 
 # Declare factory

@@ -1,16 +1,18 @@
+import itertools
 import sys
 import types
-import itertools
-import numpy as np
 from collections import defaultdict
 
-from sparkle.src.env.parallel    import parallel
-from sparkle.src.pex.pex         import pex_factory
-from sparkle.src.env.spaces      import EnvSpaces
-from sparkle.src.utils.timer     import Timer
-from sparkle.src.utils.json      import JsonParser
-from sparkle.src.utils.prints    import disclaimer, liner, spacer, bold
-from sparkle.src.plot.plot       import violins_array, scatter_names
+import numpy as np
+
+from sparkle.src.env.parallel import parallel
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.pex.pex import pex_factory
+from sparkle.src.plot.plot import scatter_names, violins_array
+from sparkle.src.utils.json import JsonParser
+from sparkle.src.utils.prints import bold, disclaimer, liner, spacer
+from sparkle.src.utils.timer import Timer
+
 
 def AvgPex(n_avg, combination):
 

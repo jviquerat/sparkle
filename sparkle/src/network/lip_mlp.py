@@ -1,12 +1,14 @@
 import copy
-import torch
-import torch.nn as tnn
 from typing import List
 
-from sparkle.src.network.base        import BaseNetwork
+import torch
+import torch.nn as tnn
+
+from sparkle.src.network.base import BaseNetwork
 from sparkle.src.network.torch_dicts import add_lip_layer
-from sparkle.src.utils.prints        import spacer, new_line
-from sparkle.src.utils.error         import error
+from sparkle.src.utils.error import error
+from sparkle.src.utils.prints import new_line, spacer
+
 
 ###############################################
 ### Lipschitz network

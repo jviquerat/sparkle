@@ -1,13 +1,15 @@
+from types import SimpleNamespace
+from typing import Any, Tuple
+
 import numpy as np
 from numpy import ndarray
-from types import SimpleNamespace
-from typing import Tuple, Any
 
-from sparkle.src.utils.default   import set_default
-from sparkle.src.agent.base      import BaseAgent
+from sparkle.src.agent.base import BaseAgent
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
-from sparkle.src.infill.infill   import infill_factory
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.infill.infill import infill_factory
+from sparkle.src.utils.default import set_default
+
 
 ###############################################
 ### EGO

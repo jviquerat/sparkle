@@ -1,7 +1,9 @@
-import numpy as np
 from math import sin
 
+import numpy as np
+
 from sparkle.env.base_env import base_env
+
 
 ###############################################
 ### Environment for 1D multimodal function

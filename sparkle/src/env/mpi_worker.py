@@ -1,6 +1,8 @@
 
-from sparkle.src.env.parallel import parallel
 from numpy import float64, ndarray
+
+from sparkle.src.env.parallel import parallel
+
 
 ###############################################
 # Worker class for slave processes

@@ -1,5 +1,6 @@
 import filecmp
 
+
 # Compare files
 def compare_files(f1, f2):
 

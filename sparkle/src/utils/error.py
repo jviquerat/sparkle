@@ -1,7 +1,7 @@
 import sys
 
 from sparkle.src.env.parallel import parallel
-from sparkle.src.utils.prints import liner, spacer, new_line, err_print, warn_print
+from sparkle.src.utils.prints import err_print, liner, new_line, spacer, warn_print
 
 ###############################################
 ### A set of functions to print errors and warnings

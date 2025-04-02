@@ -1,9 +1,11 @@
 import types
+
 import numpy as np
 
-from sparkle.src.pex.pex     import pex_factory
-from sparkle.src.env.spaces  import EnvSpaces
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.pex.pex import pex_factory
 from sparkle.src.utils.timer import Timer
+
 
 # Sample using pex
 def sample(pex_type, n_points, dim):

@@ -1,8 +1,9 @@
 import numpy as np
 
-from sparkle.src.utils.seeds     import set_seeds
+from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.kernel.matern52 import Matern52
-from sparkle.src.env.spaces      import EnvSpaces
+from sparkle.src.utils.seeds import set_seeds
+
 
 ###############################################
 ### Test matern52 kernel

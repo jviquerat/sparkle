@@ -1,11 +1,13 @@
 import types
-import numpy as np
-from numpy import ndarray
 from typing import Callable, Optional, Tuple
 
+import numpy as np
+from numpy import ndarray
+
 from sparkle.src.agent.lbfgsb import LBFGSB
-from sparkle.src.pex.mlhs     import MLHS
-from sparkle.src.env.spaces   import EnvSpaces
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.pex.mlhs import MLHS
+
 
 ###############################################
 ### Multi-start L-BFGS-B

@@ -1,8 +1,10 @@
-from numpy import ndarray
 from types import SimpleNamespace
 
-from sparkle.src.utils.prints import spacer
+from numpy import ndarray
+
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.utils.prints import spacer
+
 
 ###############################################
 ### Base agent

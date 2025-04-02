@@ -1,12 +1,14 @@
-import numpy           as np
 import multiprocessing as mp
 
-from sparkle.src.env.parallel         import parallel
-from sparkle.src.env.base             import BaseParallelEnvironments
+import numpy as np
+
+from sparkle.src.env.base import BaseParallelEnvironments
 from sparkle.src.env.multiproc_worker import MultiprocWorker
-from sparkle.src.env.spaces           import EnvSpaces
-from sparkle.src.utils.default        import set_default
-from sparkle.src.utils.timer          import Timer
+from sparkle.src.env.parallel import parallel
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.utils.default import set_default
+from sparkle.src.utils.timer import Timer
+
 
 ###############################################
 ### A wrapper class for multiprocessing parallel environments

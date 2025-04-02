@@ -1,12 +1,14 @@
-import types
 import math
+import types
+
 import numpy as np
 from numpy import ndarray
 
+from sparkle.src.agent.base import BaseAgent
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.pex.mlhs import MLHS
 from sparkle.src.utils.default import set_default
-from sparkle.src.agent.base    import BaseAgent
-from sparkle.src.pex.mlhs      import MLHS
-from sparkle.src.env.spaces    import EnvSpaces
+
 
 ###############################################
 ### CEM

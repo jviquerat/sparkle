@@ -1,6 +1,7 @@
 import numpy as np
 from numpy import ndarray
 
+
 ###############################################
 ### Exponential moving average class
 class EMA:

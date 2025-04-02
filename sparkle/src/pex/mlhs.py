@@ -1,13 +1,15 @@
 import math
-import numpy as np
 from types import SimpleNamespace
 
-from sparkle.src.pex.base        import BasePex
-from sparkle.src.pex.lhs         import LHS
-from sparkle.src.utils.distances import distance, nearest_one_to_all, nearest_all_to_all
-from sparkle.src.utils.default   import set_default
-from sparkle.src.utils.prints    import spacer, fmt_float
+import numpy as np
+
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.pex.base import BasePex
+from sparkle.src.pex.lhs import LHS
+from sparkle.src.utils.default import set_default
+from sparkle.src.utils.distances import distance, nearest_all_to_all, nearest_one_to_all
+from sparkle.src.utils.prints import fmt_float, spacer
+
 
 ###############################################
 ### Maximin Latin hypercube sampling

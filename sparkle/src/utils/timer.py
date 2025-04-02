@@ -1,6 +1,7 @@
 import time
 
-from sparkle.src.utils.prints import spacer, fmt_float
+from sparkle.src.utils.prints import fmt_float, spacer
+
 
 ###############################################
 ### timer class

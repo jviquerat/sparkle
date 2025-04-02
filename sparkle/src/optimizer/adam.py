@@ -1,7 +1,9 @@
-import torch.optim as toptim
 from types import SimpleNamespace
 
+import torch.optim as toptim
+
 from sparkle.src.network.mlp import MLP
+
 
 ###############################################
 ### Adam optimizer class

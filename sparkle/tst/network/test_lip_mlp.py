@@ -1,7 +1,8 @@
 import torch
 
-from sparkle.src.utils.distances import tensor_distance
 from sparkle.src.network.lip_mlp import LipMLP
+from sparkle.src.utils.distances import tensor_distance
+
 
 ###############################################
 ### Test lipschitz mlp

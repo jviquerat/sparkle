@@ -1,9 +1,11 @@
 import types
+
 import numpy as np
 
-from sparkle.src.pex.mlhs    import MLHS
-from sparkle.src.env.spaces  import EnvSpaces
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.pex.mlhs import MLHS
 from sparkle.src.utils.seeds import set_seeds
+
 
 ###############################################
 ### Test maximin lhs pex

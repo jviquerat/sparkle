@@ -1,8 +1,10 @@
-import numpy as np
 from types import SimpleNamespace
 
-from sparkle.src.pex.base import BasePex
+import numpy as np
+
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.pex.base import BasePex
+
 
 ###############################################
 ### Latin hypercube sampling

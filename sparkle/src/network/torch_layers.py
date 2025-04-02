@@ -1,6 +1,7 @@
 import torch.nn as tnn
 from torch import Tensor
 
+
 ###############################################
 # A linear lipschitz layer
 class LipschitzLinear(tnn.Module):

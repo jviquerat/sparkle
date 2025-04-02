@@ -1,9 +1,11 @@
 import types
+
 import numpy as np
 
-from sparkle.src.pex.fpd     import FPD
-from sparkle.src.env.spaces  import EnvSpaces
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.pex.fpd import FPD
 from sparkle.src.utils.seeds import set_seeds
+
 
 ###############################################
 ### Test fixed_poisson_disc pex

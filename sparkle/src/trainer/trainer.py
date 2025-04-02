@@ -1,6 +1,6 @@
-from sparkle.src.core.factory      import Factory
-from sparkle.src.trainer.regular   import Regular
+from sparkle.src.core.factory import Factory
 from sparkle.src.trainer.metamodel import Metamodel
+from sparkle.src.trainer.regular import Regular
 
 # Declare factory
 trainer_factory = Factory()

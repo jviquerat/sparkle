@@ -1,18 +1,19 @@
 import math
 import types
+from typing import Tuple
+
 import numpy as np
 import torch
 import torch.distributions as td
 from numpy import ndarray
-from typing import Tuple
 from torch.distributions.multivariate_normal import MultivariateNormal
 
-from sparkle.src.utils.default       import set_default
-from sparkle.src.network.mlp         import MLP
-from sparkle.src.optimizer.optimizer import opt_factory
-from sparkle.src.agent.base          import BaseAgent
+from sparkle.src.agent.base import BaseAgent
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.network.mlp import MLP
 from sparkle.src.optimizer.adam import Adam
+from sparkle.src.optimizer.optimizer import opt_factory
+from sparkle.src.utils.default import set_default
 
 
 ###############################################

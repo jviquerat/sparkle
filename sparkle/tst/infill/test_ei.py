@@ -1,11 +1,13 @@
 import types
+
 import numpy as np
 
-from sparkle.src.utils.seeds   import set_seeds
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.infill.ei import EI
 from sparkle.src.model.kriging import Kriging
-from sparkle.src.infill.ei     import EI
-from sparkle.src.pex.lhs       import LHS
-from sparkle.src.env.spaces    import EnvSpaces
+from sparkle.src.pex.lhs import LHS
+from sparkle.src.utils.seeds import set_seeds
+
 
 ###############################################
 ### Test ei infill

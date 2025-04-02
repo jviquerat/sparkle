@@ -3,6 +3,7 @@ from numpy import ndarray
 
 from sparkle.src.utils.error import error
 
+
 ###############################################
 ### Furthest point sampling
 ### x: array of point coordinates of shape (n_points, dim)
