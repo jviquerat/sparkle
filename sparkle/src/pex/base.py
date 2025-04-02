@@ -13,7 +13,6 @@ from sparkle.src.utils.prints import fmt_float, spacer
 
 
 ###############################################
-### Base experiment plan
 class BasePex():
     """
     Base class for experiment plans.
@@ -85,7 +84,6 @@ class BasePex():
         """
         return self.x.shape[0]
 
-    # Return i-th point of pex
     def point(self, i: int) -> ndarray:
         """
         Returns the i-th point of the experiment plan.
@@ -99,7 +97,6 @@ class BasePex():
 
         return np.array([self.x[i]])
 
-    # Compute volume of domain
     def volume(self) -> float64:
         """
         Computes the volume of the search space domain.
@@ -111,14 +108,13 @@ class BasePex():
         v = self.xmax - self.xmin
         return np.prod(v)
 
-    # Compute phi-p criterion
-    # Default value suggested by Morris & Mitchell (1995)
+
     def phi_p(self, p: int=50) -> float:
         """
         Computes the phi-p criterion for the experiment plan.
 
         The phi-p criterion is a measure of the space-filling properties
-        of the experiment plan.
+        of the experiment plan. Default value suggested by Morris & Mitchell (1995)
 
         Args:
             p: The power parameter for the phi-p criterion.
@@ -134,7 +130,6 @@ class BasePex():
 
         return math.pow(d, 1.0/p)
 
-    # Print informations
     def summary(self):
         """
         Prints a summary of the experiment plan's configuration.
@@ -143,7 +138,6 @@ class BasePex():
         spacer("Pex type is "+self.name+" with "+str(self.n_points)+" points")
         spacer("Phi-p criterion: "+fmt_float(self.phi_p()))
 
-    # 2D rendering (for debugging purpose)
     def render_2d(self):
         """
         Renders the experiment plan in 2D (if the dimensionality is 2).

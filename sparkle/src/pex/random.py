@@ -9,7 +9,6 @@ from sparkle.src.utils.default import set_default
 
 
 ###############################################
-### Random experiment plan
 class Random(BasePex):
     """
     Random experiment plan.
@@ -31,7 +30,6 @@ class Random(BasePex):
 
         self.reset()
 
-    # Reset sampling
     def reset(self) -> None:
         """
         Resets the Random experiment plan by generating new sample points.
@@ -45,7 +43,6 @@ class Random(BasePex):
                                     size = (self.n_points_, self.dim))
 
 ###############################################
-### Random experiment plan with fps step
 class RandomFPS(BasePex):
     """
     Random experiment plan with Furthest Point Sampling (FPS).
@@ -70,7 +67,6 @@ class RandomFPS(BasePex):
 
         self.reset()
 
-    # Reset sampling
     def reset(self) -> None:
         """
         Resets the RandomFPS experiment plan by generating new sample points.

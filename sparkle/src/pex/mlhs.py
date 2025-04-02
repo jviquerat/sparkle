@@ -12,7 +12,6 @@ from sparkle.src.utils.prints import fmt_float, spacer
 
 
 ###############################################
-### Maximin Latin hypercube sampling
 class MLHS(BasePex):
     """
     Maximin Latin Hypercube Sampling (MLHS) experiment plan.
@@ -39,7 +38,6 @@ class MLHS(BasePex):
 
         self.reset()
 
-    # Reset sampling
     def reset(self) -> None:
         """
         Resets the MLHS experiment plan by generating new sample points.
@@ -123,7 +121,6 @@ class MLHS(BasePex):
                 dn_copy[:]     = d_nearest[:]
                 pn_copy[:]     = p_nearest[:]
 
-    # Print informations
     def summary(self):
         """
         Prints a summary of the MLHS experiment plan's configuration.

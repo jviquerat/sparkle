@@ -5,9 +5,6 @@ from sparkle.src.utils.error import error
 
 
 ###############################################
-### Furthest point sampling
-### x: array of point coordinates of shape (n_points, dim)
-### n_points: target number of points
 def FPS(x: ndarray, n_points: int) -> ndarray:
     """
     Furthest Point Sampling (FPS) algorithm.
