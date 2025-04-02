@@ -10,8 +10,18 @@ from sparkle.src.utils.data import DataAvg
 from sparkle.src.utils.prints import liner
 
 
-# Average training over multiple runs
 def train(json_file, pms):
+    """
+    Trains an agent and averages results over multiple runs.
+
+    This function sets up the training environment, trains an agent for
+    multiple runs, averages the results across runs, and generates a plot
+    of the averaged data.
+
+    Args:
+        json_file: The path to the JSON configuration file.
+        pms: A SimpleNamespace object containing parameters for training.
+    """
 
     # Add paths to PATH
     base_path = os.path.abspath(os.getcwd())
@@ -61,8 +71,16 @@ def train(json_file, pms):
     # Finalize parallel process
     parallel.finalize()
 
-# Generate results folder name
 def folder_name(pms):
+    """
+    Generates a folder name based on the parameters.
+
+    Args:
+        pms: A SimpleNamespace object containing parameters for naming.
+
+    Returns:
+        A string representing the generated folder name.
+    """
 
     name_env = ""
     if hasattr(pms.naming, "env"):

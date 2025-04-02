@@ -7,8 +7,18 @@ from sparkle.src.pex.pex import pex_factory
 from sparkle.src.utils.timer import Timer
 
 
-# Sample using pex
 def sample(pex_type, n_points, dim):
+    """
+    Samples points using a Point Exploration (Pex) algorithm.
+
+    This function initializes a Pex algorithm, samples points from its
+    distribution, and displays timing and summary information.
+
+    Args:
+        pex_type: The type of Pex algorithm to use (e.g., "random", "mlhs").
+        n_points: The number of points to sample.
+        dim: The dimensionality of the search space.
+    """
 
     xmin     = np.zeros(dim)
     xmax     = np.ones(dim)

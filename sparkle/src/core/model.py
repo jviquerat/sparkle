@@ -7,8 +7,17 @@ from sparkle.src.env.parallel import parallel
 from sparkle.src.model.generator import generate
 
 
-# Compute model
 def model(json_file, pms):
+    """
+    Generates a surrogate model based on a JSON configuration.
+
+    This function sets up the environment, generates a surrogate model using
+    the specified parameters, and stores the model in the results directory.
+
+    Args:
+        json_file: The path to the JSON configuration file.
+        pms: A SimpleNamespace object containing parameters for the model.
+    """
 
     # Add paths to PATH
     base_path = os.path.abspath(os.getcwd())
@@ -37,8 +46,16 @@ def model(json_file, pms):
     # Finalize parallel process
     parallel.finalize()
 
-# Generate results folder name
 def folder_name(pms):
+    """
+    Generates a folder name based on the parameters.
+
+    Args:
+        pms: A SimpleNamespace object containing parameters for naming.
+
+    Returns:
+        A string representing the generated folder name.
+    """
 
     name_env = ""
     if hasattr(pms.naming, "env"):
