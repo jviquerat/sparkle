@@ -22,7 +22,7 @@ def helper():
     spacer("   spk --pex -type <pex_type> -n_points <n_points> -dim <dim>")
     spacer("Optional arguments:")
     spacer("       --set_seeds <seed>")
-    exit(0)
+    sys.exit(0)
 
 def main():
 

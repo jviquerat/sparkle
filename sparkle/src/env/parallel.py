@@ -1,3 +1,5 @@
+import sys
+
 ###############################################
 ### A wrapper class for parallelism
 class SpkParallel:
@@ -18,7 +20,7 @@ class SpkParallel:
         if self.type_ == "multiprocessing":
             if not hasattr(pms, "n_env"):
                 print("Parallel: multiprocessing requires argument n_env")
-                exit(0)
+                sys.exit(1)
             else:
                 self.size_ = pms.n_env
 
@@ -59,7 +61,7 @@ class SpkParallel:
 
         if self.type_ == "multiprocessing":
             print("# Parallel: comm() is not defined for multiprocessing")
-            exit(0)
+            sys.exit(1)
 
     def rank(self):
 
@@ -68,7 +70,7 @@ class SpkParallel:
 
         if self.type_ == "multiprocessing":
             print("# Parallel: rank() is not defined for multiprocessing")
-            exit(0)
+            sys.exit(1)
 
     def environments(self, path, pms):
 

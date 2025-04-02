@@ -1,4 +1,5 @@
-# Custom imports
+import sys
+
 from sparkle.src.env.parallel import parallel
 from sparkle.src.utils.prints import liner, spacer, new_line, err_print, warn_print
 
@@ -13,7 +14,7 @@ def error(module, function, text, call_exit=True):
 
     if (call_exit):
         parallel.finalize()
-        exit(0)
+        sys.exit(1)
 
 ### Warning
 def warning(module, function, text):
