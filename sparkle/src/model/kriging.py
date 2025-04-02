@@ -1,18 +1,21 @@
 # Generic imports
 import numpy as np
-from   numpy import matmul
+from   numpy import ndarray, matmul
 from   numpy.linalg import solve
+from types import SimpleNamespace
+from typing import Optional, Tuple
 
 # Custom imports
 from sparkle.src.model.base      import BaseModel
 from sparkle.src.kernel.kernel   import kernel_factory
 from sparkle.src.utils.default   import set_default
 from sparkle.src.utils.error     import error
+from sparkle.src.env.spaces import EnvSpaces
 
 ###############################################
 ### Kriging model
 class Kriging(BaseModel):
-    def __init__(self, spaces, path, pms):
+    def __init__(self, spaces: EnvSpaces, path: str, pms: SimpleNamespace) -> None:
         super().__init__(spaces, path)
 
         # Set parameters
@@ -34,7 +37,7 @@ class Kriging(BaseModel):
         self.reset()
 
     # Reset model
-    def reset(self):
+    def reset(self) -> None:
 
         self.K_  = None
         self.x_  = None
@@ -44,7 +47,7 @@ class Kriging(BaseModel):
         self.kernel.reset()
 
     # Build model from input
-    def build(self, x, y):
+    def build(self, x: ndarray, y: ndarray) -> None:
 
         self.x_ = self.normalize(x)
         self.y_ = y
@@ -56,7 +59,7 @@ class Kriging(BaseModel):
         self.K_  = self.kernel(self.x_, self.x_)
 
     # Evaluate at test points
-    def evaluate(self, xt):
+    def evaluate(self, xt: ndarray) -> Tuple[ndarray, ndarray]:
 
         xn  = self.normalize(xt)
         Kl  = self.kernel(xn, self.x_)
@@ -68,7 +71,7 @@ class Kriging(BaseModel):
         return mu, std
 
     # Dump kriging data
-    def dump(self, filename="kriging.dat"):
+    def dump(self, filename: str="kriging.dat") -> None:
 
         filename = self.path+"/"+filename
         with open(filename, "w") as f:
@@ -82,7 +85,7 @@ class Kriging(BaseModel):
             np.savetxt(f, self.y_)
 
     # Load kriging data
-    def load(self, filename=None):
+    def load(self, filename: Optional[str]=None) -> None:
 
         self.reset()
         self.it += 1
