@@ -13,7 +13,6 @@ plt.rcParams['legend.fontsize'] = 10
 plt.rcParams['figure.titlesize'] = 12
 plt.rcParams['figure.titleweight'] = 'bold'
 
-# Plot averaged fields
 def plot_avg(data: ndarray, filename: str, avg_type: str) -> None:
     """
     Plots the average and best cost over optimization steps.
@@ -64,8 +63,10 @@ def plot_avg(data: ndarray, filename: str, avg_type: str) -> None:
     fig.tight_layout()
     fig.savefig(filename+'.png')
 
-# Return avg, p and m fields depending on avg type
-def return_plottables(avg: ndarray, p: ndarray, m: ndarray, avg_type: str) -> tuple[ndarray, ndarray, ndarray, str]:
+def return_plottables(avg: ndarray,
+                      p: ndarray,
+                      m: ndarray,
+                      avg_type: str) -> tuple[ndarray, ndarray, ndarray, str]:
     """
     Returns the plottable data based on the specified average type.
 
@@ -107,8 +108,12 @@ def return_plottables(avg: ndarray, p: ndarray, m: ndarray, avg_type: str) -> tu
 
     return avg, p, m, ylabel
 
-# 1D rendering for regular trainer
-def render_1D_regular(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray, x_plot: ndarray, cost_map: ndarray) -> None:
+def render_1D_regular(filename: str,
+                      spaces: EnvSpaces,
+                      x: ndarray,
+                      c: ndarray,
+                      x_plot: ndarray,
+                      cost_map: ndarray) -> None:
     """
     Renders a 1D plot for the regular trainer.
 
@@ -143,8 +148,13 @@ def render_1D_regular(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray, 
     plt.savefig(filename, dpi=100)
     plt.close()
 
-# 2D rendering for regular trainer
-def render_2D_regular(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray, x_plot: ndarray, y_plot: ndarray, cost_map: ndarray) -> None:
+def render_2D_regular(filename: str,
+                      spaces: EnvSpaces,
+                      x: ndarray,
+                      c: ndarray,
+                      x_plot: ndarray,
+                      y_plot: ndarray,
+                      cost_map: ndarray) -> None:
     """
     Renders a 2D plot for the regular trainer.
 
@@ -184,10 +194,16 @@ def render_2D_regular(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray, 
     plt.savefig(filename, dpi=100)
     plt.close()
 
-# 1D rendering for metamodel trainer
-def render_1D_metamodel(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray,
-                        x_plot: ndarray, cost_map: ndarray,
-                        y_mu: ndarray, y_std: ndarray, fct: ndarray, fct_name: str,
+def render_1D_metamodel(filename: str,
+                        spaces: EnvSpaces,
+                        x: ndarray,
+                        c: ndarray,
+                        x_plot: ndarray,
+                        cost_map: ndarray,
+                        y_mu: ndarray,
+                        y_std: ndarray,
+                        fct: ndarray,
+                        fct_name: str,
                         highlight_last: bool=True) -> None:
     """
     Renders a 1D plot for the metamodel trainer.
@@ -243,10 +259,17 @@ def render_1D_metamodel(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray
     plt.savefig(filename, dpi=100)
     plt.close()
 
-# 2D rendering for metamodel trainer
-def render_2D_metamodel(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray,
-                        x_plot: ndarray, y_plot: ndarray, cost_map: ndarray,
-                        y_mu: ndarray, y_std: ndarray, fct: ndarray, fct_name: str,
+def render_2D_metamodel(filename: str,
+                        spaces: EnvSpaces,
+                        x: ndarray,
+                        c: ndarray,
+                        x_plot: ndarray,
+                        y_plot: ndarray,
+                        cost_map: ndarray,
+                        y_mu: ndarray,
+                        y_std: ndarray,
+                        fct: ndarray,
+                        fct_name: str,
                         highlight_last: bool=True) -> None:
     """
     Renders a 2D plot for the metamodel trainer.
@@ -320,8 +343,11 @@ def render_2D_metamodel(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray
     plt.savefig(filename, dpi=100)
     plt.close()
 
-# Violin plot array
-def violins_array(filename: str, x: list[ndarray], x_labels: list[str], y_label: str | None=None, title: str | None=None) -> None:
+def violins_array(filename: str,
+                  x: list[ndarray],
+                  x_labels: list[str],
+                  y_label: str | None=None,
+                  title: str | None=None) -> None:
     """
     Generates a violin plot for an array of data.
 
@@ -350,8 +376,12 @@ def violins_array(filename: str, x: list[ndarray], x_labels: list[str], y_label:
     plt.savefig(filename, dpi=100)
     plt.close()
 
-# Multi-bar plot
-def multi_bar(filename: str, x: dict[str, list[float]], x_labels: list[str], bar_labels: list[str], y_label: str | None=None, title: str | None=None) -> None:
+def multi_bar(filename: str,
+              x: dict[str, list[float]],
+              x_labels: list[str],
+              bar_labels: list[str],
+              y_label: str | None=None,
+              title: str | None=None) -> None:
     """
     Generates a multi-bar plot.
 
@@ -387,8 +417,13 @@ def multi_bar(filename: str, x: dict[str, list[float]], x_labels: list[str], bar
     plt.savefig(filename, dpi=100)
     plt.close()
 
-# Scatter plot with names
-def scatter_names(filename: str, x: dict[str, float], y: dict[str, float], names: list[str], x_label: str | None=None, y_label: str | None=None, title: str | None=None) -> None:
+def scatter_names(filename: str,
+                  x: dict[str, float],
+                  y: dict[str, float],
+                  names: list[str],
+                  x_label: str | None=None,
+                  y_label: str | None=None,
+                  title: str | None=None) -> None:
     """
     Generates a scatter plot with names.
 
