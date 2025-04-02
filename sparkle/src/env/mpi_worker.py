@@ -1,13 +1,27 @@
-
 from numpy import float64, ndarray
 
 from sparkle.src.env.parallel import parallel
 
 
 ###############################################
-# Worker class for slave processes
 class MpiWorker():
+    """
+    Worker class for MPI slave processes.
+
+    This class defines the behavior of a worker process in an MPI-based
+    parallel environment. It handles communication with the main process and
+    executes commands related to environment interaction.
+    """
     def __init__(self, env_name: str, args: None, cpu: int, path: str) -> None:
+        """
+        Initializes the MpiWorker.
+
+        Args:
+            env_name: The name of the environment module.
+            args: Additional arguments for the environment constructor.
+            cpu: The CPU index for the worker.
+            path: The base path for storing results.
+        """
 
         # Build environment
         module    = __import__(env_name)
@@ -17,8 +31,13 @@ class MpiWorker():
         else:
             self.env = env_build(cpu, path)
 
-    # Working function for slaves
     def work(self):
+        """
+        The main working loop for slave processes.
+
+        This method continuously receives commands from the main process,
+        executes them, and sends back the results.
+        """
         while True:
             data    = None
             data    = parallel.comm().scatter(data, root=0)
@@ -43,22 +62,47 @@ class MpiWorker():
                 parallel.finalize()
                 break
 
-    # Compute cost
     def cost(self, x: ndarray) -> float64:
+        """
+        Computes the cost of a point in the environment.
+
+        Args:
+            x: The point to evaluate.
+
+        Returns:
+            The cost value.
+        """
 
         return self.env.cost(x)
 
-    # Resetting
     def reset(self, run: int) -> bool:
+        """
+        Resets the environment for a new run.
+
+        Args:
+            run: The run number.
+
+        Returns:
+            A boolean value indicating the success of the reset operation.
+        """
 
         return self.env.reset(run)
 
-    # Rendering
     def render(self, x, c, **kwargs):
+        """
+        Renders the environment.
+
+        Args:
+            x: The point to render.
+            c: The cost value at the point.
+            **kwargs: Additional keyword arguments for rendering.
+        """
 
         return self.env.render(x, c, **kwargs)
 
-    # Closing
     def close(self) -> None:
+        """
+        Closes the environment.
+        """
 
         self.env.close()
