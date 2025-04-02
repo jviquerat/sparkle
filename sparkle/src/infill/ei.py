@@ -1,22 +1,26 @@
-# Generic imports
 import numpy as np
+from numpy import ndarray
 from math import sqrt, pi, exp, erf
+from typing import Any
+
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.model.kriging import Kriging
 
 ###############################################
 ### Expected improvement infill
 class EI():
-    def __init__(self, spaces, model):
+    def __init__(self, spaces: EnvSpaces, model: Any) -> None:
 
         self.spaces = spaces
         self.model  = model
 
-    def set_best(self, xb, yb):
+    def set_best(self, xb: ndarray, yb: float) -> None:
 
         self.xb = xb
         self.yb = yb
 
     # Actual infill criterion
-    def _ei(self, x):
+    def _ei(self, x: ndarray) -> ndarray:
 
         x       = np.reshape(x, (-1,self.spaces.dim))
         mu, std = self.model.evaluate(x)
@@ -33,6 +37,6 @@ class EI():
         return ei
 
     # () operator used for optimization
-    def __call__(self, x):
+    def __call__(self, x: ndarray) -> ndarray:
 
         return self._ei(x)
