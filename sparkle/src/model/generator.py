@@ -7,8 +7,21 @@ from sparkle.src.plot.plot import render_1D_metamodel, render_2D_metamodel
 from sparkle.src.utils.error import error
 
 
-# Create pex, compute costs and generate model
 def generate(env_pms, pex_pms, model_pms, path):
+    """
+    Generates a surrogate model and visualizes it.
+
+    This function initializes the environment, a point exploration (Pex)
+    algorithm, and a surrogate model. It then evaluates the cost of the
+    points sampled by the Pex algorithm, builds the surrogate model,
+    and visualizes the model if the dimensionality is 1 or 2.
+
+    Args:
+        env_pms: Parameters for the environment.
+        pex_pms: Parameters for the Pex algorithm.
+        model_pms: Parameters for the surrogate model.
+        path: The base path for storing results.
+    """
 
     # Initialize environment
     env = parallel.environments(path, env_pms)

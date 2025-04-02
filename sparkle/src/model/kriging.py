@@ -12,10 +12,22 @@ from sparkle.src.utils.default import set_default
 from sparkle.src.utils.error import error
 
 
-###############################################
-### Kriging model
 class Kriging(BaseModel):
+    """
+    Kriging surrogate model.
+
+    This class implements a Kriging surrogate model, which is a type of
+    Gaussian process regression model used for function approximation.
+    """
     def __init__(self, spaces: EnvSpaces, path: str, pms: SimpleNamespace) -> None:
+        """
+        Initializes the Kriging model.
+
+        Args:
+            spaces: The environment's search space definition.
+            path: The base path for storing results.
+            pms: A SimpleNamespace object containing parameters for the model.
+        """
         super().__init__(spaces, path)
 
         # Set parameters
@@ -36,8 +48,10 @@ class Kriging(BaseModel):
 
         self.reset()
 
-    # Reset model
     def reset(self) -> None:
+        """
+        Resets the Kriging model.
+        """
 
         self.K_  = None
         self.x_  = None
@@ -46,8 +60,14 @@ class Kriging(BaseModel):
 
         self.kernel.reset()
 
-    # Build model from input
     def build(self, x: ndarray, y: ndarray) -> None:
+        """
+        Builds the Kriging model from input data.
+
+        Args:
+            x: The input data points.
+            y: The corresponding target values.
+        """
 
         self.x_ = self.normalize(x)
         self.y_ = y
@@ -58,8 +78,18 @@ class Kriging(BaseModel):
         self.it += 1
         self.K_  = self.kernel(self.x_, self.x_)
 
-    # Evaluate at test points
     def evaluate(self, xt: ndarray) -> Tuple[ndarray, ndarray]:
+        """
+        Evaluates the Kriging model at test points.
+
+        Args:
+            xt: The test points at which to evaluate the model.
+
+        Returns:
+            A tuple containing:
+                - The predicted mean values at the test points.
+                - The predicted standard deviations at the test points.
+        """
 
         xn  = self.normalize(xt)
         Kl  = self.kernel(xn, self.x_)
@@ -70,8 +100,13 @@ class Kriging(BaseModel):
 
         return mu, std
 
-    # Dump kriging data
     def dump(self, filename: str="kriging.dat") -> None:
+        """
+        Dumps the Kriging model data to a file.
+
+        Args:
+            filename: The name of the file to which to dump the data.
+        """
 
         filename = self.path+"/"+filename
         with open(filename, "w") as f:
@@ -84,8 +119,14 @@ class Kriging(BaseModel):
             np.savetxt(f, self.x_)
             np.savetxt(f, self.y_)
 
-    # Load kriging data
     def load(self, filename: Optional[str]=None) -> None:
+        """
+        Loads the Kriging model data from a file.
+
+        Args:
+            filename: The name of the file from which to load the data.
+                      If None, uses the model_file_ attribute.
+        """
 
         self.reset()
         self.it += 1
