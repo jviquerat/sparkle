@@ -1,22 +1,26 @@
-# Generic imports
 import numpy as np
+from numpy import ndarray
 from math import sqrt, pi, exp, erf, log, expm1, log1p
+from typing import Any
+
+from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.model.kriging import Kriging
 
 ###############################################
 ### Log expected improvement infill
 class LogEI():
-    def __init__(self, spaces, model):
+    def __init__(self, spaces: EnvSpaces, model: Any) -> None:
 
         self.spaces = spaces
         self.model  = model
         self.bound  =-1.0e8
 
-    def set_best(self, xb, yb):
+    def set_best(self, xb: ndarray, yb: float) -> None:
 
         self.xb = xb
         self.yb = yb
 
-    def _log_ei(self, x):
+    def _log_ei(self, x: ndarray) -> ndarray:
 
         x       = np.reshape(x, (-1,self.spaces.dim))
         mu, std = self.model.evaluate(x)
@@ -44,12 +48,12 @@ class LogEI():
         return lgei
 
     # () operator used for optimization
-    def __call__(self, x):
+    def __call__(self, x: ndarray) -> ndarray:
 
         return self._log_ei(x)
 
 # Numerically stable version of log(1 - exp(x))
-def log1mexp(x):
+def log1mexp(x: float) -> float:
 
     if (x > -log(2)):
         return log(-expm1(x))
@@ -59,7 +63,7 @@ def log1mexp(x):
 # erfcx approximation from:
 # "Closed-form approximations to the error and complementary error
 #  functions and their applications in atmospheric science", Ren et al (2007)
-def erfcx(x):
+def erfcx(x: float) -> float:
 
     a = 2.9110
     v = a/((a-1.0)*sqrt(pi*x*x) + sqrt(pi*x*x + a*a))
