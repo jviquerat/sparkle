@@ -13,9 +13,23 @@ from sparkle.src.utils.timer import Timer
 
 
 ###############################################
-### A wrapper class for mpi parallel environments
 class MpiEnvironments(BaseParallelEnvironments):
+    """
+    A wrapper class for MPI parallel environments.
+
+    This class manages a set of environments running in parallel using the
+    Message Passing Interface (MPI). It handles communication with worker
+    processes and provides methods for evaluating costs, resetting, and
+    rendering environments.
+    """
     def __init__(self, path: str, pms: SimpleNamespace) -> None:
+        """
+        Initializes the MpiEnvironments.
+
+        Args:
+            path: The base path for storing results.
+            pms: A SimpleNamespace object containing parameters for the environments.
+        """
 
         # Default parameters
         self.name = pms.name
@@ -33,8 +47,13 @@ class MpiEnvironments(BaseParallelEnvironments):
         # Initialize timer
         self.timer_env = Timer("env      ")
 
-    # Get environment spaces
     def get_spaces(self) -> Any:
+        """
+        Retrieves the environment's search space definition.
+
+        Returns:
+            A dictionary containing the search space definition.
+        """
 
         spaces = {"dim": self.worker.env.dim,
                   "x0": self.worker.env.x0,
@@ -47,8 +66,16 @@ class MpiEnvironments(BaseParallelEnvironments):
 
         return spaces
 
-    # Compute cost in all environments
     def cost(self, x: ndarray) -> ndarray:
+        """
+        Computes the cost of multiple points in parallel.
+
+        Args:
+            x: A NumPy array of points to evaluate.
+
+        Returns:
+            A NumPy array of the corresponding costs.
+        """
 
         # Initialize stuff
         n_dof   = x.shape[0]
@@ -79,8 +106,16 @@ class MpiEnvironments(BaseParallelEnvironments):
 
         return costs
 
-    # Reset environments
     def reset(self, run: int) -> List[bool]:
+        """
+        Resets the environments for a new run.
+
+        Args:
+            run: The run number.
+
+        Returns:
+            A list of boolean values indicating the success of the reset operation.
+        """
 
         # Send
         data = [('reset', run) for i in range(parallel.size)]
@@ -94,18 +129,26 @@ class MpiEnvironments(BaseParallelEnvironments):
 
         return data
 
-    # Render environment
     def render(self, x, c, **kwargs):
+        """
+        Renders the environment.
+
+        Args:
+            x: The point to render.
+            c: The cost value at the point.
+            **kwargs: Additional keyword arguments for rendering.
+        """
 
         if parallel.is_root():
             return self.worker.render(x, c, **kwargs)
 
-    # Close
     def close(self) -> None:
+        """
+        Closes the environments.
+        """
 
         data = [('close',None) for i in range(parallel.size)]
         data = parallel.comm().scatter(data, root=0)
 
         # Main process executing
         self.worker.close()
-

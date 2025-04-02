@@ -11,9 +11,23 @@ from sparkle.src.utils.timer import Timer
 
 
 ###############################################
-### A wrapper class for multiprocessing parallel environments
 class MultiprocEnvironments(BaseParallelEnvironments):
+    """
+    A wrapper class for multiprocessing parallel environments.
+
+    This class manages a set of environments running in parallel using the
+    multiprocessing library. It handles communication with worker processes
+    and provides methods for evaluating costs, resetting, and rendering
+    environments.
+    """
     def __init__(self, path, pms):
+        """
+        Initializes the MultiprocEnvironments.
+
+        Args:
+            path: The base path for storing results.
+            pms: A SimpleNamespace object containing parameters for the environments.
+        """
 
         # Default parameters
         self.name  = pms.name
@@ -40,8 +54,13 @@ class MultiprocEnvironments(BaseParallelEnvironments):
         # Initialize timer
         self.timer_env = Timer("env      ")
 
-    # Get environment spaces
     def get_spaces(self):
+        """
+        Retrieves the environment's search space definition.
+
+        Returns:
+            A dictionary containing the search space definition.
+        """
 
         spaces = {"dim": self.get("dim"),
                   "x0": self.get("x0"),
@@ -53,16 +72,32 @@ class MultiprocEnvironments(BaseParallelEnvironments):
 
         return spaces
 
-    # Get quantity based on name
     def get(self, name):
+        """
+        Retrieves a specific quantity from the environment.
+
+        Args:
+            name: The name of the quantity to retrieve.
+
+        Returns:
+            The value of the requested quantity.
+        """
 
         self.pipes[0].send((name, None))
         rcv = self.pipes[0].recv()
 
         return rcv
 
-    # Compute cost in all environments
     def cost(self, x):
+        """
+        Computes the cost of multiple points in parallel.
+
+        Args:
+            x: A NumPy array of points to evaluate.
+
+        Returns:
+            A NumPy array of the corresponding costs.
+        """
 
         # Initialize stuff
         n_dof   = x.shape[0]
@@ -86,8 +121,16 @@ class MultiprocEnvironments(BaseParallelEnvironments):
 
         return costs
 
-    # Reset environments
     def reset(self, run):
+        """
+        Resets the environments for a new run.
+
+        Args:
+            run: The run number.
+
+        Returns:
+            A NumPy array of boolean values indicating the success of the reset operation.
+        """
 
         # Send
         for p in self.pipes:
@@ -101,8 +144,14 @@ class MultiprocEnvironments(BaseParallelEnvironments):
 
         return data
 
-    # Render environment
     def render(self, x, c):
+        """
+        Renders the environment.
+
+        Args:
+            x: The point to render.
+            c: The cost value at the point.
+        """
 
         # Send
         self.pipes[0].send(('render', [x,c]))
@@ -112,8 +161,10 @@ class MultiprocEnvironments(BaseParallelEnvironments):
 
         return rnd
 
-    # Close
     def close(self):
+        """
+        Closes the environments.
+        """
 
         # Close all envs
         for p in self.pipes:

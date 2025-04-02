@@ -8,13 +8,33 @@ from sparkle.src.utils.error import error
 
 
 ###############################################
-### A base class for parallel environments
 class BaseParallelEnvironments():
+    """
+    A base class for parallel environments.
+
+    This class provides a common interface for managing and interacting with
+    multiple environments running in parallel. It includes methods for
+    evaluating costs, generating cost maps, and handling parallel execution.
+    """
     def __init__(self):
+        """
+        Initializes the BaseParallelEnvironments.
+        """
         pass
 
-    # Evaluate cost on a list of points in parallel
     def evaluate(self, x: ndarray) -> ndarray:
+        """
+        Evaluates the cost of multiple points in parallel.
+
+        Args:
+            x: A NumPy array of points to evaluate.
+
+        Returns:
+            A NumPy array of the corresponding costs.
+
+        Raises:
+            error: If the number of points is not a multiple of the number of parallel environments.
+        """
 
         n_points = x.shape[0]
 
@@ -45,8 +65,15 @@ class BaseParallelEnvironments():
 
         return costs
 
-    # Generate cost map for rendering 1D envs
     def generate_cost_map_1D(self) -> Tuple[ndarray, ndarray]:
+        """
+        Generates a cost map for rendering 1D environments.
+
+        Returns:
+            A tuple containing:
+                - A NumPy array of x-coordinates.
+                - A NumPy array of corresponding cost values.
+        """
 
         n_plot   = 400
         x_plot   = np.linspace(self.spaces.xmin[0], self.spaces.xmax[0], num=n_plot)
@@ -58,8 +85,16 @@ class BaseParallelEnvironments():
 
         return x_plot, cost_map
 
-    # Generate cost map for rendering 2D envs
     def generate_cost_map_2D(self) -> Tuple[ndarray, ndarray, ndarray]:
+        """
+        Generates a cost map for rendering 2D environments.
+
+        Returns:
+            A tuple containing:
+                - A NumPy array of x-coordinates.
+                - A NumPy array of y-coordinates.
+                - A NumPy array of corresponding cost values.
+        """
 
         n_plot   = 100
         x_plot   = np.linspace(self.spaces.xmin[0], self.spaces.xmax[0], num=n_plot)
