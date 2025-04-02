@@ -8,6 +8,15 @@ from sparkle.src.utils.prints import err_print, liner, new_line, spacer, warn_pr
 
 ### Error
 def error(module, function, text, call_exit=True):
+    """
+    Prints an error message and optionally exits the program.
+
+    Args:
+        module: The name of the module where the error occurred.
+        function: The name of the function where the error occurred.
+        text: The error message.
+        call_exit: If True, exits the program after printing the error.
+    """
     liner(err_print("Sparkle error"))
     spacer("Module "+str(module)+", function "+str(function))
     spacer(text)
@@ -18,8 +27,15 @@ def error(module, function, text, call_exit=True):
 
 ### Warning
 def warning(module, function, text):
+    """
+    Prints a warning message.
+
+    Args:
+        module: The name of the module where the warning occurred.
+        function: The name of the function where the warning occurred.
+        text: The warning message.
+    """
     liner(warn_print("Sparkle warning"))
     spacer("Module "+str(module)+", function "+str(function))
     spacer(text)
     new_line()
-
