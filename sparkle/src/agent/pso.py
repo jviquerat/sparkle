@@ -7,14 +7,27 @@ from sparkle.src.agent.base import BaseAgent
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.utils.default import set_default
 
-
 ###############################################
-### Particle swarm optimization
 class PSO(BaseAgent):
+    """
+    Particle Swarm Optimization (PSO) agent.
+
+    This agent implements the Particle Swarm Optimization algorithm, a
+    population-based stochastic optimization technique inspired by the social
+    behavior of bird flocking or fish schooling.
+    """
     def __init__(self,
                  path: str,
                  spaces: EnvSpaces,
                  pms: SimpleNamespace) -> None:
+        """
+        Initializes the PSO agent.
+
+        Args:
+            path: The base path for storing results.
+            spaces: The environment's search space definition.
+            pms: A SimpleNamespace object containing parameters for the agent.
+        """
         super().__init__(path, spaces, pms)
 
         self.name        = "PSO"
@@ -27,8 +40,13 @@ class PSO(BaseAgent):
 
         if (not self.silent): self.summary()
 
-    # Reset
     def reset(self, run: int) -> None:
+        """
+        Resets the PSO agent for a new run.
+
+        Args:
+            run: The run number.
+        """
 
         # Mother class reset
         super().reset(run)
@@ -38,10 +56,17 @@ class PSO(BaseAgent):
         self.p_best  = np.zeros((self.n_points, self.dim))
         self.p_score = np.ones(self.n_points)*1.0e8
 
-    # Sample points
-    # A local copy of x is required as sample() does not take
-    # previous samples as argument
     def sample(self) -> ndarray:
+        """
+        Samples new points from the PSO distribution.
+
+        This method generates new points based on the current positions and
+        velocities of the particles, as well as their personal best positions
+        and the global best position.
+
+        Returns:
+            A NumPy array of shape (n_points, dim) representing the new points.
+        """
 
         if (self.stp == 0):
             self.x = np.random.rand(self.n_points, self.dim)
@@ -61,20 +86,34 @@ class PSO(BaseAgent):
 
         return self.x
 
-    # Step
     def step(self, x: ndarray, c: ndarray) -> None:
+        """
+        Performs one step of the PSO algorithm.
+
+        This method updates the local best positions and scores of the particles
+        and increments the step counter.
+
+        Args:
+            x: The points that were evaluated.
+            c: The cost values at the evaluated points.
+        """
 
         # Update best
         self.update_local_best(x, c)
 
         self.stp += 1
 
-    # Update local best
     def update_local_best(self, x: ndarray, c: ndarray) -> None:
+        """
+        Updates the local best positions and scores of the particles.
+
+        Args:
+            x: The points that were evaluated.
+            c: The cost values at the evaluated points.
+        """
 
         # Update best score for each particle
         for i in range(self.n_points):
             if (c[i] <= self.p_score[i]):
                 self.p_score[i]  = c[i]
                 self.p_best[i,:] = x[i,:]
-

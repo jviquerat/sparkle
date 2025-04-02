@@ -16,13 +16,26 @@ local_factory.register("cem",   CEM)
 local_factory.register("pbo",   PBO)
 
 ###############################################
-### The optimizer class is a transparent class for calling
-### optimizers with a simple cost function, without the need
-### to write a full environment
-### It does not comply to the other agents interface
-### It is assumed to run sequentially
+
 class Optimizer():
+    """
+    A transparent class for calling optimizers with a simple cost function.
+
+    This class provides a simplified interface for using various optimization
+    algorithms without the need to define a full environment. It is designed
+    for sequential execution and does not adhere to the standard agent
+    interface used elsewhere in the framework.
+    """
     def __init__(self, name, spaces, pms, cost):
+        """
+        Initializes the Optimizer.
+
+        Args:
+            name: The name of the optimization algorithm to use (e.g., "pso", "cmaes").
+            spaces: The search space definition.
+            pms: A SimpleNamespace object containing parameters for the optimizer.
+            cost: The cost function to be minimized.
+        """
 
         # Initialize agent
         self.agent = local_factory.create(name, path=".", spaces=spaces, pms=pms)
@@ -33,13 +46,28 @@ class Optimizer():
         # Initial reset
         self.reset(0)
 
-    # Reset
     def reset(self, run):
+        """
+        Resets the optimizer for a new run.
+
+        Args:
+            run: The run number.
+        """
 
         self.agent.reset(run)
 
-    # Perform optimization
     def optimize(self):
+        """
+        Performs the optimization process.
+
+        This method iteratively samples points, evaluates the cost function,
+        and updates the optimizer until the termination condition is met.
+
+        Returns:
+            A tuple containing:
+                - The best point found (NumPy array).
+                - The best score achieved (float).
+        """
 
         # Loop until done
         best_x     = None

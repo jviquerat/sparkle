@@ -17,12 +17,28 @@ from sparkle.src.utils.default import set_default
 
 
 ###############################################
-### PBO
+
 class PBO(BaseAgent):
+    """
+    Policy-Based Optimization (PBO) agent.
+
+    This agent implements a Policy-Based Optimization algorithm, which uses
+    neural networks to learn a policy for sampling new points in the search
+    space. It adapts the sampling distribution based on the performance of
+    the sampled points.
+    """
     def __init__(self,
                  path: str,
                  spaces: EnvSpaces,
                  pms: types.SimpleNamespace) -> None:
+        """
+        Initializes the PBO agent.
+
+        Args:
+            path: The base path for storing results.
+            spaces: The environment's search space definition.
+            pms: A SimpleNamespace object containing parameters for the agent.
+        """
         super().__init__(path, spaces, pms)
 
         self.name        = "PBO"
@@ -80,8 +96,13 @@ class PBO(BaseAgent):
         if (not self.silent): self.net_sg.info()
         if (not self.silent): self.net_cr.info()
 
-    # Reset
     def reset(self, run: int) -> None:
+        """
+        Resets the PBO agent for a new run.
+
+        Args:
+            run: The run number.
+        """
 
         # Mother class reset
         super().reset(run)
@@ -105,8 +126,17 @@ class PBO(BaseAgent):
                                          model=self.net_cr,
                                          pms=self.pms_opt_cr)
 
-    # Sample from distribution
     def sample(self) -> ndarray:
+        """
+        Samples new points from the PBO distribution.
+
+        This method generates new points based on the current policy, which
+        is represented by the neural networks that output the standard
+        deviations and correlations.
+
+        Returns:
+            A NumPy array of shape (n_points, dim) representing the new points.
+        """
 
         obs = torch.ones(1,self.dim)*self.obs
 
@@ -118,11 +148,21 @@ class PBO(BaseAgent):
 
         return x
 
-    # Compute full cov pdf
     def get_pdf(self,
                 mu: torch.Tensor,
                 sg: torch.Tensor,
                 cr: torch.Tensor) -> MultivariateNormal:
+        """
+        Computes the multivariate normal distribution.
+
+        Args:
+            mu: The mean vector.
+            sg: The standard deviations.
+            cr: The correlations.
+
+        Returns:
+            A MultivariateNormal distribution.
+        """
 
         cov = self.get_cov(sg, cr)
         scl = torch.linalg.cholesky(cov)
@@ -130,8 +170,17 @@ class PBO(BaseAgent):
 
         return pdf
 
-    # Step
     def step(self, x: ndarray, c: ndarray) -> None:
+        """
+        Performs one step of the PBO algorithm.
+
+        This method updates the policy networks based on the performance of
+        the sampled points.
+
+        Args:
+            x: The points that were evaluated.
+            c: The cost values at the evaluated points.
+        """
 
         # Store costs
         for i in range(c.shape[0]):
@@ -155,8 +204,16 @@ class PBO(BaseAgent):
 
         self.stp += 1
 
-    # Compute advantages
     def compute_advantages(self, x: ndarray) -> torch.Tensor:
+        """
+        Computes the advantages of the sampled points.
+
+        Args:
+            x: The points that were evaluated.
+
+        Returns:
+            A tensor of the elite points.
+        """
 
         # Update elite_step
         self.elite_stp += self.n_elite
@@ -189,8 +246,18 @@ class PBO(BaseAgent):
 
         return torch.tensor(x_elite)
 
-    # Get data history
     def get_history(self, n_gen: int) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Retrieves the history of elite points and their advantages.
+
+        Args:
+            n_gen: The number of generations to retrieve.
+
+        Returns:
+            A tuple containing:
+                - A tensor of elite points.
+                - A tensor of their advantages.
+        """
 
         # Starting and ending indices based on the required nb of generations
         start     = max(0,self.elite_stp - n_gen*self.n_elite)
@@ -209,13 +276,22 @@ class PBO(BaseAgent):
 
         return buff_x, buff_a
 
-    # Train loop
     def train_loop(self,
                    n_epochs: int,
                    n_gens: int,
                    batch_frac: float,
                    net: MLP,
                    opt: Adam) -> None:
+        """
+        Performs the training loop for the policy networks.
+
+        Args:
+            n_epochs: The number of training epochs.
+            n_gens: The number of generations to use for training.
+            batch_frac: The fraction of the history to use in each batch.
+            net: The neural network to train.
+            opt: The optimizer to use for training.
+        """
 
         # Loop on epochs
         for epoch in range(n_epochs):
@@ -243,11 +319,21 @@ class PBO(BaseAgent):
                 loss.backward()
                 opt.step()
 
-    # Compute loss
     def get_loss(self,
                  obs: torch.Tensor,
                  adv: torch.Tensor,
                  act: torch.Tensor) -> torch.Tensor:
+        """
+        Computes the loss for the policy networks.
+
+        Args:
+            obs: The observations.
+            adv: The advantages.
+            act: The actions.
+
+        Returns:
+            The computed loss.
+        """
 
         # Compute pdf
         sg  = self.net_sg(obs)*self.sigma0
@@ -262,10 +348,19 @@ class PBO(BaseAgent):
 
         return loss_pg
 
-    # Compute covariance matrix
     def get_cov(self,
                 sg: torch.Tensor,
                 cr: torch.Tensor) -> torch.Tensor:
+        """
+        Computes the covariance matrix.
+
+        Args:
+            sg: The standard deviations.
+            cr: The correlations.
+
+        Returns:
+            The computed covariance matrix.
+        """
 
         # Extract sigmas and thetas
         sigmas = sg

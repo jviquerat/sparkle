@@ -10,10 +10,20 @@ from sparkle.src.pex.mlhs import MLHS
 
 
 ###############################################
-### Multi-start L-BFGS-B
+
 class MSLBFGSB():
+    """
+    Multi-start L-BFGS-B optimizer.
+
+    This class implements a multi-start version of the L-BFGS-B algorithm.
+    It performs multiple optimizations from different starting points to
+    increase the likelihood of finding the global optimum.
+    """
 
     def __init__(self) -> None:
+        """
+        Initializes the MSLBFGSB optimizer.
+        """
         pass
 
     def optimize(self,
@@ -25,6 +35,25 @@ class MSLBFGSB():
                  m: int=5,
                  tol: float=1e-3,
                  max_iter: int=20) -> Tuple[ndarray, float]:
+        """
+        Optimizes a function using the multi-start L-BFGS-B algorithm.
+
+        Args:
+            f: The objective function to minimize.
+            xmin: The lower bounds for the variables, as a NumPy array.
+            xmax: The upper bounds for the variables, as a NumPy array.
+            df: An optional function to compute the gradient of f. If not provided,
+                finite differences will be used.
+            n_pts: The number of starting points for the multi-start optimization.
+            m: The maximum number of correction pairs to store in L-BFGS-B (memory size).
+            tol: The tolerance for the norm of the projected gradient in L-BFGS-B.
+            max_iter: The maximum number of iterations for each L-BFGS-B optimization.
+
+        Returns:
+            A tuple containing:
+                - The optimized point (NumPy array).
+                - The value of the objective function at the optimized point (float).
+        """
 
         pms          = types.SimpleNamespace()
         pms.n_points = n_pts

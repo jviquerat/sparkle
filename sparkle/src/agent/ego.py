@@ -10,15 +10,29 @@ from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.infill.infill import infill_factory
 from sparkle.src.utils.default import set_default
 
-
 ###############################################
-### EGO
 class EGO(BaseAgent):
+    """
+    Efficient Global Optimization (EGO) agent.
+
+    This agent implements the EGO algorithm, which combines a surrogate model
+    with an infill criterion to efficiently explore the search space and find
+    the global optimum of a function.
+    """
     def __init__(self,
                  path: str,
                  spaces: EnvSpaces,
                  model: Any,
                  pms: SimpleNamespace) -> None:
+        """
+        Initializes the EGO agent.
+
+        Args:
+            path: The base path for storing results.
+            spaces: The environment's search space definition.
+            model: The surrogate model to use for function approximation.
+            pms: A SimpleNamespace object containing parameters for the agent.
+        """
         super().__init__(path, spaces, pms)
 
         self.name        = "EGO"
@@ -34,24 +48,55 @@ class EGO(BaseAgent):
 
         self.summary()
 
-    # Reset
     def reset(self, run: int) -> None:
+        """
+        Resets the EGO agent for a new run.
+
+        Args:
+            run: The run number.
+        """
 
         super().reset(run)
 
-    # Return best point
     def best_point(self) -> Tuple[ndarray, float]:
+        """
+        Returns the best point found so far by the surrogate model.
+
+        Returns:
+            A tuple containing:
+                - The best point (NumPy array).
+                - The best function value at that point (float).
+        """
 
         k = np.argmin(self.model.y)
         return self.model.x[k], self.model.y[k]
 
-    # Local function for optimization of infill
     def opt_infill(self, x: ndarray) -> ndarray:
+        """
+        Local function for optimization of the infill criterion.
+
+        This function is used internally by the optimizer to minimize the
+        negative of the infill criterion.
+
+        Args:
+            x: The point at which to evaluate the infill criterion.
+
+        Returns:
+            The negative of the infill criterion value at x.
+        """
 
         return -self.infill(x)
 
-    # Sample new point based on expected improvement
     def sample(self) -> ndarray:
+        """
+        Samples a new point based on the expected improvement criterion.
+
+        This method optimizes the infill criterion to find a promising new
+        point to evaluate.
+
+        Returns:
+            A NumPy array representing the new point to evaluate.
+        """
 
         # Set best point to infill before optimization
         xb, yb  = self.best_point()
@@ -67,13 +112,26 @@ class EGO(BaseAgent):
 
         return np.reshape(x, (-1,self.spaces.dim))
 
-    # Step
     def step(self, x: ndarray, c: ndarray) -> None:
+        """
+        Performs one step of the EGO algorithm.
+
+        This method updates the step counter.
+
+        Args:
+            x: The point that was evaluated.
+            c: The cost value at the evaluated point.
+        """
 
         self.stp += 1
 
-    # Check if done
     def done(self) -> bool:
+        """
+        Checks if the EGO algorithm has reached its termination condition.
+
+        Returns:
+            True if the maximum number of steps has been reached, False otherwise.
+        """
 
         if (self.stp == self.n_steps_max): return True
         return False
