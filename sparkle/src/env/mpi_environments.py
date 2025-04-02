@@ -1,5 +1,8 @@
 # Generic imports
 import numpy as np
+from numpy import ndarray
+from types import SimpleNamespace
+from typing import Dict, List, Union, Any
 
 # Custom imports
 from sparkle.src.env.parallel   import parallel
@@ -12,7 +15,7 @@ from sparkle.src.utils.timer    import Timer
 ###############################################
 ### A wrapper class for mpi parallel environments
 class MpiEnvironments(BaseParallelEnvironments):
-    def __init__(self, path, pms):
+    def __init__(self, path: str, pms: SimpleNamespace) -> None:
 
         # Default parameters
         self.name = pms.name
@@ -31,7 +34,7 @@ class MpiEnvironments(BaseParallelEnvironments):
         self.timer_env = Timer("env      ")
 
     # Get environment spaces
-    def get_spaces(self):
+    def get_spaces(self) -> Any:
 
         spaces = {"dim": self.worker.env.dim,
                   "x0": self.worker.env.x0,
@@ -45,7 +48,7 @@ class MpiEnvironments(BaseParallelEnvironments):
         return spaces
 
     # Compute cost in all environments
-    def cost(self, x):
+    def cost(self, x: ndarray) -> ndarray:
 
         # Initialize stuff
         n_dof   = x.shape[0]
@@ -77,7 +80,7 @@ class MpiEnvironments(BaseParallelEnvironments):
         return costs
 
     # Reset environments
-    def reset(self, run):
+    def reset(self, run: int) -> List[bool]:
 
         # Send
         data = [('reset', run) for i in range(parallel.size)]
@@ -98,7 +101,7 @@ class MpiEnvironments(BaseParallelEnvironments):
             return self.worker.render(x, c, **kwargs)
 
     # Close
-    def close(self):
+    def close(self) -> None:
 
         data = [('close',None) for i in range(parallel.size)]
         data = parallel.comm().scatter(data, root=0)

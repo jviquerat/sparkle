@@ -1,9 +1,13 @@
-# Generic imports
+from numpy import ndarray
+from types import SimpleNamespace
+from typing import Optional, List, Any
 
 ###############################################
 ### A class holding informations dimensions
 class EnvSpaces:
-    def __init__(self, spaces, pms=None):
+    def __init__(self,
+                 spaces: Any,
+                 pms: Optional[SimpleNamespace]=None) -> None:
 
         self.natural_dim_ = spaces["dim"]
         self.true_dim_    = self.natural_dim_
@@ -24,7 +28,7 @@ class EnvSpaces:
             self.true_dim_ = 1
 
     @property
-    def dim(self):
+    def dim(self) -> int:
         return self.true_dim_
 
     @property
@@ -32,25 +36,25 @@ class EnvSpaces:
         return self.true_dim_
 
     @property
-    def x0(self):
+    def x0(self) -> ndarray:
         return self.x0_
 
     @property
-    def xmin(self):
+    def xmin(self) -> ndarray:
         return self.xmin_
 
     @property
-    def xmax(self):
+    def xmax(self) -> ndarray:
         return self.xmax_
 
     @property
-    def vmin(self):
+    def vmin(self) -> float:
         return self.vmin_
 
     @property
-    def vmax(self):
+    def vmax(self) -> float:
         return self.vmax_
 
     @property
-    def levels(self):
+    def levels(self) -> List[float]:
         return self.levels_

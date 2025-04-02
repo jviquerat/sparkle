@@ -1,16 +1,18 @@
 import sys
+from types import SimpleNamespace
+from typing import Any
 
 ###############################################
 ### A wrapper class for parallelism
 class SpkParallel:
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         # Default values
         self.size_ = 1
         self.type_ = None
 
-    def set(self, pms):
+    def set(self, pms: SimpleNamespace) -> None:
 
         if hasattr(pms, "parallel_type"):
             self.type_ = pms.parallel_type
@@ -41,10 +43,10 @@ class SpkParallel:
         return self.type_
 
     @property
-    def size(self):
+    def size(self) -> int:
         return self.size_
 
-    def is_root(self):
+    def is_root(self) -> bool:
 
         if self.type_ == "mpi":
             return self._rank == 0
@@ -54,7 +56,7 @@ class SpkParallel:
 
         return True
 
-    def comm(self):
+    def comm(self) -> Any:
 
         if self.type_ == "mpi":
             return self._comm
@@ -63,7 +65,7 @@ class SpkParallel:
             print("# Parallel: comm() is not defined for multiprocessing")
             sys.exit(1)
 
-    def rank(self):
+    def rank(self) -> int:
 
         if self.type_ == "mpi":
             return self._rank
@@ -72,7 +74,7 @@ class SpkParallel:
             print("# Parallel: rank() is not defined for multiprocessing")
             sys.exit(1)
 
-    def environments(self, path, pms):
+    def environments(self, path: str, pms: SimpleNamespace) -> Any:
 
         if self.type_ == "mpi":
             from sparkle.src.env.mpi_environments import MpiEnvironments
@@ -82,7 +84,7 @@ class SpkParallel:
             from sparkle.src.env.multiproc_environments import MultiprocEnvironments
             return MultiprocEnvironments(path, pms)
 
-    def finalize(self):
+    def finalize(self) -> None:
 
         if self.type_ == "mpi":
             from mpi4py import MPI

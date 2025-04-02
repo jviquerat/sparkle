@@ -2,11 +2,12 @@
 
 # Custom imports
 from sparkle.src.env.parallel import parallel
+from numpy import float64, ndarray
 
 ###############################################
 # Worker class for slave processes
 class MpiWorker():
-    def __init__(self, env_name, args, cpu, path):
+    def __init__(self, env_name: str, args: None, cpu: int, path: str) -> None:
 
         # Build environment
         module    = __import__(env_name)
@@ -43,12 +44,12 @@ class MpiWorker():
                 break
 
     # Compute cost
-    def cost(self, x):
+    def cost(self, x: ndarray) -> float64:
 
         return self.env.cost(x)
 
     # Resetting
-    def reset(self, run):
+    def reset(self, run: int) -> bool:
 
         return self.env.reset(run)
 
@@ -58,6 +59,6 @@ class MpiWorker():
         return self.env.render(x, c, **kwargs)
 
     # Closing
-    def close(self):
+    def close(self) -> None:
 
         self.env.close()
