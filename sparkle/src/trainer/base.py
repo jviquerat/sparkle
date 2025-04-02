@@ -5,7 +5,6 @@ from sparkle.src.utils.prints import fmt_float
 
 
 ###############################################
-### Base trainer
 class BaseTrainer():
     """
     Base class for all trainers.
@@ -21,7 +20,6 @@ class BaseTrainer():
         """
         pass
 
-    # Optimize
     def optimize(self):
         """
         Performs the optimization process.
@@ -31,7 +29,6 @@ class BaseTrainer():
         """
         raise NotImplementedError
 
-    # Reset
     def reset(self, run: int) -> None:
         """
         Resets the trainer for a new run.
@@ -59,7 +56,6 @@ class BaseTrainer():
         # Path
         self.path = self.base_path+"/"+str(run)
 
-    # Store data
     def store_data(self, x: ndarray, c: ndarray) -> None:
         """
         Stores the evaluated data points and their costs.
@@ -88,7 +84,6 @@ class BaseTrainer():
 
             self.total_stp += 1
 
-    # Dump data
     def dump_data(self) -> None:
         """
         Dumps the stored data to a file.
@@ -107,7 +102,6 @@ class BaseTrainer():
                               np.reshape(np.array(self.hist_x), (-1,self.agent.dim))]),
                    fmt='%.5e')
 
-    # Print
     def print(self) -> None:
         """
         Prints information about the current optimization step.
