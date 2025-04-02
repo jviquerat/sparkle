@@ -7,15 +7,38 @@ from sparkle.src.utils.prints import fmt_float
 ###############################################
 ### Base trainer
 class BaseTrainer():
+    """
+    Base class for all trainers.
+
+    This class defines the common interface and functionality for all trainers
+    used in the optimization framework. It provides methods for resetting,
+    optimizing, storing data, dumping data, and printing information about
+    the optimization process.
+    """
     def __init__(self):
+        """
+        Initializes the BaseTrainer.
+        """
         pass
 
     # Optimize
     def optimize(self):
+        """
+        Performs the optimization process.
+
+        Raises:
+            NotImplementedError: If the method is not implemented in a subclass.
+        """
         raise NotImplementedError
 
     # Reset
     def reset(self, run: int) -> None:
+        """
+        Resets the trainer for a new run.
+
+        Args:
+            run: The run number.
+        """
 
         # Step counters
         self.total_stp = 0
@@ -38,6 +61,16 @@ class BaseTrainer():
 
     # Store data
     def store_data(self, x: ndarray, c: ndarray) -> None:
+        """
+        Stores the evaluated data points and their costs.
+
+        This method also updates the best point found so far and keeps track
+        of the optimization history.
+
+        Args:
+            x: The evaluated points.
+            c: The cost values at the evaluated points.
+        """
 
         # The update of best points is quite inefficient, but it allows
         # to reproduce historical data when loading a pex or a model
@@ -57,6 +90,13 @@ class BaseTrainer():
 
     # Dump data
     def dump_data(self) -> None:
+        """
+        Dumps the stored data to a file.
+
+        This method saves the optimization history to a file, including the
+        time steps, cost values, best cost values, best steps, and the
+        evaluated points.
+        """
 
         filename = self.path+'/raw.dat'
         np.savetxt(filename,
@@ -69,6 +109,13 @@ class BaseTrainer():
 
     # Print
     def print(self) -> None:
+        """
+        Prints information about the current optimization step.
+
+        This method prints the current iteration number, the number of
+        evaluations, the best score found so far, the iteration at which
+        the best score was found, and the best point.
+        """
 
         # Handle no-printing after max step
         if (self.it < self.agent.n_steps_max-1):

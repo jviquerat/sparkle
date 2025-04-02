@@ -19,7 +19,22 @@ from sparkle.src.utils.timer import Timer
 ###############################################
 ### Class for metamodel-based trainer
 class Metamodel(BaseTrainer):
+    """
+    Metamodel-based trainer class.
+
+    This class implements a trainer that uses a metamodel (surrogate model)
+    to guide the optimization process. It combines an experiment plan (Pex),
+    a surrogate model, and an agent to efficiently explore the search space
+    and find the global optimum of a function.
+    """
     def __init__(self, path: str, pms: SimpleNamespace) -> None:
+        """
+        Initializes the Metamodel trainer.
+
+        Args:
+            path: The base path for storing results.
+            pms: A SimpleNamespace object containing parameters for the trainer.
+        """
 
         # Set parameters
         self.base_path    = path
@@ -55,6 +70,12 @@ class Metamodel(BaseTrainer):
 
     # Reset
     def reset(self, run: int) -> None:
+        """
+        Resets the Metamodel trainer for a new run.
+
+        Args:
+            run: The run number.
+        """
 
         super().reset(run)
         self.env.reset(run)
@@ -64,6 +85,14 @@ class Metamodel(BaseTrainer):
 
     # Optimize
     def optimize(self) -> None:
+        """
+        Performs the optimization process using the metamodel.
+
+        This method first checks if a model is loaded from a file or if it
+        needs to be built from scratch. It then iteratively samples new
+        points, evaluates their costs, updates the model, and steps the agent
+        until the termination condition is met.
+        """
 
         self.timer_global.tic()
 
@@ -151,6 +180,17 @@ class Metamodel(BaseTrainer):
 
     # Handle rendering
     def render(self, x: ndarray, c: ndarray) -> None:
+        """
+        Renders the current state of the optimization process.
+
+        This method generates plots to visualize the optimization progress,
+        either using the environment's rendering capabilities or the trainer's
+        own rendering functions.
+
+        Args:
+            x: The evaluated points.
+            c: The cost values at the evaluated points.
+        """
 
         if (self.it%self.render_every != 0): return
 
@@ -206,6 +246,12 @@ class Metamodel(BaseTrainer):
 
     # Print after building or loading model
     def initial_print(self) -> None:
+        """
+        Prints information about the initial model.
+
+        This method prints the best initial score and the corresponding
+        point after the model has been built or loaded.
+        """
 
         gs     = f"{self.best_score:.5e}"
         gb     = np.array2string(self.best_x, precision=5,
