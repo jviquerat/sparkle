@@ -15,6 +15,19 @@ from sparkle.src.utils.timer import Timer
 
 
 def AvgPex(n_avg, combination):
+    """
+    Calculates the average phi-p metric and execution time for a given Pex method and parameters.
+
+    Args:
+        n_avg: The number of times to run the Pex algorithm for averaging.
+        combination: A dictionary containing the parameters for the Pex algorithm,
+                     including 'dimension' and 'method'.
+
+    Returns:
+        A tuple containing:
+            - The average execution time (float).
+            - A NumPy array of phi-p metric values for each run.
+    """
 
     dim  = combination["dimension"]
     xmin = np.zeros(dim)
@@ -42,6 +55,13 @@ def AvgPex(n_avg, combination):
     return time, phi_p
 
 def main():
+    """
+    Main function to run the Pex benchmark.
+
+    This function reads parameters from a JSON file, generates combinations of
+    parameters, runs the benchmark for each combination, and outputs the results
+    to a data file and plots.
+    """
 
     # Check arguments
     args = sys.argv
