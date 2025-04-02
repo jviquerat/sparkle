@@ -1,9 +1,11 @@
 # Generic imports
-import numpy             as np
+import numpy as np
 import matplotlib.pyplot as plt
+from numpy import ndarray
 
 # Custom imports
 from sparkle.src.utils.error import error
+from sparkle.src.env.spaces import EnvSpaces
 
 plt.rcParams['font.size'] = 10
 plt.rcParams['axes.labelsize'] = 10
@@ -92,7 +94,7 @@ def render_1D_regular(filename, spaces, x, c, x_plot, cost_map):
     plt.close()
 
 # 2D rendering for regular trainer
-def render_2D_regular(filename, spaces, x, c, x_plot, y_plot, cost_map):
+def render_2D_regular(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray, x_plot: ndarray, y_plot: ndarray, cost_map: ndarray) -> None:
 
     plt.clf()
     fig = plt.figure()
@@ -118,10 +120,10 @@ def render_2D_regular(filename, spaces, x, c, x_plot, y_plot, cost_map):
     plt.close()
 
 # 1D rendering for metamodel trainer
-def render_1D_metamodel(filename, spaces, x, c,
-                        x_plot, cost_map,
-                        y_mu, y_std, fct, fct_name,
-                        highlight_last=True):
+def render_1D_metamodel(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray,
+                        x_plot: ndarray, cost_map: ndarray,
+                        y_mu: ndarray, y_std: ndarray, fct: ndarray, fct_name: str,
+                        highlight_last: bool=True) -> None:
 
     plt.clf()
     fig = plt.figure()
@@ -157,10 +159,10 @@ def render_1D_metamodel(filename, spaces, x, c,
     plt.close()
 
 # 2D rendering for metamodel trainer
-def render_2D_metamodel(filename, spaces, x, c,
-                        x_plot, y_plot, cost_map,
-                        y_mu, y_std, fct, fct_name,
-                        highlight_last=True):
+def render_2D_metamodel(filename: str, spaces: EnvSpaces, x: ndarray, c: ndarray,
+                        x_plot: ndarray, y_plot: ndarray, cost_map: ndarray,
+                        y_mu: ndarray, y_std: ndarray, fct: ndarray, fct_name: str,
+                        highlight_last: bool=True) -> None:
 
     plt.clf()
     fig = plt.figure()
