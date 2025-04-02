@@ -1,10 +1,8 @@
-# Generic imports
 import numpy as np
 from numpy import ndarray
 from types import SimpleNamespace
 from typing import Dict, List, Union, Any
 
-# Custom imports
 from sparkle.src.env.parallel   import parallel
 from sparkle.src.env.base       import BaseParallelEnvironments
 from sparkle.src.env.mpi_worker import MpiWorker

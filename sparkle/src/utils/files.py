@@ -1,4 +1,3 @@
-# Generic imports
 import filecmp
 
 # Compare files

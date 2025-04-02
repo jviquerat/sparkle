@@ -1,8 +1,6 @@
-# Generic imports
 import os
 import shutil
 
-# Custom imports
 from sparkle.src.utils.seeds     import set_seeds
 from sparkle.src.utils.json      import JsonParser
 from sparkle.src.utils.data      import DataAvg

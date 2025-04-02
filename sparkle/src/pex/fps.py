@@ -1,8 +1,6 @@
-# Generic imports
 import numpy as np
 from numpy import ndarray
 
-# Custom imports
 from sparkle.src.utils.error import error
 
 ###############################################

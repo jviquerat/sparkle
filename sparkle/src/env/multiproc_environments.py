@@ -1,8 +1,6 @@
-# Generic imports
 import numpy           as np
 import multiprocessing as mp
 
-# Custom imports
 from sparkle.src.env.parallel         import parallel
 from sparkle.src.env.base             import BaseParallelEnvironments
 from sparkle.src.env.multiproc_worker import MultiprocWorker

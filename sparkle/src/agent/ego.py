@@ -1,10 +1,8 @@
-# Generic imports
 import numpy as np
 from numpy import ndarray
 from types import SimpleNamespace
 from typing import Tuple, Any
 
-# Custom imports
 from sparkle.src.utils.default   import set_default
 from sparkle.src.agent.base      import BaseAgent
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB

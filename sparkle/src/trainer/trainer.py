@@ -1,4 +1,3 @@
-# Custom imports
 from sparkle.src.core.factory      import Factory
 from sparkle.src.trainer.regular   import Regular
 from sparkle.src.trainer.metamodel import Metamodel

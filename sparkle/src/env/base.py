@@ -1,9 +1,7 @@
-# Generic imports
 import numpy as np
 from numpy import ndarray
 from typing import Tuple
 
-# Custom imports
 from sparkle.src.env.parallel import parallel
 from sparkle.src.utils.error  import error
 

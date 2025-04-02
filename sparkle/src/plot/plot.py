@@ -1,9 +1,7 @@
-# Generic imports
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy import ndarray
 
-# Custom imports
 from sparkle.src.utils.error import error
 from sparkle.src.env.spaces import EnvSpaces
 

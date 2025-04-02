@@ -1,10 +1,8 @@
-# Generic imports
 import types
 import numpy as np
 from numpy import ndarray
 from typing import Callable, Optional, Tuple
 
-# Custom imports
 from sparkle.src.agent.lbfgsb import LBFGSB
 from sparkle.src.pex.mlhs     import MLHS
 from sparkle.src.env.spaces   import EnvSpaces

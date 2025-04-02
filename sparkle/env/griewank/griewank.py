@@ -1,7 +1,5 @@
-# Generic imports
 import numpy as np
 
-# Custom imports
 from sparkle.env.base_env import base_env
 
 ###############################################

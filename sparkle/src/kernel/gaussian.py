@@ -1,9 +1,7 @@
-# Generic imports
 import numpy as np
 from types import SimpleNamespace
 from typing import Optional
 
-# Custom imports
 from sparkle.src.kernel.base     import BaseKernel
 from sparkle.src.utils.distances import distance_all_to_all
 from numpy import ndarray

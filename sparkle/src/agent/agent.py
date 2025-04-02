@@ -1,4 +1,3 @@
-# Custom imports
 from sparkle.src.core.factory import Factory
 from sparkle.src.agent.pso    import PSO
 from sparkle.src.agent.cmaes  import CMAES

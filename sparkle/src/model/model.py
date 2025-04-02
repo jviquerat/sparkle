@@ -1,4 +1,3 @@
-# Custom imports
 from sparkle.src.core.factory  import Factory
 from sparkle.src.model.kriging import Kriging
 

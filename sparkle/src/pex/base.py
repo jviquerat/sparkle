@@ -1,4 +1,3 @@
-# Generic imports
 import math
 import numpy as np
 import matplotlib
@@ -6,7 +5,6 @@ import matplotlib.pyplot as plt
 from numpy import float64, ndarray
 from types import SimpleNamespace
 
-# Custom imports
 from sparkle.src.utils.distances import nearest_all_to_all
 from sparkle.src.utils.prints    import spacer, fmt_float
 from sparkle.src.utils.default   import set_default

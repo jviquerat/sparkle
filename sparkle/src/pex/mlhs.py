@@ -1,9 +1,7 @@
-# Generic imports
 import math
 import numpy as np
 from types import SimpleNamespace
 
-# Custom imports
 from sparkle.src.pex.base        import BasePex
 from sparkle.src.pex.lhs         import LHS
 from sparkle.src.utils.distances import distance, nearest_one_to_all, nearest_all_to_all

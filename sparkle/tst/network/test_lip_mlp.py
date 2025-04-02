@@ -1,7 +1,5 @@
-# Generic imports
 import torch
 
-# Custom imports
 from sparkle.src.utils.distances import tensor_distance
 from sparkle.src.network.lip_mlp import LipMLP
 

@@ -1,9 +1,7 @@
-# Generic imports
 import math
 import numpy as np
 from types import SimpleNamespace
 
-# Custom imports
 from sparkle.src.pex.base        import BasePex
 from sparkle.src.pex.fps         import FPS
 from sparkle.src.utils.distances import distance, min_distance

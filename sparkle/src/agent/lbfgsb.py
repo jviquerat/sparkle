@@ -1,9 +1,7 @@
-# Generic imports
 import numpy as np
 from numpy import ndarray
 from typing import Any, Callable, List, Optional, Tuple, Union
 
-# Custom imports
 from sparkle.src.utils.error import warning
 
 ###############################################

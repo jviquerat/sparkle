@@ -1,9 +1,7 @@
-# Generic imports
 import math
 import torch.nn as tnn
 from torch.nn.modules.container import ModuleList
 
-# Custom imports
 from sparkle.src.network.torch_layers import LipschitzLinear
 
 torch_activations = {

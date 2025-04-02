@@ -1,10 +1,8 @@
-# Generic imports
 import os
 import sys
 import time
 import shutil
 
-# Custom imports
 from sparkle.src.env.parallel    import parallel
 from sparkle.src.trainer.trainer import trainer_factory
 from sparkle.src.utils.data      import DataAvg

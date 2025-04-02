@@ -1,7 +1,5 @@
-# Generic imports
 import time
 
-# Custom imports
 from sparkle.src.utils.prints import spacer, fmt_float
 
 ###############################################
