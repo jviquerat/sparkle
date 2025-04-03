@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 
 import numpy as np
 from numpy import matmul, ndarray
-from numpy.linalg import solve
+from numpy.linalg import solve, cholesky
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.kernel.kernel import kernel_factory
@@ -54,6 +54,7 @@ class Kriging(BaseModel):
         """
 
         self.K_  = None
+        self.L_  = None
         self.x_  = None
         self.y_  = None
         self.it  = 0
@@ -77,6 +78,25 @@ class Kriging(BaseModel):
 
         self.it += 1
         self.K_  = self.kernel(self.x_, self.x_)
+        self.L_  = cholesky(self.K_)
+
+    def solve_linsys(self, L: ndarray, b: ndarray) -> ndarray:
+        """
+        Solves the linear system K * x = b using Cholesky decomposition.
+        It first solves L*y = b, then L.T*x = y
+
+        Args:
+            L: cholesky matrix
+            b: right hand side vector
+
+        Returns:
+            x: solution of the linear system
+        """
+
+        y = solve(self.L_, b)
+        x = solve(self.L_.T, y)
+
+        return x
 
     def evaluate(self, xt: ndarray) -> Tuple[ndarray, ndarray]:
         """
@@ -91,11 +111,12 @@ class Kriging(BaseModel):
                 - The predicted standard deviations at the test points.
         """
 
-        xn  = self.normalize(xt)
-        Kl  = self.kernel(xn, self.x_)
-        mu  = matmul(Kl, solve(self.K_, self.y_))
-        Kt  = self.kernel(xn, xn)
-        std = np.diag(Kt - matmul(Kl, solve(self.K_, Kl.T)))
+        xn = self.normalize(xt)
+        Kl = self.kernel(xn, self.x_)
+        mu = matmul(Kl, self.solve_linsys(self.L_, self.y_))
+        Kt = self.kernel(xn, xn)
+        v = self.solve_linsys(self.L_, Kl.T)
+        std = np.diag(Kt - matmul(Kl, v))
         std = np.sqrt(np.abs(std))
 
         return mu, std
@@ -115,9 +136,8 @@ class Kriging(BaseModel):
             f.write(f"{self.kernel.dim_} \n")
             f.write(f"{self.kernel.diag_eps_} \n")
             np.savetxt(f, self.kernel.theta_)
-            np.savetxt(f, self.K_)
-            np.savetxt(f, self.x_)
-            np.savetxt(f, self.y_)
+            np.savetxt(f, self.x)
+            np.savetxt(f, self.y)
 
     def load(self, filename: Optional[str]=None) -> None:
         """
@@ -139,7 +159,6 @@ class Kriging(BaseModel):
             self.kernel.dim_      = int(f.readline().split(" ")[0])
             self.kernel.diag_eps_ = float(f.readline().split(" ")[0])
 
-            self.K_     = np.zeros((self.kernel.ns_, self.kernel.ns_))
             self.x_     = np.zeros((self.kernel.ns_, self.kernel.nf_))
             self.y_     = np.zeros(self.kernel.ns_)
 
@@ -151,12 +170,6 @@ class Kriging(BaseModel):
 
             l += self.kernel.dim_
             for i in range(self.kernel.dim_): f.readline()
-            self.K_ = np.loadtxt(filename,
-                                 skiprows=l,
-                                 max_rows=self.kernel.ns_)
-
-            l += self.kernel.ns_
-            for i in range(self.kernel.ns_): f.readline()
             self.x_ = np.loadtxt(filename,
                                  skiprows=l,
                                  max_rows=self.kernel.ns_)
@@ -166,3 +179,5 @@ class Kriging(BaseModel):
             self.y_ = np.loadtxt(filename,
                                  skiprows=l,
                                  max_rows=self.kernel.ns_)
+
+        self.build(self.x_, self.y_)
