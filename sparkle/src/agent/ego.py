@@ -71,22 +71,6 @@ class EGO(BaseAgent):
         k = np.argmin(self.model.y)
         return self.model.x[k], self.model.y[k]
 
-    def opt_infill(self, x: ndarray) -> ndarray:
-        """
-        Local function for optimization of the infill criterion.
-
-        This function is used internally by the optimizer to minimize the
-        negative of the infill criterion.
-
-        Args:
-            x: The point at which to evaluate the infill criterion.
-
-        Returns:
-            The negative of the infill criterion value at x.
-        """
-
-        return -self.infill(x)
-
     def sample(self) -> ndarray:
         """
         Samples a new point based on the expected improvement criterion.
@@ -103,12 +87,15 @@ class EGO(BaseAgent):
         self.infill.set_best(xb, yb)
 
         # Optimize
+        f_lambda = lambda x: -self.infill(x)
         opt  = MSLBFGSB()
-        x, c = opt.optimize(self.opt_infill,
+        x, c = opt.optimize(f_lambda,
                             self.spaces.xmin,
                             self.spaces.xmax,
-                            n_pts=20*self.spaces.dim,
-                            tol=1.0e-6, max_iter=50)
+                            n_pts=10*self.spaces.dim,
+                            m=20,
+                            tol=1.0e-6,
+                            max_iter=200)
 
         return np.reshape(x, (-1,self.spaces.dim))
 
