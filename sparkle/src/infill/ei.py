@@ -44,7 +44,13 @@ class EI():
 
     def ei(self, x: ndarray) -> ndarray:
         """
-        Computes the Expected Improvement at a set of points.
+        Computes the Expected Improvement at a set of points:
+
+        ei(x) = std(x)*(phi(z) + z*Phi(z))
+
+        with z = (y* - mu(x))/std(x)
+             phi(z) is the pdf of the normal distribution
+             Phi(z) is the cdf of the normal distribution
 
         Args:
             x: A NumPy array of points at which to compute the EI.
