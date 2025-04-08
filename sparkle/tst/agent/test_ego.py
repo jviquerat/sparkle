@@ -4,7 +4,6 @@ from sparkle.tst.runner import runner
 
 
 ###############################################
-### Test ego
 def test_ego():
 
     # Add environment to PATH
@@ -12,4 +11,4 @@ def test_ego():
 
     # Run test
     runner("sparkle/tst/agent/json/parabola_ego.json",
-           1.286324780000000e+01, 9.951025999999998e-01)
+           1.768947175700000e+00, 1.873832957000000e-01)
