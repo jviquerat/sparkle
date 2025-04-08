@@ -5,7 +5,6 @@ import numpy as np
 from numpy import ndarray
 
 from sparkle.src.env.spaces import EnvSpaces
-from sparkle.src.model.kriging import Kriging
 
 
 ###############################################
