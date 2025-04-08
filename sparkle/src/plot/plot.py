@@ -249,6 +249,12 @@ def render_1D_metamodel(filename: str,
 
     ax = fig.add_subplot(212)
     ax.set_xlim([spaces.xmin[0], spaces.xmax[0]])
+    ratio = np.max(abs(fct))/np.min(abs(fct) + 1.0e-5)
+    if ratio > 100:
+        if np.any(fct < 0.0):
+            ax.set_yscale("symlog")
+        else:
+            ax.set_yscale("log")
     ax.plot(x_plot, fct, color='r')
     ax.grid()
     ax.set_yticklabels([])
