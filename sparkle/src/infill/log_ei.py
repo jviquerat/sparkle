@@ -42,7 +42,7 @@ class LogEI():
         self.xb = xb
         self.yb = yb
 
-    def _log_ei(self, x: ndarray) -> ndarray:
+    def log_ei(self, x: ndarray) -> ndarray:
         """
         Computes the Log Expected Improvement at a set of points.
 
@@ -92,7 +92,7 @@ class LogEI():
             A NumPy array of the LogEI values at the given points.
         """
 
-        return self._log_ei(x)
+        return self.log_ei(x)
 
 def log1mexp(x: float) -> float:
     """

@@ -42,7 +42,7 @@ class EI():
         self.xb = xb
         self.yb = yb
 
-    def _ei(self, x: ndarray) -> ndarray:
+    def ei(self, x: ndarray) -> ndarray:
         """
         Computes the Expected Improvement at a set of points.
 
@@ -81,4 +81,4 @@ class EI():
             A NumPy array of the EI values at the given points.
         """
 
-        return self._ei(x)
+        return self.ei(x)
