@@ -10,7 +10,6 @@ from sparkle.src.pex.mlhs import MLHS
 
 
 ###############################################
-
 class MSLBFGSB():
     """
     Multi-start L-BFGS-B optimizer.
