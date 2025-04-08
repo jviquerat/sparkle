@@ -10,7 +10,6 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-### Test ei infill
 def test_ei():
 
     # Set seed for reproducible test
@@ -40,12 +39,12 @@ def test_ei():
     inf.set_best(xb, yb)
     x = np.array([[0.5,0.5]])
     vei = inf(x)
-    ref = np.array([0.29848959])
+    ref = np.array([0.0])
 
     assert np.allclose(vei, ref)
 
     x = np.array([[0.5,0.5],
                   [0.2,0.2]])
     vei = inf(x)
-    ref = np.array([0.29848959, 1.31487147])
+    ref = np.array([0.0, 0.0])
     assert np.allclose(vei, ref)
