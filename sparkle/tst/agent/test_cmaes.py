@@ -4,7 +4,6 @@ from sparkle.tst.runner import runner
 
 
 ###############################################
-### Test cmaes
 def test_cmaes():
 
     # Add environment to PATH

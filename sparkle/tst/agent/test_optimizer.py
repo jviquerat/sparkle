@@ -9,7 +9,6 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-### Test transparent optimizer
 def test_optimizer():
 
     # Set seed for reproducible test
