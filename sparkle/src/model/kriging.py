@@ -93,8 +93,8 @@ class Kriging(BaseModel):
             x: solution of the linear system
         """
 
-        y = solve(self.L_, b)
-        x = solve(self.L_.T, y)
+        y = solve(L, b)
+        x = solve(L.T, y)
 
         return x
 
