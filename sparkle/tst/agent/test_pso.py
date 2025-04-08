@@ -4,7 +4,6 @@ from sparkle.tst.runner import runner
 
 
 ###############################################
-### Test pso
 def test_pso():
 
     # Add environment to PATH

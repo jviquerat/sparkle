@@ -7,7 +7,6 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-### Test L-BFGS-B
 def test_lbfgsb():
 
     # Set seed for reproducible test
@@ -56,7 +55,6 @@ def test_lbfgsb():
     assert compare(c, c_ref, 1.0e-15)
 
 ###############################################
-### Test multi-start L-BFGS-B
 def test_mslbfgsb():
 
     # Set seed for reproducible test

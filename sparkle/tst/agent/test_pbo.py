@@ -4,7 +4,6 @@ from sparkle.tst.runner import runner
 
 
 ###############################################
-### Test pbo
 def test_pbo():
 
     # Add environment to PATH
@@ -15,7 +14,6 @@ def test_pbo():
            1.296554897777778e-07, 6.301704800000000e-09)
 
 ###############################################
-### Test pbo with default parameters
 def test_pbo_default():
 
     # Add environment to PATH
