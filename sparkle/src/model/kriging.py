@@ -76,9 +76,10 @@ class Kriging(BaseModel):
         if (self.it%self.optimize_every_ == 0):
             self.kernel.optimize(self.x_, self.y_)
 
-        self.it += 1
         self.C_  = self.kernel(self.x_, self.x_)
         self.L_  = cholesky(self.C_)
+
+        self.it += 1
 
     def solve_linsys(self, L: ndarray, b: ndarray) -> ndarray:
         """
