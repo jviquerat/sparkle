@@ -98,7 +98,10 @@ class Kriging(BaseModel):
 
     def evaluate(self, x_test: ndarray) -> Tuple[ndarray, ndarray]:
         """
-        Evaluates the Kriging model at test points.
+        Evaluates the Kriging model at test points
+
+        mu = c(x) @ C_inv @ y
+        std² = diag(c(x,x) - c(x) @ C_inv @ c(x).T)
 
         Shapes:
             nt is the number of test points
@@ -117,24 +120,83 @@ class Kriging(BaseModel):
         x = self.normalize(x_test) # shape (nt, d)
 
         # Computation of mu
-        # C_inv     -> shape (ns, ns)
-        # y         -> shape (ns,)
-        # C_inv @ y -> shape (ns)
-        # c         -> shape (nt, ns)
-        c  = self.kernel(x, self.x_) # c(x), shape (nt, ns)
-        mu = matmul(c, self.solve_linsys(self.L_, self.y_)) # c @ C_inv @ y, shape (nt,)
+        # C_inv         -> shape (ns, ns)
+        # y             -> shape (ns,)
+        # C_inv @ y     -> shape (ns)
+        # c             -> shape (nt, ns)
+        # c @ C_inv @ y -> shape (nt,)
+        c  = self.kernel(x, self.x_)
+        mu = matmul(c, self.solve_linsys(self.L_, self.y_))
 
         # Computation of std
-        # C_inv       -> shape (ns, ns)
-        # c.T         -> shape (ns, nt)
-        # C_inv @ c.T -> shape (ns, nt)
-        # c           -> shape (nt, ns)
-        # C(x,x)      -> shape (nt, nt)
-        s   = matmul(c, self.solve_linsys(self.L_, c.T)) # c @ C_inv @ c.T, shape (nt, nt)
-        std = np.diag(self.kernel(x,x) - s) # shape (nt,)
-        std = np.sqrt(np.abs(std))
+        # C_inv           -> shape (ns, ns)
+        # c.T             -> shape (ns, nt)
+        # C_inv @ c.T     -> shape (ns, nt)
+        # c               -> shape (nt, ns)
+        # C(x,x)          -> shape (nt, nt)
+        # c @ C_inv @ c.T -> shape (nt, nt)
+        s = matmul(c, self.solve_linsys(self.L_, c.T))
+        std_squared = np.diag(self.kernel(x,x) - s)
+        std = np.sqrt(np.abs(std_squared))
 
         return mu, std
+
+    def evaluate_grad(self, x_test: ndarray) -> Tuple[ndarray, ndarray]:
+        """
+        Evaluates the gradient of mu and std at test points
+
+        grad_mu = grad_c(x).T @ C_inv @ y
+        grad_std = -grad_c(x).T @ C_inv @ c.T / std
+
+        Shapes:
+            nt is the number of test points
+            ns is the number of samples of the model
+            d  is the dimension of each point
+
+        Args:
+            x_test: The test points at which to evaluate the gradients of the model, shape (nt, d)
+
+        Returns:
+            A tuple containing:
+                - The gradient of mu  at the test points.
+                - The gradient of std at the test points.
+        """
+
+        # Initial computations
+        # x     -> shape (nt, d)
+        # c     -> shape (nt, ns)
+        # dc_dx -> shape (nt, ns, d)
+        x = self.normalize(x_test)
+        c = self.kernel.covariance(x, self.x_, self.kernel.theta_)
+        dc_dx = self.kernel.covariance_dx(x, self.x_, self.kernel.theta_)
+
+        # Gradient of mu
+        # y                          -> shape (ns,)
+        # C_inv                      -> shape (ns, ns)
+        # C_inv @ y                  -> shape (ns,)
+        # dc_dx                      -> shape (nt, ns, d)
+        # dc_dx[i,:,:].T             -> shape (d, ns)
+        # dc_dx[i,:,:].T @ C_inv @ y -> shape (d,)
+        grad_mu = np.zeros_like(x_test)
+        for i in range(x_test.shape[0]):
+            grad_mu[i, :]  = matmul(dc_dx[i,:,:].T, self.solve_linsys(self.L_, self.y_))
+            grad_mu[i, :] /= self.spaces.xmax - self.spaces.xmin
+
+        # Gradient of std
+        # C_inv                             -> shape (ns, ns)
+        # c                                 -> shape (nt, ns)
+        # dc_dx                             -> shape (nt, ns, d)
+        # dc_dx[i,:,:].T                    -> shape (d, ns)
+        # C_inv @ c[i,:].T                  -> shape (ns, 1)
+        # dc_dx[i,:,:].T @ C_inv @ c[i,:].T -> shape (d,)
+        grad_std = np.zeros_like(x_test)
+        mu, std = self.evaluate(x_test) # Provide the non-normalized x
+        for i in range(x_test.shape[0]):
+            tmp = matmul(dc_dx[i,:,:].T, self.solve_linsys(self.L_, c[i, :].T))
+            grad_std[i, :]  = -tmp/std[i]
+            grad_std[i, :] /= self.spaces.xmax - self.spaces.xmin
+
+        return grad_mu, grad_std
 
     def dump(self, filename: str="kriging.dat") -> None:
         """
