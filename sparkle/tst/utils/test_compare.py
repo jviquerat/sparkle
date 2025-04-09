@@ -4,7 +4,6 @@ from sparkle.src.utils.compare import compare
 
 
 ###############################################
-### Test comparison
 def test_compare():
 
     # Comparing true

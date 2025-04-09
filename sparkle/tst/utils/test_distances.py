@@ -14,7 +14,6 @@ from sparkle.src.utils.distances import (
 
 
 ###############################################
-### Test distance
 def test_distance():
 
     x = np.zeros(5)
@@ -23,7 +22,6 @@ def test_distance():
     assert compare(d, math.sqrt(5.0), 1.0e-15)
 
 ###############################################
-### Test distance_one_to_all
 def test_distance_all_to_all():
 
     x = np.array([[1.0, 1.0],
@@ -36,7 +34,6 @@ def test_distance_all_to_all():
     assert np.allclose(d, ref)
 
 ###############################################
-### Test nearest_one_to_all
 def test_nearest_one_to_all():
 
     x = np.array([[1.0, 1.0],
@@ -47,7 +44,6 @@ def test_nearest_one_to_all():
     assert p == 1
 
 ###############################################
-### Test nearest_all_to_all
 def test_nearest_all_to_all():
 
     x = np.array([[1.0, 1.0],
@@ -58,7 +54,6 @@ def test_nearest_all_to_all():
     assert np.allclose(p, [1,0,1])
 
 ###############################################
-### Test min_distance
 def test_min_distance():
 
     x = np.array([[1.0, 1.0],
@@ -68,7 +63,6 @@ def test_min_distance():
     assert compare(d, math.sqrt(2.0), 1.0e-15)
 
 ###############################################
-### Test min_max_distance
 def test_min_max_distance():
 
     x = np.array([[1.0, 1.0],

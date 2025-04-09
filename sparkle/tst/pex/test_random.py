@@ -8,7 +8,6 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-### Test random pex
 def test_random():
 
     set_seeds(0)

@@ -9,7 +9,6 @@ from sparkle.src.pex.lhs import LHS
 
 
 ###############################################
-### Test kriging model
 def test_kriging():
 
     pms          = types.SimpleNamespace()

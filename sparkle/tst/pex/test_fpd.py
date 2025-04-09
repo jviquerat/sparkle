@@ -8,7 +8,6 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-### Test fixed_poisson_disc pex
 def test_fpd():
 
     set_seeds(0)

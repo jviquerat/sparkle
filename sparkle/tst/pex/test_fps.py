@@ -9,7 +9,6 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-### Test furthest point sampling
 def test_fps():
 
     set_seeds(0)

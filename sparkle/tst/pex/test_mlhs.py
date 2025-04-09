@@ -8,7 +8,6 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-### Test maximin lhs pex
 def test_maximin_lhs():
 
     set_seeds(0)
