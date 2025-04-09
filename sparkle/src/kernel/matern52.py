@@ -92,7 +92,8 @@ class Matern52(BaseKernel):
         f     = (1.0 + ratio*dist + ratio**2*dist**2/3.0)
         g     = np.exp(-ratio*dist)
 
-        v = ((1.0 - f)/dist + 2.0*ratio/3.0)*delta**2*ratio*dx*g
+        v = ((1.0 - f)/dist + 2.0*ratio/3.0)*delta**2*ratio*g # shape (ni, nj)
+        v = v[:, :, np.newaxis]*dx # shape (ni, nj, d)
 
         return v
 
