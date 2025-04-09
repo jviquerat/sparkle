@@ -53,7 +53,7 @@ class Kriging(BaseModel):
         Resets the Kriging model.
         """
 
-        self.K_  = None
+        self.C_  = None
         self.L_  = None
         self.x_  = None
         self.y_  = None
@@ -77,8 +77,8 @@ class Kriging(BaseModel):
             self.kernel.optimize(self.x_, self.y_)
 
         self.it += 1
-        self.K_  = self.kernel(self.x_, self.x_)
-        self.L_  = cholesky(self.K_)
+        self.C_  = self.kernel(self.x_, self.x_)
+        self.L_  = cholesky(self.C_)
 
     def solve_linsys(self, L: ndarray, b: ndarray) -> ndarray:
         """
@@ -98,12 +98,17 @@ class Kriging(BaseModel):
 
         return x
 
-    def evaluate(self, xt: ndarray) -> Tuple[ndarray, ndarray]:
+    def evaluate(self, x_test: ndarray) -> Tuple[ndarray, ndarray]:
         """
         Evaluates the Kriging model at test points.
 
+        Shapes:
+            nt is the number of test points
+            ns is the number of samples of the model
+            d  is the dimension of each point
+
         Args:
-            xt: The test points at which to evaluate the model.
+            x_test: The test points at which to evaluate the model, shape (nt, d)
 
         Returns:
             A tuple containing:
@@ -111,12 +116,24 @@ class Kriging(BaseModel):
                 - The predicted standard deviations at the test points.
         """
 
-        xn = self.normalize(xt)
-        Kl = self.kernel(xn, self.x_)
-        mu = matmul(Kl, self.solve_linsys(self.L_, self.y_))
-        Kt = self.kernel(xn, xn)
-        v = self.solve_linsys(self.L_, Kl.T)
-        std = np.diag(Kt - matmul(Kl, v))
+        x = self.normalize(x_test) # shape (nt, d)
+
+        # Computation of mu
+        # C_inv     -> shape (ns, ns)
+        # y         -> shape (ns,)
+        # C_inv @ y -> shape (ns)
+        # c         -> shape (nt, ns)
+        c  = self.kernel(x, self.x_) # c(x), shape (nt, ns)
+        mu = matmul(c, self.solve_linsys(self.L_, self.y_)) # c @ C_inv @ y, shape (nt,)
+
+        # Computation of std
+        # C_inv       -> shape (ns, ns)
+        # c.T         -> shape (ns, nt)
+        # C_inv @ c.T -> shape (ns, nt)
+        # c           -> shape (nt, ns)
+        # C(x,x)      -> shape (nt, nt)
+        s   = matmul(c, self.solve_linsys(self.L_, c.T)) # c @ C_inv @ c.T, shape (nt, nt)
+        std = np.diag(self.kernel(x,x) - s) # shape (nt,)
         std = np.sqrt(np.abs(std))
 
         return mu, std
