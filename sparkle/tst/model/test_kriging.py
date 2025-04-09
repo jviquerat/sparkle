@@ -35,5 +35,5 @@ def test_kriging():
     model.dump(filename)
     model.load(filename)
 
-    assert model.evaluate(x_new) == y_new
+    assert np.allclose(model.evaluate(x_new), y_new)
     os.remove(filename)
