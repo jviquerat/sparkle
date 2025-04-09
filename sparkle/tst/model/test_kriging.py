@@ -1,15 +1,16 @@
 import os
 import types
 
+import pytest
 import numpy as np
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.model.kriging import Kriging
 from sparkle.src.pex.lhs import LHS
 
-
+@pytest.mark.parametrize("kernel_type", [("gaussian"), ("matern52")])
 ###############################################
-def test_kriging():
+def test_kriging(kernel_type):
 
     pms          = types.SimpleNamespace()
     pms.n_points = 10
@@ -23,7 +24,7 @@ def test_kriging():
 
     pms             = types.SimpleNamespace()
     pms.kernel      = types.SimpleNamespace()
-    pms.kernel.name = "gaussian"
+    pms.kernel.name = kernel_type
     model           = Kriging(space, ".", pms)
     model.build(lhs_pex.x, y)
 
