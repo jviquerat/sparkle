@@ -158,8 +158,8 @@ class Kriging(BaseModel):
 
         Returns:
             A tuple containing:
-                - The gradient of mu  at the test points.
-                - The gradient of std at the test points.
+                - The gradient of mu  at the test points, shape (nt, d)
+                - The gradient of std at the test points, shape (nt, d)
         """
 
         # Initial computations
