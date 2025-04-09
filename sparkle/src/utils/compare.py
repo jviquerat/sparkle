@@ -1,8 +1,6 @@
 import math
 import sys
 
-from numpy import float64
-
 
 def compare(x: float, y: float, eps: float=1.0e-8) -> bool:
     """
