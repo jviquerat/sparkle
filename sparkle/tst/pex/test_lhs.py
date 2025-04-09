@@ -8,7 +8,6 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-### Test lhs pex
 def test_lhs():
 
     set_seeds(0)

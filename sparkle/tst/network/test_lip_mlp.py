@@ -5,7 +5,6 @@ from sparkle.src.utils.distances import tensor_distance
 
 
 ###############################################
-### Test lipschitz mlp
 def test_lip_mlp():
 
     # lip mlp with input of size 3, output of size 1, lip_constant of 1

@@ -4,7 +4,6 @@ from sparkle.src.network.mlp import MLP
 
 
 ###############################################
-### Test mlp
 def test_mlp():
 
     # mlp with input of size 3, output of size 1

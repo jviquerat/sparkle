@@ -4,7 +4,6 @@ from sparkle.src.network.branched_mlp import BranchedMLP
 
 
 ###############################################
-### Test branched_mlp
 def test_branched_mlp():
 
     # branched mlp with input of size 3, output of size 1,

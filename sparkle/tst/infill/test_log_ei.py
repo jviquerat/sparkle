@@ -10,7 +10,6 @@ from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-### Test log_ei infill
 def test_log_ei():
 
     # Set seed for reproducible test
