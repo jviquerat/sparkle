@@ -93,10 +93,7 @@ class Kriging(BaseModel):
             x: solution of the linear system
         """
 
-        y = solve(L, b)
-        x = solve(L.T, y)
-
-        return x
+        return solve(L.T, solve(L, b))
 
     def evaluate(self, x_test: ndarray) -> Tuple[ndarray, ndarray]:
         """
