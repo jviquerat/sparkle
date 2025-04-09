@@ -53,10 +53,10 @@ class EI():
              Phi(z) is the cdf of the normal distribution
 
         Args:
-            x: A NumPy array of points at which to compute the EI.
+            x: A NumPy array of points at which to compute the EI, shape (n, d)
 
         Returns:
-            A NumPy array of the EI values at the given points.
+            A NumPy array of the EI values at the given points, shape (n,)
         """
 
         x       = np.reshape(x, (-1,self.spaces.dim))
@@ -72,6 +72,32 @@ class EI():
             ei[i] = std[i]*(phi + z*Phi)
 
         return ei
+
+    def ei_grad(self, x: ndarray) -> ndarray:
+        """
+        Computes the gradient of EI at a set of points:
+
+        ei_grad(x) = - grad_m(x) Phi(z) + grad_s(x) phi(z)
+
+        Args:
+            x: A NumPy array of points at which to compute the gradient of EI, shape (n,d)
+
+        Returns:
+            A NumPy array of the EI gradient values at the given points, shape (n, d)
+        """
+
+        x       = np.reshape(x, (-1,self.spaces.dim))
+        mu, std = self.model.evaluate(x)
+        grad_mu, grad_std = self.model.evaluate_grad(x)
+
+        grad_ei = np.zeros_like(x)
+        for i in range(x.shape[0]):
+            z     = (self.yb - mu[i])/std[i]
+            phi   = (1.0/sqrt(2.0*pi))*exp(-0.5*z**2)
+            Phi   = 0.5*(1.0 + erf(z/sqrt(2.0)))
+            grad_ei[i] = -grad_mu[i,:]*phi + grad_std[i,:]*Phi
+
+        return grad_ei
 
     def __call__(self, x: ndarray) -> ndarray:
         """
