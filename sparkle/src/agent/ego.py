@@ -88,10 +88,12 @@ class EGO(BaseAgent):
 
         # Optimize
         f_lambda = lambda x: -self.infill(x)
+        grad_lambda = lambda x: -self.infill.grad(x)[0]
         opt  = MSLBFGSB()
         x, c = opt.optimize(f_lambda,
                             self.spaces.xmin,
                             self.spaces.xmax,
+                            df=grad_lambda,
                             n_pts=10*self.spaces.dim,
                             m=20,
                             tol=1.0e-6,
