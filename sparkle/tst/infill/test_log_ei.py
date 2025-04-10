@@ -46,6 +46,7 @@ def test_log_ei(kernel_type, ref0, ref1):
     inf = LogEI(space, model)
     inf.set_best(xb, yb)
 
+    # Test () function
     x = np.array([[0.5,0.5]])
     vei = inf(x)
     assert np.allclose(vei, ref0)
@@ -54,3 +55,21 @@ def test_log_ei(kernel_type, ref0, ref1):
                   [0.2,0.2]])
     vei = inf(x)
     assert np.allclose(vei, ref1)
+
+    # # Test gradient function
+    # grad_log_ei = inf.grad(x)
+    # grad_log_ei_fd = np.zeros_like(grad_log_ei)
+    # eps = 1.0e-8
+
+    # for i in range(x.shape[0]):
+    #     for j in range(space_dict["dim"]):
+    #         dx = np.zeros_like(x[i])
+    #         dx[j] = eps
+
+    #         x_plus = x[[i]] + dx
+    #         x_minus = x[[i]] - dx
+    #         log_ei_plus = inf(x_plus)
+    #         log_ei_minus = inf(x_minus)
+    #         grad_log_ei_fd[i, j] = (log_ei_plus[0] - log_ei_minus[0])/(2.0 * eps)
+
+    # assert np.allclose(grad_log_ei, grad_log_ei_fd)
