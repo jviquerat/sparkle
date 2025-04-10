@@ -1,5 +1,6 @@
 import types
 
+import pytest
 import numpy as np
 
 from sparkle.src.env.spaces import EnvSpaces
@@ -8,9 +9,16 @@ from sparkle.src.model.kriging import Kriging
 from sparkle.src.pex.lhs import LHS
 from sparkle.src.utils.seeds import set_seeds
 
-
+@pytest.mark.parametrize("kernel_type, ref0, ref1",
+                         [("gaussian",
+                           np.array([0.0]),
+                           np.array([0.0, 0.0])),
+                          ("matern52",
+                           np.array([0.0]),
+                           np.array([0.0, 0.0]))
+                          ])
 ###############################################
-def test_ei():
+def test_ei(kernel_type, ref0, ref1):
 
     # Set seed for reproducible test
     set_seeds(0)
@@ -27,7 +35,7 @@ def test_ei():
 
     pms             = types.SimpleNamespace()
     pms.kernel      = types.SimpleNamespace()
-    pms.kernel.name = "gaussian"
+    pms.kernel.name = kernel_type
     model           = Kriging(space, ".", pms)
     model.build(lhs_pex.x, y)
 
@@ -41,15 +49,12 @@ def test_ei():
     # Test () function
     x = np.array([[0.5,0.5]])
     vei = inf(x)
-    ref = np.array([0.0])
-
-    assert np.allclose(vei, ref)
+    assert np.allclose(vei, ref0)
 
     x = np.array([[0.5,0.5],
                   [0.2,0.2]])
     vei = inf(x)
-    ref = np.array([0.0, 0.0])
-    assert np.allclose(vei, ref)
+    assert np.allclose(vei, ref1)
 
     # Test gradient function
     ei_grad = inf.ei_grad(x)
