@@ -35,7 +35,7 @@ class Gaussian(BaseKernel):
     def covariance(self,
                    x: ndarray,
                    y: ndarray,
-                   theta: ndarray) -> ndarray:
+                   theta: Optional[ndarray]=None) -> ndarray:
         """
         Computes the Gaussian covariance matrix between two sets of points:
 
@@ -51,6 +51,7 @@ class Gaussian(BaseKernel):
         Returns:
             The Gaussian covariance matrix between x and y, shape (ni, nj)
         """
+        if theta is None: theta = self.theta_
 
         dist = distance_all_to_all(x, y)
         v    = np.exp(-0.5*(dist/theta[0])**2)
@@ -60,7 +61,7 @@ class Gaussian(BaseKernel):
     def covariance_dx(self,
                       x: ndarray,
                       y: ndarray,
-                      theta: ndarray) -> ndarray:
+                      theta: Optional[ndarray]=None) -> ndarray:
         """
         Computes the derivative of the Gaussian covariance function with
         respect to the first variable x:
@@ -76,6 +77,7 @@ class Gaussian(BaseKernel):
             The derivative of the Gaussian covariance matrix with respect to x,
             with shape (ni, nj, d)
         """
+        if theta is None: theta = self.theta_
 
         dx = x[:, np.newaxis, :] - y[np.newaxis, :, :] # x - y
         dk = -(dx/theta**2)*self.covariance(x, y, theta)[:, :, np.newaxis]

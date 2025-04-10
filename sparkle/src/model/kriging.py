@@ -167,8 +167,8 @@ class Kriging(BaseModel):
         # c     -> shape (nt, ns)
         # dc_dx -> shape (nt, ns, d)
         x = self.normalize(x_test)
-        c = self.kernel.covariance(x, self.x_, self.kernel.theta_)
-        dc_dx = self.kernel.covariance_dx(x, self.x_, self.kernel.theta_)
+        c = self.kernel.covariance(x, self.x_)
+        dc_dx = self.kernel.covariance_dx(x, self.x_)
 
         # Gradient of mu
         # y                          -> shape (ns,)
