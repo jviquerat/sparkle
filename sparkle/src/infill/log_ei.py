@@ -5,6 +5,7 @@ import numpy as np
 from numpy import ndarray
 
 from sparkle.src.env.spaces import EnvSpaces
+from sparkle.src.infill.ei import EI
 
 
 ###############################################
@@ -29,6 +30,7 @@ class LogEI():
         self.spaces = spaces
         self.model  = model
         self.bound  =-1.0e8
+        self.ei     = EI(spaces, model)
 
     def set_best(self, xb: ndarray, yb: float) -> None:
         """
@@ -39,6 +41,7 @@ class LogEI():
             yb: The function value at the best point.
         """
 
+        self.ei.set_best(xb, yb)
         self.xb = xb
         self.yb = yb
 
@@ -77,6 +80,22 @@ class LogEI():
             lgei[i] += log(std[i])
 
         return lgei
+
+    def grad(self, x: ndarray) -> ndarray:
+        """
+        Computes the gradient of log_ei at a set of points:
+
+        grad_log_ei(x) = grad_ei(x)/ei(x)
+
+        Args:
+            x: A NumPy array of points at which to compute the gradient of EI, shape (n,d)
+
+        Returns:
+            A NumPy array of the log_ei gradient values at the given points, shape (n, d)
+        """
+
+        # XXX probably not stable
+        return self.ei.grad(x)/(self.ei(x) + 1.0e-8)
 
     def __call__(self, x: ndarray) -> ndarray:
         """
