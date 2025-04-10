@@ -1,5 +1,6 @@
 import types
 
+import pytest
 import numpy as np
 
 from sparkle.src.env.spaces import EnvSpaces
@@ -8,9 +9,16 @@ from sparkle.src.model.kriging import Kriging
 from sparkle.src.pex.lhs import LHS
 from sparkle.src.utils.seeds import set_seeds
 
-
+@pytest.mark.parametrize("kernel_type, ref0, ref1",
+                         [("gaussian",
+                           np.array([-5567.79385322]),
+                           np.array([-5567.79385331, -62.12016033])),
+                          ("matern52",
+                           np.array([-2562.66880535]),
+                           np.array([-2562.66880535, -77.39146467]))
+                          ])
 ###############################################
-def test_log_ei():
+def test_log_ei(kernel_type, ref0, ref1):
 
     # Set seed for reproducible test
     set_seeds(0)
@@ -27,7 +35,7 @@ def test_log_ei():
 
     pms             = types.SimpleNamespace()
     pms.kernel      = types.SimpleNamespace()
-    pms.kernel.name = "matern52"
+    pms.kernel.name = kernel_type
     model           = Kriging(space, ".", pms)
     model.build(lhs_pex.x, y)
 
@@ -40,11 +48,9 @@ def test_log_ei():
 
     x = np.array([[0.5,0.5]])
     vei = inf(x)
-    ref = np.array([-2562.66880535])
-    assert np.allclose(vei, ref)
+    assert np.allclose(vei, ref0)
 
     x = np.array([[0.5,0.5],
                   [0.2,0.2]])
     vei = inf(x)
-    ref = np.array([-2562.66880535, -77.39146467])
-    assert np.allclose(vei, ref)
+    assert np.allclose(vei, ref1)
