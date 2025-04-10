@@ -35,7 +35,7 @@ class Matern52(BaseKernel):
     def covariance(self,
                    x: ndarray,
                    y: ndarray,
-                   theta: ndarray) -> ndarray:
+                   theta: Optional[ndarray]=None) -> ndarray:
         """
         Computes the Matern 5/2 covariance function between two sets of points:
 
@@ -53,6 +53,7 @@ class Matern52(BaseKernel):
         Returns:
             The Matern 5/2 covariance matrix between x and y.
         """
+        if theta is None: theta = self.theta_
 
         dist  = distance_all_to_all(x, y)
         sigma = theta[0]
@@ -66,7 +67,7 @@ class Matern52(BaseKernel):
     def covariance_dx(self,
                       x: ndarray,
                       y: ndarray,
-                      theta: ndarray) -> ndarray:
+                      theta: Optional[ndarray]=None) -> ndarray:
         """
         Computes the derivative of the Matern 5/2 covariance function with
         respect to the first variable x:
@@ -83,6 +84,8 @@ class Matern52(BaseKernel):
         Returns:
             The derivative of the Matern 5/2 covariance matrix with respect to x.
         """
+        if theta is None: theta = self.theta_
+        
         dist = distance_all_to_all(x, y)
         dx   = x[:, np.newaxis, :] - y[np.newaxis, :, :] # x - y
 
