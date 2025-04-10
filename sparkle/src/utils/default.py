@@ -15,5 +15,4 @@ def set_default(name: str, default_value: Any, pms: SimpleNamespace) -> Any:
         The value of the parameter, either the user-specified value or the default value.
     """
 
-    if (hasattr(pms, name)): return getattr(pms, name)
-    else: return default_value
+    return getattr(pms, name, default_value)
