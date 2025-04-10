@@ -57,8 +57,8 @@ def test_ei(kernel_type, ref0, ref1):
     assert np.allclose(vei, ref1)
 
     # Test gradient function
-    ei_grad = inf.ei_grad(x)
-    ei_grad_fd = np.zeros_like(ei_grad)
+    grad_ei = inf.grad(x)
+    grad_ei_fd = np.zeros_like(grad_ei)
     eps = 1.0e-8
 
     for i in range(x.shape[0]):
@@ -70,6 +70,6 @@ def test_ei(kernel_type, ref0, ref1):
             x_minus = x[[i]] - dx
             ei_plus = inf(x_plus)
             ei_minus = inf(x_minus)
-            ei_grad_fd[i, j] = (ei_plus[0] - ei_minus[0])/(2.0 * eps)
+            grad_ei_fd[i, j] = (ei_plus[0] - ei_minus[0])/(2.0 * eps)
 
-    assert np.allclose(ei_grad, ei_grad_fd)
+    assert np.allclose(grad_ei, grad_ei_fd)
