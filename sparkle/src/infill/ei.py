@@ -73,11 +73,11 @@ class EI():
 
         return ei
 
-    def ei_grad(self, x: ndarray) -> ndarray:
+    def grad(self, x: ndarray) -> ndarray:
         """
         Computes the gradient of EI at a set of points:
 
-        ei_grad(x) = - grad_m(x) Phi(z) + grad_s(x) phi(z)
+        grad_ei(x) = - grad_m(x) Phi(z) + grad_s(x) phi(z)
 
         Args:
             x: A NumPy array of points at which to compute the gradient of EI, shape (n,d)
