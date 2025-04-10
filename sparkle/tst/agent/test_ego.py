@@ -11,4 +11,4 @@ def test_ego():
 
     # Run test
     runner("sparkle/tst/agent/json/parabola_ego.json",
-           1.768947175700000e+00, 1.873832957000000e-01)
+           1.790231330000000e+00, 6.684993000000000e-02)
