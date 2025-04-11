@@ -85,7 +85,7 @@ class Matern52(BaseKernel):
             The derivative of the Matern 5/2 covariance matrix with respect to x.
         """
         if theta is None: theta = self.theta_
-        
+
         dist = distance_all_to_all(x, y)
         dx   = x[:, np.newaxis, :] - y[np.newaxis, :, :] # x - y
 
@@ -126,13 +126,12 @@ class Matern52(BaseKernel):
         """
 
         # Here m = 2 (sigma, delta)
-        m     = theta.shape[0]
-        dk    = np.zeros((x.shape[0], y.shape[0], m))
+        sigma = theta[0]
+        delta = theta[1]
+        dk    = np.zeros((x.shape[0], y.shape[0], self.dim_))
 
         # Derivative w.r.t. sigma
         dist  = distance_all_to_all(x, y)
-        sigma = theta[0]
-        delta = theta[1]
         ratio = math.sqrt(5.0)/sigma
         R     = ratio*dist/sigma
         f     = (1.0 + ratio*dist + ratio**2*dist**2/3.0)

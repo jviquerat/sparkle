@@ -21,10 +21,10 @@ def test_gaussian():
     kernel = Gaussian(space)
     x0     = np.array([[0.5,0.5]])
     x1     = np.array([[0.6,0.6]])
-    theta  = np.array([0.1])
+    theta  = np.array([0.1, 0.2])
 
     K = kernel(x0, x1, theta)
-    K_ref = np.array([[0.3678794411714425]])
+    K_ref = np.array([[0.01471518]])
     assert np.allclose(K, K_ref)
 
     # Check shapes
@@ -32,18 +32,18 @@ def test_gaussian():
                        [0.4,0.4]])
     x1     = np.array([[0.6,0.6],
                        [0.1,0.1]])
-    theta  = np.array([0.1])
+    theta  = np.array([0.1, 0.2])
 
     K = kernel(x0, x1, theta)
-    K_ref = np.array([[3.67879441e-01, 1.12535175e-07],
-                      [1.83156389e-02, 1.23409804e-04]])
+    K_ref = np.array([[1.47151777e-02, 4.50140699e-09],
+                      [7.32625556e-04, 4.93649216e-06]])
     assert np.allclose(K, K_ref)
 
     # Check derivative wrt x
     kernel = Gaussian(space)
     x0     = np.array([[0.5,0.5]])
     x1     = np.array([[0.6,0.6]])
-    theta  = np.array([0.1])
+    theta  = np.array([0.1, 0.2])
 
     K = kernel(x0, x1, theta)
     dKdx = kernel.covariance_dx(x0, x1, theta)
@@ -61,6 +61,13 @@ def test_gaussian():
     dKdt = kernel.covariance_dtheta(x0, x1, theta)
 
     eps = 1.0e-8
-    dKdt_fd = np.array([kernel(x0, x1, theta+eps) - kernel(x0, x1, theta-eps)])/(2.0*eps)
+    dx = np.array([eps, 0.0])
+    dy = np.array([0.0, eps])
+    dKdt_fd = np.array([kernel(x0, x1, theta+dx) - kernel(x0, x1, theta-dx),
+                        kernel(x0, x1, theta+dy) - kernel(x0, x1, theta-dy)])/(2.0*eps)
+    dKdt_fd = dKdt_fd.reshape(dKdt.shape)
+
+    print(dKdt)
+    print(dKdt_fd)
 
     assert np.allclose(dKdt, dKdt_fd)

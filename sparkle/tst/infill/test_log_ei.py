@@ -11,8 +11,8 @@ from sparkle.src.utils.seeds import set_seeds
 
 @pytest.mark.parametrize("kernel_type, ref0, ref1",
                          [("gaussian",
-                           np.array([-5567.79385322]),
-                           np.array([-5567.79385331, -62.12016033])),
+                           np.array([-77877.87462661]),
+                           np.array([-77877.87463119, -734.27186907])),
                           ("matern52",
                            np.array([-2562.66880535]),
                            np.array([-2562.66880535, -77.39146467]))

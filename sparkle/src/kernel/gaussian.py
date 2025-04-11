@@ -30,7 +30,7 @@ class Gaussian(BaseKernel):
         """
         super().__init__(spaces)
 
-        self.dim_ = 1
+        self.dim_ = 2
 
     def covariance(self,
                    x: ndarray,
@@ -53,8 +53,10 @@ class Gaussian(BaseKernel):
         """
         if theta is None: theta = self.theta_
 
+        sigma = theta[0]
+        delta = theta[1]
         dist = distance_all_to_all(x, y)
-        v    = np.exp(-0.5*(dist/theta[0])**2)
+        v    = delta**2*np.exp(-0.5*(dist/sigma)**2)
 
         return v
 
@@ -79,8 +81,10 @@ class Gaussian(BaseKernel):
         """
         if theta is None: theta = self.theta_
 
+        sigma = theta[0]
+        delta = theta[1]
         dx = x[:, np.newaxis, :] - y[np.newaxis, :, :] # x - y
-        dk = -(dx/theta**2)*self.covariance(x, y, theta)[:, :, np.newaxis]
+        dk = -(dx/sigma**2)*self.covariance(x, y, theta)[:, :, np.newaxis]
 
         return dk
 
@@ -104,11 +108,17 @@ class Gaussian(BaseKernel):
             with shape (ni, nj, m)
         """
 
-        # This is an isotropic kernel, but we add the dimension of parameters
-        # for compatibility with non-isotropic kernels
-        dist2     = distance_all_to_all(x, y)**2
-        K         = self.covariance(x, y, theta)
-        dk        = np.zeros((x.shape[0], y.shape[0], 1))
-        dk[:,:,0] = (dist2 / theta[0]**3)*K
+        # Here m = 2 (sigma, delta)
+        sigma = theta[0]
+        delta = theta[1]
+        dk    = np.zeros((x.shape[0], y.shape[0], self.dim_))
+
+        # Derivative w.r.t. sigma
+        dist        = distance_all_to_all(x, y)
+        K           = self.covariance(x, y, theta)
+        dk[:, :, 0] = (dist**2 / sigma**3)*K
+
+        # Derivative w.r.t. delta
+        dk[:, :, 1] = 2.0*delta*np.exp(-0.5*(dist/sigma)**2)
 
         return dk
