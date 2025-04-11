@@ -1,7 +1,6 @@
-import itertools
 import sys
 import types
-from collections import defaultdict
+from typing import List, Tuple
 
 import numpy as np
 
@@ -12,11 +11,13 @@ from sparkle.src.plot.plot import scatter_names, violins_array
 from sparkle.src.utils.json import JsonParser
 from sparkle.src.utils.prints import bold, disclaimer, liner, spacer
 from sparkle.src.utils.timer import Timer
+from sparkle.src.bench.bench import combine_parameters
 
 
-def AvgPex(n_avg, combination):
+def AvgPex(n_avg: int, combination: List[dict]) -> Tuple[float, np.ndarray]:
     """
-    Calculates the average phi-p metric and execution time for a given Pex method and parameters.
+    Calculates the average phi-p metric and execution time for a given
+    Pex method and parameters.
 
     Args:
         n_avg: The number of times to run the Pex algorithm for averaging.
@@ -85,31 +86,10 @@ def main():
     dimensions = pms.dimensions
 
     # Retrieve parameter keys and values
-    # "method" and "dimension" are mandatory keys
     keys   = ["method", "dimension"]
     values = [ methods,  dimensions]
 
-    # Check inner parameters (passed to pex through pms)
-    if (hasattr(pms, "inner_pms")):
-        iterable = pms.inner_pms.__dict__.items()
-        for k in iterable:
-            keys   += [k[0]]
-            values += [k[1]]
-
-    spacer("Parameter keys: "+str(keys))
-    spacer("Parameter values: "+str(values))
-
-    # Generate combinations as list of tuples
-    comb_tuples = list(itertools.product(*values))
-
-    # Convert list of tuples to list of dicts
-    combinations = []
-    for k in comb_tuples:
-        comb_dict = defaultdict(list)
-        for l in range(len(k)):
-            comb_dict[keys[l]] = k[l]
-        combinations.append(dict(comb_dict))
-    spacer("Nb of combinations: "+str(len(combinations)))
+    combinations = combine_parameters(keys, values)
 
     # Run benchmark with combinations of parameters
     # Store results in a dict mapping tuple of parameter values to numpy array
