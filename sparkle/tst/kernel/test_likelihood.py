@@ -1,6 +1,7 @@
 import os
 import types
 
+import pytest
 import numpy as np
 
 from sparkle.src.env.spaces import EnvSpaces
@@ -8,9 +9,10 @@ from sparkle.src.kernel.gaussian import Gaussian
 from sparkle.src.kernel.matern52 import Matern52
 from sparkle.src.pex.lhs import LHS
 
-
+@pytest.mark.parametrize("kernel_type",
+                         [(Gaussian), (Matern52)])
 ###############################################
-def test_likelihood():
+def test_likelihood(kernel_type):
 
     pms          = types.SimpleNamespace()
     pms.n_points = 4
@@ -22,26 +24,11 @@ def test_likelihood():
     lhs_pex      = LHS(space, pms)
     y            = np.cos(lhs_pex.x[:,0]) + np.cos(lhs_pex.x[:,1])
 
-    # Test likelihood gradient with gaussian kernel
-    kernel = Gaussian(space)
-    kernel.optimize(lhs_pex.x, y)
-
-    log_theta = np.log(np.array([0.5]))
-    dLdt = kernel.grad_log_likelihood(log_theta)
-
-    eps = 1.0e-8
-    log_theta_plus = log_theta + eps
-    log_theta_minus = log_theta - eps
-    dLdt_fd = np.array([kernel.log_likelihood(log_theta_plus) -
-                        kernel.log_likelihood(log_theta_minus)])/(2.0*eps)
-
-    assert np.allclose(dLdt, dLdt_fd)
-
     # Test likelihood gradient with matern52 kernel
-    kernel = Matern52(space)
+    kernel = kernel_type(space)
     kernel.optimize(lhs_pex.x, y)
 
-    log_theta = np.log(np.array([0.5, 0.5]))
+    log_theta = np.log(np.array([0.5, 0.6]))
     dLdt = kernel.grad_log_likelihood(log_theta)
 
     eps = 1.0e-8
