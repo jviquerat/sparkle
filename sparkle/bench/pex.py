@@ -14,7 +14,7 @@ from sparkle.src.utils.timer import Timer
 from sparkle.src.bench.bench import combine_parameters
 
 
-def AvgPex(n_avg: int, combination: List[dict]) -> Tuple[float, np.ndarray]:
+def avg_pex(n_avg: int, combination: List[dict]) -> Tuple[float, np.ndarray]:
     """
     Calculates the average phi-p metric and execution time for a given
     Pex method and parameters.
@@ -97,7 +97,7 @@ def main():
     time    = dict()
     for cmb in combinations:
         spacer(str(cmb))
-        t, phi_p = AvgPex(n_avg, cmb)
+        t, phi_p = avg_pex(n_avg, cmb)
         results[tuple(cmb.values())] = phi_p
         time[tuple(cmb.values())]    = t
 
