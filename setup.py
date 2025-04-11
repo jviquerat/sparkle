@@ -5,6 +5,6 @@ setup(
     version='0.0.1',
     entry_points = {
         'console_scripts': ['spk=sparkle.src.core.main:main',
-                            'bench_pex=sparkle.src.bench.pex:main']
+                            'bench_pex=sparkle.bench.pex:main']
     }
 )
