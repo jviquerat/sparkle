@@ -6,7 +6,7 @@ from numpy import ndarray
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.kernel.base import BaseKernel
-from sparkle.src.utils.distances import distance_all_to_all
+from sparkle.src.utils.distances import pairwise_distances
 
 
 class Gaussian(BaseKernel):
@@ -55,7 +55,7 @@ class Gaussian(BaseKernel):
 
         sigma = theta[0]
         delta = theta[1]
-        dist = distance_all_to_all(x, y)
+        dist = pairwise_distances(x, y)
         v    = delta**2*np.exp(-0.5*(dist/sigma)**2)
 
         return v
@@ -114,7 +114,7 @@ class Gaussian(BaseKernel):
         dk    = np.zeros((x.shape[0], y.shape[0], self.dim_))
 
         # Derivative w.r.t. sigma
-        dist        = distance_all_to_all(x, y)
+        dist        = pairwise_distances(x, y)
         K           = self.covariance(x, y, theta)
         dk[:, :, 0] = (dist**2 / sigma**3)*K
 

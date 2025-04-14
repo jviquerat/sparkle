@@ -7,7 +7,7 @@ from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.base import BasePex
 from sparkle.src.pex.lhs import LHS
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.distances import distance, nearest_all_to_all, nearest_one_to_all
+from sparkle.src.utils.distances import distance, nearest_neighbors_in_set, nearest_neighbor_in_set
 from sparkle.src.utils.prints import fmt_float, spacer
 
 
@@ -52,7 +52,7 @@ class MLHS(BasePex):
         self.x_ = base.x
 
         # Compute initial nearest neighbors
-        d_nearest, p_nearest = nearest_all_to_all(self.x)
+        d_nearest, p_nearest = nearest_neighbors_in_set(self.x)
         p_min                = np.argmin(d_nearest)
         self.d_min_initial   = d_nearest[p_min]
         self.d_min           = self.d_min_initial
@@ -82,17 +82,17 @@ class MLHS(BasePex):
             # Update nearest for pts that had p1 or p2 as nearest
             for k in range(self.n_points):
                 if (pn_copy[k] in [p1, p2]):
-                    dn, pn     = nearest_one_to_all(self.x, k)
+                    dn, pn     = nearest_neighbor_in_set(self.x, k)
                     dn_copy[k] = dn
                     pn_copy[k] = pn
 
             # Update nearest for p1
-            dn, pn      = nearest_one_to_all(self.x, p1)
+            dn, pn      = nearest_neighbor_in_set(self.x, p1)
             dn_copy[p1] = dn
             pn_copy[p1] = pn
 
             # Update nearest for p2
-            dn, pn      = nearest_one_to_all(self.x, p2)
+            dn, pn      = nearest_neighbor_in_set(self.x, p2)
             dn_copy[p2] = dn
             pn_copy[p2] = pn
 

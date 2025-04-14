@@ -6,7 +6,7 @@ from numpy.linalg import solve, cholesky, slogdet
 
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
 from sparkle.src.env.spaces import EnvSpaces
-from sparkle.src.utils.distances import min_max_distance
+from sparkle.src.utils.distances import min_max_distance_in_set
 
 
 class BaseKernel():
@@ -86,7 +86,7 @@ class BaseKernel():
         self.nf_ = x.shape[1] # nb of features
 
         # Update bounds
-        dmin, dmax = min_max_distance(self.x_)
+        dmin, dmax = min_max_distance_in_set(self.x_)
         self.xmin_ = np.log(max(dmin,0.1)*np.ones(self.dim_))
         self.xmax_ = np.log(dmax*np.ones(self.dim_))
 

@@ -8,7 +8,7 @@ from numpy import float64, ndarray
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.distances import nearest_all_to_all
+from sparkle.src.utils.distances import nearest_neighbors_in_set
 from sparkle.src.utils.prints import fmt_float, spacer
 
 
@@ -149,7 +149,7 @@ class BasePex():
 
         if (self.dim != 2): return
 
-        d_nearest, _ = nearest_all_to_all(self.x)
+        d_nearest, _ = nearest_neighbors_in_set(self.x)
         d_nearest   /= np.max(d_nearest)
 
         plt.clf()

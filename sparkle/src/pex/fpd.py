@@ -7,7 +7,7 @@ from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.base import BasePex
 from sparkle.src.pex.fps import FPS
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.distances import distance, min_distance
+from sparkle.src.utils.distances import distance, min_distance_in_set
 from sparkle.src.utils.error import error
 from sparkle.src.utils.prints import fmt_float, spacer
 
@@ -111,7 +111,7 @@ class FPD(BasePex):
         self.x_ = FPS(np.array(lst), self.n_points_)
 
         # Compute minimal distance
-        self.d_min = min_distance(self.x)
+        self.d_min = min_distance_in_set(self.x)
 
     def summary(self):
         """
