@@ -7,119 +7,135 @@ from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.base import BasePex
 from sparkle.src.pex.lhs import LHS
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.distances import distance, nearest_neighbors_in_set, nearest_neighbor_in_set
+from sparkle.src.utils.distances import distance, pairwise_distances, nearest_neighbors_in_set, nearest_neighbor_in_set
 from sparkle.src.utils.prints import fmt_float, spacer
 
 
-###############################################
 class MLHS(BasePex):
     """
-    Maximin Latin Hypercube Sampling (MLHS) experiment plan.
+    Maximin Latin Hypercube Sampling (MLHS) experiment plan
 
-    This class implements the Maximin Latin Hypercube Sampling method, which
-    combines the stratification of LHS with a maximin criterion to improve
-    the space-filling properties of the experiment plan.
+    Combines LHS stratification with a maximin criterion (maximizing the minimum
+    distance between points) for improved space-filling properties
     """
     def __init__(self, spaces: EnvSpaces, pms: SimpleNamespace) -> None:
         """
-        Initializes the MLHS experiment plan.
+        Initializes the MLHS experiment plan
 
         Args:
-            spaces: The environment's search space definition.
-            pms: A SimpleNamespace object containing parameters for the experiment plan,
-                including the swap ratio (swap_ratio).
+            spaces: The environment's search space definition
+            pms: A SimpleNamespace object containing other parameters
         """
         super().__init__(spaces, pms)
 
-        self.name       = "maximin_lhs"
+        self.name = "maximin_lhs"
+
         self.swap_ratio = set_default("swap_ratio", max(0.1, 1.0/float(self.dim)), pms)
-        self.n_iter     = math.floor(self.swap_ratio*self.dim*self.n_points_**2)
+        self.n_iter     = math.ceil(self.swap_ratio*self.dim*self.n_points_**2)
         self.pms        = pms
 
         self.reset()
 
     def reset(self) -> None:
         """
-        Resets the MLHS experiment plan by generating new sample points.
+        Resets the MLHS plan by generating and optimizing sample points.
 
-        This method generates an initial LHS design, then iteratively
-        improves it by swapping points to maximize the minimum distance
-        between points.
+        Generates an initial LHS design, then iteratively improves it by
+        swapping coordinate values between points along one dimension at a time
+        to maximize the minimum distance between any two points in the set.
+        Uses vectorized operations and provided distance functions.
         """
-
-        # Generate default lhs
-        base    = LHS(self.spaces, self.pms)
-        self.x_ = base.x
+        # Generate initial LHS design
+        initial_design = LHS(self.spaces, self.pms)
+        self.x_ = initial_design.x.copy()
 
         # Compute initial nearest neighbors
         d_nearest, p_nearest = nearest_neighbors_in_set(self.x)
-        p_min                = np.argmin(d_nearest)
-        self.d_min_initial   = d_nearest[p_min]
-        self.d_min           = self.d_min_initial
+        p_min_idx            = np.argmin(d_nearest)
+        self.d_min           = d_nearest[p_min_idx]
+        self.d_min_initial   = self.d_min
         self.n_swaps         = 0
 
-        # Copy nearest arrays
-        dn_copy = d_nearest.copy()
-        pn_copy = p_nearest.copy()
+        # Store the current best state (nearest distances and their indices)
+        current_d_nearest = d_nearest.copy()
+        current_p_nearest = p_nearest.copy()
 
-        # Space out samples
-        for k in range(self.n_iter):
+        # Loop trying to space out samples
+        for iteration in range(self.n_iter):
 
-            # Draw a random dimension
-            dim = np.random.randint(self.dim)
+            # Choose a random dimension to perform the swap
+            dim_idx = np.random.randint(self.dim)
 
-            # Draw two distinct random points from the samples
+            # Choose two distinct random points from the design to swap coordinates
             p1, p2 = np.random.choice(self.n_points, size=2, replace=False)
 
-            # Save original p1 and p2 coordinates
-            x1 = self.x[p1].copy()
-            x2 = self.x[p2].copy()
+            # Store original coordinate values before swapping
+            x1_dim_val = self.x[p1, dim_idx]
+            x2_dim_val = self.x[p2, dim_idx]
 
-            # Exchance dimension dim between points p1 and p2
-            self.x[p1,dim] = x2[dim]
-            self.x[p2,dim] = x1[dim]
+            # Perform the swap on the design matrix
+            self.x[p1, dim_idx] = x2_dim_val
+            self.x[p2, dim_idx] = x1_dim_val
 
-            # Update nearest for pts that had p1 or p2 as nearest
-            for k in range(self.n_points):
-                if (pn_copy[k] in [p1, p2]):
-                    dn, pn     = nearest_neighbor_in_set(self.x, k)
-                    dn_copy[k] = dn
-                    pn_copy[k] = pn
+            # Create temporary copies to hold the state after the potential swap
+            temp_d_nearest = current_d_nearest.copy()
+            temp_p_nearest = current_p_nearest.copy()
 
-            # Update nearest for p1
-            dn, pn      = nearest_neighbor_in_set(self.x, p1)
-            dn_copy[p1] = dn
-            pn_copy[p1] = pn
+            # Update nearest neighbor info for the two swapped points (p1, p2)
+            dn1, pn1 = nearest_neighbor_in_set(self.x, p1)
+            dn2, pn2 = nearest_neighbor_in_set(self.x, p2)
+            temp_d_nearest[p1], temp_p_nearest[p1] = dn1, pn1
+            temp_d_nearest[p2], temp_p_nearest[p2] = dn2, pn2
 
-            # Update nearest for p2
-            dn, pn      = nearest_neighbor_in_set(self.x, p2)
-            dn_copy[p2] = dn
-            pn_copy[p2] = pn
+            # Update nearest neighbor info for points whose nearest neighbor
+            # was p1 or p2 before the swap. First we identify these points,
+            # then we recompute the nearest neighbors
+            affected_indices = np.where((current_p_nearest == p1) |
+                                        (current_p_nearest == p2))[0]
 
-            # For all points, check if p1 or p2 is now nearest
-            for k in range(self.n_points):
-                if (k == p1) or (k == p2): continue
-                d1 = distance(self.x[k], self.x[p1])
-                d2 = distance(self.x[k], self.x[p2])
-                p, d = p1, d1
-                if (d2 < d1): p, d = p2, d2
-                if (d < dn_copy[k]):
-                    dn_copy[k] = d
-                    pn_copy[k] = p
+            for k in affected_indices:
+                # If we find p1 or p2, this was already done in previous step
+                if k == p1 or k == p2: continue
 
-            # Compute new min distance and update if improved
-            p = np.argmin(dn_copy)
-            d = dn_copy[p]
-            if (d > self.d_min):
-                self.d_min    = d
+                dnk, pnk = nearest_neighbor_in_set(self.x, k)
+                temp_d_nearest[k], temp_p_nearest[k] = dnk, pnk
+
+            # For all points, check if the new p1 or p2 are now nearest neighbors
+            # We first identify these points, then check for nearest neighbors
+            other_indices_mask = np.ones(self.n_points, dtype=bool)
+            other_indices_mask[[p1, p2]] = False # exclude p1 and p2
+            other_indices_mask[affected_indices] = False # exclude pts from previous case
+            other_indices = np.where(other_indices_mask)[0]
+
+            if len(other_indices) > 0:
+                # Compute distances from other points to the modified p1 and p2
+                dist_matrix_k_p1p2 = pairwise_distances(self.x[other_indices],
+                                                        self.x[[p1, p2]])
+                dist_k_p1 = dist_matrix_k_p1p2[:, 0] # Distances to p1
+                dist_k_p2 = dist_matrix_k_p1p2[:, 1] # Distances to p2
+
+                # Compare and update if the new p1 or p2 is closer
+                for i, k in enumerate(other_indices):
+                    # Check if p1 is closer than the current nearest
+                    p, d = p1, dist_k_p1[i]
+                    if (dist_k_p2[i] < dist_k_p1[i]):
+                        p, d = p2, dist_k_p2[i]
+
+                    if d < temp_d_nearest[k]:
+                        temp_d_nearest[k] = d
+                        temp_p_nearest[k] = p
+
+            # Find new min distance and update if improved
+            new_min_dist = np.min(temp_d_nearest)
+
+            if new_min_dist > self.d_min: # accept swap: self.x is already modified
+                self.d_min = new_min_dist
+                current_d_nearest[:] = temp_d_nearest
+                current_p_nearest[:] = temp_p_nearest
                 self.n_swaps += 1
-                d_nearest[:]  = dn_copy[:]
-                p_nearest[:]  = pn_copy[:]
-            else:
-                self.x[p1,dim] = x1[dim]
-                self.x[p2,dim] = x2[dim]
-                dn_copy[:]     = d_nearest[:]
-                pn_copy[:]     = p_nearest[:]
+            else: # reject swap: revert self.x to its previous state
+                self.x[p1, dim_idx] = x1_dim_val
+                self.x[p2, dim_idx] = x2_dim_val
 
     def summary(self):
         """
