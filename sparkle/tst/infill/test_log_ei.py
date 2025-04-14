@@ -14,8 +14,8 @@ from sparkle.src.utils.seeds import set_seeds
                            np.array([-77877.87462661]),
                            np.array([-77877.87463119, -734.27186907])),
                           ("matern52",
-                           np.array([-2562.66880535]),
-                           np.array([-2562.66880535, -77.39146467]))
+                           np.array([-2588.19418269]),
+                           np.array([-2588.19418269,   -78.08823369]))
                           ])
 ###############################################
 def test_log_ei(kernel_type, ref0, ref1):

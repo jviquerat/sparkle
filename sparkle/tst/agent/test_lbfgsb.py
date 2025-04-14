@@ -80,13 +80,13 @@ def test_mslbfgsb():
     # Run the optimizer.
     x, c  = opt.optimize(f, xmin, xmax, n_pts=10, m=5, tol=1e-3, max_iter=20)
     x_ref = np.array([3.18515304089873, 3.129799326779645])
-    c_ref = -1.8083520358351746
+    c_ref = -1.8083520358717708
     assert np.allclose(x, x_ref)
     assert compare(c, c_ref, 1.0e-15)
 
     # Test with gradient
     x, c  = opt.optimize(f, xmin, xmax, df=df, n_pts=10, m=5, tol=1e-3, max_iter=20)
-    x_ref = np.array([3.16608712, 3.14339285])
-    c_ref = -1.8047183915703982
+    x_ref = np.array([3.17955849, 3.13560734])
+    c_ref = -1.8078819103729469
     assert np.allclose(x, x_ref)
     assert compare(c, c_ref, 1.0e-15)

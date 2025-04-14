@@ -31,7 +31,7 @@ class MLHS(BasePex):
         self.name = "maximin_lhs"
 
         self.swap_ratio = set_default("swap_ratio", max(0.1, 1.0/float(self.dim)), pms)
-        self.n_iter     = math.ceil(self.swap_ratio*self.dim*self.n_points_**2)
+        self.n_iter     = math.ceil(self.swap_ratio*self.dim*self.n_points_)
         self.pms        = pms
 
         self.reset()
