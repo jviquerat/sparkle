@@ -7,7 +7,7 @@ from numpy import ndarray
 
 def distance(xi: ndarray, xj: ndarray) -> float:
     """
-    Computes the Euclidean distance between two points.
+    Computes the Euclidean distance between two points
 
     Args:
         xi: The first point as a NumPy array.
@@ -19,9 +19,9 @@ def distance(xi: ndarray, xj: ndarray) -> float:
 
     return np.linalg.norm(xi - xj)
 
-def distance_all_to_all(xi: ndarray, xj: ndarray) -> ndarray:
+def pairwise_distances(xi: ndarray, xj: ndarray) -> ndarray:
     """
-    Computes the Euclidean distances between all pairs of points from two sets.
+    Computes the Euclidean distances between all pairs of points from two sets
 
     Args:
         xi: The first set of points as a NumPy array of shape (n_batch_i, dim).
@@ -34,9 +34,9 @@ def distance_all_to_all(xi: ndarray, xj: ndarray) -> ndarray:
 
     return np.linalg.norm(xi[:,np.newaxis,:] - xj[np.newaxis,:,:], axis=-1)
 
-def nearest_one_to_all(x: ndarray, i: int) -> Tuple[float, int]:
+def nearest_neighbor_in_set(x: ndarray, i: int) -> Tuple[float, int]:
     """
-    Computes the nearest neighbor of a point within a set of points.
+    Computes the nearest neighbor of a point within a set of points
 
     Args:
         x: The set of points as a NumPy array of shape (n_points, dim).
@@ -60,9 +60,9 @@ def nearest_one_to_all(x: ndarray, i: int) -> Tuple[float, int]:
 
     return d_min, p_min
 
-def nearest_all_to_all(x: ndarray) -> Tuple[ndarray, ndarray]:
+def nearest_neighbors_in_set(x: ndarray) -> Tuple[ndarray, ndarray]:
     """
-    Computes the nearest neighbor for each point in a set of points.
+    Computes the nearest neighbor for each point within a set of points.
 
     Args:
         x: The set of points as a NumPy array of shape (n_points, dim).
@@ -75,14 +75,14 @@ def nearest_all_to_all(x: ndarray) -> Tuple[ndarray, ndarray]:
               the nearest neighbors.
     """
 
-    d = distance_all_to_all(x, x)
+    d = pairwise_distances(x, x)
     np.fill_diagonal(d, np.inf)
     p_nearest = d.argmin(axis=1)
     d_nearest = d[np.arange(len(x)), p_nearest]
 
     return d_nearest, p_nearest
 
-def min_distance(x: ndarray) -> float:
+def min_distance_in_set(x: ndarray) -> float:
     """
     Computes the minimum distance between any two points in a set.
 
@@ -93,12 +93,12 @@ def min_distance(x: ndarray) -> float:
         The minimum distance between any two points in x.
     """
 
-    d, p = nearest_all_to_all(x)
+    d, p = nearest_neighbors_in_set(x)
     dmin = np.min(d)
 
     return dmin
 
-def min_max_distance(x: ndarray) -> Tuple[float, float]:
+def min_max_distance_in_set(x: ndarray) -> Tuple[float, float]:
     """
     Computes the minimum and maximum distances between any two points in a set.
 
@@ -111,7 +111,7 @@ def min_max_distance(x: ndarray) -> Tuple[float, float]:
             - The maximum distance between any two points in x.
     """
 
-    d = distance_all_to_all(x, x)
+    d = pairwise_distances(x, x)
     np.fill_diagonal(d, np.inf)
     dmin = np.min(d)
     np.fill_diagonal(d, -np.inf)

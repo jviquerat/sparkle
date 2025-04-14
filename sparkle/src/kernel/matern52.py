@@ -7,7 +7,7 @@ from numpy import ndarray
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.kernel.base import BaseKernel
-from sparkle.src.utils.distances import distance_all_to_all
+from sparkle.src.utils.distances import pairwise_distances
 
 
 class Matern52(BaseKernel):
@@ -55,7 +55,7 @@ class Matern52(BaseKernel):
         """
         if theta is None: theta = self.theta_
 
-        dist  = distance_all_to_all(x, y)
+        dist  = pairwise_distances(x, y)
         sigma = theta[0]
         delta = theta[1]
         ratio = math.sqrt(5.0)/sigma
@@ -86,7 +86,7 @@ class Matern52(BaseKernel):
         """
         if theta is None: theta = self.theta_
 
-        dist = distance_all_to_all(x, y)
+        dist = pairwise_distances(x, y)
         dx   = x[:, np.newaxis, :] - y[np.newaxis, :, :] # x - y
 
         sigma = theta[0]
@@ -131,7 +131,7 @@ class Matern52(BaseKernel):
         dk    = np.zeros((x.shape[0], y.shape[0], self.dim_))
 
         # Derivative w.r.t. sigma
-        dist  = distance_all_to_all(x, y)
+        dist  = pairwise_distances(x, y)
         ratio = math.sqrt(5.0)/sigma
         R     = ratio*dist/sigma
         f     = (1.0 + ratio*dist + ratio**2*dist**2/3.0)
