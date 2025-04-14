@@ -1,5 +1,6 @@
 import math
 from types import SimpleNamespace
+from typing import Callable
 
 import numpy as np
 
@@ -7,7 +8,9 @@ from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.base import BasePex
 from sparkle.src.pex.lhs import LHS
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.distances import distance, pairwise_distances, nearest_neighbors_in_set, nearest_neighbor_in_set
+from sparkle.src.utils.distances import (distance, nearest_neighbor_in_set,
+                                         nearest_neighbors_in_set,
+                                         pairwise_distances)
 from sparkle.src.utils.prints import fmt_float, spacer
 
 
@@ -30,21 +33,40 @@ class MLHS(BasePex):
 
         self.name = "maximin_lhs"
 
-        self.swap_ratio = set_default("swap_ratio", max(0.1, 1.0/float(self.dim)), pms)
-        self.n_iter     = math.ceil(self.swap_ratio*self.dim*self.n_points_)
-        self.pms        = pms
+        default_swap_ratio = max(0.1, 1.0/float(self.dim))
+        self.swap_ratio    = set_default("swap_ratio", default_swap_ratio, pms)
+        default_n_iter     = math.ceil(self.swap_ratio*self.dim*self.n_points_)
+        self.n_iter        = set_default("n_iter", default_n_iter, pms)
+        self.pms           = pms
 
-        self.reset()
+        self.reset(self.acceptance)
 
-    def reset(self) -> None:
+    def acceptance(self, new_min_dist: float) -> bool:
         """
-        Resets the MLHS plan by generating and optimizing sample points.
+        An acceptance function for the standard MLHS design
+        If the new minimal distance is higher than the previous one, accept the swap
 
-        Generates an initial LHS design, then iteratively improves it by
-        swapping coordinate values between points along one dimension at a time
-        to maximize the minimum distance between any two points in the set.
-        Uses vectorized operations and provided distance functions.
+        Args:
+            new_min_dist: new minimal distance in design
+
+        Returns:
+            accepted: whether to accept the swap
         """
+
+        accepted = False
+        if new_min_dist > self.d_min:
+            accepted = True
+
+        return accepted
+
+    def reset(self, acceptance: Callable) -> None:
+        """
+        Resets the MLHS plan by generating and optimizing sample points
+
+        Args:
+            acceptance: an acceptance function
+        """
+
         # Generate initial LHS design
         initial_design = LHS(self.spaces, self.pms)
         self.x_ = initial_design.x.copy()
@@ -59,6 +81,10 @@ class MLHS(BasePex):
         # Store the current best state (nearest distances and their indices)
         current_d_nearest = d_nearest.copy()
         current_p_nearest = p_nearest.copy()
+
+        # Track the best design found so far
+        best_x = self.x_.copy()
+        best_d_min = self.d_min
 
         # Loop trying to space out samples
         for iteration in range(self.n_iter):
@@ -128,14 +154,28 @@ class MLHS(BasePex):
             # Find new min distance and update if improved
             new_min_dist = np.min(temp_d_nearest)
 
-            if new_min_dist > self.d_min: # accept swap: self.x is already modified
+            # Acceptance logic
+            accepted = acceptance(new_min_dist)
+
+            # Update state based on acceptance
+            if accepted: # accept swap: self.x is already modified
                 self.d_min = new_min_dist
                 current_d_nearest[:] = temp_d_nearest
                 current_p_nearest[:] = temp_p_nearest
                 self.n_swaps += 1
-            else: # reject swap: revert self.x to its previous state
+
+                # Check if this accepted state is the new best overall
+                if self.d_min > best_d_min:
+                    best_d_min = self.d_min
+                    best_x = self.x.copy()
+            else:
+                # Reject swap: revert self.x_ to its state before the swap
                 self.x[p1, dim_idx] = x1_dim_val
                 self.x[p2, dim_idx] = x2_dim_val
+
+        # Set the final design to the best one found during the search
+        self.x_ = best_x
+        self.d_min = best_d_min
 
     def summary(self):
         """

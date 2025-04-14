@@ -3,12 +3,12 @@ import types
 import numpy as np
 
 from sparkle.src.env.spaces import EnvSpaces
-from sparkle.src.pex.mlhs import MLHS
+from sparkle.src.pex.mlhs_sa import MLHS_SA
 from sparkle.src.utils.seeds import set_seeds
 
 
 ###############################################
-def test_maximin_lhs():
+def test_maximin_lhs_sa():
 
     set_seeds(0)
 
@@ -23,19 +23,19 @@ def test_maximin_lhs():
 
     loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
     s = EnvSpaces(loc_space)
-    pex = MLHS(s, pms)
+    pex = MLHS_SA(s, pms)
 
     ref = np.array([[0.47049118, 0.7482182 ],
                     [0.14293245, 0.87178995],
-                    [0.21689695, 0.48605165],
-                    [0.96074124, 0.5648464 ],
+                    [0.89931042, 0.81659655],
+                    [0.96074124, 0.17258634],
                     [0.3686379 , 0.25726077],
                     [0.04573446, 0.3350182 ],
-                    [0.5364656 , 0.17258634],
+                    [0.5364656 , 0.5648464 ],
                     [0.65764775, 0.98171076],
-                    [0.7469719 , 0.81659655],
+                    [0.7469719 , 0.48605165],
                     [0.78195346, 0.16046639],
-                    [0.89931042, 0.04733705],
+                    [0.21689695, 0.04733705],
                     [0.29540693, 0.65583435]])
 
     assert pex.n_points == n_points
