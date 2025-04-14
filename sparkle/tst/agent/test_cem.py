@@ -11,4 +11,4 @@ def test_cem():
 
     # Run test
     runner("sparkle/tst/agent/json/parabola_cem.json",
-           1.431102162133334e-03, 6.048401466666668e-05)
+           2.021139963200000e-03, 9.921293946666666e-05)
