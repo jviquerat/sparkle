@@ -1,0 +1,25 @@
+{
+    "n_avg": 3,
+    "avg_type": "log",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 10000,
+        "renderer": "trainer",
+        "environment": {
+            "name": "parabola"
+        },
+        "agent": {
+            "name": "sa",
+            "n_steps_max": 50,
+            "T0": 1.0,
+            "std_factor": 0.05,
+            "alpha": 0.2
+        }
+    }
+}

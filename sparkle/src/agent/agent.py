@@ -3,6 +3,7 @@ from sparkle.src.agent.cmaes import CMAES
 from sparkle.src.agent.ego import EGO
 from sparkle.src.agent.pbo import PBO
 from sparkle.src.agent.pso import PSO
+from sparkle.src.agent.sa import SA
 from sparkle.src.core.factory import Factory
 
 # Declare factory
@@ -14,3 +15,4 @@ agent_factory.register("cmaes", CMAES)
 agent_factory.register("cem",   CEM)
 agent_factory.register("pbo",   PBO)
 agent_factory.register("ego",   EGO)
+agent_factory.register("sa",    SA)
