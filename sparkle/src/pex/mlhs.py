@@ -39,7 +39,7 @@ class MLHS(BasePex):
         self.n_iter        = set_default("n_iter", default_n_iter, pms)
         self.pms           = pms
 
-        self.reset(self.acceptance)
+        self.reset()
 
     def acceptance(self, new_min_dist: float) -> bool:
         """
@@ -59,12 +59,9 @@ class MLHS(BasePex):
 
         return accepted
 
-    def reset(self, acceptance: Callable) -> None:
+    def reset(self) -> None:
         """
         Resets the MLHS plan by generating and optimizing sample points
-
-        Args:
-            acceptance: an acceptance function
         """
 
         # Generate initial LHS design
@@ -155,7 +152,7 @@ class MLHS(BasePex):
             new_min_dist = np.min(temp_d_nearest)
 
             # Acceptance logic
-            accepted = acceptance(new_min_dist)
+            accepted = self.acceptance(new_min_dist)
 
             # Update state based on acceptance
             if accepted: # accept swap: self.x is already modified

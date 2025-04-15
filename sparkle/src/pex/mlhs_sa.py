@@ -52,7 +52,7 @@ class MLHS_SA(MLHS, BasePex):
 
         self.T = None
 
-        self.reset(self.acceptance) # Implemented in MLHS class
+        self.reset() # Implemented in MLHS class
 
     def acceptance(self, new_min_dist: float) -> bool:
         """
