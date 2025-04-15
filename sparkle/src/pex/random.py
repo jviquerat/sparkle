@@ -43,7 +43,7 @@ class Random(BasePex):
                                     size = (self.n_points_, self.dim))
 
 ###############################################
-class RandomFPS(BasePex):
+class RFPS(BasePex):
     """
     Random experiment plan with Furthest Point Sampling (FPS).
 
