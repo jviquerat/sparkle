@@ -4,6 +4,7 @@ from typing import List, Tuple
 
 import numpy as np
 
+from sparkle.src.bench.bench import combine_parameters
 from sparkle.src.env.parallel import parallel
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.pex import pex_factory
@@ -11,7 +12,6 @@ from sparkle.src.plot.plot import scatter_names, violins_array
 from sparkle.src.utils.json import JsonParser
 from sparkle.src.utils.prints import bold, disclaimer, liner, spacer
 from sparkle.src.utils.timer import Timer
-from sparkle.src.bench.bench import combine_parameters
 
 
 def avg_pex(n_avg: int, combination: List[dict]) -> Tuple[float, np.ndarray]:

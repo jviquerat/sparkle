@@ -7,8 +7,11 @@ from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.base import BasePex
 from sparkle.src.pex.lhs import LHS
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.distances import (nearest_neighbor_in_set, nearest_neighbors_in_set,
-                                         pairwise_distances)
+from sparkle.src.utils.distances import (
+    nearest_neighbor_in_set,
+    nearest_neighbors_in_set,
+    pairwise_distances,
+)
 from sparkle.src.utils.prints import fmt_float, spacer
 
 

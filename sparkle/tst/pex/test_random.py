@@ -3,7 +3,7 @@ import types
 import numpy as np
 
 from sparkle.src.env.spaces import EnvSpaces
-from sparkle.src.pex.random import Random, RFPS
+from sparkle.src.pex.random import RFPS, Random
 from sparkle.src.utils.seeds import set_seeds
 
 

@@ -2,7 +2,7 @@ from typing import Optional
 
 import numpy as np
 from numpy import ndarray
-from numpy.linalg import solve, cholesky, slogdet
+from numpy.linalg import cholesky, slogdet, solve
 
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
 from sparkle.src.env.spaces import EnvSpaces

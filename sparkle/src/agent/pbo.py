@@ -15,7 +15,6 @@ from sparkle.src.optimizer.adam import Adam
 from sparkle.src.optimizer.optimizer import opt_factory
 from sparkle.src.utils.default import set_default
 
-
 ###############################################
 
 class PBO(BaseAgent):

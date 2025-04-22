@@ -7,6 +7,7 @@ from sparkle.src.agent.base import BaseAgent
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.utils.default import set_default
 
+
 ###############################################
 class PSO(BaseAgent):
     """

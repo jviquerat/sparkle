@@ -9,6 +9,7 @@ from sparkle.src.network.torch_dicts import add_lip_layer
 from sparkle.src.utils.error import error
 from sparkle.src.utils.prints import new_line, spacer
 
+
 class LipMLP(BaseNetwork):
     """
     Lipschitz Multi-Layer Perceptron (LipMLP) neural network.

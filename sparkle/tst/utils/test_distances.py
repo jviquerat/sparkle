@@ -5,11 +5,11 @@ import numpy as np
 from sparkle.src.utils.compare import compare
 from sparkle.src.utils.distances import (
     distance,
-    pairwise_distances,
     min_distance_in_set,
     min_max_distance_in_set,
-    nearest_neighbors_in_set,
     nearest_neighbor_in_set,
+    nearest_neighbors_in_set,
+    pairwise_distances,
 )
 
 
