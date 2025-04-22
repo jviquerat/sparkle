@@ -8,13 +8,13 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # Custom imports
-from sparkle.src.model.base          import base_model
-from sparkle.src.network.lip_mlp     import lip_mlp
+from sparkle.src.model.base          import BaseModel
+from sparkle.src.network.lip_mlp     import LipMLP
 from sparkle.src.optimizer.optimizer import opt_factory
 
 ###############################################
 ### Lipschitz network model
-class lipnet(base_model):
+class lipnet(BaseModel):
     def __init__(self, spaces, path, pms):
         super().__init__(spaces, path)
 
@@ -26,11 +26,11 @@ class lipnet(base_model):
     def reset(self):
 
         # Initialize network
-        self.net = lip_mlp(inp_dim   = self.spaces.dim,
-                           out_dim   = 1,
-                           arch      = [32,32],
-                           acts      = ["tanh","tanh","linear"],
-                           lip_const = [2.0, 2.0, 2.0])
+        self.net = LipMLP(inp_dim      = self.spaces.dim,
+                          out_dim      = 1,
+                          arch         = [32,32],
+                          acts         = ["tanh","tanh","linear"],
+                          lip_constant = [2.0, 2.0, 2.0])
 
         self.opt = toptim.Adam(self.net.params(), lr=2.0e-3)
 
@@ -63,10 +63,10 @@ class lipnet(base_model):
                             create_graph=False)[0]
             local_grad_lip = grad.norm()
 
-            lip[k]      = local_lip.item()
-            grad_lip[k] = local_grad_lip.item()
+            lip[k]      = local_lip.detach().item()
+            grad_lip[k] = local_grad_lip.detach().item()
 
-            y_out[k]     = y.detach().item()
+            y_out[k]     = y.detach().detach().item()
 
         sample_density = self.gaussian_kde(xx, self.x_, bandwidth=0.2)
         sample_density /= np.max(sample_density)
@@ -74,13 +74,15 @@ class lipnet(base_model):
         # Denormalize evaluation
         y  = self.denormalize(y_out, self.ymin_, self.ymax_)
 
-        #imp = np.maximum(self.ymin_ - y, 0.0)
-        imp = self.sigmoid(self.ymin_ - y)
+        imp = np.maximum(self.ymin_ - y, 0.0)
+        #imp = self.sigmoid(self.ymin_ - y)
 
-        acq = imp*grad_lip/sample_density
+        acq = imp*lip*sample_density
+        #acq = imp*sample_density
         #acq = np.log(acq)
 
         return y, acq
+        #return y, lip
 
     def sigmoid(self, x):
 
