@@ -1,7 +1,8 @@
 
 
-from sparkle.src.utils.json import JsonParser
 from sparkle.src.bench.bench import combine_parameters
+from sparkle.src.utils.json import JsonParser
+
 
 ###############################################
 def test_bench():

@@ -1,12 +1,13 @@
 import os
 import types
 
-import pytest
 import numpy as np
+import pytest
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.model.kriging import Kriging
 from sparkle.src.pex.lhs import LHS
+
 
 @pytest.mark.parametrize("kernel_type", [("gaussian"), ("matern52")])
 ###############################################

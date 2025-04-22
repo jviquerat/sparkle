@@ -10,6 +10,7 @@ from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.infill.infill import infill_factory
 from sparkle.src.utils.default import set_default
 
+
 ###############################################
 class EGO(BaseAgent):
     """

@@ -8,6 +8,7 @@ from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.utils.default import set_default
 from sparkle.src.utils.error import error
 
+
 ###############################################
 class SA(BaseAgent):
     """

@@ -1,6 +1,6 @@
 import itertools
-from typing import Any, List
 from collections import defaultdict
+from typing import Any, List
 
 from sparkle.src.utils.prints import spacer
 

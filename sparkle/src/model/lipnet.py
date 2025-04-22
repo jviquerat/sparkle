@@ -1,14 +1,16 @@
 import math
-import torch
-from torch.autograd import grad as autograd
-import torch.optim as toptim
-import numpy as np
-import matplotlib.pyplot as plt
-from typing import Tuple, List
-from numpy import ndarray
+from typing import List, Tuple
 
-from sparkle.src.model.base          import BaseModel
-from sparkle.src.network.lip_mlp     import LipMLP
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torch.optim as toptim
+from numpy import ndarray
+from torch.autograd import grad as autograd
+
+from sparkle.src.kernel.gaussian import Gaussian
+from sparkle.src.model.base import BaseModel
+from sparkle.src.network.lip_mlp import LipMLP
 
 
 class lipnet(BaseModel):

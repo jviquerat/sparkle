@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 
 import numpy as np
 from numpy import matmul, ndarray
-from numpy.linalg import solve, cholesky
+from numpy.linalg import cholesky, solve
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.kernel.kernel import kernel_factory

@@ -1,6 +1,6 @@
 from sparkle.src.core.factory import Factory
 from sparkle.src.model.kriging import Kriging
-from sparkle.src.model.lipnet  import lipnet
+from sparkle.src.model.lipnet import lipnet
 
 # Declare factory
 model_factory = Factory()

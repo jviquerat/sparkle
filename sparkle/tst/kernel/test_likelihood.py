@@ -1,12 +1,13 @@
 import types
 
-import pytest
 import numpy as np
+import pytest
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.kernel.gaussian import Gaussian
 from sparkle.src.kernel.matern52 import Matern52
 from sparkle.src.pex.lhs import LHS
+
 
 @pytest.mark.parametrize("kernel_type",
                          [(Gaussian), (Matern52)])

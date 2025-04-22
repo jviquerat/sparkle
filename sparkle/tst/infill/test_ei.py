@@ -1,13 +1,14 @@
 import types
 
-import pytest
 import numpy as np
+import pytest
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.infill.ei import EI
 from sparkle.src.model.kriging import Kriging
 from sparkle.src.pex.lhs import LHS
 from sparkle.src.utils.seeds import set_seeds
+
 
 @pytest.mark.parametrize("kernel_type, ref0, ref1",
                          [("gaussian",
