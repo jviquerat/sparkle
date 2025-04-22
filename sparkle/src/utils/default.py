@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from typing import Any, Optional
+from typing import Any
 
 
 def set_default(name: str, default_value: Any, pms: SimpleNamespace) -> Any:

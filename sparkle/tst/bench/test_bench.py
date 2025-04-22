@@ -1,7 +1,4 @@
-import types
 
-import pytest
-import numpy as np
 
 from sparkle.src.utils.json import JsonParser
 from sparkle.src.bench.bench import combine_parameters
