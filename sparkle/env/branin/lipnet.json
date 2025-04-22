@@ -1,7 +1,7 @@
 {
     "naming": {
         "env": true,
-        "agent": true,
+        "model": true,
         "tag": false,
         "time": false
     },
@@ -10,7 +10,7 @@
         "separable": true
     },
     "pex": {
-        "name": "maximin_lhs",
+        "name": "rfps",
         "n_points": 20
     },
     "model": {
