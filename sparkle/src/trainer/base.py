@@ -18,7 +18,6 @@ class BaseTrainer():
         """
         Initializes the BaseTrainer.
         """
-        pass
 
     def optimize(self):
         """

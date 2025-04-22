@@ -2,16 +2,11 @@ import math
 import random
 from types import SimpleNamespace
 
-import numpy as np
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.base import BasePex
-from sparkle.src.pex.mlhs import LHS, MLHS
+from sparkle.src.pex.mlhs import MLHS
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.distances import (distance, nearest_neighbor_in_set,
-                                         nearest_neighbors_in_set,
-                                         pairwise_distances)
-from sparkle.src.utils.prints import fmt_float, spacer
 
 
 class MLHS_SA(MLHS, BasePex):

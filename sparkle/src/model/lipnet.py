@@ -9,7 +9,6 @@ from numpy import ndarray
 
 from sparkle.src.model.base          import BaseModel
 from sparkle.src.network.lip_mlp     import LipMLP
-from sparkle.src.optimizer.optimizer import opt_factory
 
 
 class lipnet(BaseModel):
@@ -224,7 +223,6 @@ class lipnet(BaseModel):
             filename: The name of the file to save
                 the model to. Defaults to "lipnet.dat".
         """
-        pass
 
     def plot_loss(self, filename: str, loss: ndarray, labels: List[str]):
         """

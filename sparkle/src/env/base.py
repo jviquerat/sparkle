@@ -20,7 +20,6 @@ class BaseParallelEnvironments():
         """
         Initializes the BaseParallelEnvironments.
         """
-        pass
 
     def evaluate(self, x: ndarray) -> ndarray:
         """

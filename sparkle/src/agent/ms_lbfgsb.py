@@ -23,7 +23,6 @@ class MSLBFGSB():
         """
         Initializes the MSLBFGSB optimizer.
         """
-        pass
 
     def optimize(self,
                  f: Callable,

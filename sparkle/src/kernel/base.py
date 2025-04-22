@@ -1,7 +1,7 @@
 from typing import Optional
 
 import numpy as np
-from numpy import matmul, ndarray
+from numpy import ndarray
 from numpy.linalg import solve, cholesky, slogdet
 
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB

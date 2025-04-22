@@ -21,7 +21,6 @@ class LBFGSB():
         """
         Initializes the LBFGSB optimizer.
         """
-        pass
 
     def optimize(self,
                  f0: Callable,
