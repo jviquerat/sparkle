@@ -23,7 +23,7 @@ def helper():
     spacer("   spk --model <json_file>")
     spacer("   spk --pex -type <pex_type> -n_points <n_points> -dim <dim>")
     spacer("Optional arguments:")
-    spacer("       --set_seeds <seed>")
+    spacer("       --set-seeds <seed>")
     sys.exit(0)
 
 def main():
@@ -39,8 +39,8 @@ def main():
     args = sys.argv
 
     # Check for set_seeds option
-    if ("--set_seeds" in args):
-        seed = args[args.index("--set_seeds")+1]
+    if ("--set-seeds" in args):
+        seed = args[args.index("--set-seeds")+1]
         set_seeds(int(seed))
 
     # Training mode
