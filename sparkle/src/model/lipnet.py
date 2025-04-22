@@ -13,7 +13,7 @@ from sparkle.src.model.base import BaseModel
 from sparkle.src.network.lip_mlp import LipMLP
 
 
-class lipnet(BaseModel):
+class LipNet(BaseModel):
     def __init__(self, spaces, path, pms):
         """
         Initializes the Lipschitzian network model.
@@ -53,7 +53,7 @@ class lipnet(BaseModel):
         n_batch = x.shape[0]
         y_out = np.zeros(n_batch)
         lip = np.zeros(n_batch)
-        grad_lip = np.zeros(n_batch)
+        #grad_lip = np.zeros(n_batch)
 
         xx = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
 
@@ -68,13 +68,13 @@ class lipnet(BaseModel):
                             grad_outputs=grad_outputs)[0]
             local_lip = grad.norm()
 
-            grad = autograd(outputs=local_lip,
-                            inputs=xt,
-                            create_graph=False)[0]
-            local_grad_lip = grad.norm()
+            # grad = autograd(outputs=local_lip,
+            #                 inputs=xt,
+            #                 create_graph=False)[0]
+            # local_grad_lip = grad.norm()
 
             lip[k] = local_lip.detach().item()
-            grad_lip[k] = local_grad_lip.detach().item()
+            #grad_lip[k] = local_grad_lip.detach().item()
             y_out[k] = y.detach().detach().item()
 
         sample_density = self.gaussian_kde(xx, self.x_, bandwidth=0.2)
@@ -95,7 +95,7 @@ class lipnet(BaseModel):
         # imp = np.maximum(self.ymin_ - y, 0.0)
         # acq = imp * lip * density
 
-        return y, acq
+        return y, lip
 
     def sigmoid(self, x: ndarray) -> ndarray:
         """
