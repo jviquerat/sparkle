@@ -108,7 +108,7 @@ def bold(text):
     if (parallel.is_root()):
         return bld_clr + text + end_clr
 
-def fmt_float(x: Union[float, float64]) -> str:
+def fmt_float(x: float) -> str:
     """
     Formats a float for output, using either scientific notation or fixed-point notation.
 
