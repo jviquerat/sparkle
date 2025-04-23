@@ -1,7 +1,5 @@
 import subprocess
-from typing import Union
-
-from numpy import float64
+from typing import Optional
 
 from sparkle.src.env.parallel import parallel
 
@@ -49,15 +47,16 @@ def liner_simple(text: str):
     if (parallel.is_root()):
         print("### "+text)
 
-def spacer(text: str) -> None:
+def spacer(text: str, end: Optional[str]="\n") -> None:
     """
     Prints a line with a spacer format if the current process is the root process.
 
     Args:
         text: The text to print.
+        end: Ending characater
     """
     if (parallel.is_root()):
-        print("# "+text)
+        print("# "+text, end=end)
 
 def disclaimer():
     """
