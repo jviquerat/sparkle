@@ -11,6 +11,7 @@ from torch.autograd import grad as autograd
 from sparkle.src.kernel.gaussian import Gaussian
 from sparkle.src.model.base import BaseModel
 from sparkle.src.network.lip_mlp import LipMLP
+from sparkle.src.utils.prints import spacer, fmt_float, new_line
 
 
 class LipNet(BaseModel):
@@ -24,20 +25,26 @@ class LipNet(BaseModel):
             pms: Model parameters.
         """
         super().__init__(spaces, path)
-        self.n_epochs = pms.n_epochs
+        self.n_epochs_max = pms.n_epochs_max
+        self.target_loss = pms.target_loss
+        self.lr = pms.lr
+        self.beta = pms.beta
         self.reset()
 
     def reset(self):
         """
         Resets the model to its initial state.
         """
+        size = 16*self.spaces.dim
         self.net = LipMLP(inp_dim=self.spaces.dim,
                           out_dim=1,
-                          arch=[32, 32],
+                          arch=[size, size],
                           acts=["tanh", "tanh", "linear"],
                           lip_constant=[2.0, 2.0, 2.0])
 
-        self.opt = toptim.Adam(self.net.params(), lr=2.0e-3)
+        self.opt = toptim.Adam(self.net.params(),
+                               lr=self.lr)
+        self.kernel = Gaussian(self.spaces)
 
     def evaluate(self, x: ndarray) -> Tuple[ndarray, ndarray]:
         """
@@ -53,7 +60,6 @@ class LipNet(BaseModel):
         n_batch = x.shape[0]
         y_out = np.zeros(n_batch)
         lip = np.zeros(n_batch)
-        #grad_lip = np.zeros(n_batch)
 
         xx = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
 
@@ -68,25 +74,18 @@ class LipNet(BaseModel):
                             grad_outputs=grad_outputs)[0]
             local_lip = grad.norm()
 
-            # grad = autograd(outputs=local_lip,
-            #                 inputs=xt,
-            #                 create_graph=False)[0]
-            # local_grad_lip = grad.norm()
-
             lip[k] = local_lip.detach().item()
-            #grad_lip[k] = local_grad_lip.detach().item()
             y_out[k] = y.detach().detach().item()
 
-        sample_density = self.gaussian_kde(xx, self.x_, bandwidth=0.2)
-        sample_density /= np.max(sample_density)
+        density = np.sum(self.kernel.covariance(xx, self.x_), axis=1)
+        density /= np.max(density)
 
         # Denormalize evaluation
         y  = self.denormalize(y_out, self.ymin_, self.ymax_)
+        #imp = np.maximum(self.ymin_ - y, 0.0)
+        imp = self.sigmoid(self.ymin_ - y)
 
-        imp = np.maximum(self.ymin_ - y, 0.0)
-        #imp = self.sigmoid(self.ymin_ - y)
-
-        acq = imp*lip*sample_density
+        acq = imp*lip/density
         #acq = imp*sample_density
         #acq = np.log(acq)
 
@@ -95,7 +94,7 @@ class LipNet(BaseModel):
         # imp = np.maximum(self.ymin_ - y, 0.0)
         # acq = imp * lip * density
 
-        return y, lip
+        return y, lip #imp*lip*density
 
     def sigmoid(self, x: ndarray) -> ndarray:
         """
@@ -123,11 +122,16 @@ class LipNet(BaseModel):
         self.x_    = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
         self.y_    = self.normalize(y, self.ymin_, self.ymax_)
 
+        self.kernel.optimize(self.x_, self.y_)
+
         n_points     = x.shape[0]
         batch_size   = math.floor(1.0*n_points)
-        history_loss = np.zeros((self.n_epochs, 2))
+        history_loss = np.zeros((10*self.n_epochs_max, 2))
+        loss = 1.0e8
 
-        for epoch in range(self.n_epochs):
+        #for epoch in range(self.n_epochs):
+        epoch = 0
+        while loss > self.target_loss:
             r = np.arange(0, n_points)
             p = np.random.permutation(r)
             xb = torch.from_numpy(self.x_[p])
@@ -144,6 +148,7 @@ class LipNet(BaseModel):
                     done = True
 
                 loss = self.get_loss(xb[start:end], c[start:end])
+
                 self.opt.zero_grad()
                 loss.backward()
                 self.opt.step()
@@ -151,16 +156,14 @@ class LipNet(BaseModel):
 
             history_loss[epoch, 0] = epoch
             history_loss[epoch, 1] /= float(btc)
-            end = "\r"
-            if (epoch == self.n_epochs - 1):
-                end = "\n"
-            print(
-                "# Epoch #" + str(epoch) + "/" + str(self.n_epochs) + ", loss = " + str(history_loss[epoch, 1]) + "                    ",
-                end=end,
-            )
+            spacer(f"Epoch #{epoch}, loss = {fmt_float(history_loss[epoch, 1])}                     ", end="\r")
 
+            if (epoch == self.n_epochs_max-1): break
+            epoch += 1
+
+        new_line()
         self.plot_loss(self.path + "/loss.png", history_loss, ["loss"])
-        print("# Lipschitz constants: " + str(self.net.lip_consts()))
+        spacer(f"Lipschitz constants: {self.net.lip_consts()}")
 
     def get_loss(self, x: torch.Tensor, c: torch.Tensor) -> torch.Tensor:
         """
@@ -174,47 +177,14 @@ class LipNet(BaseModel):
             torch.Tensor: The computed loss.
         """
         r = self.net.forward(x.requires_grad_(True))
-        loss = torch.mean((c - r.reshape(-1)) ** 2)
-        return loss
+        mse_loss = torch.mean((c - r.reshape(-1)) ** 2)
 
-    # Compute gaussien kernel density
-    def gaussian_kde(self, eval_pts, sample_pts, bandwidth=0.5):
-        """
-        Estimate the density at given evaluation points using Gaussian KDE.
+        lip_constants = self.net.lip_consts()
+        lip_penalty = sum(abs(lc) for lc in lip_constants)
 
-        Parameters:
-        - evaluation_points: array of shape (n, d)
-        Points at which to evaluate the density.
-        - sample_points: array of shape (m, d)
-        Data points used to build the density estimate.
-        - bandwidth: float
-        The bandwidth parameter (h) controlling the smoothness.
+        total_loss = mse_loss + self.beta*lip_penalty
 
-        Returns:
-        - density: array of shape (n,)
-        Density estimates at the evaluation points.
-        """
-        n, d = eval_pts.shape
-        m = sample_pts.shape[0]
-
-        # Calculate the difference between each evaluation point and each sample point
-        # This creates an array of shape (n, m, d)
-        diff = eval_pts[:, np.newaxis, :] - sample_pts[np.newaxis, :, :]
-
-        # Compute the squared Euclidean distance for each difference vector
-        # Resulting in an array of shape (n, m)
-        squared_distances = np.sum(diff**2, axis=2)
-
-        # Calculate the normalization factor for the Gaussian kernel in d dimensions
-        norm_factor = (2 * np.pi) ** (d / 2) * bandwidth ** d
-
-        # Compute the Gaussian kernel values for each pair (evaluation_point, sample_point)
-        kernel_values = np.exp(-0.5 * squared_distances / (bandwidth ** 2)) / norm_factor
-
-        # Average over all sample points to get the density estimate at each evaluation point
-        density = np.mean(kernel_values, axis=1)
-
-        return density
+        return total_loss
 
     # Dump model
     def dump(self, filename="lipnet.dat"):
