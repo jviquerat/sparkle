@@ -1,5 +1,7 @@
+import os
 import math
 from typing import List, Tuple
+from types import SimpleNamespace
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,10 +9,12 @@ import torch
 import torch.optim as toptim
 from numpy import ndarray
 from torch.autograd import grad as autograd
+torch.set_default_dtype(torch.double)
 
 from sparkle.src.kernel.gaussian import Gaussian
 from sparkle.src.model.base import BaseModel
 from sparkle.src.network.lip_mlp import LipMLP
+from sparkle.src.utils.default import set_default
 from sparkle.src.utils.prints import spacer, fmt_float, new_line
 
 
@@ -25,26 +29,93 @@ class LipNet(BaseModel):
             pms: Model parameters.
         """
         super().__init__(spaces, path)
-        self.n_epochs_max = pms.n_epochs_max
-        self.target_loss = pms.target_loss
-        self.lr = pms.lr
-        self.beta = pms.beta
-        self.reset()
+        self.ensemble_size = set_default("ensemble_size", 5, pms)
+        self.n_epochs_max  = set_default("n_epochs_max", 50000, pms)
+        self.target_loss   = set_default("target_loss", 1.0e-4, pms)
+        self.lr            = set_default("lr", 5.0e-4, pms)
+        self.beta          = set_default("beta", 0.0, pms)
+        self.load_model_   = set_default("load_model", False, pms)
+        self.arch          = set_default("arch", [16*self.spaces.dim]*2, pms)
+        self.acts          = set_default("acts", ["tanh", "tanh", "linear"], pms)
+        self.lip_constants = set_default("lip_constant", [2.0, 2.0, 2.0], pms)
+
+        self.ensemble: List[LipMLP] = []
+        for i in range(self.ensemble_size):
+            member = LipMLP(
+                inp_dim=self.spaces.dim,
+                out_dim=1,
+                arch=self.arch,
+                acts=self.acts,
+                lip_constant=self.lip_constants,
+                name=f"lipmlp_member_{i}"
+            )
+            self.ensemble.append(member)
 
     def reset(self):
         """
         Resets the model to its initial state.
         """
-        size = 16*self.spaces.dim
-        self.net = LipMLP(inp_dim=self.spaces.dim,
-                          out_dim=1,
-                          arch=[size, size],
-                          acts=["tanh", "tanh", "linear"],
-                          lip_constant=[2.0, 2.0, 2.0])
+        for model in self.ensemble:
+            model.reset()
 
-        self.opt = toptim.Adam(self.net.params(),
-                               lr=self.lr)
-        self.kernel = Gaussian(self.spaces)
+    def build(self, x: ndarray, y: ndarray):
+        """
+        Builds and trains the model from input data.
+
+        Args:
+            x: Training input data.
+            y: Training output data.
+        """
+        self.ymax_ = np.max(y)
+        self.ymin_ = np.min(y)
+        self.x_    = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
+        self.y_    = self.normalize(y, self.ymin_, self.ymax_)
+
+        n_points   = x.shape[0]
+        batch_size = math.floor(1.0*n_points)
+        all_loss   = []
+
+        for i, model in enumerate(self.ensemble):
+            optimizer = toptim.Adam(model.params(), lr=self.lr)
+
+            epoch        = 0
+            loss_val     = 1.0e8
+            history_loss = []
+            while loss_val > self.target_loss and epoch < self.n_epochs_max:
+                epoch_loss = 0.0
+                p = np.random.permutation(n_points)
+                xb_np, cb_np = self.x_[p], self.y_[p]
+
+                done = False
+                btc = 0
+                while not done:
+                    start, end = btc*batch_size, min((btc + 1)*batch_size, n_points)
+                    if start >= end: break
+                    btc += 1
+                    if end == n_points: done = True
+
+                    xb = torch.from_numpy(xb_np[start:end])
+                    cb = torch.from_numpy(cb_np[start:end])
+
+                    loss = self.get_loss(model, xb, cb)
+
+                    optimizer.zero_grad()
+                    loss.backward()
+                    optimizer.step()
+                    epoch_loss += loss.item()
+
+                avg_epoch_loss = epoch_loss / float(btc) if btc > 0 else 0.0
+                history_loss.append([epoch, avg_epoch_loss])
+                loss_val = avg_epoch_loss
+
+                spacer(f"Model #{i}, epoch #{epoch}, loss = {fmt_float(avg_epoch_loss)}                  ", end="\r")
+                epoch += 1
+
+            all_loss.append(history_loss)
+
+        self.plot_loss(self.path+"/loss.png", all_loss)
+
+        new_line()
 
     def evaluate(self, x: ndarray) -> Tuple[ndarray, ndarray]:
         """
@@ -58,145 +129,111 @@ class LipNet(BaseModel):
                 output and acq is the acquisition function value.
         """
         n_batch = x.shape[0]
-        y_out = np.zeros(n_batch)
         lip = np.zeros(n_batch)
 
         xx = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
+        xx = torch.from_numpy(xx)
 
-        for k in range(n_batch):
-            xt = torch.tensor(xx[k]).requires_grad_(True)
-            y = self.net.forward(xt)
+        y_all = np.zeros((self.ensemble_size, n_batch))
+        with torch.no_grad():
+            for i, model in enumerate(self.ensemble):
+                y = model.forward(xx)
+                y_all[i,:] = y.squeeze().numpy()
 
-            grad_outputs = torch.ones_like(y)
-            grad = autograd(outputs=y,
-                            inputs=xt,
-                            create_graph=True,
-                            grad_outputs=grad_outputs)[0]
-            local_lip = grad.norm()
+        y_mean_norm = np.mean(y_all, axis=0)
+        y_std_norm = np.std(y_all, axis=0)
 
-            lip[k] = local_lip.detach().item()
-            y_out[k] = y.detach().detach().item()
+        y_mean = self.denormalize(y_mean_norm, self.ymin_, self.ymax_)
+        y_std = y_std_norm*(self.ymax_ - self.ymin_)
 
-        density = np.sum(self.kernel.covariance(xx, self.x_), axis=1)
-        density /= np.max(density)
+        return y_mean, y_std
 
-        # Denormalize evaluation
-        y  = self.denormalize(y_out, self.ymin_, self.ymax_)
-        #imp = np.maximum(self.ymin_ - y, 0.0)
-        imp = self.sigmoid(self.ymin_ - y)
-
-        acq = imp*lip/density
-        #acq = imp*sample_density
-        #acq = np.log(acq)
-
-        # density = np.mean(self.kernel.covariance(xx, self.x_), axis=1)
-        # y = self.denormalize(y_out, self.ymin_, self.ymax_)
-        # imp = np.maximum(self.ymin_ - y, 0.0)
-        # acq = imp * lip * density
-
-        return y, lip #imp*lip*density
-
-    def sigmoid(self, x: ndarray) -> ndarray:
+    def evaluate_grad(self, x: ndarray) -> Tuple[ndarray, ndarray]:
         """
-        Applies the sigmoid function.
+        Evaluates the gradient of the ensemble mean prediction AND
+        the gradient of the ensemble standard deviation prediction
+        with respect to the input.
 
         Args:
-            x: Input array.
+            x: Input data of shape (n_batch, input_dim).
 
         Returns:
-            np.ndarray: Output array after applying sigmoid.
+            Tuple[np.ndarray, np.ndarray]: (grad_mean, grad_std),
+                representing nabla[mu(x)] and nabla[sigma(x)],
+                properly scaled to original input/output space.
         """
-        return 1.0 / (1.0 + np.exp(-x))
+        n_batch = x.shape[0]
+        dim     = x.shape[1]
+        xx      = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
+        xx      = torch.from_numpy(xx).requires_grad_(True)
 
-    def build(self, x: ndarray, y: ndarray):
-        """
-        Builds and trains the model from input data.
+        # Store individual model predictions
+        y_list = []
+        for model in self.ensemble:
+            y_list.append(model.forward(xx))
 
-        Args:
-            x: Training input data.
-            y: Training output data.
-        """
-        self.reset()
-        self.ymax_ = np.max(y)
-        self.ymin_ = np.min(y)
-        self.x_    = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
-        self.y_    = self.normalize(y, self.ymin_, self.ymax_)
+        # Stack predictions: shape (ensemble_size, n_batch, 1) or (ensemble_size, n_batch)
+        y_all = torch.stack(y_list, dim=0)
+        if y_all.dim() == 3 and y_all.shape[-1] == 1:
+            y_all = y_all.squeeze(-1) # shape (ensemble_size, n_batch)
 
-        self.kernel.optimize(self.x_, self.y_)
+        # Compute mean and std
+        y_mean = torch.mean(y_all, dim=0) # shape (n_batch,)
+        y_std = torch.std(y_all, dim=0) # shape (n_batch,)
+        y_std = y_std + 1e-5 # prevent 0 std
 
-        n_points     = x.shape[0]
-        batch_size   = math.floor(1.0*n_points)
-        history_loss = np.zeros((10*self.n_epochs_max, 2))
-        loss = 1.0e8
+        # Gradients of mean
+        grad_outputs_mean = torch.ones_like(y_mean)
+        grad_of_mean = autograd(
+            outputs=y_mean,
+            inputs=xx,
+            grad_outputs=grad_outputs_mean,
+            retain_graph=True, # Keep graph for next autograd call
+            create_graph=False
+        )[0]
+        grad_mean = grad_of_mean.detach().clone().numpy()
 
-        #for epoch in range(self.n_epochs):
-        epoch = 0
-        while loss > self.target_loss:
-            r = np.arange(0, n_points)
-            p = np.random.permutation(r)
-            xb = torch.from_numpy(self.x_[p])
-            c = torch.from_numpy(self.y_[p])
+        # Gradients of std
+        grad_outputs_std = torch.ones_like(y_std)
+        grad_of_std = autograd(
+            outputs=y_std,
+            inputs=xx,
+            grad_outputs=grad_outputs_std,
+            retain_graph=False,
+            create_graph=False
+        )[0]
+        grad_std = grad_of_std.detach().numpy()
 
-            done = False
-            btc = 0
+        # Denormalize
+        grad_scale  = (self.ymax_-self.ymin_)/(self.spaces.xmax-self.spaces.xmin)
+        grad_mean  *= grad_scale
+        grad_std   *= grad_scale
 
-            while not done:
-                start = btc * batch_size
-                end = min((btc + 1) * batch_size, n_points)
-                btc += 1
-                if (end == n_points):
-                    done = True
+        return grad_mean, grad_std
 
-                loss = self.get_loss(xb[start:end], c[start:end])
-
-                self.opt.zero_grad()
-                loss.backward()
-                self.opt.step()
-                history_loss[epoch, 1] += loss
-
-            history_loss[epoch, 0] = epoch
-            history_loss[epoch, 1] /= float(btc)
-            spacer(f"Epoch #{epoch}, loss = {fmt_float(history_loss[epoch, 1])}                     ", end="\r")
-
-            if (epoch == self.n_epochs_max-1): break
-            epoch += 1
-
-        new_line()
-        self.plot_loss(self.path + "/loss.png", history_loss, ["loss"])
-        spacer(f"Lipschitz constants: {self.net.lip_consts()}")
-
-    def get_loss(self, x: torch.Tensor, c: torch.Tensor) -> torch.Tensor:
+    def get_loss(self, model: LipMLP, x: torch.Tensor, c: torch.Tensor) -> torch.Tensor:
         """
         Computes the loss.
 
         Args:
+            model: current lipschitz model
             x: Input data of shape (batch_size, dim).
             c: Target values of shape (batch_size,).
 
         Returns:
             torch.Tensor: The computed loss.
         """
-        r = self.net.forward(x.requires_grad_(True))
+        r = model.forward(x.requires_grad_(True))
         mse_loss = torch.mean((c - r.reshape(-1)) ** 2)
 
-        lip_constants = self.net.lip_consts()
+        lip_constants = model.lip_consts()
         lip_penalty = sum(abs(lc) for lc in lip_constants)
 
         total_loss = mse_loss + self.beta*lip_penalty
 
         return total_loss
 
-    # Dump model
-    def dump(self, filename="lipnet.dat"):
-        """
-        Placeholder for dumping the model to a file.
-
-        Args:
-            filename: The name of the file to save
-                the model to. Defaults to "lipnet.dat".
-        """
-
-    def plot_loss(self, filename: str, loss: ndarray, labels: List[str]):
+    def plot_loss(self, filename: str, loss: List[List[float]]):
         """
         Plots the training loss curve.
 
@@ -207,9 +244,13 @@ class LipNet(BaseModel):
         """
         plt.clf()
         fig = plt.figure()
-        for k in range(loss.shape[1] - 1):
-            plt.plot(loss[:, 0], loss[:, k + 1], label=labels[k])
+        for i in range(len(loss)):
+            arr = np.array(loss[i])
+            plt.plot(arr[:,0], arr[:,1])
         plt.yscale("log")
-        plt.legend(loc="upper right")
+
         plt.savefig(filename, dpi=100)
         plt.close()
+
+    def dump(self, filename_prefix="lipnet_member_"):
+        pass
