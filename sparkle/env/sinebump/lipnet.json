@@ -1,7 +1,7 @@
 {
     "naming": {
         "env": true,
-        "agent": true,
+        "model": true,
         "tag": false,
         "time": false
     },
@@ -10,11 +10,15 @@
         "separable": true
     },
     "pex": {
-        "name": "maximin_lhs",
+        "name": "rfps",
         "n_points": 20
     },
     "model": {
         "name": "lipnet",
-        "n_epochs": 10000
+        "ensemble_size": 5,
+        "n_epochs_max": 50000,
+        "target_loss": 1.0e-4,
+        "lr": 5.0e-4,
+        "beta": 0.0
     }
 }
