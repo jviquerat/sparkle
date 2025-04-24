@@ -6,19 +6,16 @@
         "time": false
     },
     "environment": {
-        "name": "branin",
-        "separable": true
+        "name": "sinebump"
     },
     "pex": {
         "name": "rfps",
         "n_points": 20
     },
     "model": {
-        "name": "lipnet",
-        "ensemble_size": 5,
-        "n_epochs_max": 50000,
-        "target_loss": 1.0e-4,
-        "lr": 5.0e-4,
-        "beta": 0.0
+    	  "name": "kriging",
+        "kernel": {
+            "name": "gaussian"
+        }
     }
 }

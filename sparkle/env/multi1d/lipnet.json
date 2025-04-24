@@ -15,9 +15,10 @@
     },
     "model": {
         "name": "lipnet",
+        "ensemble_size": 5,
         "n_epochs_max": 50000,
         "target_loss": 1.0e-4,
         "lr": 5.0e-4,
-        "beta": 1.0e-4
+        "beta": 0.0
     }
 }
