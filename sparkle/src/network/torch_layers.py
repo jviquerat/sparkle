@@ -1,7 +1,7 @@
 import torch
 import torch.nn as tnn
 from torch import Tensor
-
+torch.set_default_dtype(torch.double)
 
 class LipschitzLinear(tnn.Module):
     """

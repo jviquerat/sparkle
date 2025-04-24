@@ -3,10 +3,9 @@ import math
 import torch
 import torch.nn as tnn
 from torch.nn.modules.container import ModuleList
+torch.set_default_dtype(torch.double)
 
 from sparkle.src.network.torch_layers import LipschitzLinear
-
-torch.set_default_dtype(torch.float64)
 
 torch_activations = {
     'relu': tnn.ReLU(),
