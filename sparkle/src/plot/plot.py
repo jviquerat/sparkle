@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import matplotlib.cm as cm
 import numpy as np
 from numpy import ndarray
 
@@ -426,10 +428,45 @@ def multi_bar(filename: str,
     plt.savefig(filename, dpi=100)
     plt.close()
 
+def map_ints_to_colors(int_list, cmap_name='turbo'):
+  """
+  Maps a list of integers to a list of RGBA color values using a Matplotlib colormap.
+
+  Args:
+    int_list (list or np.array): A list or NumPy array of integers.
+    cmap_name (str, optional): The name of the Matplotlib colormap to use.
+                                Defaults to 'viridis'.
+
+  Returns:
+    list: A list of RGBA tuples, where each tuple corresponds to an integer
+          in the input list, mapped through the colormap. Returns an empty
+          list if int_list is empty. Returns a list of the 'middle' color
+          if all integers in the list are the same.
+  """
+  if not int_list:
+    return []
+
+  # Convert to numpy array for easier min/max handling if needed
+  values = np.array(int_list)
+
+  # Create a normalizer instance mapping the integer range to [0, 1]
+  # Handles the case where min == max automatically
+  norm = mcolors.Normalize(vmin=values.min(), vmax=values.max())
+
+  # Get the colormap instance
+  cmap = cm.get_cmap(cmap_name)
+
+  # Apply the normalization and colormap to each integer
+  # cmap(norm(value)) returns an RGBA tuple (Red, Green, Blue, Alpha)
+  colors = [cmap(norm(value)) for value in values]
+
+  return colors
+
 def scatter_names(filename: str,
                   x: dict[str, float],
                   y: dict[str, float],
                   names: list[str],
+                  colors: list[str] | None=None,
                   x_label: str | None=None,
                   y_label: str | None=None,
                   title: str | None=None) -> None:
@@ -453,13 +490,20 @@ def scatter_names(filename: str,
     fig = plt.figure()
     ax  = fig.add_subplot(111)
 
-    for m in names:
-        ax.scatter(x[m], y[m], marker='o', color='red')
-        ax.text(x[m], y[m], m, fontsize=9, color="red")
+    if colors is not None:
+        cs = map_ints_to_colors(colors)
+        ct = cs
+    else:
+        cs = ["red"]*len(names)
+        ct = ["black"]*len(names)
 
-    if (x_label is not None): ax.set_xlabel(x_label)
-    if (y_label is not None): ax.set_ylabel(y_label)
-    if (title is not None): ax.set_title(title)
+    for k, m in enumerate(names):
+        ax.scatter(x[m], y[m], marker='o', color=cs[k])
+        ax.text(x[m], y[m], m, fontsize=10, c=ct[k])
+
+    if x_label is not None: ax.set_xlabel(x_label)
+    if y_label is not None: ax.set_ylabel(y_label)
+    if title is not None: ax.set_title(title)
     ax.set_yscale('log')
     ax.grid(True)
     plt.savefig(filename, dpi=100)
