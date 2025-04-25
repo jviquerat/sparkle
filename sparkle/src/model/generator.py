@@ -5,6 +5,7 @@ from sparkle.src.model.model import model_factory
 from sparkle.src.pex.pex import pex_factory
 from sparkle.src.plot.plot import render_1D_metamodel, render_2D_metamodel
 from sparkle.src.utils.error import error
+from sparkle.src.utils.timer import Timer
 
 
 def generate(env_pms, pex_pms, model_pms, path):
@@ -27,10 +28,21 @@ def generate(env_pms, pex_pms, model_pms, path):
     env = parallel.environments(path, env_pms)
 
     # Initialize pex
+    timer_pex = Timer("pex generation ")
+    timer_pex.tic()
     pex = pex_factory.create(pex_pms.name,
                              spaces = env.spaces,
                              pms    = pex_pms)
     pex.summary()
+    timer_pex.toc()
+    timer_pex.show()
+
+    # Evaluate costs
+    timer_eval = Timer("pex evaluation ")
+    timer_eval.tic()
+    pex_costs = env.evaluate(pex.x)
+    timer_eval.toc()
+    timer_eval.show()
 
     # Initialize model
     model = model_factory.create(model_pms.name,
@@ -38,11 +50,12 @@ def generate(env_pms, pex_pms, model_pms, path):
                                  path   = path,
                                  pms    = model_pms)
 
-    # Compute costs
-    pex_costs = env.evaluate(pex.x)
-
     # Initialize model
+    timer_model = Timer("model generation")
+    timer_model.tic()
     model.build(pex.x, pex_costs)
+    timer_model.toc()
+    timer_model.show()
     model.dump()
 
     # Render
