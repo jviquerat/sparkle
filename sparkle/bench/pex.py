@@ -122,15 +122,21 @@ def main():
             violins_array(f, x, labels, y_label="phi_p(50)", title=t)
 
     # Scatter plots for given dimension
-    phi_p = {}
-    t     = {}
-    d     = 10
-    for m in methods:
-        phi_p[m] = np.mean(results[m,d])
-        t[m]     = time[m,d]
+    phi_p  = {}
+    t      = {}
+    names  = []
+    colors = []
+    for cmb in combinations:
+        d = cmb["dimension"]
+        m = cmb["method"]
+        colors.append(d)
+        name = f"{m} {d}"
+        names.append(name)
+        phi_p[name] = 1.0/np.mean(results[m,d])
+        t[name]     = time[m,d]
 
     f = "scatter.png"
-    scatter_names(f, phi_p, t, methods, x_label="phi_p", y_label="t", title="scatter")
+    scatter_names(f, phi_p, t, names, colors=colors, x_label="1/phi_p(50)", y_label="t", title="scatter")
 
 
 if __name__ == "__main__":
