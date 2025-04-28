@@ -12,7 +12,7 @@ def test_lip_mlp():
                  out_dim      = 1,
                  arch         = [8,8,8],
                  acts         = ["relu"],
-                 lip_constant = [1.0])
+                 lip_constants = [1.0])
 
     # input with size 3 and batch_size 1
     x0 = 1.0*torch.ones(1,3)
@@ -28,7 +28,7 @@ def test_lip_mlp():
                  out_dim      = 1,
                  arch         = [8,8,8],
                  acts         = ["relu"],
-                 lip_constant = [0.01])
+                 lip_constants = [0.01])
 
     # input with size 3 and batch_size 1
     x0 = 1.0*torch.ones(1,3)
@@ -44,7 +44,7 @@ def test_lip_mlp():
                  out_dim      = 1,
                  arch         = [8,8,8],
                  acts         = ["relu","relu","relu","linear"],
-                 lip_constant = [0.01])
+                 lip_constants = [0.01])
 
     # input with size 3 and batch_size 1
     x0 = 1.0*torch.ones(1,3)
@@ -60,7 +60,7 @@ def test_lip_mlp():
                  out_dim      = 1,
                  arch         = [8,8,8],
                  acts         = ["relu","relu","relu","linear"],
-                 lip_constant = [1.0, 2.0, 3.0, 4.0])
+                 lip_constants = [1.0, 2.0, 3.0, 4.0])
 
     # input with size 3 and batch_size 1
     x0 = 1.0*torch.ones(1,3)
