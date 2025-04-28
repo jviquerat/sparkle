@@ -22,7 +22,7 @@ class LipMLP(BaseNetwork):
                  out_dim: int,
                  arch: List[int],
                  acts: List[str],
-                 lip_constant: List[float]=[1.0],
+                 lip_constants: List[float]=[1.0],
                  name: str="default") -> None:
         """
         Initializes the LipMLP.
@@ -32,7 +32,7 @@ class LipMLP(BaseNetwork):
             out_dim: The output dimension.
             arch: A list of integers representing the number of units in each hidden layer.
             acts: A list of strings representing the activation function for each layer.
-            lip_constant: The Lipschitz constant for the linear layers.
+            lip_constants: The Lipschitz constant for the linear layers.
             name: An optional name for the network.
         """
         super().__init__()
@@ -40,7 +40,7 @@ class LipMLP(BaseNetwork):
         # I/O dimensions
         self.inp_dim_   = inp_dim
         self.out_dim_   = out_dim
-        self.lip_const_ = lip_constant
+        self.lip_const_ = lip_constants
         self.name_      = name
 
         # Build architecture
@@ -60,7 +60,7 @@ class LipMLP(BaseNetwork):
 
         # Check lipschitz constant list
         if (len(self.lip_const_) == 1):
-            self.lip_const_ = [lip_constant[0]]*(len(self.arch_)-1)
+            self.lip_const_ = [lip_constants[0]]*(len(self.arch_)-1)
 
         self.net_ = tnn.ModuleList()
 

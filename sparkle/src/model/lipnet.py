@@ -37,7 +37,7 @@ class LipNet(BaseModel):
         self.load_model_   = set_default("load_model", False, pms)
         self.arch          = set_default("arch", [16*self.spaces.dim]*2, pms)
         self.acts          = set_default("acts", ["tanh", "tanh", "linear"], pms)
-        self.lip_constants = set_default("lip_constant", [2.0, 2.0, 2.0], pms)
+        self.lip_constants = set_default("lip_constants", [2.0, 2.0, 2.0], pms)
 
         self.ensemble: List[LipMLP] = []
         for i in range(self.ensemble_size):
@@ -46,7 +46,7 @@ class LipNet(BaseModel):
                 out_dim=1,
                 arch=self.arch,
                 acts=self.acts,
-                lip_constant=self.lip_constants,
+                lip_constants=self.lip_constants,
                 name=f"lipmlp_member_{i}"
             )
             self.ensemble.append(member)
