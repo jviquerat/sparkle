@@ -9,7 +9,7 @@
         "name": "parabola"
     },
     "pex": {
-        "name": "fpd",
+        "name": "rfps",
         "n_points": 20
     },
     "model": {

@@ -15,7 +15,7 @@
             "name": "lorenz"
         },
         "pex": {
-            "name": "mlhs",
+            "name": "rfps",
             "n_points": 40
         },
         "model": {

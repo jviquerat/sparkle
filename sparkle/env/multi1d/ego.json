@@ -15,7 +15,7 @@
             "name": "multi1d"
         },
         "pex": {
-            "name": "lhs",
+            "name": "rfps",
             "n_points": 5
         },
         "model": {
