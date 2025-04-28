@@ -15,7 +15,7 @@
             "name": "parabola"
         },
         "pex": {
-            "name": "lhs",
+            "name": "rfps",
             "n_points": 20
         },
         "model": {
