@@ -14,130 +14,133 @@ from sparkle.src.utils.prints import bold, disclaimer, liner, spacer
 from sparkle.src.utils.timer import Timer
 
 
-def avg_pex(n_avg: int, combination: List[dict]) -> Tuple[float, np.ndarray]:
+class BenchPex():
     """
-    Calculates the average phi-p metric and execution time for a given
-    Pex method and parameters.
-
-    Args:
-        n_avg: The number of times to run the Pex algorithm for averaging.
-        combination: A dictionary containing the parameters for the Pex algorithm,
-                     including 'dimension' and 'method'.
-
-    Returns:
-        A tuple containing:
-            - The average execution time (float).
-            - A NumPy array of phi-p metric values for each run.
+    Pex benchmark class
     """
+    def __init__(self):
+        pass
 
-    dim  = combination["dimension"]
-    xmin = np.zeros(dim)
-    xmax = np.ones(dim)
+    def run(self, args):
+        """
+        This function reads parameters from a JSON file, generates combinations of
+        parameters, runs the benchmark for each combination, and outputs the results
+        to a data file and plots.
+        """
 
-    loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
-    space = EnvSpaces(loc_space)
+        # Check arguments
+        args = sys.argv
 
-    pms = types.SimpleNamespace(**combination)
+        # Initialize json parser and read parameters
+        json_file = args[args.index("-json")+1]
+        parser    = JsonParser()
+        pms       = parser.read(json_file)
 
-    timer_pex = Timer("pex")
-    pex = pex_factory.create(combination["method"],
-                             spaces = space,
-                             pms    = pms)
+        # Set parallel framework
+        parallel.set({})
 
-    phi_p = np.zeros(n_avg)
-    for k in range(n_avg):
-        timer_pex.tic()
-        pex.reset()
-        timer_pex.toc()
-        phi_p[k] = pex.phi_p()
+        # Printings
+        disclaimer()
+        liner(bold('Pex benchmark'))
 
-    time = timer_pex.dt/n_avg
+        # Parameters
+        filename   = pms.filename
+        n_avg      = pms.n_avg
+        methods    = pms.methods
+        dimensions = pms.dimensions
 
-    return time, phi_p
+        # Retrieve parameter keys and values
+        keys   = ["method", "dimension"]
+        values = [ methods,  dimensions]
 
-def main():
-    """
-    Main function to run the Pex benchmark.
+        combinations = combine_parameters(keys, values)
 
-    This function reads parameters from a JSON file, generates combinations of
-    parameters, runs the benchmark for each combination, and outputs the results
-    to a data file and plots.
-    """
+        # Run benchmark with combinations of parameters
+        # Store results in a dict mapping tuple of parameter values to numpy array
+        results = dict()
+        time    = dict()
+        for cmb in combinations:
+            spacer(str(cmb))
+            t, phi_p = self.avg(n_avg, cmb)
+            results[tuple(cmb.values())] = phi_p
+            time[tuple(cmb.values())]    = t
 
-    # Check arguments
-    args = sys.argv
+        # Output in data file
+        with open(filename, "w") as f:
+            for k,v in results.items():
+                f.write(str(k))
+                f.write("\n")
+                f.write(np.array2string(v))
+                f.write("\n")
 
-    # Initialize json parser and read parameters
-    json_file = args[args.index("-json")+1]
-    parser    = JsonParser()
-    pms       = parser.read(json_file)
+        # Violin plot for phi-p
+        for d in dimensions:
+            labels = []
+            x      = []
+            for m in methods:
+                labels += [m]
+                x +=[results[m, d]]
 
-    # Set parallel framework
-    parallel.set({})
+                f = "test_"+str(d)+".png"
+                t = "dimension "+str(d)
+                violins_array(f, x, labels, y_label="phi_p(50)", title=t)
 
-    # Printings
-    disclaimer()
-    liner(bold('Pex benchmark'))
+        # Scatter plots for given dimension
+        phi_p  = {}
+        t      = {}
+        names  = []
+        colors = []
+        for cmb in combinations:
+            d = cmb["dimension"]
+            m = cmb["method"]
+            colors.append(d)
+            name = f"{m} {d}"
+            names.append(name)
+            phi_p[name] = 1.0/np.mean(results[m,d])
+            t[name]     = time[m,d]
 
-    # Parameters
-    filename   = pms.filename
-    n_avg      = pms.n_avg
-    methods    = pms.methods
-    dimensions = pms.dimensions
+        f = "scatter.png"
+        scatter_names(f, phi_p, t, names, colors=colors, x_label="1/phi_p(50)", y_label="t", title="scatter")
 
-    # Retrieve parameter keys and values
-    keys   = ["method", "dimension"]
-    values = [ methods,  dimensions]
+    def avg(self,
+            n_avg: int,
+            combination: List[dict]) -> Tuple[float, np.ndarray]:
+        """
+        Calculates the average phi-p metric and execution time for a given
+        Pex method and parameters.
 
-    combinations = combine_parameters(keys, values)
+        Args:
+            n_avg: The number of times to run the Pex algorithm for averaging.
+            combination: A dictionary containing the parameters for the Pex algorithm,
+                         including 'dimension' and 'method'.
 
-    # Run benchmark with combinations of parameters
-    # Store results in a dict mapping tuple of parameter values to numpy array
-    results = dict()
-    time    = dict()
-    for cmb in combinations:
-        spacer(str(cmb))
-        t, phi_p = avg_pex(n_avg, cmb)
-        results[tuple(cmb.values())] = phi_p
-        time[tuple(cmb.values())]    = t
+        Returns:
+            A tuple containing:
+                - The average execution time (float).
+                - A NumPy array of phi-p metric values for each run.
+        """
 
-    # Output in data file
-    with open(filename, "w") as f:
-        for k,v in results.items():
-            f.write(str(k))
-            f.write("\n")
-            f.write(np.array2string(v))
-            f.write("\n")
+        dim  = combination["dimension"]
+        xmin = np.zeros(dim)
+        xmax = np.ones(dim)
 
-    # Violin plot for phi-p
-    for d in dimensions:
-        labels = []
-        x      = []
-        for m in methods:
-            labels += [m]
-            x +=[results[m, d]]
+        loc_space = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
+        space = EnvSpaces(loc_space)
 
-            f = "test_"+str(d)+".png"
-            t = "dimension "+str(d)
-            violins_array(f, x, labels, y_label="phi_p(50)", title=t)
+        pms = types.SimpleNamespace(**combination)
 
-    # Scatter plots for given dimension
-    phi_p  = {}
-    t      = {}
-    names  = []
-    colors = []
-    for cmb in combinations:
-        d = cmb["dimension"]
-        m = cmb["method"]
-        colors.append(d)
-        name = f"{m} {d}"
-        names.append(name)
-        phi_p[name] = 1.0/np.mean(results[m,d])
-        t[name]     = time[m,d]
+        timer_pex = Timer("pex")
+        pex = pex_factory.create(combination["method"],
+                                 spaces = space,
+                                 pms    = pms)
 
-    f = "scatter.png"
-    scatter_names(f, phi_p, t, names, colors=colors, x_label="1/phi_p(50)", y_label="t", title="scatter")
+        phi_p = np.zeros(n_avg)
+        for k in range(n_avg):
+            timer_pex.tic()
+            pex.reset()
+            timer_pex.toc()
+            phi_p[k] = pex.phi_p()
 
+        time = timer_pex.dt/n_avg
 
-if __name__ == "__main__":
-    main()
+        return time, phi_p

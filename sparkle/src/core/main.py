@@ -6,6 +6,7 @@ from sparkle.src.core.model import model
 from sparkle.src.core.sample import sample
 from sparkle.src.core.train import train
 from sparkle.src.env.parallel import parallel
+from sparkle.bench.bench import bench_factory
 from sparkle.src.utils.json import JsonParser
 from sparkle.src.utils.prints import bold, disclaimer, err_print, liner, spacer
 from sparkle.src.utils.seeds import set_seeds
@@ -22,6 +23,7 @@ def helper():
     spacer("   spk --average <dat_file_0> ... <dat_file_n>")
     spacer("   spk --model <json_file>")
     spacer("   spk --pex -type <pex_type> -n_points <n_points> -dim <dim>")
+    spacer("   spk --bench <bench_name> -json <json_file>")
     spacer("Optional arguments:")
     spacer("       --set-seeds <seed>")
     sys.exit(0)
@@ -140,6 +142,18 @@ def main():
         liner(bold('Pex sampling mode'))
 
         sample(pex_type, n_points, dim)
+        return
+
+    # Benchmark mode
+    if ("--bench" in args):
+
+        bench_name = args[args.index("--bench")+1]
+        bench = bench_factory.create(bench_name)
+
+        disclaimer()
+        liner(bold('Benchmark mode'))
+
+        bench.run(args)
         return
 
     # If no keyword was triggered
