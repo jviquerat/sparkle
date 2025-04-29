@@ -1,3 +1,4 @@
+import os
 import sys
 import types
 from typing import List, Tuple
@@ -19,7 +20,8 @@ class BenchPex():
     Pex benchmark class
     """
     def __init__(self):
-        pass
+
+        self.name = "bench_pex"
 
     def run(self, args):
         """
@@ -36,15 +38,17 @@ class BenchPex():
         parser    = JsonParser()
         pms       = parser.read(json_file)
 
+        # Create paths for results and open repositories
+        results_path  = 'results'
+        os.makedirs(results_path, exist_ok=True)
+        results_path += '/' + self.name
+        os.makedirs(results_path, exist_ok=True)
+
         # Set parallel framework
         parallel.set({})
 
-        # Printings
-        disclaimer()
-        liner(bold('Pex benchmark'))
-
         # Parameters
-        filename   = pms.filename
+        filename   = results_path + "/" + pms.filename
         n_avg      = pms.n_avg
         methods    = pms.methods
         dimensions = pms.dimensions
@@ -81,7 +85,7 @@ class BenchPex():
                 labels += [m]
                 x +=[results[m, d]]
 
-                f = "test_"+str(d)+".png"
+                f = results_path + "/test_"+str(d)+".png"
                 t = "dimension "+str(d)
                 violins_array(f, x, labels, y_label="phi_p(50)", title=t)
 
@@ -99,7 +103,7 @@ class BenchPex():
             phi_p[name] = 1.0/np.mean(results[m,d])
             t[name]     = time[m,d]
 
-        f = "scatter.png"
+        f = results_path + "/scatter.png"
         scatter_names(f, phi_p, t, names, colors=colors, x_label="1/phi_p(50)", y_label="t", title="scatter")
 
     def avg(self,
