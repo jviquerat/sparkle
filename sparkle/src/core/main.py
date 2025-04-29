@@ -151,7 +151,7 @@ def main():
         bench = bench_factory.create(bench_name)
 
         disclaimer()
-        liner(bold('Benchmark mode'))
+        liner(bold('Benchmark mode: '+bench_name))
 
         bench.run(args)
         return
