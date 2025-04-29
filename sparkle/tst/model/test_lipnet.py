@@ -71,3 +71,6 @@ def test_lipnet():
     # Hence, the tolerances for the grad_std are very low
     assert np.allclose(grad_mu, grad_mu_fd)
     assert np.allclose(grad_std, grad_std_fd, rtol=1.0e-2, atol=1.0e-1)
+
+    filename = "loss.png"
+    os.remove(filename)
