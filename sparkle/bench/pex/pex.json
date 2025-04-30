@@ -1,6 +1,9 @@
 {
     "filename": "test.dat",
     "n_avg": 10,
-    "methods": ["random", "lhs", "mlhs", "rfps"],
-    "dimensions": [5, 10, 20, 50, 100]
+    "sweep": {
+        "method": ["random", "lhs", "mlhs", "rfps"],
+        "dimension": [5, 10, 20, 50]
+    }
+
 }

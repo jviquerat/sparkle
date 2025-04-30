@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 import numpy as np
 
-from sparkle.src.bench.bench import combine_parameters
+from sparkle.src.bench.bench import get_sweep_parameters, combine_parameters, combination_to_name
 from sparkle.src.env.parallel import parallel
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.pex import pex_factory
@@ -48,15 +48,12 @@ class BenchPex():
         parallel.set({})
 
         # Parameters
-        filename   = results_path + "/" + pms.filename
-        n_avg      = pms.n_avg
-        methods    = pms.methods
-        dimensions = pms.dimensions
+        filename = results_path + "/" + pms.filename
+        n_avg    = pms.n_avg
+        sweep    = pms.sweep
 
         # Retrieve parameter keys and values
-        keys   = ["method", "dimension"]
-        values = [ methods,  dimensions]
-
+        keys, values = get_sweep_parameters(sweep)
         combinations = combine_parameters(keys, values)
 
         # Run benchmark with combinations of parameters
@@ -78,10 +75,10 @@ class BenchPex():
                 f.write("\n")
 
         # Violin plot for phi-p
-        for d in dimensions:
+        for d in sweep.dimension:
             labels = []
             x      = []
-            for m in methods:
+            for m in sweep.method:
                 labels += [m]
                 x +=[results[m, d]]
 
@@ -96,12 +93,11 @@ class BenchPex():
         colors = []
         for cmb in combinations:
             d = cmb["dimension"]
-            m = cmb["method"]
             colors.append(d)
-            name = f"{m} {d}"
+            name = combination_to_name(cmb)
             names.append(name)
-            phi_p[name] = 1.0/np.mean(results[m,d])
-            t[name]     = time[m,d]
+            phi_p[name] = 1.0/np.mean(results[tuple(cmb.values())])
+            t[name]     = time[tuple(cmb.values())]
 
         f = results_path + "/scatter.png"
         scatter_names(f, phi_p, t, names, colors=colors, x_label="1/phi_p(50)", y_label="t", title="scatter")
