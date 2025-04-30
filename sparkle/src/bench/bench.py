@@ -62,7 +62,6 @@ def combination_to_name(cmb: Dict) -> str:
     a string name from it for storage or plotting purpose
     """
 
-    print(cmb)
     name = ""
     for k, v in cmb.items():
         name += f"{v} "
