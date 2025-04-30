@@ -381,7 +381,14 @@ def violins_array(filename: str,
     ax.set_xticks(np.arange(len(x_labels))+1)
     ax.set_xticklabels(x_labels)
     if (y_label is not None): ax.set_ylabel(y_label)
-    ax.set_yscale('log')
+
+    ratio = np.max(np.abs(x))/np.min(np.abs(x) + 1.0e-5)
+    if ratio > 100:
+        if np.any(x < 0.0):
+            ax.set_yscale("symlog")
+        else:
+            ax.set_yscale("log")
+
     if (title is not None): ax.set_title(title)
 
     plt.savefig(filename, dpi=100)
@@ -466,6 +473,7 @@ def scatter_names(filename: str,
                   x: dict[str, float],
                   y: dict[str, float],
                   names: list[str],
+                  use_log_scale: bool=True,
                   colors: list[str] | None=None,
                   x_label: str | None=None,
                   y_label: str | None=None,
@@ -504,7 +512,8 @@ def scatter_names(filename: str,
     if x_label is not None: ax.set_xlabel(x_label)
     if y_label is not None: ax.set_ylabel(y_label)
     if title is not None: ax.set_title(title)
-    ax.set_yscale('log')
+    if use_log_scale: ax.set_yscale("log")
+
     ax.grid(True)
     plt.savefig(filename, dpi=100)
     plt.close()
