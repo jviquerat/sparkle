@@ -11,7 +11,7 @@ from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.pex import pex_factory
 from sparkle.src.plot.plot import scatter_names, violins_array
 from sparkle.src.utils.json import JsonParser
-from sparkle.src.utils.prints import bold, disclaimer, liner, spacer
+from sparkle.src.utils.prints import spacer
 from sparkle.src.utils.timer import Timer
 
 
@@ -58,17 +58,17 @@ class BenchPex():
 
         # Run benchmark with combinations of parameters
         # Store results in a dict mapping tuple of parameter values to numpy array
-        results = dict()
-        time    = dict()
+        cost = dict()
+        time = dict()
         for cmb in combinations:
             spacer(str(cmb))
             t, phi_p = self.avg(n_avg, cmb)
-            results[tuple(cmb.values())] = phi_p
-            time[tuple(cmb.values())]    = t
+            cost[tuple(cmb.values())] = phi_p
+            time[tuple(cmb.values())] = t
 
         # Output in data file
         with open(filename, "w") as f:
-            for k,v in results.items():
+            for k,v in cost.items():
                 f.write(str(k))
                 f.write("\n")
                 f.write(np.array2string(v))
@@ -80,7 +80,7 @@ class BenchPex():
             x      = []
             for m in sweep.method:
                 labels += [m]
-                x +=[results[m, d]]
+                x +=[cost[m, d]]
 
                 f = results_path + "/test_"+str(d)+".png"
                 t = "dimension "+str(d)
@@ -96,7 +96,7 @@ class BenchPex():
             colors.append(d)
             name = combination_to_name(cmb)
             names.append(name)
-            phi_p[name] = 1.0/np.mean(results[tuple(cmb.values())])
+            phi_p[name] = 1.0/np.mean(cost[tuple(cmb.values())])
             t[name]     = time[tuple(cmb.values())]
 
         f = results_path + "/scatter.png"
@@ -111,8 +111,7 @@ class BenchPex():
 
         Args:
             n_avg: The number of times to run the Pex algorithm for averaging.
-            combination: A dictionary containing the parameters for the Pex algorithm,
-                         including 'dimension' and 'method'.
+            combination: A dictionary containing the parameters
 
         Returns:
             A tuple containing:
