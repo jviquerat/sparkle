@@ -4,6 +4,8 @@ import matplotlib.cm as cm
 import numpy as np
 from numpy import ndarray
 
+from adjustText import adjust_text
+
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.utils.error import error
 
@@ -505,9 +507,12 @@ def scatter_names(filename: str,
         cs = ["red"]*len(names)
         ct = ["black"]*len(names)
 
+    texts = []
     for k, m in enumerate(names):
         ax.scatter(x[m], y[m], marker='o', color=cs[k])
-        ax.text(x[m], y[m], m, fontsize=10, c=ct[k])
+        texts.append(ax.text(x[m], y[m], m, fontsize=10, c=ct[k]))
+
+    adjust_text(texts, arrowprops=dict(arrowstyle="-", color='gray', lw=0.5))
 
     if x_label is not None: ax.set_xlabel(x_label)
     if y_label is not None: ax.set_ylabel(y_label)
@@ -515,5 +520,6 @@ def scatter_names(filename: str,
     if use_log_scale: ax.set_yscale("log")
 
     ax.grid(True)
+    fig.tight_layout()
     plt.savefig(filename, dpi=100)
     plt.close()
