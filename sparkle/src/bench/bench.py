@@ -1,11 +1,32 @@
 import itertools
+from types import SimpleNamespace
 from collections import defaultdict
-from typing import Any, List
+from typing import Any, List, Dict, Tuple
 
 from sparkle.src.utils.prints import spacer
 
 
-def combine_parameters(keys: List[str], values: List[Any]) -> List[dict]:
+def get_sweep_parameters(sweep: SimpleNamespace) -> Tuple[Dict]:
+    """
+    A function to retrieve the list of keys and values within the
+    sweep keyword of the json benchmark file
+
+    Args:
+        sweep: a Simplenamespace containing the sweep parameters
+
+    Returns:
+        keys: a dict of keys
+        values: a dict of values
+    """
+    keys = []
+    values = []
+    for k, v in vars(sweep).items():
+        keys.append(k)
+        values.append(v)
+
+    return keys, values
+
+def combine_parameters(keys: List[str], values: List[Any]) -> List[Dict]:
     """
     A function to combine parameters based on a list of keys and a list of values
 
@@ -18,7 +39,6 @@ def combine_parameters(keys: List[str], values: List[Any]) -> List[dict]:
                       the different values
 
     """
-    # Printings
     spacer("Parameter keys: "+str(keys))
     spacer("Parameter values: "+str(values))
 
@@ -35,3 +55,16 @@ def combine_parameters(keys: List[str], values: List[Any]) -> List[dict]:
     spacer("Nb of combinations: "+str(len(combinations)))
 
     return combinations
+
+def combination_to_name(cmb: Dict) -> str:
+    """
+    A function that takes a combination of parameters and returns
+    a string name from it for storage or plotting purpose
+    """
+
+    print(cmb)
+    name = ""
+    for k, v in cmb.items():
+        name += f"{v} "
+
+    return name
