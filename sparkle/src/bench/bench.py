@@ -3,6 +3,8 @@ from types import SimpleNamespace
 from collections import defaultdict
 from typing import Any, List, Dict, Tuple
 
+import numpy as np
+
 from sparkle.src.utils.prints import spacer
 
 
@@ -67,3 +69,12 @@ def combination_to_name(cmb: Dict) -> str:
         name += f"{v} "
 
     return name
+
+def write_bench_data(filename: str, cost: Dict) -> None:
+
+    with open(filename, "w") as f:
+        for k,v in cost.items():
+            f.write(str(k))
+            f.write("\n")
+            f.write(np.array2string(v))
+            f.write("\n")
