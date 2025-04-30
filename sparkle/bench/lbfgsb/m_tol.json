@@ -1,0 +1,10 @@
+{
+    "filename": "lbfgsb_m_tol.dat",
+    "n_avg": 100,
+    "sweep": {
+        "m": [5, 10, 20],
+        "tol": [1e-3, 1e-5, 1e-7],
+        "max_iter": [50],
+        "n_pts_ms": [10]
+    }
+}
