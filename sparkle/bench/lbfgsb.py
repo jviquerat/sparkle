@@ -12,7 +12,7 @@ from sparkle.src.bench.bench import (get_sweep_parameters,
 from sparkle.src.env.parallel import parallel
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.agent.ms_lbfgsb import MSLBFGSB
-from sparkle.env.sinebump.sinebump import sinebump
+from sparkle.env.griewank.griewank import griewank
 from sparkle.src.utils.json import JsonParser
 from sparkle.src.utils.prints import spacer
 from sparkle.src.utils.timer import Timer
@@ -93,7 +93,6 @@ class BenchLBFGSB():
             combination: List[dict]) -> Tuple[float, np.ndarray]:
         """
         Calculates the average final cost and execution time for L-BFGS-B
-        with given parameters on the Sinebump function.
 
         Args:
             n_avg: Number of averaging runs.
@@ -104,7 +103,7 @@ class BenchLBFGSB():
                 - Average execution time (float).
                 - NumPy array of final costs for each run.
         """
-        env = sinebump(cpu=0, path='.')
+        env = griewank(cpu=0, path='.')
         xmin = env.xmin
         xmax = env.xmax
         cost_func = env.cost
@@ -115,7 +114,6 @@ class BenchLBFGSB():
 
         for k in range(n_avg):
             timer_lbfgsb.tic()
-            # We use the Multi-Start version for better chance of finding global optimum
             x_opt, c_opt = opt.optimize(cost_func,
                                         xmin,
                                         xmax,
