@@ -95,10 +95,10 @@ class EGO(BaseAgent):
                             self.spaces.xmin,
                             self.spaces.xmax,
                             df=grad_lambda,
-                            n_pts=10*self.spaces.dim,
+                            n_pts=20*self.spaces.dim,
                             m=20,
-                            tol=1.0e-6,
-                            max_iter=200)
+                            tol=1.0e-5,
+                            max_iter=100)
 
         return np.reshape(x, (-1,self.spaces.dim))
 
