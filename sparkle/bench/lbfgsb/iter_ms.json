@@ -1,6 +1,7 @@
 {
     "filename": "lbfgsb_iter_ms.dat",
     "n_avg": 500,
+    "color_by": "n_pts_ms",
     "sweep": {
         "m": [10],
         "tol": [1e-5],

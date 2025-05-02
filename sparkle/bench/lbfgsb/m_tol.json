@@ -1,6 +1,7 @@
 {
     "filename": "lbfgsb_m_tol.dat",
     "n_avg": 500,
+    "color_by": "m",
     "sweep": {
         "m": [5, 10, 20],
         "tol": [1e-3, 1e-5, 1e-7],
