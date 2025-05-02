@@ -3,6 +3,7 @@ from typing import Callable, Optional, Tuple
 
 import numpy as np
 from numpy import ndarray
+import scipy
 
 from sparkle.src.agent.lbfgsb import LBFGSB
 from sparkle.src.env.spaces import EnvSpaces
@@ -32,7 +33,8 @@ class MSLBFGSB():
                  n_pts: int=10,
                  m: int=5,
                  tol: float=1e-3,
-                 max_iter: int=20) -> Tuple[ndarray, float]:
+                 max_iter: int=20,
+                 use_scipy=True) -> Tuple[ndarray, float]:
         """
         Optimizes a function using the multi-start L-BFGS-B algorithm.
 
@@ -46,6 +48,7 @@ class MSLBFGSB():
             m: The maximum number of correction pairs to store in L-BFGS-B (memory size).
             tol: The tolerance for the norm of the projected gradient in L-BFGS-B.
             max_iter: The maximum number of iterations for each L-BFGS-B optimization.
+            use_scipy: Whether to use scipy LBFGSB implementation
 
         Returns:
             A tuple containing:
@@ -64,14 +67,41 @@ class MSLBFGSB():
 
         x_star = np.zeros((n_pts, dim))
         c_star = np.zeros(n_pts)
-        opt    = LBFGSB()
 
-        for k in range(n_pts):
-            x, c      = opt.optimize(f, pex.x[k], xmin, xmax,
-                                     df=df, m=m, tol=tol, max_iter=max_iter)
-            x_star[k] = x
-            c_star[k] = c
+        # Use scipy implementation
+        if (use_scipy):
+            scipy_bounds = list(zip(xmin, xmax))
+            scipy_options = {
+                'maxcor': m,
+                'gtol': tol,
+                'maxiter': max_iter,
+                'disp': False
+                }
 
+            for k in range(n_pts):
+                result = scipy.optimize.minimize(
+                    fun=f,
+                    x0=pex.x[k],
+                    method='L-BFGS-B',
+                    jac=df,
+                    bounds=scipy_bounds,
+                    options=scipy_options
+                )
+
+                x_star[k] = result.x
+                c_star[k] = result.fun
+
+        # Use in-house implementation
+        else:
+            opt = LBFGSB()
+
+            for k in range(n_pts):
+                x, c      = opt.optimize(f, pex.x[k], xmin, xmax,
+                                         df=df, m=m, tol=tol, max_iter=max_iter)
+                x_star[k] = x
+                c_star[k] = c
+
+        # Retrieve best
         best = np.argmin(c_star)
 
         return x_star[best], c_star[best]
