@@ -100,8 +100,8 @@ class BaseKernel():
                                 df=grad_lambda,
                                 n_pts=10*self.dim_,
                                 m=20,
-                                tol=1.0e-6,
-                                max_iter=200)
+                                tol=1.0e-5,
+                                max_iter=100)
 
         self.theta_ = np.exp(x_opt)
 
