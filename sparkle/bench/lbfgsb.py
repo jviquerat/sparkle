@@ -83,11 +83,11 @@ class BenchLBFGSB():
             avg_costs[name] = np.mean(cost[tuple(cmb.values())])
             avg_times[name] = time[tuple(cmb.values())]
 
-        f = os.path.join(results_path, "scatter_time_vs_cost.png")
+        f = os.path.join(results_path, "scatter.png")
         scatter_names(f, avg_costs, avg_times, names, colors=colors,
-                      x_label="Average Final Cost (log scale)",
-                      y_label="Average Execution Time (s, log scale)",
-                      title="Avg Time vs. Avg Cost")
+                      x_label="cost",
+                      y_label="t",
+                      title="[m, tol, max_iter, n_pts_pms]")
 
     def avg(self,
             n_avg: int,
