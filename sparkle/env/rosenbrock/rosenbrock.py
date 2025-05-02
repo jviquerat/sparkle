@@ -1,6 +1,7 @@
 import numpy as np
 
 from sparkle.env.base_env import base_env
+from sparkle.src.utils.default import set_default
 
 
 ###############################################
@@ -15,15 +16,13 @@ class rosenbrock(base_env):
         self.base_path = path
         self.cpu       = cpu
         self.dim       = 2
-        if hasattr(pms, "dim"): self.dim = pms.dim
+        self.dim       = set_default("dim", 2, pms)
 
-        self.x0        =-1.0*np.ones(self.dim)
-        self.x0[0]     = 0.0
-        self.xmin      =-2.0*np.ones(self.dim)
-        self.xmax      = 2.0*np.ones(self.dim)
-        if hasattr(pms, "x0"):   self.x0   = pms.x0
-        if hasattr(pms, "xmin"): self.xmin = pms.xmin
-        if hasattr(pms, "xmax"): self.xmax = pms.xmax
+        x0        =-1.0*np.ones(self.dim)
+        x0[0]     = 0.0
+        self.x0   = set_default("x0", x0, pms)
+        self.xmin = set_default("xmin", -2.0*np.ones(self.dim), pms)
+        self.xmax = set_default("xmax", 2.0*np.ones(self.dim), pms)
 
         # Plotting data
         self.it_plt    = 0
