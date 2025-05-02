@@ -52,6 +52,7 @@ class BenchLBFGSB():
         filename = os.path.join(results_path, pms.filename)
         n_avg    = pms.n_avg
         sweep    = pms.sweep
+        color_by = pms.color_by
 
         # Retrieve parameter keys and values for combinations
         keys, values = get_sweep_parameters(sweep)
@@ -76,7 +77,7 @@ class BenchLBFGSB():
         colors = []
 
         for cmb in combinations:
-            colors.append(cmb["m"])
+            colors.append(cmb[color_by])
             name = combination_to_name(cmb)
             names.append(name)
             avg_costs[name] = np.mean(cost[tuple(cmb.values())])
