@@ -344,10 +344,16 @@ def render_2D_metamodel(filename: str,
 
     ax = fig.add_subplot(133)
     ax.axis('off')
+
+    scale = "linear"
+    ratio = np.max(np.abs(fct))/np.min(np.abs(fct) + 1.0e-5)
+    if ratio > 100:
+        scale = "symlog"
+
     im3 = ax.imshow(fct,
                     extent=[spaces.xmin[0], spaces.xmax[0],
                             spaces.xmin[1], spaces.xmax[1]],
-                    alpha=0.8, cmap='RdBu_r')
+                    alpha=0.8, cmap='RdBu_r', norm=scale)
     if highlight_last:
         ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
     ax.set_title(fct_name)
