@@ -1,9 +1,10 @@
 {
     "filename": "lbfgsb_all.dat",
     "n_avg": 100,
+    "color_by": "n_pts_ms",
     "sweep": {
         "m": [5, 10, 20],
-        "tol": [1e-3, 1e-5, 1e-7],
+        "tol": [1e-5],
         "max_iter": [10, 50, 100],
         "n_pts_ms": [5, 10, 20]
     }
