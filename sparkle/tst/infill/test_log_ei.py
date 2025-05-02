@@ -12,11 +12,11 @@ from sparkle.src.utils.seeds import set_seeds
 
 @pytest.mark.parametrize("kernel_type, ref0, ref1",
                          [("gaussian",
-                           np.array([-77898.30518898]),
-                           np.array([-77898.30518898, -734.46169215])),
+                           np.array([-78476.96418075]),
+                           np.array([-78476.96419005,   -739.83807089])),
                           ("matern52",
-                           np.array([-2588.29551967]),
-                           np.array([-2588.29551967,   -78.09099962]))
+                           np.array([-2588.44748576]),
+                           np.array([-2588.44748576,   -78.09514743]))
                           ])
 ###############################################
 def test_log_ei(kernel_type, ref0, ref1):

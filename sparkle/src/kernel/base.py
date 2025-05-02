@@ -101,7 +101,9 @@ class BaseKernel():
                                 n_pts=10*self.dim_,
                                 m=20,
                                 tol=1.0e-5,
-                                max_iter=100)
+                                max_iter=100,
+                                test_ratio=10,
+                                use_scipy=True)
 
         self.theta_ = np.exp(x_opt)
 
