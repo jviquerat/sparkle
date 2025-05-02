@@ -98,7 +98,9 @@ class EGO(BaseAgent):
                             n_pts=20*self.spaces.dim,
                             m=20,
                             tol=1.0e-5,
-                            max_iter=100)
+                            max_iter=100,
+                            test_ratio=10,
+                            use_scipy=True)
 
         return np.reshape(x, (-1,self.spaces.dim))
 

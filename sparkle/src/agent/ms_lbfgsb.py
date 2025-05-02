@@ -34,9 +34,12 @@ class MSLBFGSB():
                  m: int=5,
                  tol: float=1e-3,
                  max_iter: int=20,
+                 test_ratio: int=10,
                  use_scipy=True) -> Tuple[ndarray, float]:
         """
         Optimizes a function using the multi-start L-BFGS-B algorithm.
+        We sample test_ratio*n_pts points and compute the associated cost,
+        then select the best n_pts as initial points for the multi-start algorithm
 
         Args:
             f: The objective function to minimize.
@@ -48,6 +51,7 @@ class MSLBFGSB():
             m: The maximum number of correction pairs to store in L-BFGS-B (memory size).
             tol: The tolerance for the norm of the projected gradient in L-BFGS-B.
             max_iter: The maximum number of iterations for each L-BFGS-B optimization.
+            test_ratio: Nb of points ratio for initial values test
             use_scipy: Whether to use scipy LBFGSB implementation
 
         Returns:
@@ -57,13 +61,20 @@ class MSLBFGSB():
         """
 
         pms          = types.SimpleNamespace()
-        pms.n_points = n_pts
+        pms.n_points = n_pts*test_ratio
         pms.n_iter   = 1000
 
         dim        = xmin.shape[0]
         space_dict = {"dim": dim, "x0": None, "xmin": xmin, "xmax": xmax}
         spaces     = EnvSpaces(space_dict)
         pex        = MLHS(spaces, pms)
+
+        # Compute costs and retain only best n_pts
+        costs = np.zeros(n_pts*test_ratio)
+        for k in range(n_pts*test_ratio):
+            costs[k] = f(pex.x[k]).squeeze()
+        best  = np.argsort(costs)[:n_pts]
+        x     = pex.x[best]
 
         x_star = np.zeros((n_pts, dim))
         c_star = np.zeros(n_pts)
@@ -81,7 +92,7 @@ class MSLBFGSB():
             for k in range(n_pts):
                 result = scipy.optimize.minimize(
                     fun=f,
-                    x0=pex.x[k],
+                    x0=x[k],
                     method='L-BFGS-B',
                     jac=df,
                     bounds=scipy_bounds,
@@ -96,7 +107,7 @@ class MSLBFGSB():
             opt = LBFGSB()
 
             for k in range(n_pts):
-                x, c      = opt.optimize(f, pex.x[k], xmin, xmax,
+                x, c      = opt.optimize(f, x[k], xmin, xmax,
                                          df=df, m=m, tol=tol, max_iter=max_iter)
                 x_star[k] = x
                 c_star[k] = c
