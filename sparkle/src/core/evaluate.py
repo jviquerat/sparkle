@@ -32,7 +32,7 @@ def evaluate(dat_file, json_file):
     parser = JsonParser()
     pms    = parser.read(json_file)
     parallel.set(pms)
-    env    = parallel.environments(".", pms.environment)
+    env    = parallel.environments(".", pms.trainer.environment)
     env.reset(0)
 
     # Retrieve data file
@@ -44,7 +44,7 @@ def evaluate(dat_file, json_file):
     # Run environment
     x = np.array([x])
     c = env.cost(x)
-    env.render(x)
+    env.render(x, c)
 
     # Finalize
     env.close()
