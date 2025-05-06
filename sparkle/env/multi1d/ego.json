@@ -20,14 +20,14 @@
         },
         "model": {
             "name": "kriging",
-            "optimize_every": 100,
+            "optimize_every": 10,
             "kernel": {
                 "name": "matern52"
             }
         },
         "agent": {
             "name": "ego",
-            "n_steps_max": 10,
+            "n_steps_max": 15,
             "infill": "log_ei"
         }
     }
