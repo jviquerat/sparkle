@@ -34,12 +34,18 @@ Environments are expected to be available locally or present in the path. To tra
 spk --train <json_file>
 ```
 
-## Examples
+## Analytical environments
 
-Below are several optimization examples performed with the different methods.
+| Environment  | Default dimension | Description                              | Illustration                                                       |
+|:-------------|:------------------|:-----------------------------------------|:------------------------------------------------------------------:|
+| `parabola`   | 2                 | Classic parabola, solved with `CEM`      | <img width="200" alt="gif" src="sparkle/msc/parabola_cem.gif">     |
+| `rosenbrock` | 2                 | Rosenbrock function, solved with `CMAES` | <img width="200" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> |
+| `sinebump`   | 2                 | Sinebump function, solved with `PSO`     | <img width="200" alt="gif" src="sparkle/msc/sinebump_pso.gif">     |
 
-| **`parabola (cem)`**                                                     | **`rosenbrock (cmaes)`**                                            | **`sinebump (pso)`**                                                       |
-| :----------------------------------------------------------------------: | :-----------------------------------------------------------------: | :------------------------------------------------------------------------: |
-| <img height="200" alt="gif" src="sparkle/msc/parabola_cem.gif">          | <img height="200" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> | <img height="200" alt="gif" src="sparkle/msc/sinebump_pso.gif">            |
-| **`packing (cmaes)`**                                                    | **`lorenz (pbo)`**                                                  | **`packing (cmaes)`**                                                      |
-| <img height="200" alt="gif" src="sparkle/msc/packing_circles_cmaes.gif"> | <img height="200" alt="gif" src="sparkle/msc/lorenz_pbo.gif">       | <img height="200" alt="gif" src="sparkle/msc/packing_triangles_cmaes.gif"> |
+## Physics-based environments
+
+| Environment | Default dimension | Description                                                                    | Illustration                                                  |
+|:------------|:------------------|:-------------------------------------------------------------------------------|:-------------------------------------------------------------:|
+| `lorenz`    | 4                 | Optimizing a control law for the chaotic Lorenz attractor, solved with `PBO`   | <img width="300" alt="gif" src="sparkle/msc/lorenz_pbo.gif">  |
+| `n-body`    | 9                 | Optimizing the initial parameters to find periodic orbits, solved with `CMAES` | <img width="300" alt="gif" src="sparkle/msc/nbody_cmaes.gif"> |
+
