@@ -1,0 +1,30 @@
+{
+    "n_avg": 1,
+    "avg_type": "log",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 10,
+        "renderer": "env",
+        "environment": {
+            "name": "n_body",
+            "args": {
+                "render_mode": "png",
+                "trail_length": 1200,
+                "t_max": 60.0,
+                "n_bodies": 3
+            }
+        },
+        "agent": {
+            "name": "cmaes",
+            "n_steps_max": 1000,
+	          "clip": true,
+            "escape": true
+        }
+    }
+}
