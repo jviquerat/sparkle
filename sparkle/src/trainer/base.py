@@ -67,19 +67,23 @@ class BaseTrainer():
             c: The cost values at the evaluated points.
         """
 
+        # Work on copies
+        xc = np.copy(x)
+        cc = np.copy(c)
+
         # The update of best points is quite inefficient, but it allows
         # to reproduce historical data when loading a pex or a model
-        for i in range(c.shape[0]):
-            if (c[i] <= self.best_score):
-                self.best_score = c[i]
-                self.best_x[:]  = x[i,:]
+        for i in range(cc.shape[0]):
+            if (cc[i] <= self.best_score):
+                self.best_score = cc[i]
+                self.best_x[:]  = xc[i,:]
                 self.best_stp   = self.total_stp
 
             self.hist_t.append(self.total_stp)
-            self.hist_c.append(c[i])
+            self.hist_c.append(cc[i])
             self.hist_b.append(self.best_score)
             self.hist_s.append(self.best_stp)
-            self.hist_x.append(x[i,:])
+            self.hist_x.append(xc[i,:])
 
             self.total_stp += 1
 
