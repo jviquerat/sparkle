@@ -45,8 +45,9 @@ spk --train <json_file>
 
 ## Physics-based environments
 
-| Environment | Default dimension | Description                                                                    | Illustration                                                  |
-|:------------|:------------------|:-------------------------------------------------------------------------------|:-------------------------------------------------------------:|
-| `lorenz`    | 4                 | Optimizing a control law for the chaotic Lorenz attractor, solved with `PBO`   | <img width="300" alt="gif" src="sparkle/msc/lorenz_pbo.gif">  |
-| `n-body`    | 9                 | Optimizing the initial parameters to find periodic orbits, solved with `CMAES` | <img width="300" alt="gif" src="sparkle/msc/nbody_cmaes.gif"> |
+| Environment   | Default dimension | Description                                                                                                                                | Illustration                                                        |
+|:--------------|:------------------|:-------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------:|
+| `lorenz`      | 4                 | Optimizing a control law for the chaotic Lorenz attractor, solved with `PBO`                                                               | <img width="300" alt="gif" src="sparkle/msc/lorenz_pbo.gif">        |
+| `n-body`      | 9                 | Optimizing the initial parameters to find periodic orbits, solved with `CMAES`                                                             | <img width="300" alt="gif" src="sparkle/msc/nbody_cmaes.gif">       |
+| `heat-source` | 14                | Optimizing the positions of heat sources to obtain a high temperature distribution with low variance in a target area, solved with `CMAES` | <img width="300" alt="gif" src="sparkle/msc/heat_source_cmaes.gif"> |
 
