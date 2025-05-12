@@ -1,0 +1,27 @@
+{
+    "n_avg": 1,
+    "avg_type": "linear",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "trainer": {
+        "name": "regular",
+        "renderer": "env",
+        "render_every": 1,
+        "environment": {
+            "name": "packing",
+            "args": {
+                "n_spheres": 13,
+                "max_boundary_side": 11
+            }
+        },
+        "agent": {
+            "name": "pbo",
+            "n_steps_max": 1000,
+            "n_points": 30
+        }
+    }
+}
