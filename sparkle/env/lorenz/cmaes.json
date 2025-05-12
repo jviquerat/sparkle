@@ -11,10 +11,14 @@
         "name": "regular",
         "render_every": 10,
         "environment": {
-            "name": "lorenz"
+            "name": "lorenz",
+            "args": {
+                "render_mode": "gif"
+            }
         },
         "agent": {
             "name": "cmaes",
+            "clip": true,
             "n_steps_max": 200
         }
     }
