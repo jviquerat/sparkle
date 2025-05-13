@@ -58,17 +58,19 @@ class BenchPex():
 
         # Run benchmark with combinations of parameters
         # Store results in a dict mapping tuple of parameter values to numpy array
-        cost = dict()
+        phi_p = dict()
+        minimax = dict()
         time = dict()
         for cmb in combinations:
             spacer(str(cmb))
-            t, phi_p = self.avg(n_avg, cmb)
-            cost[tuple(cmb.values())] = phi_p
+            t, _phi_p, _minimax = self.avg(n_avg, cmb)
+            phi_p[tuple(cmb.values())] = _phi_p
+            minimax[tuple(cmb.values())] = _minimax
             time[tuple(cmb.values())] = t
 
         # Output in data file
         with open(filename, "w") as f:
-            for k,v in cost.items():
+            for k,v in phi_p.items():
                 f.write(str(k))
                 f.write("\n")
                 f.write(np.array2string(v))
@@ -80,34 +82,47 @@ class BenchPex():
             x      = []
             for m in sweep.method:
                 labels += [m]
-                x +=[cost[m, d]]
+                x +=[phi_p[m, d]]
 
                 f = results_path + "/test_"+str(d)+".png"
                 t = "dimension "+str(d)
                 violins_array(f, x, labels, y_label="phi_p(50)", title=t)
 
         # Scatter plots for given dimension
-        phi_p  = {}
-        t      = {}
-        names  = []
-        colors = []
+        sc_phi_p   = {}
+        sc_minimax = {}
+        t          = {}
+        names      = []
+        colors     = []
         for cmb in combinations:
             d = cmb["dimension"]
             colors.append(d)
             name = combination_to_name(cmb)
             names.append(name)
-            phi_p[name] = 1.0/np.mean(cost[tuple(cmb.values())])
-            t[name]     = time[tuple(cmb.values())]
+            sc_phi_p[name]   = np.mean(phi_p[tuple(cmb.values())])
+            sc_minimax[name] = np.mean(minimax[tuple(cmb.values())])
+            t[name]          = time[tuple(cmb.values())]
 
-        f = results_path + "/scatter.png"
-        scatter_names(f, phi_p, t, names, colors=colors, x_label="1/phi_p(50)", y_label="t", title="scatter")
+        f = os.path.join(results_path, "scatter_phip.png")
+        scatter_names(f, sc_phi_p, t, names,
+                      colors=colors,
+                      x_label="phi_p(50)",
+                      y_label="t",
+                      title="scatter")
+
+        f = os.path.join(results_path, "scatter_minimax.png")
+        scatter_names(f, sc_minimax, t, names,
+                      colors=colors,
+                      x_label="minimax",
+                      y_label="t",
+                      title="scatter")
 
     def avg(self,
             n_avg: int,
             combination: List[dict]) -> Tuple[float, np.ndarray]:
         """
-        Calculates the average phi-p metric and execution time for a given
-        Pex method and parameters.
+        Calculates the average phi-p metric, minimax distance and
+        execution time for a given Pex method and parameters.
 
         Args:
             n_avg: The number of times to run the Pex algorithm for averaging.
@@ -134,12 +149,14 @@ class BenchPex():
                                  pms    = pms)
 
         phi_p = np.zeros(n_avg)
+        minimax = np.zeros(n_avg)
         for k in range(n_avg):
             timer_pex.tic()
             pex.reset()
             timer_pex.toc()
             phi_p[k] = pex.phi_p()
+            minimax[k] = pex.minimax()
 
         time = timer_pex.dt/n_avg
 
-        return time, phi_p
+        return time, phi_p, minimax

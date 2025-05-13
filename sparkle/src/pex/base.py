@@ -8,7 +8,7 @@ from numpy import float64, ndarray
 
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.utils.default import set_default
-from sparkle.src.utils.distances import nearest_neighbors_in_set
+from sparkle.src.utils.distances import nearest_neighbors_in_set, pairwise_distances
 from sparkle.src.utils.prints import fmt_float, spacer
 
 
@@ -34,6 +34,7 @@ class BasePex():
 
         self.spaces    = spaces
         self.n_points_ = set_default("n_points", 10*self.dim, pms)
+        self.MC_set    = None
 
     @property
     def dim(self) -> int:
@@ -108,7 +109,6 @@ class BasePex():
         v = self.xmax - self.xmin
         return np.prod(v)
 
-
     def phi_p(self, p: int=50) -> float:
         """
         Computes the phi-p criterion for the experiment plan.
@@ -130,6 +130,32 @@ class BasePex():
 
         return math.pow(d, 1.0/p)
 
+    def minimax(self, n_samples: int=10000) -> float:
+        """
+        Computes the minimax criterion for the experiment plan,
+        using Monte-Carlo sampling. We uniformly draw n_samples
+        within the domain, and for each random point, find the minimum
+        Euclidian distance to any of the selected design points
+
+        Args:
+            n_samples: the number of samples to draw for MC estimate
+
+        Returns:
+            The evaluated minimax distance
+        """
+        # Generate n_samples random points uniformly within the domain
+        if (self.MC_set is None):
+            self.MC_set = np.random.uniform(low=self.xmin,
+                                            high=self.xmax,
+                                            size=(n_samples, self.dim))
+
+        # For each Monte Carlo point, find its minimum squared Euclidean distance
+        # to any of the selected design points (self.x)
+        dists        = pairwise_distances(self.MC_set, self.x)
+        minimax_dist = np.max(np.min(dists, axis=1))
+
+        return minimax_dist
+
     def summary(self):
         """
         Prints a summary of the experiment plan's configuration.
@@ -137,6 +163,7 @@ class BasePex():
 
         spacer("Pex type is "+self.name+" with "+str(self.n_points)+" points")
         spacer("Phi-p criterion: "+fmt_float(self.phi_p()))
+        spacer("Minimax criterion: "+fmt_float(self.minimax()))
 
     def render_2d(self):
         """
