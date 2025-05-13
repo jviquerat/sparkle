@@ -36,18 +36,18 @@ spk --train <json_file>
 
 ## Analytical environments
 
-| Environment  | Default dimension | Description                              | Illustration                                                       |
-|:-------------|:------------------|:-----------------------------------------|:------------------------------------------------------------------:|
-| `parabola`   | 2                 | Classic parabola, solved with `CEM`      | <img width="200" alt="gif" src="sparkle/msc/parabola_cem.gif">     |
-| `rosenbrock` | 2                 | Rosenbrock function, solved with `CMAES` | <img width="200" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> |
-| `sinebump`   | 2                 | Sinebump function, solved with `PSO`     | <img width="200" alt="gif" src="sparkle/msc/sinebump_pso.gif">     |
-| `multi1d`    | 1                 | Multi1D function, solved with `EGO`      | <img width="300" alt="gif" src="sparkle/msc/multi1d_ego.gif">      |
+| Environment  | Default dimension | Description                               | Illustration                                                       |
+|:-------------|:------------------|:------------------------------------------|:------------------------------------------------------------------:|
+| `parabola`   | 2                 | Classic parabola (solved with `CEM`)      | <img width="200" alt="gif" src="sparkle/msc/parabola_cem.gif">     |
+| `rosenbrock` | 2                 | Rosenbrock function (solved with `CMAES`) | <img width="200" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> |
+| `sinebump`   | 2                 | Sinebump function (solved with `PSO`)     | <img width="200" alt="gif" src="sparkle/msc/sinebump_pso.gif">     |
+| `multi1d`    | 1                 | Multi1D function (solved with `EGO`)      | <img width="300" alt="gif" src="sparkle/msc/multi1d_ego.gif">      |
 
 ## Physics-based environments
 
-| Environment   | Default dimension | Description                                                                                                                                | Illustration                                                        |
-|:--------------|:------------------|:-------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------:|
-| `lorenz`      | 4                 | Optimizing a control law for the chaotic Lorenz attractor, solved with `PBO`                                                               | <img width="300" alt="gif" src="sparkle/msc/lorenz_pbo.gif">        |
-| `n-body`      | 9                 | Optimizing the initial parameters to find periodic orbits, solved with `CMAES`                                                             | <img width="300" alt="gif" src="sparkle/msc/nbody_cmaes.gif">       |
-| `heat-source` | 14                | Optimizing the positions of heat sources to obtain a high temperature distribution with low variance in a target area, solved with `CMAES` | <img width="300" alt="gif" src="sparkle/msc/heat_source_cmaes.gif"> |
+| Environment   | Default dimension | Description                                                                                                                                                                                                                                                | Illustration                                                        |
+|:--------------|:------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------:|
+| `lorenz`      | 4                 | Optimizing a control law for the chaotic Lorenz attractor (solved with `PBO`)                                                                                                                                                                              | <img width="300" alt="gif" src="sparkle/msc/lorenz_pbo.gif">        |
+| `n-body`      | 9                 | Optimizing the initial parameters to find periodic orbits, adapted from <a href="https://pubs.aip.org/aapt/ajp/article-abstract/82/6/609/1057817/A-guide-to-hunting-periodic-three-body-orbits?redirectedFrom=fulltext">this ref</a> (solved with `CMAES`) | <img width="300" alt="gif" src="sparkle/msc/nbody_cmaes.gif">       |
+| `heat-source` | 14                | Optimizing the positions of heat sources to obtain a high temperature distribution with low variance in a target area (solved with `CMAES`)                                                                                                                | <img width="300" alt="gif" src="sparkle/msc/heat_source_cmaes.gif"> |
 
