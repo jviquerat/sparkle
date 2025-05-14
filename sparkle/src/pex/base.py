@@ -130,7 +130,7 @@ class BasePex():
 
         return math.pow(d, 1.0/p)
 
-    def minimax(self, n_samples: int=10000) -> float:
+    def minimax(self, n_samples: int=1000) -> float:
         """
         Computes the minimax criterion for the experiment plan,
         using Monte-Carlo sampling. We uniformly draw n_samples
