@@ -36,61 +36,51 @@ def FPS(x: ndarray, n_target: int) -> ndarray:
         return x.copy()
 
     # selected is the array of selected points indices
-    # candidate_mask is a mask for candidate points (true if point is candidate)
+    # mask[p] = True if point p is candidate
     selected = np.zeros(n_target, dtype=int)
-    candidate_mask = np.ones(n_points, dtype=bool)
+    mask     = np.ones(n_points, dtype=bool)
 
-    # Array of minimal squared distance from each point to any selected point
+    # Array of minimal (squared) distance from each point to any selected point
     # It is initialized with np.inf and updated after each point selection
-    # We use squared distances for efficiency
-    min_sq_dists = np.full(n_points, np.inf)
+    min_dists = np.full(n_points, np.inf)
 
     # Select the first point randomly
-    k = np.random.randint(0, n_points)
+    k           = np.random.randint(0, n_points)
     selected[0] = k
-    candidate_mask[k] = False
-    n_selected = 1
+    mask[k]     = False
+    n_selected  = 1
 
-    # Compute squared distances from the first point to all other candidates
-    # The mask selects only candidates points
-    diffs = x[candidate_mask] - x[k]
-    sq_dists_to_last = np.sum(diffs*diffs, axis=1)
+    # Compute (squared) distances from current point to candidates
+    diff         = x[mask] - x[k]
+    dists_to_crt = np.sum(diff*diff, axis=1)
 
     # Update minimal distances for candidates
-    min_sq_dists[candidate_mask] = sq_dists_to_last
+    min_dists[mask] = dists_to_crt
 
     # Loop until n_target points are selected
     while n_selected < n_target:
 
-        # Get min distances for current candidates
-        current_candidate_min_sq_dists = min_sq_dists[candidate_mask]
-
-        # Find position (relative index) of the farthest candidate
-        farthest_candidate_pos = np.argmax(current_candidate_min_sq_dists)
-
-        # Get the original index of the farthest candidate
-        candidate_original_indices = np.where(candidate_mask)[0]
-        farthest_original_idx = candidate_original_indices[farthest_candidate_pos]
+        # Find index of farthest candidate *within the masked array*,
+        # then retrieve its index in the original numbering
+        farthest_idx     = np.argmax(min_dists[mask])
+        original_indices = np.where(mask)[0]
+        farthest_idx     = original_indices[farthest_idx]
 
         # Add the farthest point to the selected set
-        selected[n_selected] = farthest_original_idx
-        candidate_mask[farthest_original_idx] = False # Mark as selected
-        n_selected += 1
+        selected[n_selected] = farthest_idx
+        mask[farthest_idx]   = False # Mark as selected
+        n_selected          += 1
 
         # Exit if done
         if n_selected == n_target:
             break
 
-        # Update min distances for remaining candidates
-        last_selected_coords = x[farthest_original_idx]
-
         # Calculate sq distances from the *newly added* point to remaining candidates
-        diffs = x[candidate_mask] - last_selected_coords
-        sq_dists_to_last = np.sum(diffs * diffs, axis=1)
+        diff         = x[mask] - x[farthest_idx]
+        dists_to_crt = np.sum(diff*diff, axis=1)
 
         # Update min distances: take element-wise min of current and new distances
-        min_sq_dists[candidate_mask] = np.minimum(min_sq_dists[candidate_mask],
-                                                  sq_dists_to_last)
+        min_dists[mask] = np.minimum(min_dists[mask], dists_to_crt)
 
     # Return the subset of points corresponding to the selected indices
     return x[selected]
