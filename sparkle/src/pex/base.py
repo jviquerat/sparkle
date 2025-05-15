@@ -138,6 +138,34 @@ class BasePex():
         spacer("Pex type is "+self.name+" with "+str(self.n_points)+" points")
         spacer("Phi-p criterion: "+fmt_float(self.phi_p()))
 
+    def render_distances_distributions(self):
+        """
+        Compute distance distributions
+        """
+
+        dists = pairwise_distances(self.x, self.x)
+        dists = np.reshape(dists, (-1))
+
+        plt.clf()
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        fig.set_size_inches(5, 5)
+
+        plt.hist(dists)
+        plt.savefig(f"{self.name}_hist_pairwise.png", dpi=100)
+        plt.close()
+
+        dists, _ = nearest_neighbors_in_set(self.x)
+
+        plt.clf()
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        fig.set_size_inches(5, 5)
+
+        plt.hist(dists)
+        plt.savefig(f"{self.name}_hist_neibhors.png", dpi=100)
+        plt.close()
+
     def render_2d(self):
         """
         Renders the experiment plan in 2D (if the dimensionality is 2).
