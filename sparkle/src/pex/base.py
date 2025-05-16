@@ -130,7 +130,7 @@ class BasePex():
 
         return math.pow(d, 1.0/p)
 
-    def minimax(self, n_samples: int=10000) -> float:
+    def minimax(self, x=None, n_samples: int=10000) -> float:
         """
         Computes the minimax criterion for the experiment plan,
         using Monte-Carlo sampling. We uniformly draw n_samples
@@ -149,9 +149,11 @@ class BasePex():
                                             high=self.xmax,
                                             size=(n_samples, self.dim))
 
+        if x is None: x = self.x
+
         # For each Monte Carlo point, find its minimum squared Euclidean distance
         # to any of the selected design points (self.x)
-        dists        = pairwise_distances(self.MC_set, self.x)
+        dists        = pairwise_distances(self.MC_set, x)
         minimax_dist = np.max(np.min(dists, axis=1))
 
         return minimax_dist
@@ -165,12 +167,13 @@ class BasePex():
         spacer("Phi-p criterion: "+fmt_float(self.phi_p()))
         spacer("Minimax criterion: "+fmt_float(self.minimax()))
 
-    def render_distances_distributions(self):
+    def render_distances_distributions(self, x=None, i: int=None):
         """
         Compute distance distributions
         """
+        if x is None: x = self.x
 
-        dists = pairwise_distances(self.x, self.x)
+        dists = pairwise_distances(x, x)
         dists = np.reshape(dists, (-1))
 
         plt.clf()
@@ -178,19 +181,23 @@ class BasePex():
         ax = fig.add_subplot(111)
         fig.set_size_inches(5, 5)
 
+        filename = f"{self.name}_hist_pairwise.png"
+        if i is not None: filename = f"{self.name}_hist_pairwise_{i}.png"
         plt.hist(dists)
-        plt.savefig(f"{self.name}_hist_pairwise.png", dpi=100)
+        plt.savefig(filename, dpi=100)
         plt.close()
 
-        dists, _ = nearest_neighbors_in_set(self.x)
+        dists, _ = nearest_neighbors_in_set(x)
 
         plt.clf()
         fig = plt.figure()
         ax = fig.add_subplot(111)
         fig.set_size_inches(5, 5)
 
+        filename = f"{self.name}_hist_neighbors.png"
+        if i is not None: filename = f"{self.name}_hist_neighbors_{i}.png"
         plt.hist(dists)
-        plt.savefig(f"{self.name}_hist_neibhors.png", dpi=100)
+        plt.savefig(filename, dpi=100)
         plt.close()
 
     def render_2d(self):

@@ -2,7 +2,7 @@
     "filename": "test.dat",
     "n_avg": 100,
     "sweep": {
-        "method": ["random", "lhs", "mlhs", "rfps"],
+        "method": ["random", "lhs", "mlhs", "maxrfps", "minrfps"],
         "dimension": [5, 10, 20, 50]
     }
 
