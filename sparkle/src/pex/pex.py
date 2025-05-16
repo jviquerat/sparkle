@@ -3,7 +3,9 @@ from sparkle.src.pex.fpd import FPD
 from sparkle.src.pex.lhs import LHS
 from sparkle.src.pex.mlhs import MLHS
 from sparkle.src.pex.mlhs_sa import MLHS_SA
-from sparkle.src.pex.random import RFPS, Random
+from sparkle.src.pex.random import Random
+from sparkle.src.pex.maxrfps import MaxRFPS
+from sparkle.src.pex.minrfps import MinRFPS
 
 # Declare factory
 pex_factory = Factory()
@@ -14,4 +16,5 @@ pex_factory.register("lhs",        LHS)
 pex_factory.register("mlhs",       MLHS)
 pex_factory.register("mlhs_sa",    MLHS_SA)
 pex_factory.register("fpd",        FPD)
-pex_factory.register("rfps",       RFPS)
+pex_factory.register("maxrfps",    MaxRFPS)
+pex_factory.register("minrfps",    MinRFPS)
