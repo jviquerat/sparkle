@@ -57,13 +57,17 @@ class PSO(BaseAgent):
         self.p_best  = np.zeros((self.n_points, self.dim))
         self.p_score = np.ones(self.n_points)*1.0e8
 
-    def sample(self) -> ndarray:
+    def sample(self, validate) -> ndarray:
         """
         Samples new points from the PSO distribution.
 
         This method generates new points based on the current positions and
         velocities of the particles, as well as their personal best positions
         and the global best position.
+
+        Args:
+            validate: a function used to validate or reject sampled points.
+                      Returns True if point if valid, False otherwise
 
         Returns:
             A NumPy array of shape (n_points, dim) representing the new points.

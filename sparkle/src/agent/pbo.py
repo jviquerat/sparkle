@@ -125,13 +125,17 @@ class PBO(BaseAgent):
                                          model=self.net_cr,
                                          pms=self.pms_opt_cr)
 
-    def sample(self) -> ndarray:
+    def sample(self, validate) -> ndarray:
         """
         Samples new points from the PBO distribution.
 
         This method generates new points based on the current policy, which
         is represented by the neural networks that output the standard
         deviations and correlations.
+
+        Args:
+            validate: a function used to validate or reject sampled points.
+                      Returns True if point if valid, False otherwise
 
         Returns:
             A NumPy array of shape (n_points, dim) representing the new points.

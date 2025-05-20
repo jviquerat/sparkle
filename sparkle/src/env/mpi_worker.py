@@ -75,6 +75,23 @@ class MpiWorker():
 
         return self.env.cost(x)
 
+    def validate(self, x: ndarray) -> float64:
+        """
+        Validate a point against a priori environment constraints
+        XXX This function is directly called using the main process
+
+        Args:
+            x: The point to evaluate
+
+        Returns:
+            True if point is valid, False otherwise
+        """
+
+        if hasattr(self.env, "validate"):
+            return self.env.validate(x)
+        else:
+            return True
+
     def reset(self, run: int) -> bool:
         """
         Resets the environment for a new run.

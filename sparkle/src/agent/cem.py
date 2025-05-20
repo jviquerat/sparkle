@@ -56,13 +56,17 @@ class CEM(BaseAgent):
         self.xmin_cem = self.xmin.copy()
         self.xmax_cem = self.xmax.copy()
 
-    def sample(self) -> ndarray:
+    def sample(self, validate) -> ndarray:
         """
         Samples new points from the CEM distribution.
 
         This method generates new points based on the current elite set,
         adapting the sampling distribution towards the region of better
         performing points.
+
+        Args:
+            validate: a function used to validate or reject sampled points.
+                      Returns True if point if valid, False otherwise
 
         Returns:
             A NumPy array of shape (n_points, dim) representing the new points.
