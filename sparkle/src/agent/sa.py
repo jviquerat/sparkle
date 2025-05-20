@@ -74,12 +74,16 @@ class SA(BaseAgent):
         self.x_best = self.x_current.copy()
         self.c_best = np.inf
 
-    def sample(self) -> ndarray:
+    def sample(self, validate) -> ndarray:
         """
         Samples a new point for evaluation
 
         For the first step, it returns the initial point (x0)
         For subsequent steps, it generates a neighbor of the current point
+
+        Args:
+            validate: a function used to validate or reject sampled points.
+                      Returns True if point if valid, False otherwise
 
         Returns:
             A NumPy array of shape (1, dim) representing the point to evaluate

@@ -91,21 +91,31 @@ class CMAES(BaseAgent):
         self.zm    = np.zeros(self.dim)        # auxiliary mean vector
         self.sigma = self.sigma0               # global standard deviation
 
-    def sample(self) -> ndarray:
+    def sample(self, validate) -> ndarray:
         """
         Samples new points from the CMA-ES distribution.
 
         This method generates new points based on the current mean, covariance
         matrix, and step size.
 
+        Args:
+            validate: a function used to validate or reject sampled points.
+                      Returns True if point if valid, False otherwise
+
         Returns:
             A NumPy array of shape (n_points, dim) representing the new points.
         """
 
         x      = np.zeros((self.n_points, self.dim))
-        self.z = np.random.randn(self.n_points, self.dim) # draw from N(0,1)
+        self.z = np.zeros((self.n_points, self.dim))
         for i in range(self.n_points):
-            x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, self.z[i,:])
+            val = False
+            while (not val):
+                z      = np.random.randn(self.dim) # draw from N(0,1)
+                x[i,:] = self.xm[:] + self.sigma*np.matmul(self.BD, z[:])
+                val    = validate(x[i,:])
+
+            self.z[i,:] = z[:]
 
         if (self.clip):
             for i in range(self.dim):

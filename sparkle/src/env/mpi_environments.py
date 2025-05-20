@@ -106,6 +106,23 @@ class MpiEnvironments(BaseParallelEnvironments):
 
         return costs
 
+    def validate(self, x: ndarray) -> bool:
+        """
+        Validate sampled points in the case of a priori constraints
+        XXX This function directly calls the main process worker
+
+        Args:
+            x: A design point to validate
+
+        Returns:
+            A boolean (True if point is valid, False otherwise)
+        """
+
+        # Validate with main process worker
+        valid = self.worker.validate(x)
+
+        return valid
+
     def reset(self, run: int) -> List[bool]:
         """
         Resets the environments for a new run.

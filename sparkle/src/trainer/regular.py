@@ -83,7 +83,7 @@ class Regular(BaseTrainer):
         # Loop until done
         while (not self.agent.done()):
 
-            x = self.agent.sample()
+            x = self.agent.sample(self.env.validate)
             c = self.env.cost(x)
 
             self.store_data(x, c)

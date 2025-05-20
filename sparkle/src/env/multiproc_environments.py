@@ -121,6 +121,25 @@ class MultiprocEnvironments(BaseParallelEnvironments):
 
         return costs
 
+    def validate(self, x):
+        """
+        Validate sampled points in the case of a priori constraints
+
+        Args:
+            x: A design point to validate
+
+        Returns:
+            A boolean (True if point is valid, False otherwise)
+        """
+
+        # Send
+        self.pipes[0].send(('validate', x))
+
+        # Receive
+        val = self.pipes[0].recv()
+
+        return val
+
     def reset(self, run):
         """
         Resets the environments for a new run.

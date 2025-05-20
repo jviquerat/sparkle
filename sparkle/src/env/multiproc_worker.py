@@ -33,6 +33,10 @@ def MultiprocWorker(env_name, args, cpu, path, pipe):
                 c = env.cost(data)
                 pipe.send(c)
 
+            if command == 'validate':
+                v = env.validate(data)
+                pipe.send(v)
+
             elif command == 'reset':
                 r = env.reset(data)
                 pipe.send(r)
