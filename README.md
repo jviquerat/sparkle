@@ -1,30 +1,29 @@
 # sparkle
 
 <p align="center">
-  <img align="right" width="350" alt="logo" src="sparkle/msc/logo.png">
+  <img align="right" width="300" alt="logo" src="sparkle/msc/logo.png">
 </p>
 
 ![master badge](https://github.com/jviquerat/sparkle/workflows/sparkle/badge.svg?branch=master)
 
-`sparkle` is a parametric, gradient-free optimization library. It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy.
+`sparkle` is a parametric, gradient-free optimization library. It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy. More informations about each method can be obtained from the documentation.
 
-Implementation of the following algorithms is planned:
-
-- Particle swarm optimization (PSO)
-- Cross-entropy method (CEM)
-- Covariance matrix adaptation evolution strategy (CMAES)
-- Efficient global optimization (EGO)
-- Policy based optimization (PBO)
-
-More informations about each method can be obtained from the documentation. 
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 ## Installation and usage
 
-Clone this repository and install it locally:
+Clone this repository and install it locally (the use of a virtual environment is highly recommended):
 
 ```
 git clone git@github.com:jviquerat/sparkle.git
 cd sparkle
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 pip install -e .
 ```
 
@@ -38,7 +37,7 @@ spk --train <json_file>
 
 | Environment  | Default dimension | Description                                                            | Illustration                                                       |
 |:-------------|:------------------|:-----------------------------------------------------------------------|:------------------------------------------------------------------:|
-| `parabola`   | 2                 | Classic parabola (solved with `CEM`)                                   | <img width="300" alt="gif" src="sparkle/msc/parabola_cem.gif">     |
+| `parabola`   | 2                 | Classic parabola (solved with `PBO`)                                   | <img width="300" alt="gif" src="sparkle/msc/parabola_pbo.gif">     |
 | `rosenbrock` | 2                 | Rosenbrock function (solved with `CMAES`)                              | <img width="300" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> |
 | `multi1d`    | 1                 | Multi1D function (solved with `EGO`)                                   | <img width="300" alt="gif" src="sparkle/msc/multi1d_ego.gif">      |
 | `constraint` | 2                 | Parabola with a priori constraints on parameters (solved with `CMAES`) | <img width="300" alt="gif" src="sparkle/msc/constraint_cmaes.gif"> |
