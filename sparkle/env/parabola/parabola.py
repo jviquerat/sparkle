@@ -1,28 +1,25 @@
 import numpy as np
 
 from sparkle.env.base_env import base_env
+from sparkle.src.utils.default import set_default
 
 
 ###############################################
-### Environment for parabola
 class parabola(base_env):
-
-    # Create object
+    """
+    Standard parabola function in arbitrary dimension
+    """
     def __init__(self, cpu, path, pms=None):
 
         # Fill structure
         self.name      = 'parabola'
         self.base_path = path
         self.cpu       = cpu
-        self.dim       = 2
-        if hasattr(pms, "dim"): self.dim = pms.dim
+        self.dim       = set_default("dim", 2, pms)
 
-        self.x0        = 2.5*np.ones(self.dim)
-        self.xmin      =-5.0*np.ones(self.dim)
-        self.xmax      = 5.0*np.ones(self.dim)
-        if hasattr(pms, "x0"):   self.x0   = pms.x0
-        if hasattr(pms, "xmin"): self.xmin = pms.xmin
-        if hasattr(pms, "xmax"): self.xmax = pms.xmax
+        self.x0        = set_default("x0",   2.5*np.ones(self.dim), pms)
+        self.xmin      = set_default("xmin",-5.0*np.ones(self.dim), pms)
+        self.xmax      = set_default("xmax", 5.0*np.ones(self.dim), pms)
 
         # Plotting data
         self.it_plt    = 0
@@ -30,7 +27,6 @@ class parabola(base_env):
         self.vmax      = 20.0
         self.levels    = [0.1, 1.0, 5.0, 10.0, 20.0]
 
-    # Reset environment
     def reset(self, run):
 
         self.path   = self.base_path+"/"+str(run)
@@ -38,7 +34,6 @@ class parabola(base_env):
 
         return True
 
-    # Cost function
     def cost(self, x):
 
         v = 0.0
@@ -47,6 +42,5 @@ class parabola(base_env):
 
         return v
 
-    # Close environment
     def close(self):
         pass
