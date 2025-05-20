@@ -36,12 +36,13 @@ spk --train <json_file>
 
 ## Analytical environments
 
-| Environment  | Default dimension | Description                               | Illustration                                                       |
-|:-------------|:------------------|:------------------------------------------|:------------------------------------------------------------------:|
-| `parabola`   | 2                 | Classic parabola (solved with `CEM`)      | <img width="200" alt="gif" src="sparkle/msc/parabola_cem.gif">     |
-| `rosenbrock` | 2                 | Rosenbrock function (solved with `CMAES`) | <img width="200" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> |
-| `sinebump`   | 2                 | Sinebump function (solved with `PSO`)     | <img width="200" alt="gif" src="sparkle/msc/sinebump_pso.gif">     |
-| `multi1d`    | 1                 | Multi1D function (solved with `EGO`)      | <img width="300" alt="gif" src="sparkle/msc/multi1d_ego.gif">      |
+| Environment  | Default dimension | Description                                                            | Illustration                                                       |
+|:-------------|:------------------|:-----------------------------------------------------------------------|:------------------------------------------------------------------:|
+| `parabola`   | 2                 | Classic parabola (solved with `CEM`)                                   | <img width="300" alt="gif" src="sparkle/msc/parabola_cem.gif">     |
+| `rosenbrock` | 2                 | Rosenbrock function (solved with `CMAES`)                              | <img width="300" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> |
+| `sinebump`   | 2                 | Sinebump function (solved with `PSO`)                                  | <img width="300" alt="gif" src="sparkle/msc/sinebump_pso.gif">     |
+| `multi1d`    | 1                 | Multi1D function (solved with `EGO`)                                   | <img width="300" alt="gif" src="sparkle/msc/multi1d_ego.gif">      |
+| `constraint` | 2                 | Parabola with a priori constraints on parameters (solved with `CMAES`) | <img width="300" alt="gif" src="sparkle/msc/constraint_cmaes.gif"> |
 
 ## Physics-based environments
 
