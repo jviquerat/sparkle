@@ -1,3 +1,4 @@
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.cm as cm
@@ -181,6 +182,9 @@ def render_2D_regular(filename: str,
     fig.set_size_inches(3, 3)
     fig.subplots_adjust(0,0,1,1)
 
+    cmap = matplotlib.colormaps.get_cmap('RdBu_r')
+    cmap.set_bad(color='black')
+
     ax.set_xlim([spaces.xmin[0], spaces.xmax[0]])
     ax.set_ylim([spaces.xmin[1], spaces.xmax[1]])
     ax.axis('off')
@@ -188,7 +192,7 @@ def render_2D_regular(filename: str,
               extent=[spaces.xmin[0], spaces.xmax[0],
                       spaces.xmin[1], spaces.xmax[1]],
               vmin=spaces.vmin, vmax=spaces.vmax,
-              alpha=0.8, cmap='RdBu_r')
+              alpha=0.8, cmap=cmap)
 
     cnt = ax.contour(x_plot, y_plot, cost_map, levels=spaces.levels,
                      colors='black', alpha=0.5)
