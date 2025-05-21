@@ -121,7 +121,7 @@ class LipMLP(BaseNetwork):
 
         new_line()
         spacer("Lipschitz MLP "+str(self.name_))
-        spacer("Lipschitz constant="+str(self.lip_constant_))
+        spacer("Lipschitz constant="+str(self.lip_const_))
         spacer("Input layer, size "+str(self.inp_dim_))
 
         n = 0
