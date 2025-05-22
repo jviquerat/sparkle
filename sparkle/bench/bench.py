@@ -1,6 +1,7 @@
 from sparkle.src.core.factory import Factory
 from sparkle.bench.pex import BenchPex
 from sparkle.bench.lbfgsb import BenchLBFGSB
+from sparkle.bench.pbo import BenchPBO
 
 # Declare factory
 bench_factory = Factory()
@@ -8,4 +9,5 @@ bench_factory = Factory()
 # Register benchmarks
 bench_factory.register("pex", BenchPex)
 bench_factory.register("lbfgsb", BenchLBFGSB)
+bench_factory.register("pbo", BenchPBO)
 
