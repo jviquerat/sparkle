@@ -1,0 +1,26 @@
+{
+    "filename": "test.dat",
+    "n_avg": 10,
+    "sweep": {
+        "sg_lr": [1.0e-3, 2.0e-3, 5.0e-3],
+        "cr_lr": [1.0e-3, 2.0e-3, 5.0e-3]
+    },
+    "color_by": "sg_lr",
+    "trainer": {
+        "name": "regular",
+        "render_every": 1,
+        "renderer": "env",
+        "environment": {
+            "name": "rosenbrock",
+            "args": {
+                "dim": 2
+            }
+        },
+        "agent": {
+            "name": "pbo",
+            "n_steps_max": 150
+        }
+    },
+    "hint_path": "sparkle/env/rosenbrock"
+
+}
