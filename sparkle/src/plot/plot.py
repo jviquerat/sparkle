@@ -485,7 +485,8 @@ def scatter_names(filename: str,
                   x: dict[str, float],
                   y: dict[str, float],
                   names: list[str],
-                  use_log_scale: bool=True,
+                  use_x_log_scale: bool=False,
+                  use_y_log_scale: bool=False,
                   colors: list[str] | None=None,
                   x_label: str | None=None,
                   y_label: str | None=None,
@@ -522,12 +523,17 @@ def scatter_names(filename: str,
         ax.scatter(x[m], y[m], marker='o', color=cs[k])
         texts.append(ax.text(x[m], y[m], m, fontsize=10, c=ct[k]))
 
-    adjust_text(texts, arrowprops=dict(arrowstyle="-", color='gray', lw=0.5))
+    adjust_text(texts,
+                iter_lim=1000,
+                ensure_inside_axes=True,
+                expand=(1.5, 1.5),
+                arrowprops=dict(arrowstyle="-", color='gray', lw=0.5))
 
     if x_label is not None: ax.set_xlabel(x_label)
     if y_label is not None: ax.set_ylabel(y_label)
     if title is not None: ax.set_title(title)
-    if use_log_scale: ax.set_yscale("log")
+    if use_x_log_scale: ax.set_xscale("log")
+    if use_y_log_scale: ax.set_yscale("log")
 
     ax.grid(True)
     fig.tight_layout()
