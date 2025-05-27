@@ -89,9 +89,9 @@ class BenchPex():
                 violins_array(f, x, labels, y_label="phi_p(50)", title=t)
 
         # Scatter plots for given dimension
-        sc_phi_p   = {}
-        sc_minimax = {}
-        t          = {}
+        sc_phi_p   = dict()
+        sc_minimax = dict()
+        t          = dict()
         names      = []
         colors     = []
         for cmb in combinations:
@@ -108,14 +108,16 @@ class BenchPex():
                       colors=colors,
                       x_label="phi_p(50)",
                       y_label="t",
-                      title="scatter")
+                      title="scatter",
+                      use_y_log_scale=True)
 
         f = os.path.join(results_path, "scatter_minimax.png")
         scatter_names(f, sc_minimax, t, names,
                       colors=colors,
                       x_label="minimax",
                       y_label="t",
-                      title="scatter")
+                      title="scatter",
+                      use_y_log_scale=True)
 
     def avg(self,
             n_avg: int,
