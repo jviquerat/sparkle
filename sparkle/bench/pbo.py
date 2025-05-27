@@ -102,7 +102,7 @@ class BenchPBO():
 
     def avg(self,
             n_avg: int,
-            combination: List[dict],
+            combination: dict,
             pms: Any,
             results_path: str) -> Tuple[float, np.ndarray]:
         """

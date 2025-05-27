@@ -91,7 +91,7 @@ class BenchLBFGSB():
 
     def avg(self,
             n_avg: int,
-            combination: List[dict]) -> Tuple[float, np.ndarray]:
+            combination: dict) -> Tuple[float, np.ndarray]:
         """
         Calculates the average final cost and execution time for L-BFGS-B
 
