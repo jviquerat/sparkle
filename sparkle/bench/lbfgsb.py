@@ -87,7 +87,7 @@ class BenchLBFGSB():
         scatter_names(f, avg_costs, avg_times, names, colors=colors,
                       x_label="cost",
                       y_label="t",
-                      title="[m, tol, max_iter, n_pts_pms]")
+                      title=", ".join(keys))
 
     def avg(self,
             n_avg: int,

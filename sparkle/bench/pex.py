@@ -110,7 +110,7 @@ class BenchPex():
                       colors=colors,
                       x_label="phi_p(50)",
                       y_label="t",
-                      title="scatter",
+                      title=", ".join(keys),
                       use_y_log_scale=True)
 
         f = os.path.join(results_path, "scatter_minimax.png")
@@ -118,7 +118,7 @@ class BenchPex():
                       colors=colors,
                       x_label="minimax",
                       y_label="t",
-                      title="scatter",
+                      title=", ".join(keys),
                       use_y_log_scale=True)
 
     def avg(self,
