@@ -8,7 +8,7 @@ import numpy as np
 from sparkle.src.utils.prints import spacer
 
 
-def get_sweep_parameters(sweep: SimpleNamespace) -> Tuple[Dict]:
+def get_sweep_parameters(sweep: SimpleNamespace) -> Tuple[List]:
     """
     A function to retrieve the list of keys and values within the
     sweep keyword of the json benchmark file
@@ -68,7 +68,7 @@ def combination_to_name(cmb: Dict) -> str:
     for k, v in cmb.items():
         name += f"{v} "
 
-    return name
+    return name.rstrip()
 
 def write_bench_data(filename: str, cost: Dict) -> None:
 
