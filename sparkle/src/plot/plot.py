@@ -511,6 +511,12 @@ def scatter_names(filename: str,
     fig = plt.figure()
     ax  = fig.add_subplot(111)
 
+    if x_label is not None: ax.set_xlabel(x_label)
+    if y_label is not None: ax.set_ylabel(y_label)
+    if title is not None: ax.set_title(title)
+    if use_x_log_scale: ax.set_xscale("log")
+    if use_y_log_scale: ax.set_yscale("log")
+
     if colors is not None:
         cs = map_ints_to_colors(colors)
         ct = cs
@@ -528,12 +534,6 @@ def scatter_names(filename: str,
                 ensure_inside_axes=True,
                 expand=(1.5, 1.5),
                 arrowprops=dict(arrowstyle="-", color='gray', lw=0.5))
-
-    if x_label is not None: ax.set_xlabel(x_label)
-    if y_label is not None: ax.set_ylabel(y_label)
-    if title is not None: ax.set_title(title)
-    if use_x_log_scale: ax.set_xscale("log")
-    if use_y_log_scale: ax.set_yscale("log")
 
     ax.grid(True)
     fig.tight_layout()
