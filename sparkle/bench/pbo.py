@@ -98,7 +98,7 @@ class BenchPBO():
                       use_y_log_scale=True,
                       x_label="best mean score",
                       y_label="best std score",
-                      title="scatter")
+                      title=", ".join(keys))
 
     def avg(self,
             n_avg: int,
