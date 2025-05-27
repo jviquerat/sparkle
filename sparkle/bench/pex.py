@@ -123,7 +123,7 @@ class BenchPex():
 
     def avg(self,
             n_avg: int,
-            combination: List[dict]) -> Tuple[float, np.ndarray]:
+            combination: dict) -> Tuple[float, np.ndarray]:
         """
         Calculates the average phi-p metric, minimax distance and
         execution time for a given Pex method and parameters.
