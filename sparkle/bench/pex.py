@@ -5,7 +5,9 @@ from typing import List, Tuple
 
 import numpy as np
 
-from sparkle.src.bench.bench import get_sweep_parameters, combine_parameters, combination_to_name
+from sparkle.src.bench.bench import (get_sweep_parameters,
+                                     combine_parameters,
+                                     combination_to_name)
 from sparkle.src.env.parallel import parallel
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.pex.pex import pex_factory
