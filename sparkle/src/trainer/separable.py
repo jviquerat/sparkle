@@ -5,17 +5,17 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # Custom imports
-from sparkle.src.trainer.base    import base_trainer
+from sparkle.src.trainer.base    import BaseTrainer
 from sparkle.src.agent.agent     import agent_factory
-from sparkle.src.utils.timer     import timer
+from sparkle.src.utils.timer     import Timer
 from sparkle.src.env.parallel    import parallel
 from sparkle.src.utils.error     import error
 from sparkle.src.pex.pex         import pex_factory
-from sparkle.src.model.sepnet    import sepnet
+from sparkle.src.model.sepnet    import SepNet
 
 ###############################################
 ### Class for separable trainer
-class separable(base_trainer):
+class Separable(BaseTrainer):
     def __init__(self, env_pms, agent_pms, path, pms):
 
         # Set parameters
@@ -37,12 +37,12 @@ class separable(base_trainer):
                                           spaces = self.env.spaces,
                                           pms    = agent_pms)
 
-        self.model = sepnet(r_dim   = self.r_dim,
+        self.model = SepNet(r_dim   = self.r_dim,
                             spaces  = self.env.spaces,
                             pms_opt = pms.opt)
 
         # Initialize timer
-        self.timer_global = timer("global   ")
+        self.timer_global = Timer("global   ")
 
     # Reset
     def reset(self, run):

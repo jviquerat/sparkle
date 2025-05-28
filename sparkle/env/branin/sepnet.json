@@ -10,11 +10,11 @@
         "separable": true
     },
     "pex": {
-        "name": "maximin_lhs",
+        "name": "minrfps",
         "n_points": 20
     },
     "model": {
         "name": "sepnet",
-        "n_epochs": 30000
+        "n_epochs": 20000
     }
 }

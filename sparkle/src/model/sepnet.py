@@ -1,4 +1,3 @@
-# Generic imports
 import math
 import torch
 import torch.optim as toptim
@@ -6,18 +5,15 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
-# Custom imports
-from sparkle.src.network.lip_mlp     import lip_mlp
-from sparkle.src.optimizer.optimizer import opt_factory
-from sparkle.src.env.spaces          import environment_spaces
+from sparkle.src.network.lip_mlp import LipMLP
+from sparkle.src.model.base import BaseModel
+
 
 ###############################################
-### Separable network model
-class sepnet():
-    def __init__(self, spaces, pms):
+class SepNet(BaseModel):
+    def __init__(self, spaces, path, pms):
 
-
-        self.spaces   = spaces
+        super().__init__(spaces, path)
         self.n_epochs = pms.n_epochs
 
         self.reset()
@@ -28,11 +24,11 @@ class sepnet():
         # Initialize networks
         self.net = []
         for k in range(self.spaces.dim):
-            net = lip_mlp(inp_dim   = 1,
-                          out_dim   = 1,
-                          arch      = [32,32,32],
-                          acts      = ["tanh","tanh","tanh","linear"],
-                          lip_const = [2.0, 2.0, 2.0, 5.0])
+            net = LipMLP(inp_dim   = 1,
+                         out_dim   = 1,
+                         arch      = [32],
+                         acts      = ["tanh","linear"],
+                         lip_constants = [2.0, 2.0])
 
             self.net.append(net)
 
@@ -40,7 +36,7 @@ class sepnet():
         for k in range(self.spaces.dim):
             pms_list.append({"params": self.net[k].params()})
 
-        self.opt = toptim.Adam(pms_list, lr=1.0e-3)
+        self.opt = toptim.Adam(pms_list, lr=2.0e-4)
 
     # Evaluate at test points
     def evaluate(self, x):
@@ -124,7 +120,7 @@ class sepnet():
         return loss
 
     # Dump model
-    def dump(self, filename):
+    def dump(self, filename: str="separable.dat"):
         pass
 
     # Normalize input
@@ -164,7 +160,7 @@ class sepnet():
 
         plt.yscale('log')
         plt.legend(loc="upper right")
-        plt.savefig(filename, dpi=100)
+        plt.savefig(self.path+"/"+filename, dpi=100)
         plt.close()
 
     # Plot function for 2D models only
