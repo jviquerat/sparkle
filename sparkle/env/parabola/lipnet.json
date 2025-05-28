@@ -6,19 +6,19 @@
         "time": false
     },
     "environment": {
-        "name": "parabola",
-        "separable": true
+        "name": "parabola"
     },
     "pex": {
-        "name": "rfps",
+        "name": "minrfps",
         "n_points": 20
     },
     "model": {
         "name": "lipnet",
-        "ensemble_size": 5,
-        "n_epochs_max": 50000,
+        "fge_cycles": 5,
+        "fge_first_cycle_len": 15000,
+        "fge_cycle_len": 2000,
         "target_loss": 1.0e-4,
         "lr": 5.0e-4,
-        "beta": 0.0
+        "beta": 1.0e-4
     }
 }

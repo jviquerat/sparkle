@@ -6,19 +6,19 @@
         "time": false
     },
     "environment": {
-        "name": "multi1d",
-        "separable": true
+        "name": "multi1d"
     },
     "pex": {
-        "name": "rfps",
-        "n_points": 10
+        "name": "minrfps",
+        "n_points": 5
     },
     "model": {
         "name": "lipnet",
-        "ensemble_size": 5,
-        "n_epochs_max": 50000,
+        "fge_cycles": 5,
+        "fge_first_cycle_len": 20000,
+        "fge_cycle_len": 5000,
         "target_loss": 1.0e-4,
-        "lr": 5.0e-4,
-        "beta": 0.0
+        "lr": 2.0e-3,
+        "beta": 1.0e-4
     }
 }

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.optim as toptim
+import torch.optim.lr_scheduler as tsched
 from numpy import ndarray
 from torch.autograd import grad as autograd
 torch.set_default_dtype(torch.double)
@@ -19,9 +20,16 @@ from sparkle.src.utils.prints import spacer, fmt_float, new_line
 
 
 class LipNet(BaseModel):
+    """
+    A Lipschitz-constrained neural network with fast geometric ensembling
+    FGE aims at generating snapshots from different local minima while avoiding
+    the entire retraining of different models.
+    After a first "regular" training step, a sawtooth-like cyclic learning rate
+    is applied to collect snapshots of retrained networks and use them for ensembling
+    """
     def __init__(self, spaces, path, pms):
         """
-        Initializes the Lipschitzian network model.
+        Initializes the model
 
         Args:
             spaces: Search space definition.
@@ -29,38 +37,39 @@ class LipNet(BaseModel):
             pms: Model parameters.
         """
         super().__init__(spaces, path)
-        self.ensemble_size = set_default("ensemble_size", 5, pms)
-        self.n_epochs_max  = set_default("n_epochs_max", 50000, pms)
-        self.target_loss   = set_default("target_loss", 1.0e-4, pms)
-        self.lr            = set_default("lr", 5.0e-4, pms)
-        self.beta          = set_default("beta", 0.0, pms)
-        self.load_model_   = set_default("load_model", False, pms)
-        self.arch          = set_default("arch", [16*self.spaces.dim]*2, pms)
-        self.acts          = set_default("acts", ["tanh", "tanh", "linear"], pms)
+
+        self.fge_cycles = set_default("fge_cycles", 5, pms)
+        self.fge_first_cycle_len = set_default("fge_first_cycle_len", 15000, pms)
+        self.fge_cycle_len = set_default("fge_cycle_len", 2000, pms)
+
+        self.n_epochs_max = self.fge_first_cycle_len + (self.fge_cycles-1)*self.fge_cycle_len
+
+        self.target_loss = set_default("target_loss", 1.0e-4, pms)
+        self.lr = set_default("lr", 5.0e-4, pms)
+        self.beta = set_default("beta", 0.0, pms)
+        self.load_model_ = set_default("load_model", False, pms)
+        self.arch = set_default("arch", [16*self.spaces.dim]*2, pms)
+        self.acts = set_default("acts", ["tanh", "tanh", "linear"], pms)
         self.lip_constants = set_default("lip_constants", [2.0, 2.0, 2.0], pms)
 
-        self.ensemble: List[LipMLP] = []
-        for i in range(self.ensemble_size):
-            member = LipMLP(
-                inp_dim=self.spaces.dim,
-                out_dim=1,
-                arch=self.arch,
-                acts=self.acts,
-                lip_constants=self.lip_constants,
-                name=f"lipmlp_member_{i}"
-            )
-            self.ensemble.append(member)
+        self.model: LipMLP = LipMLP(
+            inp_dim=self.spaces.dim,
+            out_dim=1,
+            arch=self.arch,
+            acts=self.acts,
+            lip_constants=self.lip_constants,
+            name="lipmlp_fge_model"
+        )
 
     def reset(self):
         """
         Resets the model to its initial state.
         """
-        for model in self.ensemble:
-            model.reset()
+        self.model.reset()
 
     def build(self, x: ndarray, y: ndarray):
         """
-        Builds and trains the model from input data.
+        Builds and trains the FGE model from input data.
 
         Args:
             x: Training input data.
@@ -68,20 +77,36 @@ class LipNet(BaseModel):
         """
         self.ymax_ = np.max(y)
         self.ymin_ = np.min(y)
-        self.x_    = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
-        self.y_    = self.normalize(y, self.ymin_, self.ymax_)
+        self.x_ = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
+        self.y_ = self.normalize(y, self.ymin_, self.ymax_)
 
-        n_points   = x.shape[0]
+        self.fge_snapshots_weights = []
+
+        n_points = x.shape[0]
         batch_size = math.floor(1.0*n_points)
-        all_loss   = []
+        loss_history = []
 
-        for i, model in enumerate(self.ensemble):
-            optimizer = toptim.Adam(model.params(), lr=self.lr)
+        total_epochs = 0
+        for cycle in range(self.fge_cycles):
+            optimizer = toptim.Adam(self.model.params(), lr=self.lr)
+            if cycle == 0:
+                cycle_epochs = self.fge_first_cycle_len
+                scheduler = tsched.CosineAnnealingLR(optimizer,
+                                                     T_max=self.fge_first_cycle_len)
+            else:
+                cycle_epochs = self.fge_cycle_len
+                for param_group in optimizer.param_groups:
+                    param_group['lr'] = self.lr
+                scheduler = tsched.CosineAnnealingLR(optimizer,
+                                                     T_max=self.fge_cycle_len)
 
-            epoch        = 0
-            loss_val     = 1.0e8
-            history_loss = []
-            while loss_val > self.target_loss and epoch < self.n_epochs_max:
+                noise_level = 0.05
+                with torch.no_grad():
+                    for param in self.model.parameters():
+                        param.add_(torch.randn_like(param) * noise_level)
+
+            for epoch in range(cycle_epochs):
+                total_epochs += 1
                 epoch_loss = 0.0
                 p = np.random.permutation(n_points)
                 xb_np, cb_np = self.x_[p], self.y_[p]
@@ -97,7 +122,7 @@ class LipNet(BaseModel):
                     xb = torch.from_numpy(xb_np[start:end])
                     cb = torch.from_numpy(cb_np[start:end])
 
-                    loss = self.get_loss(model, xb, cb)
+                    loss = self.get_loss(self.model, xb, cb)
 
                     optimizer.zero_grad()
                     loss.backward()
@@ -105,53 +130,81 @@ class LipNet(BaseModel):
                     epoch_loss += loss.item()
 
                 avg_epoch_loss = epoch_loss / float(btc) if btc > 0 else 0.0
-                history_loss.append([epoch, avg_epoch_loss])
-                loss_val = avg_epoch_loss
+                loss_history.append([total_epochs, avg_epoch_loss])
+                scheduler.step()
 
-                spacer(f"Model #{i}, epoch #{epoch}, loss = {fmt_float(avg_epoch_loss)}                  ", end="\r")
-                epoch += 1
+                cycle_text = f"FGE Cycle {cycle}"
+                epoch_text = f"epoch {epoch}"
+                lr = f"{fmt_float(optimizer.param_groups[0]['lr'])}"
+                loss = f"{fmt_float(avg_epoch_loss)}"
+                spacer(f"{cycle_text}, {epoch_text}, loss = {loss}, lr = {lr}                     ", end="\r")
 
-            all_loss.append(history_loss)
+            # Save snapshot
+            snapshot_weights = {k: v.clone().cpu() for k, v in self.model.state_dict().items()}
+            self.fge_snapshots_weights.append(snapshot_weights)
 
-        self.plot_loss(self.path+"/loss.png", all_loss)
-
+        self.plot_loss(self.path+"/loss.png", loss_history)
         new_line()
+
+        # Set model to average weights
+        self.set_avg_weights()
+
+    def set_avg_weights(self):
+        """
+        Sets the model weights to the average of FGE snapshots
+        """
+        avg_weights = {}
+        num_snapshots = len(self.fge_snapshots_weights)
+        for key in self.fge_snapshots_weights[0].keys():
+            avg_weights[key] = sum(snapshot[key] for snapshot in self.fge_snapshots_weights)/num_snapshots
+
+        self.model.load_state_dict(avg_weights)
 
     def evaluate(self, x: ndarray) -> Tuple[ndarray, ndarray]:
         """
-        Evaluates the model at test points.
+        Evaluates the FGE model at test points.
+        The mean is from the averaged snapshots model (or individual snapshots).
+        The std is from the spread of snapshot predictions.
 
         Args:
             x: Input data of shape (n_batch, input_dim).
 
         Returns:
-            Tuple[np.ndarray, np.ndarray]: (y, acq), where y is the predicted
-                output and acq is the acquisition function value.
+            Tuple[np.ndarray, np.ndarray]: (y_mean, y_std), where y_mean is the
+                                           predicted output and y_std is the uncertainty.
         """
         n_batch = x.shape[0]
-        lip = np.zeros(n_batch)
+        xx_np = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
+        xx = torch.from_numpy(xx_np)
 
-        xx = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
-        xx = torch.from_numpy(xx)
+        y_mean_norm_np = np.zeros(n_batch)
+        y_std_norm_np = np.zeros(n_batch)
+        y_all_snapshots = np.zeros((len(self.fge_snapshots_weights), n_batch))
 
-        y_all = np.zeros((self.ensemble_size, n_batch))
-        with torch.no_grad():
-            for i, model in enumerate(self.ensemble):
-                y = model.forward(xx)
-                y_all[i,:] = y.squeeze().numpy()
+        # Load successive snapshots and infer output
+        for i, snapshot_weights in enumerate(self.fge_snapshots_weights):
+            weights = {k: v for k,v in snapshot_weights.items()}
+            self.model.load_state_dict(weights)
+            with torch.no_grad():
+                y_all_snapshots[i,:] = self.model.forward(xx).squeeze().numpy()
 
-        y_mean_norm = np.mean(y_all, axis=0)
-        y_std_norm = np.std(y_all, axis=0)
+        # Restore averaged model weights
+        self.set_avg_weights()
 
-        y_mean = self.denormalize(y_mean_norm, self.ymin_, self.ymax_)
-        y_std = y_std_norm*(self.ymax_ - self.ymin_)
+        # Compute mean and std of outputs
+        y_mean_norm_np = np.mean(y_all_snapshots, axis=0)
+        y_std_norm_np = np.std(y_all_snapshots, axis=0)
+
+        y_mean = self.denormalize(y_mean_norm_np, self.ymin_, self.ymax_)
+        y_std = y_std_norm_np*(self.ymax_ - self.ymin_)
 
         return y_mean, y_std
 
+
     def evaluate_grad(self, x: ndarray) -> Tuple[ndarray, ndarray]:
         """
-        Evaluates the gradient of the ensemble mean prediction AND
-        the gradient of the ensemble standard deviation prediction
+        Evaluates the gradient of the FGE mean prediction AND
+        the gradient of the FGE standard deviation prediction
         with respect to the input.
 
         Args:
@@ -159,30 +212,20 @@ class LipNet(BaseModel):
 
         Returns:
             Tuple[np.ndarray, np.ndarray]: (grad_mean, grad_std),
-                representing nabla[mu(x)] and nabla[sigma(x)],
-                properly scaled to original input/output space.
+                                           representing nabla[mu(x)] and nabla[sigma(x)],
+                                           properly scaled to original input/output space.
         """
         n_batch = x.shape[0]
-        dim     = x.shape[1]
-        xx      = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
-        xx      = torch.from_numpy(xx).requires_grad_(True)
+        xx = self.normalize(x, self.spaces.xmin, self.spaces.xmax)
+        xx = torch.from_numpy(xx).requires_grad_(True)
 
-        # Store individual model predictions
-        y_list = []
-        for model in self.ensemble:
-            y_list.append(model.forward(xx))
+        grad_mean = np.zeros((n_batch, self.spaces.dim))
+        grad_std = np.zeros((n_batch, self.spaces.dim))
 
-        # Stack predictions: shape (ensemble_size, n_batch, 1) or (ensemble_size, n_batch)
-        y_all = torch.stack(y_list, dim=0)
-        if y_all.dim() == 3 and y_all.shape[-1] == 1:
-            y_all = y_all.squeeze(-1) # shape (ensemble_size, n_batch)
+        # Gradient of mean
+        self.set_avg_weights()
+        y_mean = self.model.forward(xx).squeeze()
 
-        # Compute mean and std
-        y_mean = torch.mean(y_all, dim=0) # shape (n_batch,)
-        y_std = torch.std(y_all, dim=0) # shape (n_batch,)
-        y_std = y_std + 1e-5 # prevent 0 std
-
-        # Gradients of mean
         grad_outputs_mean = torch.ones_like(y_mean)
         grad_of_mean = autograd(
             outputs=y_mean,
@@ -193,21 +236,33 @@ class LipNet(BaseModel):
         )[0]
         grad_mean = grad_of_mean.detach().clone().numpy()
 
-        # Gradients of std
-        grad_outputs_std = torch.ones_like(y_std)
+        # Gradient of std
+        y_list_snapshots = []
+        for snapshot_weights in self.fge_snapshots_weights:
+            weights = {k: v for k,v in snapshot_weights.items()}
+            self.model.load_state_dict(weights)
+            y_list_snapshots.append(self.model.forward(xx).squeeze())
+
+        y_all_snapshots = torch.stack(y_list_snapshots, dim=0)
+        y_std_fge = torch.std(y_all_snaps, dim=0) + 1.0e-5
+
+        grad_outputs_std = torch.ones_like(y_std_fge)
         grad_of_std = autograd(
-            outputs=y_std,
+            outputs=y_std_fge,
             inputs=xx,
             grad_outputs=grad_outputs_std,
             retain_graph=False,
             create_graph=False
-        )[0]
+            )[0]
         grad_std = grad_of_std.detach().numpy()
 
         # Denormalize
-        grad_scale  = (self.ymax_-self.ymin_)/(self.spaces.xmax-self.spaces.xmin)
-        grad_mean  *= grad_scale
-        grad_std   *= grad_scale
+        grad_scale = (self.ymax_-self.ymin_)/(self.spaces.xmax-self.spaces.xmin)
+        grad_mean *= grad_scale
+        grad_std  *= grad_scale
+
+        # Restore averaged model weights
+        self.set_avg_weights()
 
         return grad_mean, grad_std
 
@@ -223,34 +278,37 @@ class LipNet(BaseModel):
         Returns:
             torch.Tensor: The computed loss.
         """
-        r = model.forward(x.requires_grad_(True))
-        mse_loss = torch.mean((c - r.reshape(-1)) ** 2)
+        r = model.forward(x.requires_grad_(True)) # As per original user code
+        mse_loss = torch.mean((c.squeeze() - r.squeeze()) ** 2)
 
         lip_constants = model.lip_consts()
         lip_penalty = sum(abs(lc) for lc in lip_constants)
-
         total_loss = mse_loss + self.beta*lip_penalty
 
         return total_loss
 
-    def plot_loss(self, filename: str, loss: List[List[float]]):
+    def plot_loss(self, filename: str, loss_data: List[List[float]]):
         """
         Plots the training loss curve.
 
         Args:
             filename: The name of the file to save the plot to.
-            loss: Loss data of shape (n_samples, n_losses+1).
-            labels: Labels for each loss curve.
+            loss_data: A list containing one list of [epoch, loss_value] pairs.
         """
         plt.clf()
         fig = plt.figure()
-        for i in range(len(loss)):
-            arr = np.array(loss[i])
-            plt.plot(arr[:,0], arr[:,1])
+
+        arr = np.array(loss_data)
+        plt.plot(arr[:,0], arr[:,1])
         plt.yscale("log")
-
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.title("FGE Training Loss")
         plt.savefig(filename, dpi=100)
-        plt.close()
+        plt.close(fig)
 
-    def dump(self, filename_prefix="lipnet_member_"):
+    def dump(self, filename_prefix="lipnet_fge_model"):
+        """
+        Model saving is disabled as per request.
+        """
         pass
