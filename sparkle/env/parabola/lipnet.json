@@ -15,10 +15,13 @@
     "model": {
         "name": "lipnet",
         "fge_cycles": 5,
-        "fge_first_cycle_len": 15000,
-        "fge_cycle_len": 2000,
+        "fge_first_cycle_len": 40000,
+        "fge_cycle_len": 20000,
         "target_loss": 1.0e-4,
-        "lr": 5.0e-4,
-        "beta": 1.0e-4
+        "lr": 2.0e-3,
+        "beta": 1.0e-4,
+        "noise_level": 0.05,
+        "patience": 1000,
+        "improvement": 1.0e-6
     }
 }

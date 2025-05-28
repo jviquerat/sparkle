@@ -100,6 +100,9 @@ class LipNet(BaseModel):
                 scheduler = tsched.CosineAnnealingLR(optimizer,
                                                      T_max=self.fge_first_cycle_len)
             else:
+                # Reset weigths to first run
+                self.set_snapshot_weights(0)
+                
                 cycle_epochs = self.fge_cycle_len
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = self.lr
@@ -108,7 +111,6 @@ class LipNet(BaseModel):
 
                 with torch.no_grad():
                     for param in self.model.parameters():
-                        #param.add_(torch.randn_like(param) * noise_level)
                         param.add_(self.noise_level*(1.0 - 2.0*torch.rand_like(param)))
 
             previous_loss = float('inf')
@@ -177,6 +179,16 @@ class LipNet(BaseModel):
             avg_weights[key] = sum(snapshot[key] for snapshot in self.fge_snapshots_weights)/num_snapshots
 
         self.model.load_state_dict(avg_weights)
+
+    def set_snapshot_weights(self, k):
+        """
+        Sets the model weights to a specific snapshot
+        """
+        weights = {}
+        for key in self.fge_snapshots_weights[0].keys():
+            weights[key] = self.fge_snapshots_weights[k][key]
+
+        self.model.load_state_dict(weights)
 
     def evaluate(self, x: ndarray) -> Tuple[ndarray, ndarray]:
         """
