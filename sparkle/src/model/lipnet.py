@@ -48,9 +48,15 @@ class LipNet(BaseModel):
         self.lr = set_default("lr", 5.0e-4, pms)
         self.beta = set_default("beta", 0.0, pms)
         self.load_model_ = set_default("load_model", False, pms)
-        self.arch = set_default("arch", [16*self.spaces.dim]*2, pms)
+
+        width = 16*math.floor(math.sqrt(self.spaces.dim))
+        self.arch = set_default("arch", [width]*2, pms)
         self.acts = set_default("acts", ["tanh", "tanh", "linear"], pms)
         self.lip_constants = set_default("lip_constants", [2.0, 2.0, 2.0], pms)
+
+        self.noise_level = set_default("noise_level", 0.05, pms)
+        self.patience = set_default("patience", 1000, pms)
+        self.improvement = set_default("improvement", 1.0e-6, pms)
 
         self.model: LipMLP = LipMLP(
             inp_dim=self.spaces.dim,
@@ -58,7 +64,7 @@ class LipNet(BaseModel):
             arch=self.arch,
             acts=self.acts,
             lip_constants=self.lip_constants,
-            name="lipmlp_fge_model"
+            name="lipmlp_fge"
         )
 
     def reset(self):
@@ -100,14 +106,12 @@ class LipNet(BaseModel):
                 scheduler = tsched.CosineAnnealingLR(optimizer,
                                                      T_max=self.fge_cycle_len)
 
-                noise_level = 0.05
                 with torch.no_grad():
                     for param in self.model.parameters():
-                        param.add_(torch.randn_like(param) * noise_level)
+                        #param.add_(torch.randn_like(param) * noise_level)
+                        param.add_(self.noise_level*(1.0 - 2.0*torch.rand_like(param)))
 
             previous_loss = float('inf')
-            patience = 500
-            improvement = 1.0e-5
             n_wait = 0
             for epoch in range(cycle_epochs):
                 total_epochs += 1
@@ -137,12 +141,12 @@ class LipNet(BaseModel):
                 loss_history.append([total_epochs, avg_epoch_loss])
                 scheduler.step()
 
-                if (abs(loss - previous_loss)/loss) < improvement:
+                if (abs(loss - previous_loss)/loss) < self.improvement:
                     n_wait +=1
                 else:
                     n_wait = 0
 
-                if n_wait == patience:
+                if n_wait == self.patience:
                     break
 
                 previous_loss = loss
