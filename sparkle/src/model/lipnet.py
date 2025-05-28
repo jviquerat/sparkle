@@ -105,6 +105,10 @@ class LipNet(BaseModel):
                     for param in self.model.parameters():
                         param.add_(torch.randn_like(param) * noise_level)
 
+            previous_loss = float('inf')
+            patience = 500
+            improvement = 1.0e-5
+            n_wait = 0
             for epoch in range(cycle_epochs):
                 total_epochs += 1
                 epoch_loss = 0.0
@@ -132,6 +136,16 @@ class LipNet(BaseModel):
                 avg_epoch_loss = epoch_loss / float(btc) if btc > 0 else 0.0
                 loss_history.append([total_epochs, avg_epoch_loss])
                 scheduler.step()
+
+                if (abs(loss - previous_loss)/loss) < improvement:
+                    n_wait +=1
+                else:
+                    n_wait = 0
+
+                if n_wait == patience:
+                    break
+
+                previous_loss = loss
 
                 cycle_text = f"FGE Cycle {cycle}"
                 epoch_text = f"epoch {epoch}"
