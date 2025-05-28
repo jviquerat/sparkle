@@ -18,6 +18,7 @@ from sparkle.src.utils.default import set_default
 from sparkle.src.utils.prints import spacer, fmt_float, new_line
 
 
+###############################################
 class LipNet(BaseModel):
     def __init__(self, spaces, path, pms):
         """
