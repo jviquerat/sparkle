@@ -1,3 +1,5 @@
+import sys
+
 from numpy import float64, ndarray
 
 from sparkle.src.env.parallel import parallel
@@ -60,7 +62,7 @@ class MpiWorker():
             if command == 'close':
                 self.close()
                 parallel.finalize()
-                break
+                sys.exit(0)
 
     def cost(self, x: ndarray) -> float64:
         """
