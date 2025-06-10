@@ -7,6 +7,7 @@ import numpy as np
 
 from sparkle.src.bench.bench import (get_sweep_parameters,
                                      combine_parameters,
+                                     format_parameter_value,
                                      combination_to_name)
 from sparkle.src.env.parallel import parallel
 from sparkle.src.env.spaces import EnvSpaces
@@ -72,8 +73,9 @@ class BenchPBO():
         time = dict()
         for cmb in combinations:
             spacer(str(cmb))
+            str_key = combination_to_name(cmb)
             b = self.avg(n_avg, cmb, pms, results_path)
-            best[tuple(cmb.values())] = b
+            best[str_key] = b
 
         # Scatter plots for given dimension
         best_mean = {}
@@ -85,11 +87,12 @@ class BenchPBO():
 
         for cmb in combinations:
             d = cmb[color_by]
-            colors.append(d)
+            colors.append(format_parameter_value(d))
+
             name = combination_to_name(cmb)
             names.append(name)
-            best_mean[name] = np.mean(best[tuple(cmb.values())])
-            best_std[name]  = np.std(best[tuple(cmb.values())])
+            best_mean[name] = np.mean(best[name])
+            best_std[name]  = np.std(best[name])
 
         f = os.path.join(results_path, "best_score.png")
         scatter_names(f, best_mean, best_std, names,
@@ -120,7 +123,8 @@ class BenchPBO():
         """
         pms.trainer.agent.silent = True
         for k,v in combination.items():
-            pms.trainer.agent.k = v
+            setattr(pms.trainer.agent, k, v)
+
         trainer = trainer_factory.create(pms.trainer.name,
                                          path      = results_path,
                                          pms       = pms.trainer)
