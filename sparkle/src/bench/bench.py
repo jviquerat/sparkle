@@ -58,17 +58,27 @@ def combine_parameters(keys: List[str], values: List[Any]) -> List[Dict]:
 
     return combinations
 
+def format_parameter_value(value: any) -> str:
+    """
+    Formats a parameter value into a consistent string representation.
+    Converts lists to hyphen-separated strings.
+    """
+    if isinstance(value, list):
+        return "-".join(map(str, value))
+    return str(value)
+
 def combination_to_name(cmb: Dict) -> str:
     """
     A function that takes a combination of parameters and returns
     a string name from it for storage or plotting purpose
     """
+    name_parts = []
 
-    name = ""
-    for k, v in cmb.items():
-        name += f"{v} "
+    for key, value in sorted(cmb.items()):
+        value_str = format_parameter_value(value)
+        name_parts.append(f"{value_str}")
 
-    return name.rstrip()
+    return "_".join(name_parts)
 
 def write_bench_data(filename: str, cost: Dict) -> None:
 

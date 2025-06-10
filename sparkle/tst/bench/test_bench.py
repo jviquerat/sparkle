@@ -26,7 +26,7 @@ def test_bench():
     assert combinations[0] == dict0
     assert combinations[1] == dict1
 
-    assert combination_to_name(combinations[0]) == "random 2"
+    assert combination_to_name(combinations[0]) == "2_random"
 
     nsp = SimpleNamespace()
     nsp.a = ["1", "2", "3"]
