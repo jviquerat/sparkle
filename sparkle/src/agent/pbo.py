@@ -1,6 +1,6 @@
 import math
 import types
-from typing import Tuple
+from typing import Tuple, Any
 
 import numpy as np
 import torch
@@ -11,12 +11,11 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 from sparkle.src.agent.base import BaseAgent
 from sparkle.src.env.spaces import EnvSpaces
 from sparkle.src.network.mlp import MLP
-from sparkle.src.optimizer.adam import Adam
 from sparkle.src.optimizer.optimizer import opt_factory
 from sparkle.src.utils.default import set_default
 
-###############################################
 
+###############################################
 class PBO(BaseAgent):
     """
     Policy-Based Optimization (PBO) agent.
@@ -40,37 +39,35 @@ class PBO(BaseAgent):
         """
         super().__init__(path, spaces, pms)
 
-        self.name        = "PBO"
-        sg0              = torch.tensor(0.25*(np.min(self.xmax)-np.max(self.xmin)))
-        self.sigma0      = set_default("sigma0", sg0, pms)
-        npts             = 4 + math.floor(3.0*math.log(self.dim))
-        self.n_points    = set_default("n_points", npts, pms)
-        self.n_steps_max = set_default("n_steps_max", 20, pms)
-        self.n_elite     = set_default("n_elite", int(0.5*self.n_points), pms)
-        self.adv_clip    = set_default("adv_clip", True, pms)
-        self.adv_decay   = set_default("adv_decay", 1.0-math.exp(-0.35*self.dim), pms)
-        self.obs_dim     = set_default("obs_dim", self.dim, pms)
-        self.cov_dim     = math.floor(self.dim*(self.dim - 1)/2)
+        self.name           = "PBO"
+        sg0                 = torch.tensor(0.25*(np.min(self.xmax)-np.max(self.xmin)))
+        self.sigma0         = set_default("sigma0", sg0, pms)
+        npts                = 4 + math.floor(3.0*math.log(self.dim))
+        self.n_points       = set_default("n_points", npts, pms)
+        self.n_steps_max    = set_default("n_steps_max", 20, pms)
+        self.n_elite        = set_default("n_elite", int(0.5*self.n_points), pms)
+        self.obs_dim        = set_default("obs_dim", self.dim, pms)
+        self.cov_dim        = math.floor(self.dim*(self.dim - 1)/2)
 
         # Create networks
-        if (not hasattr(pms, "sg")): pms.sg = None
-        self.sg_arch   = set_default("arch", [8,8], pms.sg)
-        self.sg_acts   = set_default("acts", ["tanh", "tanh", "sigmoid"], pms.sg)
-        self.sg_epochs = set_default("epochs", 8, pms.sg)
-        self.sg_gen    = set_default("gen", 8, pms.sg)
-        self.sg_batch  = set_default("batch", 0.5, pms.sg)
+        self.sg_arch   = set_default("sg_arch", [8,8], pms)
+        self.sg_acts   = set_default("sg_acts", ["tanh", "tanh", "sigmoid"], pms)
+        self.sg_epochs = set_default("sg_epochs", 32, pms)
+        self.sg_gen    = set_default("sg_gen", 8, pms)
+        self.sg_batch  = set_default("sg_batch", 0.5, pms)
+        self.sg_lr     = set_default("sg_lr", 5.0e-3, pms)
         self.net_sg = MLP(inp_dim = self.obs_dim,
                           out_dim = self.dim,
                           arch    = self.sg_arch,
                           acts    = self.sg_acts,
                           name    = "sigma")
 
-        if (not hasattr(pms, "cr")): pms.cr = None
-        self.cr_arch   = set_default("arch", [8,8], pms.cr)
-        self.cr_acts   = set_default("acts", ["tanh", "tanh", "sigmoid"], pms.cr)
-        self.cr_epochs = set_default("epochs", 8, pms.cr)
-        self.cr_gen    = set_default("gen", 16, pms.cr)
-        self.cr_batch  = set_default("batch", 1.0, pms.cr)
+        self.cr_arch   = set_default("cr_arch", [4,4], pms)
+        self.cr_acts   = set_default("cr_acts", ["tanh", "tanh", "sigmoid"], pms)
+        self.cr_epochs = set_default("cr_epochs", 4, pms)
+        self.cr_gen    = set_default("cr_gen", 16, pms)
+        self.cr_batch  = set_default("cr_batch", 0.5, pms)
+        self.cr_lr     = set_default("cr_lr", 5.0e-3, pms)
         self.net_cr = MLP(inp_dim = self.obs_dim,
                           out_dim = self.cov_dim,
                           arch    = self.cr_arch,
@@ -80,11 +77,11 @@ class PBO(BaseAgent):
         # Create optimizers
         pms_opt_sg = types.SimpleNamespace()
         pms_opt_sg.type = "adam"
-        pms_opt_sg.lr   = 5.0e-3
+        pms_opt_sg.lr   = self.sg_lr
         self.pms_opt_sg = set_default("opt_sg", pms_opt_sg, pms)
         pms_opt_cr = types.SimpleNamespace()
         pms_opt_cr.type = "adam"
-        pms_opt_cr.lr   = 1.0e-3
+        pms_opt_cr.lr   = self.cr_lr
         self.pms_opt_cr = set_default("opt_cr", pms_opt_cr, pms)
 
         self.obs = 0.0
@@ -107,10 +104,11 @@ class PBO(BaseAgent):
         super().reset(run)
 
         # Additional data storage
-        self.elite_stp    = 0
-        self.hist_c       = []
-        self.hist_x_elite = np.zeros((self.n_steps_elite, self.dim))
-        self.hist_a_elite = np.zeros((self.n_steps_elite))
+        self.elite_stp      = 0
+        self.hist_c         = []
+        self.hist_x_elite   = np.zeros((self.n_steps_elite, self.dim))
+        self.hist_a_elite   = np.zeros((self.n_steps_elite))
+        self.hist_lgp_elite = np.zeros((self.n_steps_elite))
 
         # Reset networks
         self.mu = torch.tensor(self.x0)
@@ -147,9 +145,12 @@ class PBO(BaseAgent):
         cr  = self.net_cr(obs)
 
         pdf = self.get_pdf(self.mu, sg[0], cr[0])
-        x   = pdf.sample([self.n_points]).numpy()
+        x   = pdf.sample([self.n_points])
 
-        return x
+        # Temporary storage of log-prob of current samples
+        self.last_lgp = pdf.log_prob(x).detach().numpy()
+
+        return x.numpy()
 
     def get_pdf(self,
                 mu: torch.Tensor,
@@ -190,8 +191,7 @@ class PBO(BaseAgent):
             self.hist_c.append(c[i])
 
         # Compute advantages
-        # x is modified during this process
-        x_elite = self.compute_advantages(x)
+        x_elite = self.compute_advantages(x, self.last_lgp)
 
         # Update
         self.train_loop(self.sg_epochs, self.sg_gen,
@@ -200,19 +200,20 @@ class PBO(BaseAgent):
                         self.cr_batch,  self.net_cr, self.opt_cr)
 
         w = self.adv
-        w = w/np.sum(w)
+        w = w/(np.sum(w) + 1.0e-5)
         self.mu[:] = 0.0
         for i in range(self.n_elite):
            self.mu[:] += w[i]*x_elite[i,:]
 
         self.stp += 1
 
-    def compute_advantages(self, x: ndarray) -> torch.Tensor:
+    def compute_advantages(self, x: ndarray, last_lgp: ndarray) -> torch.Tensor:
         """
         Computes the advantages of the sampled points.
 
         Args:
-            x: The points that were evaluated.
+            x: The points that were evaluated
+            last_lgp: associated log-probabilities
 
         Returns:
             A tensor of the elite points.
@@ -224,28 +225,27 @@ class PBO(BaseAgent):
         # Start and end indices of last generation
         # Here we retrieve all the sampled points of last
         # generation from the main score buffer
-        #start   = max(0,self.total_stp - self.n_points)
-        #end     = self.total_stp
         start   = max(0,self.n_points*self.stp)
         end     = self.n_points*(self.stp+1)
 
         # Compute normalized advantage
         avg_rwd   = np.mean(self.hist_c[start:end])
         std_rwd   = np.std( self.hist_c[start:end])
-        self.adv  = (self.hist_c[start:end] - avg_rwd)/(std_rwd + 1.0e-15)
+        self.adv  = (self.hist_c[start:end] - avg_rwd)/(std_rwd + 1.0e-5)
         self.adv *=-1.0
 
         # Retain only elite points
-        sc       = np.argsort(self.adv)
-        x_elite  = x[sc[-self.n_elite:]].copy()
-        self.adv = self.adv[sc[-self.n_elite:]]
+        sc        = np.argsort(self.adv)
+        x_elite   = x[sc[-self.n_elite:]].copy()
+        self.adv  = self.adv[sc[-self.n_elite:]]
+        lgp_elite = last_lgp[sc[-self.n_elite:]]
 
         # Decay advantage history
         start = self.elite_stp - self.n_elite
         end   = self.elite_stp
-        self.hist_x_elite[start:end] = x_elite[:]
-        self.hist_a_elite[:]        *= self.adv_decay
-        self.hist_a_elite[start:end] = self.adv[:]
+        self.hist_x_elite[start:end]   = x_elite[:]
+        self.hist_a_elite[start:end]   = self.adv[:]
+        self.hist_lgp_elite[start:end] = lgp_elite[:]
 
         return torch.tensor(x_elite)
 
@@ -258,8 +258,9 @@ class PBO(BaseAgent):
 
         Returns:
             A tuple containing:
-                - A tensor of elite points.
-                - A tensor of their advantages.
+                - A tensor of elite points
+                - A tensor of their advantages
+                - A tensor of their log-probabilities
         """
 
         # Starting and ending indices based on the required nb of generations
@@ -272,19 +273,21 @@ class PBO(BaseAgent):
         np.random.shuffle(sample)
 
         # Draw elements
-        buff_x = torch.from_numpy(self.hist_x_elite[sample])
-        buff_a = torch.from_numpy(self.hist_a_elite[sample])
-        buff_x = torch.reshape(buff_x, [-1, self.dim])
-        buff_a = torch.reshape(buff_a, [-1])
+        buff_x   = torch.from_numpy(self.hist_x_elite[sample])
+        buff_a   = torch.from_numpy(self.hist_a_elite[sample])
+        buff_lgp = torch.from_numpy(self.hist_lgp_elite[sample])
+        buff_x   = torch.reshape(buff_x,   [-1, self.dim])
+        buff_a   = torch.reshape(buff_a,   [-1])
+        buff_lgp = torch.reshape(buff_lgp, [-1])
 
-        return buff_x, buff_a
+        return buff_x, buff_a, buff_lgp
 
     def train_loop(self,
                    n_epochs: int,
                    n_gens: int,
                    batch_frac: float,
                    net: MLP,
-                   opt: Adam) -> None:
+                   opt: Any) -> None:
         """
         Performs the training loop for the policy networks.
 
@@ -298,7 +301,7 @@ class PBO(BaseAgent):
 
         # Loop on epochs
         for epoch in range(n_epochs):
-            x, a      = self.get_history(n_gens)
+            x, a, l   = self.get_history(n_gens)
             n_samples = len(a)
             if (n_samples < 2*self.n_points): return
             done      = False
@@ -315,24 +318,28 @@ class PBO(BaseAgent):
 
                 act = x[start:end]
                 adv = a[start:end]
+                lgp = l[start:end]
                 obs = torch.ones((end-start, self.obs_dim))*self.obs
 
-                loss = self.get_loss(obs, adv, act)
+                loss = self.get_loss(obs, adv, act, lgp)
                 opt.zero_grad()
                 loss.backward()
+                torch.nn.utils.clip_grad_norm_(net.parameters(), max_norm=1.0)
                 opt.step()
 
     def get_loss(self,
                  obs: torch.Tensor,
                  adv: torch.Tensor,
-                 act: torch.Tensor) -> torch.Tensor:
+                 act: torch.Tensor,
+                 lgp_old: torch.Tensor) -> torch.Tensor:
         """
         Computes the loss for the policy networks.
 
         Args:
-            obs: The observations.
-            adv: The advantages.
-            act: The actions.
+            obs: The observations
+            adv: The advantages
+            act: The actions
+            lgp_old: The log-probabilities
 
         Returns:
             The computed loss.
@@ -341,12 +348,11 @@ class PBO(BaseAgent):
         # Compute pdf
         sg  = self.net_sg(obs)*self.sigma0
         cr  = self.net_cr(obs)
-
         pdf = self.get_pdf(self.mu, sg[0], cr[0])
-        log = pdf.log_prob(act)
+        lgp = pdf.log_prob(act)
 
         # Compute loss
-        s       = torch.multiply(adv, log)
+        s       = torch.multiply(adv, lgp)
         loss_pg =-torch.mean(s)
 
         return loss_pg

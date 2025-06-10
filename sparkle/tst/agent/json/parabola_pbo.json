@@ -17,28 +17,18 @@
         "agent": {
             "name": "pbo",
             "n_steps_max": 50,
-            "sg": {
-                "arch": [8,8],
-                "acts": ["tanh","tanh","sigmoid"],
-                "epochs": 8,
-                "gen": 8,
-                "batch": 0.5
-            },
-            "opt_sg": {
-                "type": "adam",
-                "lr": 5.0e-3
-            },
-            "cr": {
-                "arch": [8,8],
-                "acts": ["tanh","tanh","sigmoid"],
-                "epochs": 8,
-                "gen": 16,
-                "batch": 1.0
-            },
-            "opt_cr": {
-                "type": "adam",
-                "lr": 1.0e-3
-            }
+            "sg_arch": [8,8],
+            "sg_acts": ["tanh","tanh","sigmoid"],
+            "sg_epochs": 32,
+            "sg_gen": 8,
+            "sg_batch": 0.5,
+            "sg_lr": 5.0e-3,
+            "cr_arch": [4,4],
+            "cr_acts": ["tanh","tanh","sigmoid"],
+            "cr_epochs": 4,
+            "cr_gen": 16,
+            "cr_batch": 0.5,
+            "cr_lr": 5.0e-3
         }
     }
 }
