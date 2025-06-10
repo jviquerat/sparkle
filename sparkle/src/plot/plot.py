@@ -447,39 +447,53 @@ def multi_bar(filename: str,
     plt.savefig(filename, dpi=100)
     plt.close()
 
-def map_ints_to_colors(int_list, cmap_name='turbo'):
-  """
-  Maps a list of integers to a list of RGBA color values using a Matplotlib colormap.
+def map_ints_to_colors(values: list, cmap_name='turbo') -> list[tuple]:
+    """
+    Maps a list of values (either numerical or string-based categories) to
+    a list of colors.
 
-  Args:
-    int_list (list or np.array): A list or NumPy array of integers.
-    cmap_name (str, optional): The name of the Matplotlib colormap to use.
-                                Defaults to 'viridis'.
+    - If the values are numerical, it maps them to a continuous colormap (viridis).
+    - If the values are strings, it maps each unique string to a distinct
+      color from a qualitative colormap (tab10).
 
-  Returns:
-    list: A list of RGBA tuples, where each tuple corresponds to an integer
-          in the input list, mapped through the colormap. Returns an empty
-          list if int_list is empty. Returns a list of the 'middle' color
-          if all integers in the list are the same.
-  """
-  if not int_list:
-    return []
+    Args:
+        values: A list of numbers or strings.
 
-  # Convert to numpy array for easier min/max handling if needed
-  values = np.array(int_list)
+    Returns:
+        A list of RGB color tuples.
+    """
+    # Convert to a numpy array for easier processing
+    values_arr = np.array(values)
 
-  # Create a normalizer instance mapping the integer range to [0, 1]
-  # Handles the case where min == max automatically
-  norm = mcolors.Normalize(vmin=values.min(), vmax=values.max())
+    # Check if the data is numerical (not string-based)
+    is_numerical = np.issubdtype(values_arr.dtype, np.number)
 
-  # Get the colormap instance
-  cmap = cm.get_cmap(cmap_name)
+    if is_numerical:
+        if values_arr.size == 0:
+            return []
+        # Avoid division by zero if all values are the same
+        if values_arr.min() == values_arr.max():
+            norm = mcolors.Normalize(vmin=values_arr.min(), vmax=values_arr.min() + 1)
+        else:
+            norm = mcolors.Normalize(vmin=values_arr.min(), vmax=values_arr.max())
+        cmap = plt.get_cmap(cmap_name)
 
-  # Apply the normalization and colormap to each integer
-  # cmap(norm(value)) returns an RGBA tuple (Red, Green, Blue, Alpha)
-  colors = [cmap(norm(value)) for value in values]
+        return [cmap(norm(v)) for v in values_arr]
 
-  return colors
+    else:
+        # Find the unique categories in the order they appear
+        unique_categories = sorted(list(set(values_arr)))
+        n_categories = len(unique_categories)
+
+        # Get a qualitative colormap (good for distinct categories)
+        # 'tab10' has 10 distinct colors. Use 'tab20' for more.
+        cmap = plt.get_cmap('tab10' if n_categories <= 10 else 'tab20')
+
+        # Create a mapping from each unique category to a color
+        color_map = {category: cmap(i) for i, category in enumerate(unique_categories)}
+
+        # Return the list of colors corresponding to the original values
+        return [color_map[v] for v in values_arr]
 
 def scatter_names(filename: str,
                   x: dict[str, float],
