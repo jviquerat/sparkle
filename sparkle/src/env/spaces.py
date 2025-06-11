@@ -35,12 +35,6 @@ class EnvSpaces:
         self.vmax_   = spaces.get("vmax")
         self.levels_ = spaces.get("levels")
 
-        self.separable_ = False
-        if hasattr(pms, "separable"): self.separable = pms.separable
-
-        if (self.separable_):
-            self.true_dim_ = 1
-
     @property
     def dim(self) -> int:
         """
