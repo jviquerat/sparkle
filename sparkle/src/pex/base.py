@@ -158,6 +158,63 @@ class BasePex():
 
         return minimax_dist
 
+    def projection_score(self, x=None) -> dict:
+        """
+        Assesses the 1D projection properties of a design for each axis.
+
+        This function computes a uniformity score for the projection of the design
+        onto each of its dimensions. The score is calculated as the standard
+        deviation of the spacings between sorted points, normalized by the range
+        of the dimension. This makes the score dimensionless and comparable across
+        dimensions with different ranges.
+
+        A lower score indicates better uniformity, with a score of 0 being perfectly uniform.
+
+        Args:
+            x: A NumPy array of shape (n_points, d_dimensions).
+
+        Returns:
+            A dictionary where keys are the dimension indices (0, 1, 2, ...)
+            and values are the corresponding 1D uniformity scores.
+        """
+        if x is None: x = self.x
+
+        n_points, d_dimensions = x.shape
+
+        lower_bounds = self.xmin
+        upper_bounds = self.xmax
+
+        scores = np.zeros(d_dimensions)
+        for i in range(d_dimensions):
+            low_b = lower_bounds[i]
+            up_b = upper_bounds[i]
+
+            # Project the design onto the i-th dimension
+            projected_points = x[:, i]
+
+            # Sort points to measure gaps between them
+            sorted_points = np.sort(projected_points)
+
+            # Add the specific boundaries for this dimension to the sequence
+            full_sequence = np.concatenate(([low_b], sorted_points, [up_b]))
+
+            # Calculate the size of the gaps between adjacent points
+            spacings = np.diff(full_sequence)
+
+            # Normalize the score by the range of the dimension
+            # This makes scores comparable across dimensions of different scales
+            dimension_range = up_b - low_b
+            if dimension_range > 0.0:
+                # The score is the standard deviation of the gap sizes,
+                # normalized by the total range.
+                score = np.std(spacings) / dimension_range
+            else:
+                # If the range is zero, the spacing deviation must also be zero.
+                score = 0.0
+            scores[i] = score
+
+        return np.max(scores)
+
     def summary(self):
         """
         Prints a summary of the experiment plan's configuration.
@@ -166,6 +223,7 @@ class BasePex():
         spacer("Pex type is "+self.name+" with "+str(self.n_points)+" points")
         spacer("Phi-p criterion: "+fmt_float(self.phi_p()))
         spacer("Minimax criterion: "+fmt_float(self.minimax()))
+        spacer("Projection score: "+fmt_float(self.projection_score()))
 
     def render_distances_distributions(self, x=None, i: int=None):
         """
