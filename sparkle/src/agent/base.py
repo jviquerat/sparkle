@@ -42,13 +42,6 @@ class BaseAgent():
         return self.spaces.dim
 
     @property
-    def natural_dim(self) -> int:
-        """
-        Returns the natural dimensionality of the search space.
-        """
-        return self.spaces.natural_dim
-
-    @property
     def x0(self) -> ndarray:
         """
         Returns the initial point in the search space.
