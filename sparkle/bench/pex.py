@@ -62,12 +62,14 @@ class BenchPex():
         # Store results in a dict mapping tuple of parameter values to numpy array
         phi_p = dict()
         minimax = dict()
+        projection = dict()
         time = dict()
         for cmb in combinations:
             spacer(str(cmb))
-            t, _phi_p, _minimax = self.avg(n_avg, cmb)
+            t, _phi_p, _minimax, _projection = self.avg(n_avg, cmb)
             phi_p[tuple(cmb.values())] = _phi_p
             minimax[tuple(cmb.values())] = _minimax
+            projection[tuple(cmb.values())] = _projection
             time[tuple(cmb.values())] = t
 
         # Output in data file
@@ -93,6 +95,7 @@ class BenchPex():
         # Scatter plots for given dimension
         sc_phi_p   = dict()
         sc_minimax = dict()
+        sc_projection = dict()
         t          = dict()
         names      = []
         colors     = []
@@ -103,6 +106,7 @@ class BenchPex():
             names.append(name)
             sc_phi_p[name]   = np.mean(phi_p[tuple(cmb.values())])
             sc_minimax[name] = np.mean(minimax[tuple(cmb.values())])
+            sc_projection[name] = np.mean(projection[tuple(cmb.values())])
             t[name]          = time[tuple(cmb.values())]
 
         f = os.path.join(results_path, "scatter_phip.png")
@@ -117,6 +121,14 @@ class BenchPex():
         scatter_names(f, sc_minimax, t, names,
                       colors=colors,
                       x_label="minimax",
+                      y_label="t",
+                      title=", ".join(keys),
+                      use_y_log_scale=True)
+
+        f = os.path.join(results_path, "scatter_projection.png")
+        scatter_names(f, sc_projection, t, names,
+                      colors=colors,
+                      x_label="projection_score",
                       y_label="t",
                       title=", ".join(keys),
                       use_y_log_scale=True)
@@ -154,13 +166,15 @@ class BenchPex():
 
         phi_p = np.zeros(n_avg)
         minimax = np.zeros(n_avg)
+        projection = np.zeros(n_avg)
         for k in range(n_avg):
             timer_pex.tic()
             pex.reset()
             timer_pex.toc()
             phi_p[k] = pex.phi_p()
             minimax[k] = pex.minimax()
+            projection[k] = pex.projection_score()
 
         time = timer_pex.dt/n_avg
 
-        return time, phi_p, minimax
+        return time, phi_p, minimax, projection
