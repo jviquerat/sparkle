@@ -11,6 +11,10 @@ class EnvSpaces:
 
     This class stores and manages information about the search space,
     including its dimensionality, bounds, and other relevant properties.
+
+    Some methods may use mixt spaces (continuous/discrete)
+    As this is not the default case, the base functions (dim, xmin, xmax...)
+    are intended for continuous problems
     """
     def __init__(self,
                  spaces: Any,
@@ -23,8 +27,7 @@ class EnvSpaces:
             pms: An optional SimpleNamespace object containing additional parameters.
         """
 
-        self.natural_dim_ = spaces["dim"]
-        self.true_dim_    = self.natural_dim_
+        self.dim_ = spaces["dim"]
         self.xmin_        = spaces["xmin"]
         self.xmax_        = spaces["xmax"]
 
@@ -40,14 +43,7 @@ class EnvSpaces:
         """
         Returns the dimensionality of the search space.
         """
-        return self.true_dim_
-
-    @property
-    def natural_dim(self):
-        """
-        Returns the natural dimensionality of the search space.
-        """
-        return self.true_dim_
+        return self.dim_
 
     @property
     def x0(self) -> ndarray:
