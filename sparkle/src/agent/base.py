@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+from typing import List
 
 from numpy import ndarray
 
@@ -40,6 +41,27 @@ class BaseAgent():
         Returns the dimensionality of the search space.
         """
         return self.spaces.dim
+
+    @property
+    def continuous_dim(self) -> int:
+        """
+        Returns the dimensionality of the continuous search space.
+        """
+        return self.spaces.continuous_dim
+
+    @property
+    def discrete_dim(self) -> int:
+        """
+        Returns the dimensionality of the discrete search space.
+        """
+        return self.spaces.discrete_dim
+
+    @property
+    def discrete_cats(self) -> List[List[int]]:
+        """
+        Returns the categories of the discrete search space.
+        """
+        return self.spaces.discrete_cats
 
     @property
     def x0(self) -> ndarray:
