@@ -41,7 +41,7 @@ class PBO(BaseAgent):
         super().__init__(path, spaces, pms)
 
         self.name           = "PBO"
-        sg0                 = torch.tensor(0.3*(np.min(self.xmax)-np.max(self.xmin)))
+        sg0                 = 0.3*torch.tensor(self.xmax - self.xmin)
         self.sigma0         = set_default("sigma0", sg0, pms)
         npts                = 4 + math.floor(3.0*math.log(self.dim))
         self.n_points       = set_default("n_points", npts, pms)
