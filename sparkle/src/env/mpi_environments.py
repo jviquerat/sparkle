@@ -60,6 +60,21 @@ class MpiEnvironments(BaseParallelEnvironments):
                   "xmin": self.worker.env.xmin,
                   "xmax": self.worker.env.xmax}
 
+        spaces["continuous_dim"] = self.worker.env.dim
+        if hasattr(self.worker.env, "continuous_dim"):
+            spaces["continuous_dim"] = self.worker.env.continuous_dim
+
+        spaces["discrete_dim"] = 0
+        if hasattr(self.worker.env, "discrete_dim"):
+            spaces["discrete_dim"] = self.worker.env.discrete_dim
+
+        spaces["discrete_cats"] = []
+        if hasattr(self.worker.env, "discrete_cats"):
+            spaces["discrete_cats"] = self.worker.env.discrete_cats
+
+        if spaces["discrete_dim"] > 0:
+            assert(spaces["continuous_dim"] + spaces["discrete_dim"] == spaces["dim"])
+
         if hasattr(self.worker.env, "vmin"):   spaces["vmin"]   = self.worker.env.vmin
         if hasattr(self.worker.env, "vmax"):   spaces["vmax"]   = self.worker.env.vmax
         if hasattr(self.worker.env, "levels"): spaces["levels"] = self.worker.env.levels
