@@ -95,7 +95,7 @@ class PBO(BaseAgent):
             pms_opt_cr.lr   = self.cr_lr
             self.pms_opt_cr = set_default("opt_cr", pms_opt_cr, pms)
 
-        if self.is_continuous:
+        if self.is_discrete:
             self.disc_arch   = set_default("disc_arch", [4,4], pms)
             self.disc_acts   = set_default("disc_acts", ["tanh", "tanh", "linear"], pms)
             self.disc_epochs = set_default("disc_epochs", 8, pms)
