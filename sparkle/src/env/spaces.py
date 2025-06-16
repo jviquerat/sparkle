@@ -27,9 +27,19 @@ class EnvSpaces:
             pms: An optional SimpleNamespace object containing additional parameters.
         """
 
-        self.dim_ = spaces["dim"]
-        self.xmin_        = spaces["xmin"]
-        self.xmax_        = spaces["xmax"]
+        self.dim_  = spaces["dim"]
+        self.xmin_ = spaces["xmin"]
+        self.xmax_ = spaces["xmax"]
+
+        self.continuous_dim_ = spaces.get("continuous_dim")
+        self.discrete_dim_   = spaces.get("discrete_dim")
+        self.discrete_cats_  = spaces.get("discrete_cats")
+
+        # Default to continuous
+        if self.continuous_dim_ is None:
+            self.continuous_dim_ = self.dim_
+            self.discrete_dim_ = 0
+            self.discrete_cats_ = None
 
         # These attributes may not be defined
         # get() defaults to None if the attribute is not present
@@ -44,6 +54,27 @@ class EnvSpaces:
         Returns the dimensionality of the search space.
         """
         return self.dim_
+
+    @property
+    def continuous_dim(self) -> int:
+        """
+        Returns the dimensionality of the continuous search space.
+        """
+        return self.continuous_dim_
+
+    @property
+    def discrete_dim(self) -> int:
+        """
+        Returns the dimensionality of the discrete search space.
+        """
+        return self.discrete_dim_
+
+    @property
+    def discrete_cats(self) -> List[List[int]]:
+        """
+        Returns the categories of the discrete search space.
+        """
+        return self.discrete_cats_
 
     @property
     def x0(self) -> ndarray:
