@@ -40,15 +40,16 @@ class PBO(BaseAgent):
         """
         super().__init__(path, spaces, pms)
 
-        self.name           = "PBO"
-        sg0                 = 0.3*torch.tensor(self.xmax - self.xmin)
-        self.sigma0         = set_default("sigma0", sg0, pms)
-        npts                = 4 + math.floor(3.0*math.log(self.dim))
-        self.n_points       = set_default("n_points", npts, pms)
-        self.n_steps_max    = set_default("n_steps_max", 20, pms)
-        self.n_elite        = set_default("n_elite", int(0.5*self.n_points), pms)
-        self.obs_dim        = set_default("obs_dim", self.continuous_dim, pms)
-        self.cov_dim        = math.floor(self.continuous_dim*(self.continuous_dim - 1)/2)
+        self.name        = "PBO"
+        sg0              = 0.3*torch.tensor(self.xmax - self.xmin)
+        self.sigma0      = set_default("sigma0", sg0, pms)
+        npts             = 4 + math.floor(3.0*math.log(self.dim))
+        self.n_points    = set_default("n_points", npts, pms)
+        self.n_steps_max = set_default("n_steps_max", 20, pms)
+        self.n_elite     = set_default("n_elite", int(0.5*self.n_points), pms)
+        self.obs_dim     = set_default("obs_dim", self.continuous_dim, pms)
+        self.cov_dim     = math.floor(self.continuous_dim*(self.continuous_dim - 1)/2)
+        self.adv_decay   = set_default("adv_decay", 1.0-math.exp(-0.35*self.dim), pms)
 
         self.obs = 0.0
         self.n_steps_elite = self.n_steps_max*self.n_elite
@@ -313,6 +314,7 @@ class PBO(BaseAgent):
         start = self.elite_stp - self.n_elite
         end   = self.elite_stp
         self.hist_x_elite[start:end] = x_elite[:]
+        self.hist_a_elite[:]        *= self.adv_decay
         self.hist_a_elite[start:end] = self.adv[:]
 
         return torch.tensor(x_elite)
@@ -388,7 +390,6 @@ class PBO(BaseAgent):
                 loss = self.get_loss(obs, adv, act)
                 opt.zero_grad()
                 loss.backward()
-                torch.nn.utils.clip_grad_norm_(net.parameters(), max_norm=1.0)
                 opt.step()
 
     def get_loss(self,
