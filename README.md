@@ -4,10 +4,11 @@
   <img align="right" width="300" alt="logo" src="sparkle/msc/logo.png">
 </p>
 
-![master badge](https://github.com/jviquerat/sparkle/workflows/sparkle/badge.svg?branch=master)
-
 `sparkle` is a parametric, gradient-free optimization library. It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy. More informations about each method can be obtained from the documentation.
 
+<br/>
+<br/>
+<br/>
 <br/>
 <br/>
 <br/>
