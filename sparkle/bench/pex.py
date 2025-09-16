@@ -72,14 +72,6 @@ class BenchPex():
             projection[tuple(cmb.values())] = _projection
             time[tuple(cmb.values())] = t
 
-        # Output in data file
-        with open(filename, "w") as f:
-            for k,v in phi_p.items():
-                f.write(str(k))
-                f.write("\n")
-                f.write(np.array2string(v))
-                f.write("\n")
-
         # Violin plot for phi-p
         for d in sweep.dimension:
             labels = []
@@ -97,6 +89,7 @@ class BenchPex():
         sc_minimax = dict()
         sc_projection = dict()
         t          = dict()
+        dims       = dict()
         names      = []
         colors     = []
         for cmb in combinations:
@@ -108,7 +101,9 @@ class BenchPex():
             sc_minimax[name] = np.mean(minimax[tuple(cmb.values())])
             sc_projection[name] = np.mean(projection[tuple(cmb.values())])
             t[name]          = time[tuple(cmb.values())]
+            dims[name]       = d
 
+        # Write to data file
         f = os.path.join(results_path, "scatter_phip.png")
         scatter_names(f, sc_phi_p, t, names,
                       colors=colors,
@@ -116,6 +111,14 @@ class BenchPex():
                       y_label="t",
                       title=", ".join(keys),
                       use_y_log_scale=True)
+
+        with open(filename, "w") as f:
+            f.write("method phi_p minimax maxpro time \n")
+            for (k1,phip), (k2,mini), (k3,pro), (k4,tm) in zip(sc_phi_p.items(),
+                                                               sc_minimax.items(),
+                                                               sc_projection.items(),
+                                                               t.items()):
+                f.write(f"{k1} {phip} {mini} {pro} {tm} \n")
 
         f = os.path.join(results_path, "scatter_minimax.png")
         scatter_names(f, sc_minimax, t, names,
@@ -129,6 +132,14 @@ class BenchPex():
         scatter_names(f, sc_projection, t, names,
                       colors=colors,
                       x_label="projection_score",
+                      y_label="t",
+                      title=", ".join(keys),
+                      use_y_log_scale=True)
+
+        f = os.path.join(results_path, "scatter_time.png")
+        scatter_names(f, dims, t, names,
+                      colors=colors,
+                      x_label="dimension",
                       y_label="t",
                       title=", ".join(keys),
                       use_y_log_scale=True)
