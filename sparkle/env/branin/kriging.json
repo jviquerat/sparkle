@@ -9,13 +9,13 @@
         "name": "branin"
     },
     "pex": {
-        "name": "rfps",
+        "name": "maxrfps",
         "n_points": 20
     },
     "model": {
     	  "name": "kriging",
         "kernel": {
-            "name": "matern52"
+            "name": "gaussian"
         }
     }
 }
