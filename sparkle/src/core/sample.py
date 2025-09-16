@@ -42,3 +42,5 @@ def sample(pex_type, n_points, dim):
 
     pex.render_distances_distributions()
     if (dim == 2): pex.render_2d()
+
+    pex.dump()
