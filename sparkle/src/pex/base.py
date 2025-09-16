@@ -107,7 +107,8 @@ class BasePex():
         Computes the phi-p criterion for the experiment plan.
 
         The phi-p criterion is a measure of the space-filling properties
-        of the experiment plan. Default value suggested by Morris & Mitchell (1995)
+        of the experiment plan. Default value suggested by Morris & Mitchell (1995).
+        Lower is better.
 
         Args:
             p: The power parameter for the phi-p criterion.
@@ -128,7 +129,8 @@ class BasePex():
         Computes the minimax criterion for the experiment plan,
         using Monte-Carlo sampling. We uniformly draw n_samples
         within the domain, and for each random point, find the minimum
-        Euclidian distance to any of the selected design points
+        Euclidian distance to any of the selected design points.
+        Higher is better.
 
         Args:
             n_samples: the number of samples to draw for MC estimate
@@ -160,8 +162,7 @@ class BasePex():
         deviation of the spacings between sorted points, normalized by the range
         of the dimension. This makes the score dimensionless and comparable across
         dimensions with different ranges.
-
-        A lower score indicates better uniformity, with a score of 0 being perfectly uniform.
+        Lower is better, with a score of 0 being perfectly uniform.
 
         Args:
             x: A NumPy array of shape (n_points, d_dimensions).
@@ -284,3 +285,14 @@ class BasePex():
         ax.scatter(self.x[:,0], self.x[:,1], c=cmap(d_nearest), marker="o", alpha=0.8)
         plt.savefig(self.name, dpi=100)
         plt.close()
+
+    def dump(self, filename: str=None) -> None:
+        """
+        Dump pex with distances distributions
+        """
+        dists, _ = nearest_neighbors_in_set(self.x)
+        if filename is None: filename = f"{self.name}"
+
+        x = np.hstack((self.x, np.reshape(dists, (-1,1))))
+        with open(filename, "w") as f:
+            np.savetxt(f, x)
