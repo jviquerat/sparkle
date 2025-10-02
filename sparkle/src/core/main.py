@@ -61,7 +61,6 @@ def main():
         liner(bold('Training mode'))
 
         if (parallel.is_root()):
-            spacer("Parallelism based on "+parallel.type)
             spacer("Number of parallel environments: "+str(parallel.size))
 
         train(json_file, pms)
@@ -111,10 +110,6 @@ def main():
         # Printings
         disclaimer()
         liner(bold('Model mode'))
-
-        if (parallel.is_root()):
-            spacer("Parallelism based on "+parallel.type)
-            spacer("Number of parallel environments: "+str(parallel.size))
 
         model(json_file, pms)
         return
