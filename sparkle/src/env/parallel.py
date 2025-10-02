@@ -2,6 +2,10 @@ import sys
 from types import SimpleNamespace
 from typing import Any
 
+import mpi4py
+mpi4py.rc.initialize = False
+mpi4py.rc.finalize   = False
+from mpi4py import MPI
 
 ###############################################
 class SpkParallel:
@@ -23,11 +27,6 @@ class SpkParallel:
         Args:
             pms: A SimpleNamespace object containing parameters for parallelism.
         """
-
-        import mpi4py
-        mpi4py.rc.initialize = False
-        mpi4py.rc.finalize   = False
-        from mpi4py import MPI
 
         if not MPI.Is_initialized():
             MPI.Init()
@@ -87,7 +86,6 @@ class SpkParallel:
         Finalizes the parallelism.
         """
 
-        from mpi4py import MPI
         MPI.Finalize()
 
 # Single instance
