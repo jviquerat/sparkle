@@ -62,6 +62,7 @@ def main():
 
         if (parallel.is_root):
             spacer("Number of parallel environments: "+str(parallel.n_envs))
+            spacer("Number of procs per environment: "+str(parallel.n_procs_per_env))
 
         train(json_file, pms)
         return
