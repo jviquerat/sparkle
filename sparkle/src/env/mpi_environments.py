@@ -102,10 +102,13 @@ class MpiEnvironments(BaseParallelEnvironments):
         for i in range(n_loops):
 
             # Send
-            data = [('step', None)]*parallel.n_envs
+            data = [('cost', None)]*parallel.n_envs
             for p in range(parallel.n_envs):
                 data[p] = ('cost', x[i*parallel.n_envs+p])
             parallel.main_comm.scatter(data, root=0)
+
+            # Main process sending to its own env_comm
+            parallel.env_comm.bcast(data[0], root=0)
 
             # Main process executing
             c = self.worker.cost(data[0][1])
@@ -153,6 +156,9 @@ class MpiEnvironments(BaseParallelEnvironments):
         data = [('reset', run) for i in range(parallel.n_envs)]
         parallel.main_comm.scatter(data, root=0)
 
+        # Main process sending to its own env_comm
+        parallel.env_comm.bcast(data[0], root=0)
+
         # Main process executing
         r = self.worker.reset(data[0][1])
 
@@ -179,8 +185,11 @@ class MpiEnvironments(BaseParallelEnvironments):
         Closes the environments.
         """
 
-        data = [('close',None) for i in range(parallel.n_envs)]
+        data = [('close', None) for i in range(parallel.n_envs)]
         data = parallel.main_comm.scatter(data, root=0)
+
+        # Main process sending to its own env_comm
+        parallel.env_comm.bcast(data, root=0)
 
         # Main process executing
         self.worker.close()

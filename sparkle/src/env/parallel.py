@@ -47,6 +47,8 @@ class SpkParallel:
         self.world_size_ = MPI.COMM_WORLD.Get_size()
 
         print(f"COMM_WORLD, size {self.world_size_}, rank {self.world_rank_}")
+        self.world_comm_.Barrier()
+        if parallel.is_root: print("")
 
         # Deduce number of parallel envs
         self.n_envs_ = self.world_size_ // self.n_procs_per_env_
@@ -64,6 +66,9 @@ class SpkParallel:
 
             print(f"COMM_MAIN, size {self.main_size_}, local rank {self.main_rank_}, global rank {self.world_rank_}")
 
+        self.world_comm_.Barrier()
+        if parallel.is_root: print("")
+
         # Second communicator specific to each env
         self.env_color_ = self.world_rank_ // self.n_procs_per_env_
         self.env_comm_  = self.world_comm_.Split(self.env_color_, 0)
@@ -71,6 +76,9 @@ class SpkParallel:
         self.env_size_  = self.env_comm_.Get_size()
 
         print(f"COMM_ENV, size {self.env_size_}, local rank {self.env_rank_}, global rank {self.world_rank_}, is_env_root {self.is_env_root}")
+
+        self.world_comm_.Barrier()
+        if parallel.is_root: print("")
 
         #MPI.Finalize()
         #exit(0)
@@ -178,6 +186,9 @@ class SpkParallel:
         # in a single process. MPI will be finalized when the process exits.
         if "PYTEST_CURRENT_TEST" in os.environ:
             return
+
+        self.env_comm.free()
+        self.main_comm.free()
 
         if MPI.Is_initialized() and not MPI.Is_finalized():
             MPI.Finalize()

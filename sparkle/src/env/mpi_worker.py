@@ -28,10 +28,17 @@ class MpiWorker():
         # Build environment
         module    = __import__(env_name)
         env_build = getattr(module, env_name)
-        if args is not None:
-            self.env = env_build(cpu, path, args)
+
+        if parallel.n_procs_per_env > 1:
+            if args is not None:
+                self.env = env_build(cpu, path, parallel.env_comm, args)
+            else:
+                self.env = env_build(cpu, path, parallel.env_comm)
         else:
-            self.env = env_build(cpu, path)
+            if args is not None:
+                self.env = env_build(cpu, path, args)
+            else:
+                self.env = env_build(cpu, path)
 
     def work(self):
         """
@@ -41,23 +48,34 @@ class MpiWorker():
         executes them, and sends back the results.
         """
         while True:
-            data    = None
-            data    = parallel.main_comm.scatter(data, root=0)
+            data = None
+
+            # env_root procs receive from world root on main_comm
+            if parallel.is_env_root:
+                data = parallel.main_comm.scatter(data, root=0)
+
+            # env_root procs scatter to env procs on their own comm
+            data = parallel.env_comm.bcast(data, root=0)
+
+            # Extract command data
             command = data[0]
-            data    = data[1]
+            values  = data[1]
 
             # Execute commands
             if command == 'cost':
-                c = self.cost(data)
-                parallel.main_comm.gather((c), root=0)
+                c = self.cost(values)
+                if parallel.is_env_root:
+                    parallel.main_comm.gather((c), root=0)
 
             if command == 'reset':
-                r = self.reset(data)
-                parallel.main_comm.gather((r), root=0)
+                r = self.reset(values)
+                if parallel.is_env_root:
+                    parallel.main_comm.gather((r), root=0)
 
             if command == 'render':
-                rnd = self.render(data)
-                parallel.main_comm.gather((rnd), root=0)
+                rnd = self.render(values)
+                if parallel.is_env_root:
+                    parallel.main_comm.gather((rnd), root=0)
 
             if command == 'close':
                 self.close()

@@ -41,6 +41,8 @@ def train(json_file, pms):
     shutil.copyfile(json_file, results_path+'/params.json')
 
     # Initialize trainer
+    # After trainer initialization, all slave processes will be stuck
+    # in a working loop, only the root process will return
     trainer = trainer_factory.create(pms.trainer.name,
                                      path      = results_path,
                                      pms       = pms.trainer)
