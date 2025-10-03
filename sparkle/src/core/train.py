@@ -68,9 +68,6 @@ def train(json_file, pms):
     filename = results_path+'/'+path
     plot_avg(data, filename, pms.avg_type)
 
-    # Finalize parallel process
-    parallel.finalize()
-
 def folder_name(pms):
     """
     Generates a folder name based on the parameters.
