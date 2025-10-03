@@ -36,7 +36,7 @@ class MpiEnvironments(BaseParallelEnvironments):
         self.args = set_default("args", None, pms)
 
         # Generate workers
-        self.worker = MpiWorker(self.name, self.args, parallel.rank(), path)
+        self.worker = MpiWorker(self.name, self.args, parallel.rank, path)
 
         # Set all slaves to wait for instructions
         if not parallel.is_root: self.worker.work()

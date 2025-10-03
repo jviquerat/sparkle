@@ -64,19 +64,20 @@ class SpkParallel:
 
         return self.rank_ == 0
 
-    def comm(self) -> Any:
-        """
-        Returns the MPI communicator.
-        """
-
-        return self.comm_
-
+    @property
     def rank(self) -> int:
         """
         Returns the rank of the current process.
         """
 
         return self.rank_
+
+    def comm(self) -> Any:
+        """
+        Returns the MPI communicator.
+        """
+
+        return self.comm_
 
     def environments(self, path: str, pms: SimpleNamespace) -> Any:
         """
