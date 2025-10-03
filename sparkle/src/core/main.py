@@ -60,7 +60,7 @@ def main():
         disclaimer()
         liner(bold('Training mode'))
 
-        if (parallel.is_root()):
+        if (parallel.is_root):
             spacer("Number of parallel environments: "+str(parallel.n_envs))
 
         train(json_file, pms)
