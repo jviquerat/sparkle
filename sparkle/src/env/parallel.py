@@ -1,3 +1,4 @@
+import os
 import sys
 from types import SimpleNamespace
 from typing import Any
@@ -85,8 +86,13 @@ class SpkParallel:
         """
         Finalizes the parallelism.
         """
+        # Do not finalize if running under pytest, as it runs all tests
+        # in a single process. MPI will be finalized when the process exits.
+        if "PYTEST_CURRENT_TEST" in os.environ:
+            return
 
-        MPI.Finalize()
+        if MPI.Is_initialized() and not MPI.Is_finalized():
+            MPI.Finalize()
 
 # Single instance
 parallel = SpkParallel()
