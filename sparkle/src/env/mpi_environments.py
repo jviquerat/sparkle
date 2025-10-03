@@ -95,16 +95,16 @@ class MpiEnvironments(BaseParallelEnvironments):
         # Initialize stuff
         n_dof   = x.shape[0]
         costs   = np.zeros((n_dof))
-        n_loops = n_dof//parallel.size
+        n_loops = n_dof//parallel.n_envs
 
         self.timer_env.tic()
 
         for i in range(n_loops):
 
             # Send
-            data = [('step', None)]*parallel.size
-            for p in range(parallel.size):
-                data[p] = ('cost', x[i*parallel.size+p])
+            data = [('step', None)]*parallel.n_envs
+            for p in range(parallel.n_envs):
+                data[p] = ('cost', x[i*parallel.n_envs+p])
             parallel.comm().scatter(data, root=0)
 
             # Main process executing
@@ -113,9 +113,9 @@ class MpiEnvironments(BaseParallelEnvironments):
             # Receive
             data = parallel.comm().gather((c), root=0)
 
-            for p in range(parallel.size):
+            for p in range(parallel.n_envs):
                 c        = data[p]
-                costs[i*parallel.size+p] = c
+                costs[i*parallel.n_envs+p] = c
 
         self.timer_env.toc()
 
@@ -150,7 +150,7 @@ class MpiEnvironments(BaseParallelEnvironments):
         """
 
         # Send
-        data = [('reset', run) for i in range(parallel.size)]
+        data = [('reset', run) for i in range(parallel.n_envs)]
         parallel.comm().scatter(data, root=0)
 
         # Main process executing
@@ -179,7 +179,7 @@ class MpiEnvironments(BaseParallelEnvironments):
         Closes the environments.
         """
 
-        data = [('close',None) for i in range(parallel.size)]
+        data = [('close',None) for i in range(parallel.n_envs)]
         data = parallel.comm().scatter(data, root=0)
 
         # Main process executing

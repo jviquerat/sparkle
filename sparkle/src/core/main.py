@@ -61,7 +61,7 @@ def main():
         liner(bold('Training mode'))
 
         if (parallel.is_root()):
-            spacer("Number of parallel environments: "+str(parallel.size))
+            spacer("Number of parallel environments: "+str(parallel.n_envs))
 
         train(json_file, pms)
         return

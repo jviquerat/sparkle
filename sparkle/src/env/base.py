@@ -37,28 +37,28 @@ class BaseParallelEnvironments():
 
         n_points = x.shape[0]
 
-        if (n_points%parallel.size != 0):
+        if (n_points%parallel.n_envs != 0):
             error("base_parallel_environments", "evaluate",
                   "nb of evaluation pts should be a multiple of nb of parallel envs")
 
-        n_steps = n_points//parallel.size
+        n_steps = n_points//parallel.n_envs
         costs   = np.zeros(n_points)
 
         step = 0
         while (step < n_steps):
             end = "\r"
             if (step == n_steps-1): end = "\n"
-            i_start = step*parallel.size
-            i_end   = (step+1)*parallel.size - 1
+            i_start = step*parallel.n_envs
+            i_end   = (step+1)*parallel.n_envs - 1
             print("# Computing individuals #"+str(i_start)+" to #"+str(i_end), end=end)
 
-            xp = np.zeros((parallel.size, self.spaces.dim))
-            for k in range(parallel.size):
-                xp[k,:] = x[step*parallel.size + k]
+            xp = np.zeros((parallel.n_envs, self.spaces.dim))
+            for k in range(parallel.n_envs):
+                xp[k,:] = x[step*parallel.n_envs + k]
 
             c = self.cost(xp)
-            for k in range(parallel.size):
-                costs[step*parallel.size + k] = c[k]
+            for k in range(parallel.n_envs):
+                costs[step*parallel.n_envs + k] = c[k]
 
             step += 1
 
