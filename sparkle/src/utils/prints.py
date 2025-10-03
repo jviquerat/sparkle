@@ -16,14 +16,14 @@ def new_line():
     """
     Prints a new line if the current process is the root process.
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         print("")
 
 def header():
     """
     Prints a header line if the current process is the root process.
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         print("#################################")
 
 def liner(text):
@@ -33,7 +33,7 @@ def liner(text):
     Args:
         text: The text to print.
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         new_line()
         print("### "+text)
 
@@ -44,7 +44,7 @@ def liner_simple(text: str):
     Args:
         text: The text to print.
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         print("### "+text)
 
 def spacer(text: str, end: Optional[str]="\n") -> None:
@@ -55,14 +55,14 @@ def spacer(text: str, end: Optional[str]="\n") -> None:
         text: The text to print.
         end: Ending characater
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         print("# "+text, end=end)
 
 def disclaimer():
     """
     Prints the Sparkle disclaimer, including the library name and Git revision, if the current process is the root process.
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         header()
         liner_simple(bold("Sparkle, an optimization library"))
         liner_simple(git_short_hash())
@@ -78,7 +78,7 @@ def warn_print(text):
     Returns:
         The text with the warning color codes.
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         return wrn_clr + text + end_clr
 
 def err_print(text):
@@ -91,7 +91,7 @@ def err_print(text):
     Returns:
         The text with the error color codes.
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         return err_clr + text + end_clr
 
 def bold(text):
@@ -104,7 +104,7 @@ def bold(text):
     Returns:
         The text with the bold formatting codes.
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         return bld_clr + text + end_clr
 
 def fmt_float(x: float) -> str:
@@ -129,7 +129,7 @@ def git_short_hash() -> str:
     Returns:
         The short Git hash as a string, or an empty string if an error occurs.
     """
-    if (parallel.is_root()):
+    if (parallel.is_root):
         try:
             process = subprocess.Popen(['git', 'rev-parse', '--short', 'HEAD'],
                                        shell=False,

@@ -53,6 +53,7 @@ class SpkParallel:
 
         return self.n_envs_
 
+    @property
     def is_root(self) -> bool:
         """
         Checks if the current process is the root process.
