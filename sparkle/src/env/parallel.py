@@ -8,6 +8,8 @@ mpi4py.rc.initialize = False
 mpi4py.rc.finalize   = False
 from mpi4py import MPI
 
+from sparkle.src.utils.default import set_default
+
 ###############################################
 class SpkParallel:
     """
@@ -30,12 +32,15 @@ class SpkParallel:
             pms: A SimpleNamespace object containing parameters for parallelism.
         """
 
+        # Default value for number of procs per env
+        self.n_procs_per_env_ = set_default("n_procs_per_env", 1, pms)
+
         if not MPI.Is_initialized():
             MPI.Init()
             self.comm_   = MPI.COMM_WORLD
             self.rank_   = MPI.COMM_WORLD.Get_rank()
             self.size_   = MPI.COMM_WORLD.Get_size()
-            self.n_envs_ = self.size_
+            self.n_envs_ = self.size_ // self.n_procs_per_env_
 
     @property
     def size(self) -> int:
@@ -52,6 +57,14 @@ class SpkParallel:
         """
 
         return self.n_envs_
+
+    @property
+    def n_procs_per_env(self) -> int:
+        """
+        Returns the number of procs per parallel environment.
+        """
+
+        return self.n_procs_per_env_
 
     @property
     def is_root(self) -> bool:
