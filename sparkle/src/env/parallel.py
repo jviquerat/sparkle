@@ -70,10 +70,10 @@ class SpkParallel:
         self.env_rank_  = self.env_comm_.Get_rank()
         self.env_size_  = self.env_comm_.Get_size()
 
-        print(f"COMM_ENV, size {self.env_size_}, local rank {self.env_rank_}, global rank {self.world_rank_}")
+        print(f"COMM_ENV, size {self.env_size_}, local rank {self.env_rank_}, global rank {self.world_rank_}, is_env_root {self.is_env_root}")
 
-        # MPI.Finalize()
-        # exit(0)
+        #MPI.Finalize()
+        #exit(0)
 
     @property
     def size(self) -> int:
@@ -117,6 +117,19 @@ class SpkParallel:
         """
 
         return self.main_comm_
+
+    @property
+    def is_env_root(self) -> Any:
+        """
+        Checks if the current process is a root process for any of the env
+        communicators. To do so, it actually checks if the process belongs
+        to the main communicator
+
+        Returns:
+            True if the current process is an env root, False otherwise.
+        """
+
+        return self.main_comm_ != MPI.COMM_NULL
 
     @property
     def env_comm(self) -> Any:
