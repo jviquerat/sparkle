@@ -48,7 +48,7 @@ class SpkParallel:
     @property
     def n_envs(self) -> int:
         """
-        Returns the number of parallel environments
+        Returns the number of parallel environments.
         """
 
         return self.n_envs_
@@ -56,7 +56,7 @@ class SpkParallel:
     @property
     def is_root(self) -> bool:
         """
-        Checks if the current process is the root process.
+        Checks if the current process is the root process in the main communicator.
 
         Returns:
             True if the current process is the root, False otherwise.
@@ -67,14 +67,14 @@ class SpkParallel:
     @property
     def rank(self) -> int:
         """
-        Returns the rank of the current process.
+        Returns the rank of the current process in the main communicator.
         """
 
         return self.rank_
 
     def comm(self) -> Any:
         """
-        Returns the MPI communicator.
+        Returns the main MPI communicator.
         """
 
         return self.comm_
