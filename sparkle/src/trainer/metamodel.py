@@ -129,7 +129,7 @@ class Metamodel(BaseTrainer):
             self.timer_mod.show()
 
         # Such agents are only sequential for now
-        if (parallel.size > 1):
+        if (parallel.n_envs > 1):
             warning("trainer::metamodel", "optimize",
                     "only samples generation can be performed in parallel")
             return

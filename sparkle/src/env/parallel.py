@@ -20,6 +20,7 @@ class SpkParallel:
         """
 
         self.size_ = 1
+        self.n_envs_ = 1
 
     def set(self, pms: SimpleNamespace) -> None:
         """
@@ -31,17 +32,26 @@ class SpkParallel:
 
         if not MPI.Is_initialized():
             MPI.Init()
-            self.comm_ = MPI.COMM_WORLD
-            self.rank_ = MPI.COMM_WORLD.Get_rank()
-            self.size_ = MPI.COMM_WORLD.Get_size()
+            self.comm_   = MPI.COMM_WORLD
+            self.rank_   = MPI.COMM_WORLD.Get_rank()
+            self.size_   = MPI.COMM_WORLD.Get_size()
+            self.n_envs_ = self.size_
 
     @property
     def size(self) -> int:
         """
-        Returns the number of parallel processes.
+        Returns the total number of parallel processes.
         """
 
         return self.size_
+
+    @property
+    def n_envs(self) -> int:
+        """
+        Returns the number of parallel environments
+        """
+
+        return self.n_envs_
 
     def is_root(self) -> bool:
         """
