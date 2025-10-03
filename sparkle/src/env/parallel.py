@@ -103,12 +103,28 @@ class SpkParallel:
         return self.world_rank_
 
     @property
-    def comm(self) -> Any:
+    def world_comm(self) -> Any:
         """
         Returns the world MPI communicator.
         """
 
         return self.world_comm_
+
+    @property
+    def main_comm(self) -> Any:
+        """
+        Returns the main MPI communicator.
+        """
+
+        return self.main_comm_
+
+    @property
+    def env_comm(self) -> Any:
+        """
+        Returns the env MPI communicator.
+        """
+
+        return self.env_comm_
 
     @property
     def n_envs(self) -> int:
