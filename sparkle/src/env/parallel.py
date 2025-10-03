@@ -14,6 +14,9 @@ from sparkle.src.utils.default import set_default
 class SpkParallel:
     """
     A wrapper class for managing MPI parallelism.
+    This class handles a two-level parallelism that can be used to pass
+    a different sub-communicator to each environment, in order to have
+    parallel environments, with eacg environment also running in parallel.
     """
 
     def __init__(self) -> None:
@@ -37,18 +40,74 @@ class SpkParallel:
 
         if not MPI.Is_initialized():
             MPI.Init()
-            self.comm_   = MPI.COMM_WORLD
-            self.rank_   = MPI.COMM_WORLD.Get_rank()
-            self.size_   = MPI.COMM_WORLD.Get_size()
-            self.n_envs_ = self.size_ // self.n_procs_per_env_
+
+        # Parallel data from COMM_WORLD
+        self.world_comm_ = MPI.COMM_WORLD
+        self.world_rank_ = MPI.COMM_WORLD.Get_rank()
+        self.world_size_ = MPI.COMM_WORLD.Get_size()
+
+        print(f"COMM_WORLD, size {self.world_size_}, rank {self.world_rank_}")
+
+        # Deduce number of parallel envs
+        self.n_envs_ = self.world_size_ // self.n_procs_per_env_
+
+        # First communicator between root processes of each env
+        # If n_procs_per_env_ is 1, this includes all processes
+        self.main_color_ = MPI.UNDEFINED
+        if self.world_rank_ % self.n_procs_per_env_ == 0:
+            self.main_color_ = 0
+
+        self.main_comm_ = self.world_comm_.Split(self.main_color_, 0)
+        if self.world_rank_ % self.n_procs_per_env_ == 0:
+            self.main_rank_ = self.main_comm_.Get_rank()
+            self.main_size_ = self.main_comm_.Get_size()
+
+            print(f"COMM_MAIN, size {self.main_size_}, local rank {self.main_rank_}, global rank {self.world_rank_}")
+
+        # Second communicator specific to each env
+        self.env_color_ = self.world_rank_ // self.n_procs_per_env_
+        self.env_comm_  = self.world_comm_.Split(self.env_color_, 0)
+        self.env_rank_  = self.env_comm_.Get_rank()
+        self.env_size_  = self.env_comm_.Get_size()
+
+        print(f"COMM_ENV, size {self.env_size_}, local rank {self.env_rank_}, global rank {self.world_rank_}")
+
+        # MPI.Finalize()
+        # exit(0)
 
     @property
     def size(self) -> int:
         """
-        Returns the total number of parallel processes.
+        Returns the total number of parallel processes in the world communicator.
         """
 
-        return self.size_
+        return self.world_size_
+
+    @property
+    def is_root(self) -> bool:
+        """
+        Checks if the current process is the root process in the world communicator.
+
+        Returns:
+            True if the current process is the root, False otherwise.
+        """
+
+        return self.world_rank_ == 0
+
+    @property
+    def rank(self) -> int:
+        """
+        Returns the rank of the current process in the world communicator.
+        """
+
+        return self.world_rank_
+
+    def comm(self) -> Any:
+        """
+        Returns the world MPI communicator.
+        """
+
+        return self.world_comm_
 
     @property
     def n_envs(self) -> int:
@@ -65,32 +124,6 @@ class SpkParallel:
         """
 
         return self.n_procs_per_env_
-
-    @property
-    def is_root(self) -> bool:
-        """
-        Checks if the current process is the root process in the main communicator.
-
-        Returns:
-            True if the current process is the root, False otherwise.
-        """
-
-        return self.rank_ == 0
-
-    @property
-    def rank(self) -> int:
-        """
-        Returns the rank of the current process in the main communicator.
-        """
-
-        return self.rank_
-
-    def comm(self) -> Any:
-        """
-        Returns the main MPI communicator.
-        """
-
-        return self.comm_
 
     def environments(self, path: str, pms: SimpleNamespace) -> Any:
         """
