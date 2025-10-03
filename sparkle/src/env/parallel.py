@@ -102,6 +102,7 @@ class SpkParallel:
 
         return self.world_rank_
 
+    @property
     def comm(self) -> Any:
         """
         Returns the world MPI communicator.
