@@ -1,0 +1,24 @@
+{
+    "n_avg": 3,
+    "avg_type": "log",
+    "n_procs_per_env": 2,
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 1,
+        "renderer": "trainer",
+        "environment": {
+            "name": "parabola_parallel"
+        },
+        "agent": {
+            "name": "cmaes",
+            "n_steps_max": 50,
+            "sigma0": 2.0
+        }
+    }
+}
