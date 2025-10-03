@@ -61,7 +61,6 @@ class MpiWorker():
 
             if command == 'close':
                 self.close()
-                parallel.finalize()
                 sys.exit(0)
 
     def cost(self, x: ndarray) -> float64:
@@ -123,5 +122,5 @@ class MpiWorker():
         """
         Closes the environment.
         """
-
         self.env.close()
+        parallel.finalize()
