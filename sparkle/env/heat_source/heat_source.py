@@ -46,9 +46,12 @@ class heat_source(base_env):
         self.xmin_cost = math.floor(0.25/self.dx)
         self.xmax_cost = math.floor(0.75/self.dx)
 
-        # Solver parameters for Jacobi iteration
-        self.max_iter = 20000 # max iterations for temperature solver
-        self.tol      = 1e-5  # convergence tolerance
+        # Solver parameters
+        # We either use an iterative jacobi, or a over-relaxation method
+        self.method = set_default("method", "sor", pms)
+        self.max_iter  = 1000 # max iterations for temperature solver
+        self.tol       = 1e-5  # convergence tolerance
+        self.omega_sor = 2.0/(1.0 + math.sin(math.pi*self.dx/self.L)) # SOR omega
 
         # Boundary Conditions
         self.T_bc = 0.0 # fixed temperature on all boundaries
@@ -142,7 +145,14 @@ class heat_source(base_env):
         dx2 = self.dx**2
         dy2 = self.dy**2
         inv_denom = 1.0/(2.0*(1.0/dx2 + 1.0/dy2))
-        jacobi(T, q3k, inv_denom, self.max_iter, self.nx, self.ny, dx2, dy2, self.tol)
+
+        if (self.method == "jacobi"):
+            jacobi(T, q3k, inv_denom,
+                   self.max_iter, self.nx, self.ny, dx2, dy2, self.tol)
+
+        if (self.method == "sor"):
+            sor(T, q3k, inv_denom, self.omega_sor,
+                   self.max_iter, self.nx, self.ny, dx2, dy2, self.tol)
 
         # Populate self.T for plotting
         self.T = T
@@ -217,15 +227,40 @@ class heat_source(base_env):
 def jacobi(T, q3k, inv_denom, max_iter, nx, ny, dx2, dy2, tol):
 
     for iteration in range(max_iter):
-            T_prv = T.copy()
+        T_prv = T.copy()
 
-            # Interior points update
-            for i in range(1, nx-1):
-                for j in range(1, ny-1):
-                    term_x  = (T_prv[i-1, j  ] + T_prv[i+1, j  ])/dx2
-                    term_y  = (T_prv[i,   j-1] + T_prv[i,   j+1])/dy2
-                    T[i, j] = (term_x + term_y + q3k[i,j])*inv_denom
+        # Interior points update
+        for i in range(1, nx-1):
+            for j in range(1, ny-1):
+                term_x  = (T_prv[i-1, j  ] + T_prv[i+1, j  ])/dx2
+                term_y  = (T_prv[i,   j-1] + T_prv[i,   j+1])/dy2
+                T[i, j] = (term_x + term_y + q3k[i,j])*inv_denom
 
-            # Check for convergence (max absolute difference)
-            diff = np.abs(T - T_prv).max()
-            if diff < tol: break
+        # Check for convergence (max absolute difference)
+        diff = np.abs(T - T_prv).max()
+        if diff < tol: break
+
+###############################################
+# Successive over-relaxation update
+@nb.njit(cache=False)
+def sor(T, q3k, inv_denom, omega, max_iter, nx, ny, dx2, dy2, tol):
+
+    for iteration in range(max_iter):
+        T_prv = T.copy()
+
+        # Loop over all interior points
+        for i in range(1, nx-1):
+            for j in range(1, ny-1):
+                # Gauss-Seidel
+                term_x = (T[i-1, j] + T_prv[i+1, j])/dx2
+                term_y = (T[i, j-1] + T_prv[i, j+1])/dy2
+
+                # This is the value a Gauss-Seidel iteration would produce
+                T_gs = (term_x + term_y + q3k[i, j])*inv_denom
+
+                # Apply the SOR formula
+                T[i, j] = (1.0 - omega)*T_prv[i, j] + omega*T_gs
+
+        # Check for convergence (max absolute difference)
+        diff = np.abs(T - T_prv).max()
+        if diff < tol: break
