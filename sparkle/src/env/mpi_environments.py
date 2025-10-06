@@ -177,8 +177,16 @@ class MpiEnvironments(BaseParallelEnvironments):
             **kwargs: Additional keyword arguments for rendering.
         """
 
-        if parallel.is_root:
-            return self.worker.render(x, c, **kwargs)
+        data = [('render', (x, c)) for i in range(parallel.n_envs)]
+        parallel.main_comm.scatter(data, root=0)
+
+        # Main process sending to its own env_comm
+        parallel.env_comm.bcast(data[0], root=0)
+
+        # Main process executing
+        r = self.worker.render(x, c)
+
+        return
 
     def close(self) -> None:
         """

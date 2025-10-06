@@ -73,9 +73,9 @@ class MpiWorker():
                     parallel.main_comm.gather((r), root=0)
 
             if command == 'render':
-                rnd = self.render(values)
-                if parallel.is_env_root:
-                    parallel.main_comm.gather((rnd), root=0)
+                x = values[0]
+                c = values[1]
+                rnd = self.render(x, c)
 
             if command == 'close':
                 self.close()
