@@ -24,8 +24,8 @@ class heat_source(base_env):
 
         # Domain
         self.L = 1.0
-        self.nx = 100
-        self.ny = 100
+        self.nx = set_default("nx", 100, pms)
+        self.ny = set_default("ny", 100, pms)
         self.dx = self.L/(self.nx - 1)
         self.dy = self.L/(self.ny - 1)
 
