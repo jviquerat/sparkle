@@ -9,17 +9,19 @@
     },
     "trainer": {
         "name": "regular",
-        "render_every": 1,
+        "render_every": 100000,
         "renderer": "env",
         "environment": {
             "name": "heat_source",
             "args": {
-                "n_sources": 7
+                "n_sources": 7,
+                "nx": 100,
+                "ny": 100
             }
         },
         "agent": {
             "name": "cmaes",
-            "n_steps_max": 250,
+            "n_steps_max": 10,
             "n_points": 20,
 	          "clip": true
         }
