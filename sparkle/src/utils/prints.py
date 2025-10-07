@@ -33,7 +33,7 @@ def liner(text):
     Args:
         text: The text to print.
     """
-    if (parallel.is_root):
+    if (parallel.is_root) and type(text) == str:
         new_line()
         print("### "+text)
 
@@ -44,7 +44,7 @@ def liner_simple(text: str):
     Args:
         text: The text to print.
     """
-    if (parallel.is_root):
+    if (parallel.is_root) and type(text) == str:
         print("### "+text)
 
 def spacer(text: str, end: Optional[str]="\n") -> None:
@@ -55,7 +55,7 @@ def spacer(text: str, end: Optional[str]="\n") -> None:
         text: The text to print.
         end: Ending characater
     """
-    if (parallel.is_root):
+    if (parallel.is_root) and type(text) == str:
         print("# "+text, end=end)
 
 def disclaimer():
