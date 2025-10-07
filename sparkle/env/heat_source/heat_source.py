@@ -170,6 +170,13 @@ class heat_source(base_env):
 
         _ = self.cost(best_u)
 
+        self._render()
+
+    def _render(self):
+        """
+        Actual rendering
+        """
+
         fig, ax = plt.subplots(figsize=(7, 7))
         ax.axis('off')
 
