@@ -76,6 +76,9 @@ def main():
         if ("-json" not in args): helper()
         json_file = args[args.index("-json")+1]
 
+        # Set parallel framework
+        parallel.set(None)
+
         # Printings
         disclaimer()
         liner(bold('Evaluation mode'))
