@@ -27,7 +27,7 @@ class SpkParallel:
         self.size_ = 1
         self.n_envs_ = 1
 
-    def set(self, pms: SimpleNamespace) -> None:
+    def set(self, pms: SimpleNamespace=None) -> None:
         """
         Configures the parallelism settings.
 
