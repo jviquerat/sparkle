@@ -1,0 +1,31 @@
+{
+    "n_avg": 1,
+    "avg_type": "linear",
+    "n_procs_per_env": 2,
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 10,
+        "renderer": "env",
+        "environment": {
+            "name": "heat_source_parallel",
+            "args": {
+                "n_sources": 8,
+                "q_source": 400.0,
+                "nx": 100,
+                "ny": 100
+            }
+        },
+        "agent": {
+            "name": "cmaes",
+            "n_steps_max": 200,
+            "n_points": 16,
+	          "clip": true
+        }
+    }
+}
