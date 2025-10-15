@@ -16,6 +16,8 @@ def helper():
     """
     Displays the command-line usage instructions.
     """
+    parallel.set({})
+
     liner(err_print("Command line error"))
     spacer("Command line functionalities:")
     spacer("   spk --train <json_file>")
@@ -42,11 +44,16 @@ def main():
 
     # Check for set_seeds option
     if ("--set-seeds" in args):
+
         seed = args[args.index("--set-seeds")+1]
         set_seeds(int(seed))
 
     # Training mode
     if ("--train" in args):
+
+        # Check inputs
+        if len(args) < 3:
+            helper()
 
         # Initialize json parser and read parameters
         json_file = args[args.index("--train")+1]
@@ -103,6 +110,10 @@ def main():
     # Model mode
     if ("--model" in args):
 
+        # Check inputs
+        if len(args) < 3:
+            helper()
+
         # Initialize json parser and read parameters
         json_file = args[args.index("--model")+1]
         parser    = JsonParser()
@@ -145,6 +156,10 @@ def main():
 
     # Benchmark mode
     if ("--bench" in args):
+
+        # Check inputs
+        if len(args) < 3:
+            helper()
 
         bench_name = args[args.index("--bench")+1]
         bench = bench_factory.create(bench_name)
