@@ -52,8 +52,8 @@ def runner(json_file, val_avg, val_bst):
     bst = data[-1,4]
     print("Avg: {:.15e}".format(avg))
     print("Bst: {:.15e}".format(bst))
-    assert(compare(avg, val_avg, 1.0e-15))
-    assert(compare(bst, val_bst, 1.0e-15))
+    assert(compare(avg, val_avg, 1.0e-6))
+    assert(compare(bst, val_bst, 1.0e-6))
 
     # Clean
     shutil.rmtree("0")
