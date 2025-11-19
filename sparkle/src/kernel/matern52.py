@@ -31,6 +31,7 @@ class Matern52(BaseKernel):
         super().__init__(spaces)
 
         self.dim_ = 2
+        self.eps_ = 1.0e-8
 
     def covariance(self,
                    x: ndarray,
@@ -55,7 +56,7 @@ class Matern52(BaseKernel):
         """
         if theta is None: theta = self.theta_
 
-        dist  = pairwise_distances(x, y)
+        dist  = np.maximum(pairwise_distances(x, y), self.eps_)
         sigma = theta[0]
         delta = theta[1]
         ratio = math.sqrt(5.0)/sigma
@@ -86,7 +87,7 @@ class Matern52(BaseKernel):
         """
         if theta is None: theta = self.theta_
 
-        dist = pairwise_distances(x, y)
+        dist  = np.maximum(pairwise_distances(x, y), self.eps_)
         dx   = x[:, np.newaxis, :] - y[np.newaxis, :, :] # x - y
 
         sigma = theta[0]
@@ -131,7 +132,7 @@ class Matern52(BaseKernel):
         dk    = np.zeros((x.shape[0], y.shape[0], self.dim_))
 
         # Derivative w.r.t. sigma
-        dist  = pairwise_distances(x, y)
+        dist  = np.maximum(pairwise_distances(x, y), self.eps_)
         ratio = math.sqrt(5.0)/sigma
         R     = ratio*dist/sigma
         f     = (1.0 + ratio*dist + ratio**2*dist**2/3.0)
