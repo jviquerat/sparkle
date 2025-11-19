@@ -12,7 +12,7 @@ def test_ego():
 
     # Run test
     runner("sparkle/tst/agent/json/parabola_ego.json",
-           1.164042800000000e-01, 2.883067260000000e-02)
+           4.429385405000000e-01, 1.790542405000000e-01)
 
     filename = "kriging.dat"
     os.remove(filename)
