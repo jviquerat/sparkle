@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sparkle"
+version = "0.1.0"
+description = "A gradient-free library"
+readme = "README.md"
+dependencies = [
+             "matplotlib==3.9.2",
+             "mpi4py==4.0.0",
+             "numpy==1.26.4",
+             "pytest==8.3.2",
+             "pytest-mpi==0.6",
+             "torch==2.2.2",
+             "adjustText==1.3.0",
+             "numba==0.61.2"
+]
+
+[project.scripts]
+spk = "sparkle.src.core.main:main"
