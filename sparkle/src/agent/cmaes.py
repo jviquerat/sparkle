@@ -159,13 +159,12 @@ class CMAES(BaseAgent):
         self.pc = (1.0-self.cc)*self.pc + hs*coeff*np.matmul(self.BD, self.zm)
 
         # Update C
-        y  = np.zeros((self.mu, self.dim))
-        for i in range(self.mu):
-            y [i,:] = np.matmul(self.BD, self.z[i,:])
+        y = self.z[:self.mu] @ self.BD.T
 
+        rank_mu_update = y.T @ (y*self.w[:, None])
         self.C = ((1.0-self.c1-self.cmu)*self.C +
                   self.c1*(np.outer(self.pc,self.pc) + (1.0-hs)*self.cc*(2.0-self.cc)*self.C) +
-                  self.cmu*(np.matmul(np.transpose(y),np.matmul(np.diag(self.w), y))))
+                  self.cmu*rank_mu_update)
 
         # Update sigma
         self.sigma = self.sigma*np.exp(min(1.0,(self.cs/self.dp)*(norm_ps/self.cn - 1.0)))
