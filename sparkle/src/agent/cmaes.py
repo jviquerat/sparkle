@@ -42,6 +42,10 @@ class CMAES(BaseAgent):
         self.clip        = set_default("clip", False, pms)
         self.escape      = set_default("escape", False, pms)
 
+        # Non-zero value added to the diagonal to avoid undefined
+        # square root evaluations
+        self.diag_eps = 1.0e-14
+
         # Number of selected samples
         self.fmu = self.n_points/2.0
         self.mu  = math.floor(self.fmu)
@@ -170,7 +174,7 @@ class CMAES(BaseAgent):
         # Update B and D
         self.C = np.triu(self.C) + np.transpose(np.triu(self.C,1))
         self.D, self.B = np.linalg.eigh(self.C)
-        self.D         = np.diag(np.sqrt(self.D))
+        self.D         = np.diag(np.sqrt(np.maximum(self.D, self.diag_eps)))
         self.BD        = np.matmul(self.B, self.D)
 
         # Escape flat cost function
