@@ -2,7 +2,6 @@ import math
 from types import SimpleNamespace
 
 import numpy as np
-from numpy import ndarray
 
 from sparkle.src.agent.base import BaseAgent
 from sparkle.src.env.spaces import EnvSpaces
@@ -95,7 +94,7 @@ class CMAES(BaseAgent):
         self.zm    = np.zeros(self.dim)        # auxiliary mean vector
         self.sigma = self.sigma0               # global standard deviation
 
-    def sample(self, validate) -> ndarray:
+    def sample(self, validate) -> np.array:
         """
         Samples new points from the CMA-ES distribution.
 
@@ -127,7 +126,7 @@ class CMAES(BaseAgent):
 
         return x
 
-    def step(self, x: ndarray, c: ndarray) -> None:
+    def step(self, x: np.array, c: np.array) -> None:
         """
         Performs one step of the CMA-ES algorithm.
 
@@ -184,7 +183,7 @@ class CMAES(BaseAgent):
 
         self.stp += 1
 
-    def sort(self, x: ndarray, c: ndarray) -> None:
+    def sort(self, x: np.array, c: np.array) -> None:
         """
         Sorts the offsprings based on their cost values.
 
