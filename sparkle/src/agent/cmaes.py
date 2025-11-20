@@ -33,7 +33,7 @@ class CMAES(BaseAgent):
         super().__init__(path, spaces, pms)
 
         self.name        = "CMAES"
-        sg0              = 0.25*(np.min(self.xmax)-np.max(self.xmin))
+        sg0              = 0.25*(np.mean(self.xmax - self.xmin))
         self.sigma0      = set_default("sigma0", sg0, pms)
         npts             = 4 + math.floor(3.0*math.log(self.dim))
         self.n_points    = set_default("n_points", npts, pms)
