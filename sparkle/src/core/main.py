@@ -28,6 +28,8 @@ def helper():
     spacer("   spk --bench <bench_name> -json <json_file>")
     spacer("Optional arguments:")
     spacer("       --set-seeds <seed>")
+    spacer("Display help:")
+    spacer("       --help")
     sys.exit(0)
 
 def main():
@@ -47,6 +49,14 @@ def main():
 
         seed = args[args.index("--set-seeds")+1]
         set_seeds(int(seed))
+
+    # Check for help option
+    if ("--help" in args):
+
+        parallel.set(None)
+        disclaimer()
+        helper()
+        return
 
     # Training mode
     if ("--train" in args):
