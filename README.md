@@ -17,15 +17,15 @@
 
 ## Installation and usage
 
-Clone this repository and install it locally (the use of a virtual environment is highly recommended):
+Clone this repository and install it locally. We recommend to use `uv`:
 
 ```
 git clone git@github.com:jviquerat/sparkle.git
 cd sparkle
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-pip install -e .
+uv venv
+source .venv/bin/activate
+uv pip install -r pyproject.toml
+uv pip install -e .
 ```
 
 Environments are expected to be available locally or present in the path. To train an agent on an environment, a `.json` case file is required (sample files are available in `sparkle/env`). Once you have written the corresponding `<env_name>.json` file to configure your agent, just run:
@@ -33,6 +33,8 @@ Environments are expected to be available locally or present in the path. To tra
 ```
 spk --train <json_file>
 ```
+
+
 
 ## Analytical environments
 
