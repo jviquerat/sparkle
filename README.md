@@ -4,7 +4,7 @@
   <img align="right" width="300" alt="logo" src="sparkle/msc/logo.png">
 </p>
 
-`sparkle` is a parametric, gradient-free optimization library. It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy. More informations about each method can be obtained from the documentation.
+`sparkle` is a parametric, gradient-free optimization library. It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy.
 
 <br/>
 <br/>
@@ -33,8 +33,6 @@ Environments are expected to be available locally or present in the path. To tra
 ```
 spk --train <json_file>
 ```
-
-
 
 ## Analytical environments
 
