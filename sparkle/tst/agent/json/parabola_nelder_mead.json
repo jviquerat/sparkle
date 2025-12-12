@@ -1,0 +1,23 @@
+{
+    "n_avg": 3,
+    "avg_type": "log",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "trainer": {
+        "name": "regular",
+        "render_every": 10000,
+        "renderer": "trainer",
+        "environment": {
+            "name": "parabola"
+        },
+        "agent": {
+            "name": "nelder_mead",
+            "n_steps_max": 200,
+            "delta": 0.1
+        }
+    }
+}
