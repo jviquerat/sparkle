@@ -4,16 +4,17 @@
   <img align="right" width="300" alt="logo" src="sparkle/msc/logo.png">
 </p>
 
-`sparkle` is a parametric, gradient-free optimization library. It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy.
+`sparkle` is a parametric, gradient-free optimization library that I mostly developed at CEMEF, in the CFL group (public repo from the team is <a href="https://git.sophia.minesparis.psl.eu/paul.garnier/sparkle">here</a>). It is designed to provide a common interface to various algorithms, and to make numerical experimentation easy.
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+If you end up using this library for research purpose, please consider citing the following paper (<a href="https://arxiv.org/pdf/2506.13240">link</a>):
+
+```
+Mixed-variable policy-based optimization
+J. Viquerat
+arXiv pre-print 2506.13240, 2025
+```
+
+</br>
 
 ## Installation and usage
 
