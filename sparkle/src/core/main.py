@@ -24,7 +24,7 @@ def helper():
     spacer("   spk --evaluate -dat <dat_file> -json <json_file>")
     spacer("   spk --average <dat_file_0> ... <dat_file_n>")
     spacer("   spk --model <json_file>")
-    spacer("   spk --pex -type <pex_type> -n_points <n_points> -dim <dim>")
+    spacer("   spk --pex -type <pex_type> -n_points <n_points> -dim <dim> -cost <cost>")
     spacer("   spk --bench <bench_name> -json <json_file>")
     spacer("Optional arguments:")
     spacer("       --set-seeds <seed>")
@@ -34,11 +34,11 @@ def helper():
 
 def main():
     """
-    Main entry point for the Sparkle framework.
+    Main entry point for the Sparkle framework
 
     This function parses command-line arguments and dispatches to the
     appropriate functionality (training, evaluation, averaging, model
-    generation, or Pex sampling).
+    generation, or Pex sampling)
     """
 
     # Check arguments
@@ -154,6 +154,10 @@ def main():
         dim = args[args.index("-dim")+1]
         dim = int(dim)
 
+        cost = None
+        if ("-cost" in args):
+            cost = args[args.index("-cost")+1]
+
         # Set parallel framework
         parallel.set({})
 
@@ -161,7 +165,7 @@ def main():
         disclaimer()
         liner(bold('Pex sampling mode'))
 
-        sample(pex_type, n_points, dim)
+        sample(pex_type, n_points, dim, cost)
         return
 
     # Benchmark mode

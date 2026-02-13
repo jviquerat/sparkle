@@ -130,7 +130,7 @@ class BasePex():
         using Monte-Carlo sampling. We uniformly draw n_samples
         within the domain, and for each random point, find the minimum
         Euclidian distance to any of the selected design points.
-        Higher is better.
+        Lower is better (we want to minimize the size of the largest gap).
 
         Args:
             n_samples: the number of samples to draw for MC estimate
