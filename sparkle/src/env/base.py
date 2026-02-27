@@ -21,12 +21,13 @@ class BaseParallelEnvironments():
         Initializes the BaseParallelEnvironments.
         """
 
-    def evaluate(self, x: ndarray) -> ndarray:
+    def evaluate(self, x: ndarray, verbose: bool = True) -> ndarray:
         """
         Evaluates the cost of multiple points in parallel.
 
         Args:
             x: A NumPy array of points to evaluate.
+            verbose: Whether to print progress.
 
         Returns:
             A NumPy array of the corresponding costs.
@@ -50,7 +51,8 @@ class BaseParallelEnvironments():
             if (step == n_steps-1): end = "\n"
             i_start = step*parallel.n_envs
             i_end   = (step+1)*parallel.n_envs - 1
-            print("# Computing individuals #"+str(i_start)+" to #"+str(i_end), end=end)
+            if verbose:
+                print("# Computing individuals #"+str(i_start)+" to #"+str(i_end), end=end)
 
             xp = np.zeros((parallel.n_envs, self.spaces.dim))
             for k in range(parallel.n_envs):
@@ -76,11 +78,23 @@ class BaseParallelEnvironments():
 
         n_plot   = 400
         x_plot   = np.linspace(self.spaces.xmin[0], self.spaces.xmax[0], num=n_plot)
-        cost_map = np.zeros(n_plot)
 
+        # Flatten all points
+        x_flat = np.zeros((n_plot, 1))
         for i in range(n_plot):
-            x = np.array([[x_plot[i]]])
-            cost_map[i] = self.cost(x)
+            x_flat[i, 0] = x_plot[i]
+
+        # Pad to multiple of parallel.n_envs
+        remainder = n_plot % parallel.n_envs
+        if remainder != 0:
+            pad_size = parallel.n_envs - remainder
+            x_flat = np.vstack((x_flat, np.tile(x_flat[-1,:], (pad_size, 1))))
+
+        # Evaluate all points in parallel
+        costs_flat = self.evaluate(x_flat, verbose=False)
+
+        # Trim padding
+        cost_map = costs_flat[:n_plot]
 
         return x_plot, cost_map
 
@@ -101,11 +115,24 @@ class BaseParallelEnvironments():
         grid     = np.array(np.meshgrid(x_plot, y_plot))
         x_plot   = grid[0]
         y_plot   = grid[1]
-        cost_map = np.zeros((n_plot,n_plot))
 
+        # Flatten all points into an array of shape (N, 2)
+        n_points = n_plot * n_plot
+        x_flat = np.zeros((n_points, 2))
         for i in range(n_plot):
             for j in range(n_plot):
-                x = np.array([[x_plot[i,j], y_plot[i,j]]])
-                cost_map[i,j] = self.cost(x)[0]
+                x_flat[i*n_plot+j, :] = [x_plot[i,j], y_plot[i,j]]
+
+        # Pad to multiple of parallel.n_envs
+        remainder = n_points % parallel.n_envs
+        if remainder != 0:
+            pad_size = parallel.n_envs - remainder
+            x_flat = np.vstack((x_flat, np.tile(x_flat[-1,:], (pad_size, 1))))
+
+        # Evaluate all points in parallel
+        costs_flat = self.evaluate(x_flat, verbose=False)
+
+        # Trim padding and reshape back to grid
+        cost_map = np.reshape(costs_flat[:n_points], (n_plot, n_plot))
 
         return x_plot, y_plot, cost_map
