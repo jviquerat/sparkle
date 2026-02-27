@@ -18,7 +18,7 @@ class LogEI():
     to improve numerical stability. It is used in Bayesian optimization to
     select the next point to evaluate.
     """
-    def __init__(self, spaces: EnvSpaces, model: Any) -> None:
+    def __init__(self, spaces: EnvSpaces, model: Any, pms: Any=None) -> None:
         """
         Initializes the LogEI infill criterion.
 

@@ -18,7 +18,7 @@ class EI():
     It balances exploration and exploitation by choosing points that are
     likely to improve upon the current best observation.
     """
-    def __init__(self, spaces: EnvSpaces, model: Any) -> None:
+    def __init__(self, spaces: EnvSpaces, model: Any, pms: Any=None) -> None:
         """
         Initializes the EI infill criterion.
 
@@ -44,7 +44,7 @@ class EI():
 
     def ei(self, x: ndarray) -> ndarray:
         """
-        Computes the Expected Improvement at a set of points:
+        Computes the expected improvement at a set of points:
 
         ei(x) = std(x)*(phi(z) + z*Phi(z))
 
@@ -101,16 +101,14 @@ class EI():
 
     def __call__(self, x: ndarray) -> ndarray:
         """
-        Computes the Expected Improvement at a set of points.
-
-        This method is an alias for _ei, allowing the EI object to be called
-        as a function.
+        Computes the expected improvement at a set of points
+        This is an alias for _ei, allowing the EI class to be called as a function
 
         Args:
-            x: A NumPy array of points at which to compute the EI.
+            x: A NumPy array of points at which to compute the EI
 
         Returns:
-            A NumPy array of the EI values at the given points.
+            A NumPy array of the EI values at the given points
         """
 
         return self.ei(x)
