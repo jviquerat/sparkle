@@ -212,7 +212,7 @@ def render_1D_metamodel(filename: str,
                         y_std: ndarray,
                         fct: ndarray,
                         fct_name: str,
-                        highlight_last: bool=True) -> None:
+                        n_new: int=1) -> None:
     """
     Renders a 1D plot for the metamodel trainer.
 
@@ -231,7 +231,7 @@ def render_1D_metamodel(filename: str,
         y_std: A NumPy array of the metamodel's standard deviation predictions.
         fct: A NumPy array of values for an additional function to plot.
         fct_name: The name of the additional function.
-        highlight_last: Whether to highlight the last sampled point.
+        n_new: Number of latest points to highlight.
     """
 
     plt.clf()
@@ -246,7 +246,9 @@ def render_1D_metamodel(filename: str,
     ax.plot(x_plot, cost_map, label="f(x)", zorder=0)
     ax.set_ylabel('y')
 
-    ax.scatter(x[:,0], c[:], c="black", marker='o', alpha=0.5, label="samples", zorder=1)
+    ax.scatter(x[:-n_new,0], c[:-n_new], c="black", marker='o', alpha=0.5, label="samples", zorder=1)
+    if n_new > 0:
+        ax.scatter(x[-n_new:,0], c[-n_new:], c="red", marker='o', alpha=0.8, label="new", zorder=2)
     ax.legend(loc='upper left')
 
     ax.plot(x_plot, y_mu, linestyle='dashed', label="model", zorder=0)
@@ -284,7 +286,7 @@ def render_2D_metamodel(filename: str,
                         y_std: ndarray,
                         fct: ndarray,
                         fct_name: str,
-                        highlight_last: bool=True) -> None:
+                        n_new: int=1) -> None:
     """
     Renders a 2D plot for the metamodel trainer.
 
@@ -304,7 +306,7 @@ def render_2D_metamodel(filename: str,
         y_std: A NumPy array of the metamodel's standard deviation predictions.
         fct: A NumPy array of values for an additional function to plot.
         fct_name: The name of the additional function.
-        highlight_last: Whether to highlight the last sampled point.
+        n_new: Number of latest points to highlight.
     """
 
     plt.clf()
@@ -326,9 +328,9 @@ def render_2D_metamodel(filename: str,
     cnt = ax.contour(x_plot, y_plot, cost_map, levels=spaces.levels,
                      colors='black', alpha=0.5)
     ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
-    ax.scatter(x[:,0], x[:,1], c="black", marker='o', alpha=0.5)
-    if highlight_last:
-        ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
+    ax.scatter(x[:-n_new,0], x[:-n_new,1], c="black", marker='o', alpha=0.5)
+    if n_new > 0:
+        ax.scatter(x[-n_new:,0], x[-n_new:,1], c='red', marker='o', alpha=0.8)
     ax.set_title("f(x)")
     fig.colorbar(im1, ax=ax, location="bottom", shrink=0.8, pad=0.05)
 
@@ -341,8 +343,8 @@ def render_2D_metamodel(filename: str,
     cnt = ax.contour(x_plot, y_plot, y_mu, levels=spaces.levels,
                      colors='black', alpha=0.5)
     ax.clabel(cnt, inline=True, fontsize=8, fmt="%.0f")
-    if highlight_last:
-        ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
+    if n_new > 0:
+        ax.scatter(x[-n_new:,0], x[-n_new:,1], c='red', marker='o', alpha=0.8)
     ax.set_title("model")
     fig.colorbar(im2, ax=ax, location="bottom", shrink=0.8, pad=0.05)
 
@@ -358,8 +360,8 @@ def render_2D_metamodel(filename: str,
                     extent=[spaces.xmin[0], spaces.xmax[0],
                             spaces.xmin[1], spaces.xmax[1]],
                     alpha=0.8, cmap='RdBu_r', norm=scale)
-    if highlight_last:
-        ax.scatter(x[-1,0], x[-1,1], c='red', marker='o', alpha=0.5)
+    if n_new > 0:
+        ax.scatter(x[-n_new:,0], x[-n_new:,1], c='red', marker='o', alpha=0.8)
     ax.set_title(fct_name)
     fig.colorbar(im3, ax=ax, location="bottom", shrink=0.8, pad=0.05)
 
