@@ -38,14 +38,15 @@ class EGO(BaseAgent):
 
         self.name        = "EGO"
         self.spaces      = spaces
-        self.n_points    = 1
+        self.n_points    = set_default("n_points", 1, pms)
         self.n_steps_max = set_default("n_steps_max", 20, pms)
         self.model       = model
 
         # Initialize infill
         self.infill = infill_factory.create(pms.infill,
                                             spaces = spaces,
-                                            model  = model)
+                                            model  = model,
+                                            pms    = pms)
 
         self.summary()
 
@@ -89,13 +90,23 @@ class EGO(BaseAgent):
 
         # Optimize
         f_lambda = lambda x: -self.infill(x)
-        grad_lambda = lambda x: -self.infill.grad(x)[0]
+
+        # If infill does not provide a gradient, df can be None
+        if hasattr(self.infill, "grad") and callable(self.infill.grad):
+            grad_lambda = lambda x: -self.infill.grad(x)[0]
+        else:
+            grad_lambda = None
+
         opt  = MSLBFGSB()
+
+        xmin = np.tile(self.spaces.xmin, self.n_points)
+        xmax = np.tile(self.spaces.xmax, self.n_points)
+
         x, c = opt.optimize(f_lambda,
-                            self.spaces.xmin,
-                            self.spaces.xmax,
+                            xmin,
+                            xmax,
                             df=grad_lambda,
-                            n_pts=20*self.spaces.dim,
+                            n_pts=20*xmin.shape[0],
                             m=20,
                             tol=1.0e-5,
                             max_iter=100,
