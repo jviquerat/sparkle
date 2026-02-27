@@ -128,12 +128,6 @@ class Metamodel(BaseTrainer):
             self.timer_mod.toc()
             self.timer_mod.show()
 
-        # Such agents are only sequential for now
-        if (parallel.n_envs > 1):
-            warning("trainer::metamodel", "optimize",
-                    "only samples generation can be performed in parallel")
-            return
-
         # Set counter
         self.timer_opt.tic()
         self.it = 0
@@ -216,7 +210,8 @@ class Metamodel(BaseTrainer):
                 fct_name = "infill"
                 render_1D_metamodel(filename, self.env.spaces, x, c,
                                     self.x_plot, self.cost_map,
-                                    y_mu, y_std, infill, fct_name)
+                                    y_mu, y_std, infill, fct_name,
+                                    n_new=self.agent.n_points)
 
             # Render depending on dimension
             if (self.env.spaces.dim == 2):
@@ -236,7 +231,8 @@ class Metamodel(BaseTrainer):
                 fct_name = "acquisition function"
                 render_2D_metamodel(filename, self.env.spaces, x, c,
                                     self.x_plot, self.y_plot, self.cost_map,
-                                    y_mu, y_std, infill, fct_name)
+                                    y_mu, y_std, infill, fct_name,
+                                    n_new=self.agent.n_points)
 
         self.it_plt += 1
 
