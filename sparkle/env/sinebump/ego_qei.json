@@ -1,0 +1,36 @@
+{
+    "n_avg": 1,
+    "avg_type": "linear",
+    "naming": {
+        "env": true,
+        "agent": true,
+        "tag": false,
+        "time": false
+    },
+    "trainer": {
+        "name": "metamodel",
+        "render_every": 1,
+        "renderer": "trainer",
+        "environment": {
+            "name": "sinebump"
+        },
+        "pex": {
+            "name": "mlhs",
+            "n_points": 20
+        },
+        "model": {
+            "name": "kriging",
+            "optimize_every": 1,
+            "kernel": {
+                "name": "gaussian"
+            }
+        },
+        "agent": {
+            "name": "ego",
+            "n_points": 4,
+            "n_steps_max": 20,
+            "infill": "q_ei",
+            "mc_samples": 100
+        }
+    }
+}
