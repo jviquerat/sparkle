@@ -52,7 +52,7 @@ class BaseParallelEnvironments():
             i_start = step*parallel.n_envs
             i_end   = (step+1)*parallel.n_envs - 1
             if verbose:
-                print("# Computing individuals #"+str(i_start)+" to #"+str(i_end), end=end)
+                print("# Computing individuals #"+str(i_start)+" to #"+str(i_end)+" out of "+str(n_points), end=end)
 
             xp = np.zeros((parallel.n_envs, self.spaces.dim))
             for k in range(parallel.n_envs):
