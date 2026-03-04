@@ -254,8 +254,6 @@ def render_1D_metamodel(filename: str,
     ax.plot(x_plot, y_mu, linestyle='dashed', label="model", zorder=0)
     ax.fill_between(x_plot, y_mu-y_std, y_mu+y_std, alpha=0.2,
                     label="confidence interval", zorder=0)
-    if highlight_last:
-        ax.scatter(x[-1,0], c[-1], c='red', marker='o', alpha=0.5, zorder=1)
 
     ax = fig.add_subplot(212)
     ax.set_xlim([spaces.xmin[0], spaces.xmax[0]])
