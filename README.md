@@ -42,6 +42,7 @@ spk --train <json_file>
 | `parabola`   | 2                 | Classic parabola (solved with `PBO`)                                   | <img width="300" alt="gif" src="sparkle/msc/parabola_pbo.gif">     |
 | `rosenbrock` | 2                 | Rosenbrock function (solved with `CMAES`)                              | <img width="300" alt="gif" src="sparkle/msc/rosenbrock_cmaes.gif"> |
 | `multi1d`    | 1                 | Multi1D function (solved with `EGO`)                                   | <img width="300" alt="gif" src="sparkle/msc/multi1d_ego.gif">      |
+| `qEI`        | 2                 | Multi1D function with parallel sampling (solved with `EGO` + `qEI`)    | <img width="300" alt="gif" src="sparkle/msc/multi1d_ego_qei.gif">  |
 | `constraint` | 2                 | Parabola with a priori constraints on parameters (solved with `CMAES`) | <img width="300" alt="gif" src="sparkle/msc/constraint_cmaes.gif"> |
 
 ## Physics-based environments
