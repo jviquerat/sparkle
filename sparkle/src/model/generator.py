@@ -74,7 +74,7 @@ def generate(env_pms, pex_pms, model_pms, path):
         render_1D_metamodel(filename, env.spaces, pex.x, pex_costs,
                             x_plot, cost_map,
                             y_mu, y_std, y_std, fct_name,
-                            highlight_last=False)
+                            n_new=0)
 
     if (env.spaces.dim == 2):
         x_plot, y_plot, cost_map = env.generate_cost_map_2D()
@@ -90,6 +90,6 @@ def generate(env_pms, pex_pms, model_pms, path):
         render_2D_metamodel(filename, env.spaces, pex.x, pex_costs,
                             x_plot, y_plot, cost_map,
                             y_mu, y_std, y_std, fct_name,
-                            highlight_last=False)
+                            n_new=0)
 
     env.close()
